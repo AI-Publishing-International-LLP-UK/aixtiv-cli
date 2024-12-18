@@ -1,34 +1,20 @@
 const express = require('express');
-const {webSearch} = require('./services/search');
-const {localSearch} = require('./services/places');
+const { searchContent } = require('./services/search');
 
 const app = express();
 app.use(express.json());
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    service: 'warp-drive-api',
-    version: process.env.npm_package_version || '1.0.0'
-  });
-});
-
 app.post('/api/search', async (req, res) => {
   try {
-    const results = await webSearch(req.body.query, req.body.count);
-    res.json(results);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+    const { query } = req.body;
+    if (!query) {
+      return res.status(400).json({ error: 'Query parameter is required' });
+    }
 
-app.post('/api/local-search', async (req, res) => {
-  try {
-    const results = await localSearch(req.body.query, req.body.location);
+    const results = await searchContent(query);
     res.json(results);
   } catch (error) {
+    console.error('Error in search endpoint:', error);
     res.status(500).json({ error: error.message });
   }
 });
