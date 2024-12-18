@@ -1,22 +1,24 @@
 const express = require('express');
-const { searchContent } = require('./services/search');
+const searchRoutes = require('./routes/search');
 
 const app = express();
 app.use(express.json());
 
-app.post('/api/search', async (req, res) => {
-  try {
-    const { query } = req.body;
-    if (!query) {
-      return res.status(400).json({ error: 'Query parameter is required' });
-    }
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'healthy', timestamp: new Date().toISOString() });
+});
 
-    const results = await searchContent(query);
-    res.json(results);
-  } catch (error) {
-    console.error('Error in search endpoint:', error);
-    res.status(500).json({ error: error.message });
-  }
+// Search routes
+app.use('/api/search', searchRoutes);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Application error:', err);
+  res.status(500).json({
+    error: err.message,
+    timestamp: new Date().toISOString()
+  });
 });
 
 const PORT = process.env.PORT || 3000;
