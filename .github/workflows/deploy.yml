@@ -19,12 +19,6 @@ jobs:
         project_id: api-for-warp-drive
         service_account_key: ${{ secrets.GCP_SA_KEY }}
 
-    - name: Configure SSH for IAP tunnel
-      run: |
-        gcloud compute config-ssh
-        gcloud compute config-ssh --remove
-        gcloud compute config-ssh --internal-ip
-
     - name: Deploy to VM
       run: |
         gcloud compute ssh mcp-server --zone=us-west1-b --tunnel-through-iap --command="
@@ -35,4 +29,4 @@ jobs:
           sudo chmod +x scripts/*.sh && \
           sudo ./scripts/setup.sh && \
           sudo -E npm install && \
-          sudo -E npm start"
+          sudo ./scripts/install-service.sh"
