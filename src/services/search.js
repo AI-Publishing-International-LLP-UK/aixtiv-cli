@@ -1,24 +1,22 @@
-const {google} = require('googleapis');
-const config = require('../config/google-config');
+const { getSearchConfig } = require('../config/search-config');
 
-const customsearch = google.customsearch('v1');
-
-async function webSearch(query, count = 10) {
+async function searchContent(query) {
   try {
-    const response = await customsearch.cse.list({
-      auth: config.customSearchApiKey,
-      cx: config.searchEngineId,
-      q: query,
-      num: count
-    });
+    const config = await getSearchConfig();
+    const url = `https://www.googleapis.com/customsearch/v1?key=${config.apiKey}&cx=${config.searchEngineId}&q=${encodeURIComponent(query)}`;
     
-    return response.data.items;
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    if (data.error) {
+      throw new Error(data.error.message);
+    }
+    
+    return data;
   } catch (error) {
-    console.error('Error performing web search:', error);
+    console.error('Search error:', error);
     throw error;
   }
 }
 
-module.exports = {
-  webSearch
-};
+module.exports = { searchContent };
