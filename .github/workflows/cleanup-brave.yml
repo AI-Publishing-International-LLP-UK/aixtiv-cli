@@ -1,10 +1,10 @@
-name: Clean up Brave API Dependencies
+name: Verify Search Configuration
 
 on:
   workflow_dispatch:
 
 jobs:
-  cleanup:
+  verify:
     runs-on: ubuntu-latest
     
     steps:
@@ -16,15 +16,9 @@ jobs:
         project_id: api-for-warp-drive
         service_account_key: ${{ secrets.GCP_SA_KEY }}
 
-    - name: Remove Brave API secret
+    - name: Check Secrets Configuration
       run: |
         gcloud compute ssh mcp-server --zone=us-west1-b --tunnel-through-iap --command='
-          gcloud secrets delete brave-api-key --quiet
-        '
-
-    - name: Verify Removal
-      run: |
-        gcloud compute ssh mcp-server --zone=us-west1-b --tunnel-through-iap --command='
-          echo "Checking remaining secrets:"
-          gcloud secrets list --format="table(name)"
+          echo "Checking search configuration:"
+          gcloud secrets list --format="table(name)" --filter="name:google_*"
         '
