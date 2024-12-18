@@ -5,6 +5,7 @@ async function getSearchConfig() {
   const projectId = 'api-for-warp-drive';
 
   try {
+    // Get Google Search credentials only
     const [apiKeyVersion] = await client.accessSecretVersion({
       name: `projects/${projectId}/secrets/google_custom_search_config/versions/latest`
     });
