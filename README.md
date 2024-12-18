@@ -1,34 +1,54 @@
 # API for Warp Drive
 
-Integrated API layer for Warp Drive project connecting multiple services and platforms.
+API integration layer for Warp Drive project with GCP services.
 
-## Core Components
+## Setup
 
-### Infrastructure
-- GCP VM (us-west1)
-- GKE clusters
-- Persistent memory
-- Container infrastructure
+1. Create a Google Cloud Project
+2. Enable required APIs:
+   - Custom Search API
+   - Places API
+3. Create API credentials and download service account key
+4. Set environment variables:
+   ```bash
+   export GOOGLE_CLOUD_PROJECT='your-project-id'
+   export GOOGLE_APPLICATION_CREDENTIALS='path/to/service-account-key.json'
+   export GOOGLE_CUSTOM_SEARCH_API_KEY='your-custom-search-api-key'
+   export GOOGLE_SEARCH_ENGINE_ID='your-search-engine-id'
+   export GOOGLE_PLACES_API_KEY='your-places-api-key'
+   ```
 
-### AI Services
-- Vertex AI integration
-- DeepMind capabilities
-- GPT video processing
-- Advanced agent systems
+## Installation
 
-### Content & Media
-- YouTube integration
-- Content automation
-- RSS processing
-- Distribution systems
+```bash
+npm install
+```
 
-## Getting Started
+## Running the Server
 
-1. Configure GCP credentials
-2. Set up environment variables
-3. Initialize infrastructure
-4. Deploy services
+```bash
+npm start
+```
 
-## Development
+## API Endpoints
 
-See `docs/` for detailed setup and development guidelines.
+### Web Search
+POST /api/search
+```json
+{
+  "query": "search term",
+  "count": 10
+}
+```
+
+### Local Search
+POST /api/local-search
+```json
+{
+  "query": "pizza near me",
+  "location": {
+    "lat": 37.7749,
+    "lng": -122.4194
+  }
+}
+```
