@@ -1,0 +1,30 @@
+name: Clean up Brave API Dependencies
+
+on:
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: api-for-warp-drive
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Remove Brave API secret
+      run: |
+        gcloud compute ssh mcp-server --zone=us-west1-b --tunnel-through-iap --command='
+          gcloud secrets delete brave-api-key --quiet
+        '
+
+    - name: Verify Removal
+      run: |
+        gcloud compute ssh mcp-server --zone=us-west1-b --tunnel-through-iap --command='
+          echo "Checking remaining secrets:"
+          gcloud secrets list --format="table(name)"
+        '
