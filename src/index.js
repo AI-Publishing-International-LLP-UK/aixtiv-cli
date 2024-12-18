@@ -5,6 +5,16 @@ const {localSearch} = require('./services/places');
 const app = express();
 app.use(express.json());
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    service: 'warp-drive-api',
+    version: process.env.npm_package_version || '1.0.0'
+  });
+});
+
 app.post('/api/search', async (req, res) => {
   try {
     const results = await webSearch(req.body.query, req.body.count);
