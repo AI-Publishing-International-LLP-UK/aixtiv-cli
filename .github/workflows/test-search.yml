@@ -1,1 +1,34 @@
-IyBUZXN0IFNlYXJjaCBBUEkgd29ya2Zsb3cKbmFtZTogVGVzdCBTZWFyY2ggQVBJCgpvbjoKICBwdXNoOgogICAgYnJhbmNoZXM6IFsgbWFpbiBdCiAgd29ya2Zsb3dfZGlzcGF0Y2g6Cgpqb2JzOgogIHRlc3Q6CiAgICBydW5zLW9uOiB1YnVudHUtbGF0ZXN0CiAgICBwZXJtaXNzaW9uczoKICAgICAgY29udGVudHM6ICdyZWFkJwogICAgICBpZC10b2tlbjogJ3dyaXRlJwogICAgCiAgICBzdGVwczoKICAgIC0gdXNlczogYWN0aW9ucy9jaGVja291dEB2NAoKICAgIC0gaWQ6ICdhdXRoJwogICAgICBuYW1lOiAnQXV0aGVudGljYXRlIHRvIEdvb2dsZSBDbG91ZCcKICAgICAgdXNlczogJ2dvb2dsZS1naXRodWItYWN0aW9ucy9hdXRoQHYyJwogICAgICB3aXRoOgogICAgICAgIHdvcmtsb2FkX2lkZW50aXR5X3Byb3ZpZGVyOiAnJHt7IHNlY3JldHMuV0lGX1BST1ZJREVSIH19JwogICAgICAgIHNlcnZpY2VfYWNjb3VudDogJyR7eyBzZWNyZXRzLldJRl9TRVJWSUNFX0FDQ09VTlQgfX0nCgogICAgLSBuYW1lOiBTZXQgdXAgQ2xvdWQgU0RLCiAgICAgIHVzZXM6IGdvb2dsZS1naXRodWItYWN0aW9ucy9zZXR1cC1nY2xvdWRAdjIKICAgICAgd2l0aDoKICAgICAgICBwcm9qZWN0X2lkOiBhcGktZm9yLXdhcnAtZHJpdmUKICAgICAgICBpbnN0YWxsX2NvbXBvbmVudHM6ICdna2UtZ2Nsb3VkLWF1dGgtcGx1Z2luJwoKICAgIC0gbmFtZTogVGVzdCBTZWFyY2ggb24gVk0KICAgICAgcnVuOiB8CiAgICAgICAgZ2Nsb3VkIGNvbXB1dGUgc3NoIG1jcC1zZXJ2ZXIgLS16b25lPXVzLXdlc3QxLWIgLS10dW5uZWwtdGhyb3VnaC1pYXAgLS1jb21tYW5kPScKICAgICAgICAgIGN1cmwgLVggUE9TVCBodHRwOi8vbG9jYWxob3N0OjMwMDAvYXBpL3NlYXJjaCBcCiAgICAgICAgICAgIC1IICJDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24iIFwKICAgICAgICAgICAgLWQgIntcInF1ZXJ5XCI6XCJjb2FjaGluZyAyMTAwIGxhdGVzdFwifSIKICAgICAgICAnCg==
+# Test Search API workflow
+name: Test Search API
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v2'
+
+    - name: 'Verify access'
+      run: |
+        gcloud compute instances list --filter="name~'^mcp-server' AND zone:(us-west1-a OR us-west1-b)"
+
+    - name: Test Search on VM
+      run: |
+        gcloud compute ssh mcp-server --zone=us-west1-b --tunnel-through-iap --command='
+          curl -X POST http://localhost:3000/api/search \
+            -H "Content-Type: application/json" \
+            -d "{\"query\":\"coaching 2100 latest\"}"
+        '
