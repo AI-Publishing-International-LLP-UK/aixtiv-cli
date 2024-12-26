@@ -33,7 +33,7 @@ jobs:
 
     - name: Test Search on VM
       run: |
-        gcloud compute ssh mcp-server --zone=us-west1-b --tunnel-through-iap --command='
+        gcloud compute ssh mcp-warp01 --zone=us-west1-b --tunnel-through-iap --command='
           curl -X POST http://localhost:3000/api/search \
             -H "Content-Type: application/json" \
             -d "{\"query\":\"coaching 2100 latest\"}"
