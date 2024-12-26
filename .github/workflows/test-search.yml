@@ -1,3 +1,4 @@
+# Test Search API workflow
 name: Test Search API
 
 on:
@@ -19,17 +20,14 @@ jobs:
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v2'
       with:
-        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+        workload_identity_provider: '${{ secrets.WIF_PROVIDER }}'
+        service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}'
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
       with:
         project_id: api-for-warp-drive
-
-    - name: Verify GCP Authentication
-      run: |
-        gcloud auth list
-        gcloud config list project
+        install_components: 'gke-gcloud-auth-plugin'
 
     - name: Test Search on VM
       run: |
