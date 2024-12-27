@@ -1,0 +1,36 @@
+{
+  "servers": {
+    "ctt-mcp": {
+      "url": "https://us-west1-mcp.anthropic.com",
+      "region": "us-west1",
+      "project": "api-for-warp-drive",
+      "services": {
+        "search": {
+          "enabled": true,
+          "type": "google"
+        },
+        "github": {
+          "enabled": true,
+          "repos": ["C2100-PR/api-for-warp-drive"]
+        },
+        "openai": {
+          "enabled": true,
+          "models": ["gpt-4", "gpt-3.5-turbo"]
+        },
+        "agents": {
+          "enabled": true,
+          "workflows": [
+            "training-analysis",
+            "content-generation",
+            "code-review"
+          ],
+          "tools": [
+            "search", 
+            "github", 
+            "code-interpreter"
+          ]
+        }
+      }
+    }
+  }
+}
