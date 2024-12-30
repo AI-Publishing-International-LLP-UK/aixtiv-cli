@@ -1,26 +1,23 @@
 #!/bin/bash
 
 # Create systemd service file
-sudo cat > /etc/systemd/system/warp-drive-api.service << EOL
+sudo tee /etc/systemd/system/api-for-warp-drive.service << EOL
 [Unit]
-Description=Warp Drive API Service
+Description=API for Warp Drive
 After=network.target
 
 [Service]
 Type=simple
 User=root
 WorkingDirectory=/home/api-for-warp-drive
-Environment=NODE_ENV=production
-Environment=GOOGLE_CLOUD_PROJECT=api-for-warp-drive
-Environment=GOOGLE_APPLICATION_CREDENTIALS=/home/api-for-warp-drive/service-account-key.json
 ExecStart=/usr/bin/npm start
-Restart=always
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
 EOL
 
-# Reload systemd and enable service
+# Enable and start service
 sudo systemctl daemon-reload
-sudo systemctl enable warp-drive-api
-sudo systemctl start warp-drive-api
+sudo systemctl enable api-for-warp-drive
+sudo systemctl restart api-for-warp-drive
