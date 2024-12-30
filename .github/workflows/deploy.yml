@@ -11,57 +11,26 @@ jobs:
     environment: production
 
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Step 2: Set up Google Cloud SDK
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: api-for-warp-drive
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
-
-      # Step 3: Deploy to VM
-      - name: Deploy to VM
-        env:
-          PROJECT_ID: api-for-warp-drive
-          ZONE: us-west1-b
-          VM_NAME: mcp-server
-          REPO_URL: https://github.com/C2100-PR/api-for-warp-drive.git
-          SCRIPT_DIR: /home/api-for-warp-drive
-          LOCAL_SCRIPT_DIR: scripts
+      - name: Deploy
         run: |
-          echo "Starting deployment to VM: ${VM_NAME} in zone: ${ZONE}"
-
-          # SSH into the VM and execute commands
-          gcloud compute ssh ${VM_NAME} \
-            --zone=${ZONE} \
+          gcloud compute ssh mcp-server \
+            --zone=us-west1-b \
             --tunnel-through-iap \
             --command="
-              echo 'Connected to VM: ${VM_NAME}';
-              cd /home || exit 1;
-              
-              echo 'Removing existing repository directory if it exists...';
+              cd /home;
               sudo rm -rf api-for-warp-drive;
-              
-              echo 'Cloning repository...';
-              sudo git clone ${REPO_URL};
-              
-              echo 'Setting up repository permissions...';
-              sudo chmod +x ${LOCAL_SCRIPT_DIR}/*.sh;
-              
-              echo 'Running setup script...';
-              sudo ${LOCAL_SCRIPT_DIR}/setup.sh;
-              
-              echo 'Installing npm dependencies...';
+              sudo git clone https://github.com/C2100-PR/api-for-warp-drive.git;
+              cd api-for-warp-drive;
+              sudo chmod +x scripts/*.sh;
+              sudo ./scripts/setup.sh;
               sudo -E npm install;
-              
-              echo 'Installing service scripts...';
-              sudo ${LOCAL_SCRIPT_DIR}/install-service.sh;
-              
-              echo 'Deployment steps completed successfully.';
+              sudo ./scripts/install-service.sh;
             "
-          
-          echo "Deployment to VM completed."
