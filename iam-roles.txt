@@ -1,0 +1,6 @@
+Required IAM roles for deployment:
+
+- roles/editor
+- roles/iam.serviceAccountAdmin
+- roles/iam.serviceAccountKeyAdmin
+- roles/serviceusage.serviceUsageAdmin
