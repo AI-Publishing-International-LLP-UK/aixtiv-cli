@@ -1,0 +1,48 @@
+name: Setup GCP Environment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          
+      - uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: api-for-warp-drive
+          
+      - name: Setup Service Account and IAM
+        run: |
+          # Create service account
+          gcloud iam service-accounts create github-actions-deploy --display-name="GitHub Actions Deploy"
+          
+          # Add roles
+          gcloud projects add-iam-policy-binding api-for-warp-drive \
+            --member="serviceAccount:github-actions-deploy@api-for-warp-drive.iam.gserviceaccount.com" \
+            --role="roles/compute.admin"
+          
+          gcloud projects add-iam-policy-binding api-for-warp-drive \
+            --member="serviceAccount:github-actions-deploy@api-for-warp-drive.iam.gserviceaccount.com" \
+            --role="roles/iap.tunnelResourceAccessor"
+            
+          gcloud projects add-iam-policy-binding api-for-warp-drive \
+            --member="serviceAccount:github-actions-deploy@api-for-warp-drive.iam.gserviceaccount.com" \
+            --role="roles/iam.serviceAccountUser"
+            
+      - name: Configure VM
+        run: |
+          gcloud compute instances add-metadata mcp-server \
+            --zone=us-west1-b \
+            --metadata=enable-oslogin=TRUE
+          
+          # Enable IAP tunnel
+          gcloud compute firewall-rules create allow-iap-tunneling \
+            --direction=INGRESS \
+            --action=allow \
+            --rules=tcp:22 \
+            --source-ranges=35.235.240.0/20
