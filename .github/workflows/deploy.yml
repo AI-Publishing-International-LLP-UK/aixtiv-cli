@@ -27,9 +27,6 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
       
-      - name: Verify authentication
-        run: gcloud auth list
-      
       - name: Deploy
         run: |
           gcloud compute ssh mcp-server --zone=us-west1-b --tunnel-through-iap --command="cd /home && sudo rm -rf api-for-warp-drive && sudo git clone https://github.com/C2100-PR/api-for-warp-drive.git && cd api-for-warp-drive && sudo chmod +x scripts/*.sh && sudo ./scripts/setup.sh && sudo -E npm install && sudo ./scripts/install-service.sh"
