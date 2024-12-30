@@ -8,12 +8,6 @@ on:
 permissions:
   id-token: write
   contents: read
-  iam: write
-  serviceAccounts: write
-  workloadIdentityPools: write
-  serviceusage: write
-  compute: write
-  storage: write
 
 jobs:
   deploy:
@@ -24,7 +18,7 @@ jobs:
       - uses: google-github-actions/auth@v1
         with:
           workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: github-actions-deploy@api-for-warp-drive.iam.gserviceaccount.com
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - uses: google-github-actions/setup-gcloud@v2
       - name: Deploy
         run: |
