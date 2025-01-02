@@ -1,5 +1,26 @@
 #!/bin/bash
 
+# Copyright (c) 2024 C2100-PR
+# OCHRA Number: [Your OCHRA Number]
+#
+# LEGAL NOTICE AND LICENSE
+#
+# This script and all associated repositories are proprietary and confidential.
+# Unauthorized access does not constitute authorization for reuse, reproduction,
+# or distribution. All rights reserved.
+#
+# Access to this code and associated systems does not grant any rights to:
+# 1. Reuse any portion of the code
+# 2. Reproduce or copy any functionality
+# 3. Distribute or share any contents
+# 4. Modify or create derivative works
+#
+# By accessing this code, you acknowledge that:
+# - Access is for authorized purposes only
+# - No rights or licenses are granted by virtue of access
+# - All intellectual property rights are reserved
+# - Any unauthorized use may result in legal action
+
 # Script to secure all repositories using gcloud shell
 
 # List of repos to secure
@@ -47,12 +68,23 @@ secure_repo() {
       "restrictions": null
     }'
 
+  # Add license and legal notice to repository
+  echo "Adding legal documentation..."
+  curl -X PUT \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Accept: application/vnd.github.v3+json" \
+    "https://api.github.com/repos/C2100-PR/$repo/contents/LICENSE" \
+    -d '{
+      "message": "Add legal notice and license",
+      "content": "'$(echo -n "Copyright (c) 2024 C2100-PR\nOCHRA Number: [Your OCHRA Number]\n\nAll rights reserved.\n\nAccess to this repository does not constitute authorization for reuse.\nUnauthorized reproduction or distribution is prohibited." | base64)'"    
+    }'
+
   # Verify status
   echo "Verifying $repo status..."
   curl -H "Authorization: Bearer $TOKEN" \
     "https://api.github.com/repos/C2100-PR/$repo"
 
-  echo "Security measures applied to $repo"
+  echo "Security measures and legal documentation applied to $repo"
 }
 
 # Main execution
@@ -69,4 +101,4 @@ do
   echo "-------------------"
 done
 
-echo "All repositories secured"
+echo "All repositories secured with legal protections"
