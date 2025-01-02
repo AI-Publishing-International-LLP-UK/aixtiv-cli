@@ -1,4 +1,1 @@
-private: true
-branch_protection:
-  required_reviews: true
-  enforce_admins: true
+{"encoding": "utf-8", "content": "private: true\nbranch_protection:\n  required_reviews: true\n  enforce_admins: true"}
