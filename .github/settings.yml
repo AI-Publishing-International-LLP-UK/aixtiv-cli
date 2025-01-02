@@ -1,0 +1,6 @@
+repository:
+  private: true
+  security:
+    enforce_admins: true
+    required_reviews: true
+    block_force_push: true
