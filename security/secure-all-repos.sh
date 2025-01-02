@@ -59,7 +59,7 @@ secure_repo() {
 echo "Starting security implementation..."
 
 # Configure gcloud
-gcloud config set project your-project-id
+gcloud config set project api-for-warp-drive
 
 # Loop through repos and secure each one
 for repo in "${REPOS[@]}"
