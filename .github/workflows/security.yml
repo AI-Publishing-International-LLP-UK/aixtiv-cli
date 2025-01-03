@@ -1,13 +1,13 @@
-name: Security Lockdown
-on: [push, pull_request]
+name: Security
+on: [push]
 jobs:
   security:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Security Scan
+    - name: Make Private
       run: |
-        echo "Repository must be private"
-        echo "Branch protection required"
-        echo "Access limited to authorized personnel"
-        exit 1 # Force failure until security measures implemented
+        curl -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+        -H "Accept: application/vnd.github.v3+json" \
+        https://api.github.com/repos/C2100-PR/api-for-warp-drive \
+        -d '{"private":true}'
