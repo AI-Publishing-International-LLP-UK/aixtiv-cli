@@ -1,17 +1,19 @@
 name: Authentication
 on: [push]
+
+permissions:
+  contents: 'read'
+  id-token: 'write'
+
 jobs:
   auth:
-    permissions:
-      contents: 'read'
-      id-token: 'write'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
       - id: auth
-        name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
-          credentials_json: '${{ secrets.GCP_SA_KEY }}'  # Using service account key
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
+          create_credentials_file: true
+          workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+          service_account: 'my-service-account@my-project.iam.gserviceaccount.com'
+          access_token_lifetime: '3600s'
+          access_token_scopes: 'https://www.googleapis.com/auth/cloud-platform'
