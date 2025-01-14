@@ -1,0 +1,28 @@
+name: Service Monitoring
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r monitoring/requirements.txt
+      - name: Run monitoring
+        env:
+          GOOGLE_CLOUD_PROJECT: api-for-warp-drive
+          GITHUB_ORG: c2100-pr
+          ADMIN_EMAIL: pr@coaching2100.com
+          EDITOR_EMAIL: dk@coaching2100.com
+        run: python monitoring/service_monitor.py --project-id $GOOGLE_CLOUD_PROJECT
