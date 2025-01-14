@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring-system
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: monitoring-system
+  template:
+    metadata:
+      labels:
+        app: monitoring-system
+    spec:
+      containers:
+      - name: monitoring
+        image: c2100lab.azurecr.io/monitoring-service:1.0.0
+        ports:
+        - containerPort: 8080
