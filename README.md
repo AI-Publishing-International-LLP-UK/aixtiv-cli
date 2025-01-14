@@ -1,54 +1,36 @@
-# API for Warp Drive
+# API Monitoring System for Coaching 2100
 
-API integration layer for Warp Drive project with GCP services.
+## Repository Information
+- Organization: c2100-pr
+- Project: api-for-warp-drive
+
+## Administrators
+- Owner: pr@coaching2100.com
+- Editor: dk@coaching2100.com
 
 ## Setup
-
-1. Create a Google Cloud Project
-2. Enable required APIs:
-   - Custom Search API
-   - Places API
-3. Create API credentials and download service account key
-4. Set environment variables:
-   ```bash
-   export GOOGLE_CLOUD_PROJECT='your-project-id'
-   export GOOGLE_APPLICATION_CREDENTIALS='path/to/service-account-key.json'
-   export GOOGLE_CUSTOM_SEARCH_API_KEY='your-custom-search-api-key'
-   export GOOGLE_SEARCH_ENGINE_ID='your-search-engine-id'
-   export GOOGLE_PLACES_API_KEY='your-places-api-key'
-   ```
-
-## Installation
-
+1. Install dependencies:
 ```bash
-npm install
+pip install -r requirements.txt
 ```
 
-## Running the Server
-
+2. Configure environment:
 ```bash
-npm start
+export GOOGLE_CLOUD_PROJECT=api-for-warp-drive
+export GITHUB_ORG=c2100-pr
 ```
 
-## API Endpoints
-
-### Web Search
-POST /api/search
-```json
-{
-  "query": "search term",
-  "count": 10
-}
+3. Run monitoring:
+```bash
+python monitoring/service_monitor.py --project-id api-for-warp-drive
 ```
 
-### Local Search
-POST /api/local-search
-```json
-{
-  "query": "pizza near me",
-  "location": {
-    "lat": 37.7749,
-    "lng": -122.4194
-  }
-}
-```
+## GitHub Actions
+- Automated monitoring every 5 minutes
+- Manual trigger available
+- Environment: production
+
+## Alerts Configuration
+- Critical threshold: 90%
+- Warning threshold: 95%
+- Alert cooldown: 5 minutes
