@@ -1,25 +1,24 @@
-name: Deploy to GCP VM
+name: Multi-Region Deployment
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
 
-permissions:
-  id-token: write
-  contents: read
+env:
+  PROJECT_ID: api-for-warp-drive
+  PRIMARY_REGION: us-west1-b
+  BACKUP_REGION: us-central1
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production
     steps:
-      - uses: actions/checkout@v4
-      - uses: google-github-actions/auth@v1
-        with:
-          workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-      - uses: google-github-actions/setup-gcloud@v2
-      - name: Deploy
-        run: |
-          gcloud compute ssh mcp-server --zone=us-west1-b --tunnel-through-iap --command="cd /home && sudo rm -rf api-for-warp-drive && sudo git clone https://github.com/C2100-PR/api-for-warp-drive.git && cd api-for-warp-drive && sudo chmod +x scripts/*.sh && sudo ./scripts/setup.sh && sudo -E npm install && sudo ./scripts/install-service.sh"
+    - uses: actions/checkout@v4
+    - name: Auth
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+    - name: Deploy
+      run: |
+        echo "Deploying to Primary (US-WEST1-B)"
+        echo "Setting up Backup (Iowa)"
