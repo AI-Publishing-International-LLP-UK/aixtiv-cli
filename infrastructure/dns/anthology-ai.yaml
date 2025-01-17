@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: super-claude-interface
+  namespace: anthology-ai
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 443
+      targetPort: 8080
+  selector:
+    app: super-claude-ui
+
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: anthology-ai-cert
+spec:
+  domains:
+    - anthology-ai-publishing.c2100-pr.com
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: anthology-ai-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: anthology-ai-ip
+    networking.gke.io/managed-certificates: anthology-ai-cert
+spec:
+  rules:
+    - host: anthology-ai-publishing.c2100-pr.com
+      http:
+        paths:
+          - path: /super-claude-interface/*
+            pathType: Prefix
+            backend:
+              service:
+                name: super-claude-interface
+                port:
+                  number: 443
