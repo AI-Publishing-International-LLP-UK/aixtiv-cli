@@ -1,0 +1,40 @@
+# Vision Lake Configuration
+project_id: api-for-warp-drive
+region: us-west1
+zone: us-west1-b
+
+storage:
+  bucket_name: vision-lake-main
+  lifecycle_rules:
+    - action: SetStorageClass
+      storage_class: NEARLINE
+      condition:
+        age_days: 30
+
+notebook_integration:
+  instance_name: vision-lake-notebooks
+  machine_type: n1-standard-4
+  network: default
+  no_public_ip: true
+
+data_transfer:
+  sources:
+    - location: las_vegas
+      type: cloud_storage
+      bucket: las-vegas-data
+    - location: iowa
+      type: cloud_storage
+      bucket: iowa-data
+  schedule: "0 0 * * *"  # Daily at midnight
+  window:
+    start: "02:00"
+    end: "06:00"
+
+monitoring:
+  metrics_prefix: vision_lake
+  alert_configs:
+    - name: storage_usage
+      threshold: 85  # Alert at 85% capacity
+    - name: transfer_latency
+      threshold: 300  # Alert if transfer takes > 5 minutes
+  notification_channel: cloud-monitoring
