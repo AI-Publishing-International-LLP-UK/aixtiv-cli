@@ -1,0 +1,97 @@
+version: 1.0
+
+vertex_ai:
+  project: api-for-warp-drive
+  region: us-west1
+  network: anthology-ai-vpc
+  subnet: vertex-subnet
+
+endpoints:
+  super_claude:
+    display_name: super-claude-orchestrator
+    model_name: claude-3-5-sonnet
+    machine_type: n1-standard-8
+    min_replica_count: 1
+    max_replica_count: 5
+    accelerator_type: NVIDIA_TESLA_T4
+    accelerator_count: 1
+    
+  quality_control:
+    display_name: quality-control-claude
+    model_name: claude-3-opus
+    machine_type: n1-standard-16
+    min_replica_count: 2
+    max_replica_count: 8
+    accelerator_type: NVIDIA_TESLA_T4
+    accelerator_count: 2
+    
+  content_generation:
+    display_name: content-generation-claude
+    model_name: claude-3-opus
+    machine_type: n1-standard-16
+    min_replica_count: 2
+    max_replica_count: 10
+    accelerator_type: NVIDIA_TESLA_T4
+    accelerator_count: 2
+
+notebooks:
+  vision_lake:
+    display_name: vision-lake-workbench
+    machine_type: n1-standard-8
+    boot_disk_type: PD_SSD
+    boot_disk_size_gb: 100
+    container_image: gcr.io/anthology-ai/vision-lake-notebook:latest
+    
+  agent_development:
+    display_name: agent-dev-workbench
+    machine_type: n1-standard-16
+    boot_disk_type: PD_SSD
+    boot_disk_size_gb: 200
+    container_image: gcr.io/anthology-ai/agent-dev-notebook:latest
+
+monitoring:
+  metrics:
+    - name: endpoint_latency
+      type: DISTRIBUTION
+      unit: ms
+      display_name: Endpoint Response Latency
+      
+    - name: endpoint_qps
+      type: GAUGE
+      unit: 1/s
+      display_name: Queries Per Second
+      
+    - name: model_accuracy
+      type: GAUGE
+      unit: ratio
+      display_name: Model Accuracy Score
+
+  alerts:
+    - name: high_latency
+      filter: metric.type="custom.googleapis.com/endpoint_latency"
+      condition: > 1000ms
+      duration: 300s
+      notification_channels: ["email"]
+      
+    - name: low_accuracy
+      filter: metric.type="custom.googleapis.com/model_accuracy"
+      condition: < 0.95
+      duration: 600s
+      notification_channels: ["email", "slack"]
+
+scaling:
+  auto_scaling:
+    cpu_utilization_target: 0.6
+    min_node_count: 1
+    max_node_count: 10
+    
+  machine_types:
+    default: n1-standard-8
+    high_memory: n1-highmem-16
+    high_cpu: n1-highcpu-16
+    
+  resource_limits:
+    cpu: 100
+    memory: 400Gi
+    nvidia_tesla_t4: 20
+    nvidia_tesla_a100: 4
