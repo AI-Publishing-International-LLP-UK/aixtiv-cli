@@ -1,0 +1,33 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeForwardingRule
+metadata:
+  name: anthology-lb-rule
+  namespace: anthology-ai
+spec:
+  description: "Frontend load balancer for anthology-ai services"
+  loadBalancingScheme: "EXTERNAL"
+  portRange: "443"
+  IPProtocol: "TCP"
+  networkTier: "PREMIUM"
+  target: "projects/api-for-warp-drive/global/targetHttpsProxies/anthology-https-proxy"
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeTargetHttpsProxy
+metadata:
+  name: anthology-https-proxy
+  namespace: anthology-ai
+spec:
+  description: "HTTPS proxy for anthology-ai services"
+  urlMap: "projects/api-for-warp-drive/global/urlMaps/anthology-url-map"
+  sslCertificates:
+    - "projects/api-for-warp-drive/global/sslCertificates/sc2100cool"
+  sslPolicy: "projects/api-for-warp-drive/global/sslPolicies/anthology-ssl-policy"
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeURLMap
+metadata:
+  name: anthology-url-map
+  namespace: anthology-ai
+spec:
+  description: "URL map for anthology-ai services"
+  defaultService: "projects/api-for-warp-drive/global/backendServices/lb-ip-2100-cool-backend"
