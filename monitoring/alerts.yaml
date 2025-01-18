@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: anthology-alerts
+  namespace: anthology-ai
+spec:
+  groups:
+  - name: anthology.rules
+    rules:
+    - alert: HighLatency
+      expr: http_request_duration_seconds > 0.5
+      for: 1m
+      labels:
+        severity: warning
+    - alert: SSLCertExpiringSoon
+      expr: ssl_certificate_expiry_days < 30
+      for: 1h
+      labels:
+        severity: warning
+    - alert: ServiceDown
+      expr: up == 0
+      for: 1m
+      labels:
+        severity: critical
