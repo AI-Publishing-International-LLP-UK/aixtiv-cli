@@ -1,0 +1,39 @@
+status: CRITICAL
+timestamp: 2025-01-17T23:27:48Z
+components:
+  dns:
+    status: NOT_FOUND
+    error: "Zone 2100-cool does not exist"
+    required_action: "CREATE"
+  
+  security:
+    status: NOT_FOUND
+    error: "Policy anthology-security not found"
+    required_action: "CREATE"
+    
+  loadbalancer:
+    status: PARTIAL
+    frontend:
+      status: NOT_FOUND
+      error: "Rule anthology-lb-rule not found"
+    backend:
+      status: MISCONFIGURED
+      current:
+        sessionAffinity: NONE
+        timeoutSec: 30
+      required:
+        sessionAffinity: CLIENT_IP
+        timeoutSec: 60
+        
+  ssl:
+    status: PENDING
+    certificate: "sc2100cool"
+    state: "PROVISIONING"
+    created: "2025-01-17T16:10:47-08:00"
+    
+remediation_order:
+  1: Create DNS zone
+  2: Update backend service
+  3: Create security policy
+  4: Create load balancer rule
+  5: Verify SSL provisioning
