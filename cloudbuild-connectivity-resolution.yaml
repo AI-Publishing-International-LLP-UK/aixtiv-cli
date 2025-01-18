@@ -1,0 +1,73 @@
+steps:
+# Authenticate and Set Context
+- name: 'gcr.io/cloud-builders/gcloud'
+  args:
+  - container
+  - clusters
+  - get-credentials
+  - private-cluster-auto
+  - --zone=us-west1
+  - --project=api-for-warp-drive
+
+# Execute Network Pathfinder
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - -c
+  - |
+    chmod +x scripts/network-pathfinder.sh
+    ./scripts/network-pathfinder.sh
+
+# Dynamic Routing Configuration
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+  - apply
+  - -f
+  - infrastructure/network/network-evolution.yaml
+
+# Comprehensive Connectivity Validation
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - -c
+  - |
+    # Validate Cluster Connectivity
+    kubectl get nodes
+    kubectl get services --all-namespaces
+    
+    # Run Connectivity Tests
+    kubectl run connectivity-test \
+      --image=busybox \
+      --rm -it \
+      --restart=Never \
+      -- sh -c "wget -q -O- http://google.com"
+
+# Performance and Security Assessment
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - -c
+  - |
+    # Resource Utilization
+    kubectl top nodes
+    kubectl top pods --all-namespaces
+    
+    # Network Policy Verification
+    kubectl get networkpolicies --all-namespaces
+
+# Notification and Reporting
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - -c
+  - |
+    if [ $? -eq 0 ]; then
+      echo "🌐 Network Connectivity Successfully Restored 🚀"
+    else
+      echo "❌ Network Resolution Encountered Challenges"
+    fi
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'N1_HIGHCPU_8'
+timeout: '1800s'  # 30 minutes max
