@@ -1,0 +1,15 @@
+sslStatus:
+  check: "now"
+  domains:
+    - staging.2100.cool
+    - 2100.cool
+  verifyChain: true
+  verifyHostname: true
+
+validation:
+  autoRenewal: true
+  expiryCheck: true
+  monitoring: true
+  alerts:
+    enabled: true
+    threshold: "30d"
