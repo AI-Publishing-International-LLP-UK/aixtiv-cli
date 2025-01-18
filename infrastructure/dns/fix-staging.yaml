@@ -1,0 +1,16 @@
+dns:
+  zone: "2100.cool"
+  records:
+    - name: "staging"
+      type: "A"
+      value: "34.54.155.123"
+      ttl: 300
+    - name: "staging"
+      type: "CNAME"
+      value: "2100.cool"
+      ttl: 300
+
+ssl:
+  provider: "lets-encrypt"
+  domains: ["staging.2100.cool"]
+  autoRenew: true
