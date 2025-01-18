@@ -1,0 +1,38 @@
+apiVersion: networking.gke.io/v1
+kind: FrontendConfig
+metadata:
+  name: anthology-lb
+  namespace: anthology-ai
+spec:
+  sslPolicy: "gcp-default"
+  certificateMap: "sc2100cool"
+  http2: true
+  timeout:
+    httpKeepAliveTimeout: "610s"
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: anthology-ingress
+  namespace: anthology-ai
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    networking.gke.io/v1beta1.FrontendConfig: "anthology-lb"
+    cloud.google.com/network-tier: "Premium"
+spec:
+  tls:
+  - hosts:
+    - "2100.cool"
+    - "*.2100.cool"
+    secretName: sc2100cool-tls
+  rules:
+  - host: "2100.cool"
+    http:
+      paths:
+      - path: "/*"
+        pathType: Prefix
+        backend:
+          service:
+            name: super-claude-ui
+            port:
+              number: 8080
