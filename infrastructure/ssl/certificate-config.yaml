@@ -1,0 +1,23 @@
+sslCertificate:
+  provider: "lets-encrypt"
+  domain: "2100.cool"
+  renewalDays: 30
+  email: "admin@2100.cool"
+  
+certificateManager:
+  enabled: true
+  autoRenewal: true
+  monitoring: true
+  
+loadBalancerConfig:
+  sslMode: "strict"
+  protocols:
+    - "TLSv1.2"
+    - "TLSv1.3"
+  cipherSuites:
+    - "ECDHE-ECDSA-AES128-GCM-SHA256"
+    - "ECDHE-RSA-AES128-GCM-SHA256"
+    
+redirects:
+  httpToHttps: true
+  wwwToNonWww: true
