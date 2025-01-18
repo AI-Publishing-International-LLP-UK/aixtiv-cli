@@ -1,0 +1,34 @@
+aiConfig:
+  claude:
+    model: "claude-3-5-sonnet-20241022"
+    maxTokens: 200000
+    temperature: 0.1
+    settings:
+      precision: "high"
+      factuality: "strict"
+      codeExecution: true
+      autoReview: true
+    
+  vertex:
+    model: "vertex-large"
+    location: "us-central1"
+    settings:
+      precision: "high"
+      backup: true
+
+automation:
+  codeExecution:
+    enabled: true
+    environments: ["python", "javascript", "shell"]
+    security: true
+    logging: true
+    
+  verification:
+    sourceCheck: true
+    factCheck: true
+    outputValidation: true
+    
+  memory:
+    type: "persistent"
+    contextWindow: "unlimited"
+    verification: true
