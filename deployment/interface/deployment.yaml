@@ -13,6 +13,8 @@ spec:
       labels:
         app: super-claude-ui
     spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: us-west4-c
       containers:
         - name: super-claude-ui
           image: gcr.io/api-for-warp-drive/super-claude-ui:latest
@@ -20,7 +22,7 @@ spec:
             - containerPort: 8080
           env:
             - name: API_ENDPOINT
-              value: "https://us-west1-api-for-warp-drive.cloudfunctions.net/super-claude"
+              value: "https://us-west4-api-for-warp-drive.cloudfunctions.net/super-claude"
             - name: VISION_LAKE_BUCKET
               value: "vision-lake-main"
           resources:
