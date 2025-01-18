@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: super-claude-staging
+  namespace: anthology-ai-staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: super-claude-ui-staging
+  template:
+    metadata:
+      labels:
+        app: super-claude-ui-staging
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: us-west4-c
+      containers:
+        - name: super-claude-ui
+          image: gcr.io/api-for-warp-drive/super-claude-ui:staging
+          ports:
+            - containerPort: 8080
+          env:
+            - name: API_ENDPOINT
+              value: "https://us-west4-api-for-warp-drive.cloudfunctions.net/super-claude-staging"
+            - name: VISION_LAKE_BUCKET
+              value: "vision-lake-staging"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "200m"
