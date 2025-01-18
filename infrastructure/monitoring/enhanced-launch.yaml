@@ -1,0 +1,21 @@
+launchMonitoring:
+  metrics:
+    responseTime:
+      threshold: "50ms"
+      sampling: "1s"
+    throughput:
+      threshold: "10000rps"
+      sampling: "1s"
+    errorRate:
+      threshold: "0.001%"
+      window: "1m"
+      
+  tracing:
+    enabled: true
+    sampling: 100
+    retention: "7d"
+    
+  realtime:
+    dashboard: true
+    alerts: true
+    anomalyDetection: true
