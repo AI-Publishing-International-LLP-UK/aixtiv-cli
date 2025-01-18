@@ -1,0 +1,21 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: super-claude-interface
+  namespace: anthology-ai 
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: super-claude-ui
+  template:
+    metadata:
+      labels:
+        app: super-claude-ui
+    spec:
+      containers:
+      - name: super-claude-ui
+        image: gcr.io/api-for-warp-drive/super-claude-ui:latest
+        ports:
+        - containerPort: 8080
