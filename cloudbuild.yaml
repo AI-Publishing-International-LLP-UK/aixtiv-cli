@@ -1,0 +1,41 @@
+steps:
+# Authenticate with GKE
+- name: 'gcr.io/cloud-builders/gcloud'
+  args:
+  - container
+  - clusters
+  - get-credentials
+  - private-cluster-auto
+  - --zone=us-west1
+  - --project=api-for-warp-drive
+
+# Apply Network Policy
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+  - apply
+  - -f
+  - infrastructure/network/network-policy.yaml
+
+# Run Network Validation
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - -c
+  - |
+    chmod +x scripts/network-validation.sh
+    ./scripts/network-validation.sh
+
+# Optional: Notify on Slack or Email if validation fails
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - -c
+  - |
+    if [ $? -ne 0 ]; then
+      echo "Network Deployment Failed"
+      # Add notification logic here
+    fi
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+timeout: '1200s'  # 20 minutes max
