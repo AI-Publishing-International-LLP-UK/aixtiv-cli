@@ -1,0 +1,15 @@
+apiVersion: cloud.google.com/v1
+kind: HealthCheck
+metadata:
+  name: staging-healthcheck
+  namespace: anthology-ai-staging
+spec:
+  type: HTTP
+  httpHealthCheck:
+    host: staging.2100.cool
+    port: 80
+    requestPath: /health
+  checkIntervalSec: 10
+  timeoutSec: 5
+  unhealthyThreshold: 3
+  healthyThreshold: 2
