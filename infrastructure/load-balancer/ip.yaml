@@ -1,0 +1,12 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeAddress
+metadata:
+  name: anthology-lb-ip
+  namespace: anthology-ai
+spec:
+  location: global
+  addressType: EXTERNAL
+  ipVersion: IPV4
+  networkTier: PREMIUM
+  purpose: "GCE_ENDPOINT"
+  description: "Global IP for anthology load balancer"
