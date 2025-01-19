@@ -1,0 +1,24 @@
+{
+  "agents": [
+    {
+      "name": "lucy-auto",
+      "config": "config/job-spec-lucy.json",
+      "status": "PENDING"
+    },
+    {
+      "name": "agent-bot",
+      "config": "config/job-spec-agent-bot.json",
+      "status": "NOT_DEPLOYED"
+    },
+    {
+      "name": "data-cleaner",
+      "config": "config/job-spec-data-cleaner.json",
+      "status": "NOT_DEPLOYED"
+    },
+    {
+      "name": "data-analyzer",
+      "config": "config/job-spec-data-analyzer.json",
+      "status": "NOT_DEPLOYED"
+    }
+  ]
+}
