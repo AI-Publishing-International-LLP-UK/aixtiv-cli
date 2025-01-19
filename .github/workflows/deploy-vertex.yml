@@ -1,0 +1,33 @@
+name: Deploy to Vertex AI
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'config/job-spec.json'
+      - 'lucy_auto/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/859242575175/locations/global/workloadIdentityPools/github-actions/providers/github
+          service_account: mcp-server-sa@api-for-warp-drive.iam.gserviceaccount.com
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy to Vertex AI
+        run: |
+          gcloud ai custom-jobs create \
+            --region=us-west4 \
+            --config=config/job-spec.json
