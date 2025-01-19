@@ -1,0 +1,99 @@
+name: Network Infrastructure Deployment
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'infrastructure/**'
+      - 'deployment/**'
+      - '.github/workflows/network-deployment.yml'
+
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'infrastructure/**'
+      - 'deployment/**'
+
+jobs:
+  pre-flight-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      
+      - name: Run Pre-Flight Checklist
+        run: |
+          chmod +x deployment/pre-flight-checklist.sh
+          ./deployment/pre-flight-checklist.sh
+
+  deployment-orchestration:
+    needs: pre-flight-validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      
+      - name: Configure Kubernetes Cluster
+        run: |
+          gcloud container clusters get-credentials private-cluster-auto \
+            --zone us-west1 \
+            --project ${{ secrets.GCP_PROJECT_ID }}
+      
+      - name: Run Deployment Orchestrator
+        run: |
+          chmod +x deployment/network-deployment-orchestrator.sh
+          ./deployment/network-deployment-orchestrator.sh
+
+  post-deployment-validation:
+    needs: deployment-orchestration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      
+      - name: Connectivity and Performance Tests
+        run: |
+          gcloud container clusters get-credentials private-cluster-auto \
+            --zone us-west1 \
+            --project ${{ secrets.GCP_PROJECT_ID }}
+          
+          # Run comprehensive connectivity tests
+          kubectl run connectivity-test \
+            --image=busybox \
+            --rm -it \
+            --restart=Never \
+            -- wget -q -O- http://super-claude-staging
+
+  notification:
+    if: always()
+    needs: 
+      - pre-flight-validation
+      - deployment-orchestration
+      - post-deployment-validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: Network Infrastructure Deployment
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
