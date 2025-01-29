@@ -1,41 +1,66 @@
 steps:
-# Authenticate with GKE
 - name: 'gcr.io/cloud-builders/gcloud'
-  args:
-  - container
-  - clusters
-  - get-credentials
-  - private-cluster-auto
-  - --zone=us-west1
-  - --project=api-for-warp-drive
-
-# Apply Network Policy
-- name: 'gcr.io/cloud-builders/kubectl'
-  args:
-  - apply
-  - -f
-  - infrastructure/network/network-policy.yaml
-
-# Run Network Validation
-- name: 'gcr.io/cloud-builders/gcloud'
+  id: 'Initialize'
   entrypoint: 'bash'
   args:
-  - -c
-  - |
-    chmod +x scripts/network-validation.sh
-    ./scripts/network-validation.sh
+    - '-c'
+    - |
+      echo "Initializing deployment for ${_DEPLOYMENT_NAME}"
+      echo "Region: ${_REGION}"
+      echo "Project: $PROJECT_ID"
 
-# Optional: Notify on Slack or Email if validation fails
+- name: 'hashicorp/terraform:1.0.0'
+  id: 'Terraform Init'
+  args:
+    - 'init'
+    - '-backend=true'
+    - '-backend-config=bucket=${_BUCKET_NAME}'
+    - '-backend-config=prefix=${_DEPLOYMENT_NAME}/state'
+  dir: 'deployments/doc-summarization'
+
+- name: 'hashicorp/terraform:1.0.0'
+  id: 'Terraform Plan'
+  args:
+    - 'plan'
+    - '-var-file=terraform.tfvars'
+    - '-out=tfplan'
+  dir: 'deployments/doc-summarization'
+
+- name: 'hashicorp/terraform:1.0.0'
+  id: 'Terraform Apply'
+  args:
+    - 'apply'
+    - '-auto-approve'
+    - 'tfplan'
+  dir: 'deployments/doc-summarization'
+
 - name: 'gcr.io/cloud-builders/gcloud'
+  id: 'Verify Deployment'
   entrypoint: 'bash'
   args:
-  - -c
-  - |
-    if [ $? -ne 0 ]; then
-      echo "Network Deployment Failed"
-      # Add notification logic here
-    fi
+    - '-c'
+    - |
+      echo "Verifying deployment..."
+      gcloud blueprints config show \
+        --deployment=${_DEPLOYMENT_NAME} \
+        --location=${_REGION} \
+        --format="yaml"
 
+timeout: '7200s'
 options:
   logging: CLOUD_LOGGING_ONLY
-timeout: '1200s'  # 20 minutes max
+  machineType: 'N1_HIGHCPU_8'
+
+substitutions:
+  _DEPLOYMENT_NAME: 'generative-ai-document-summarization'
+  _REGION: 'us-central1'
+  _BUCKET_NAME: '859242575175-us-central1-blueprint-config'
+  _SOURCE_REF: 'sic-jss'
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/terraform-sa-key/versions/latest
+      env: 'GOOGLE_CREDENTIALS'
+
+serviceAccount: 'goog-sc-generative-ai-docu-147@api-for-warp-drive.iam.gserviceaccount.com'
+tags: ['gen-ai', 'doc-summarization', 'production']
