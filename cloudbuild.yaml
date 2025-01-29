@@ -29,19 +29,6 @@ steps:
           --deployment=config.googleapis.com/v1/projects/api-for-warp-drive/locations/us-west1/deployments/generative-ai-document-summarization \
           --inputs={"delete_contents_on_destroy":true,"deployment_name":"generative-ai-document-summarization","labels":{"environment":"production","goog-solutions-console-deployment-name":"generative-ai-document-summarization","goog-solutions-console-solution-id":"generative-ai-document-summarization"},"project_id":"api-for-warp-drive","region":"us-west1"}
 
-  # Verify deployment
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'verify'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        echo "Verifying deployment..."
-        gcloud builds list \
-          --ongoing \
-          --filter="id=$BUILD_ID" \
-          --format="get(status)"
-
 timeout: '7200s'
 options:
   logging: CLOUD_LOGGING_ONLY
