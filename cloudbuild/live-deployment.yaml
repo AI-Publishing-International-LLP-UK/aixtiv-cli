@@ -19,7 +19,7 @@ steps:
       - |
         gcloud builds submit . \
           --config=cloudbuild.yaml \
-          --substitutions=_DEPLOYMENT_NAME=generative-ai-document-summarization,_REGION=us-central1
+          --substitutions=_DEPLOYMENT_NAME=generative-ai-document-summarization,_REGION=us-west1
 
   # Verify deployment
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -38,7 +38,7 @@ options:
 
 substitutions:
   _DEPLOYMENT_NAME: 'generative-ai-document-summarization'
-  _REGION: 'us-central1'
-  _BUCKET_NAME: '859242575175-us-central1-blueprint-config'
+  _REGION: 'us-west1'
+  _BUCKET_NAME: '859242575175-us-west1-blueprint-config'
 
 serviceAccount: 'goog-sc-generative-ai-docu-147@api-for-warp-drive.iam.gserviceaccount.com'
