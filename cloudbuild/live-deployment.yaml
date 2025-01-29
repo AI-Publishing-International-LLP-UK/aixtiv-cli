@@ -1,0 +1,44 @@
+steps:
+  # Initialize and authenticate
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'Auth'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Authenticating deployment for ${_DEPLOYMENT_NAME}"
+        gcloud config set project api-for-warp-drive
+        gcloud auth configure-docker
+
+  # Deploy to GCP
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'Deploy'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud builds submit . \
+          --config=cloudbuild.yaml \
+          --substitutions=_DEPLOYMENT_NAME=generative-ai-document-summarization,_REGION=us-central1
+
+  # Verify deployment
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'Verify'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Verifying deployment status..."
+        gcloud builds list --filter="id=$BUILD_ID" --format="get(status)"
+
+timeout: '7200s'
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'N1_HIGHCPU_8'
+
+substitutions:
+  _DEPLOYMENT_NAME: 'generative-ai-document-summarization'
+  _REGION: 'us-central1'
+  _BUCKET_NAME: '859242575175-us-central1-blueprint-config'
+
+serviceAccount: 'goog-sc-generative-ai-docu-147@api-for-warp-drive.iam.gserviceaccount.com'
