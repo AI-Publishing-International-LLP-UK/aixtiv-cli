@@ -1,0 +1,20 @@
+environment: production
+region: us-west1
+project_id: api-for-warp-drive
+deployment_name: generative-ai-document-summarization
+
+resources:
+  machine_type: N1_HIGHCPU_8
+  timeout: 7200s
+  logging: CLOUD_LOGGING_ONLY
+
+service_account: goog-sc-generative-ai-docu-147@api-for-warp-drive.iam.gserviceaccount.com
+
+storage:
+  backend_bucket: gs://859242575175-us-west1-blueprint-config
+  output_bucket: gs://859242575175-us-west1-blueprint-config/generative-ai-document-summarization/r-0/apply_results
+
+deployment:
+  status: live
+  version: v1.0.0
+  timestamp: "2025-01-29T12:47:00Z"
