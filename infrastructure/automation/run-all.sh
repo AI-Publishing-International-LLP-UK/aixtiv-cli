@@ -4,8 +4,10 @@ set -e
 echo "Starting full deployment sequence..."
 
 # 1. Deploy DNS and Load Balancer
-gcloud deployment-manager deployments create anthology-infra --config=infrastructure/dns/zone-setup.yaml
-LB_IP=$(gcloud compute addresses describe anthology-lb-ip --global --format='get(address)')
+# Apply Kubernetes resources for DNS zone and global IP address
+kubectl apply -f infrastructure/dns/dns-zone.yaml
+kubectl apply -f infrastructure/dns/global-address.yaml
+LB_IP=$(kubectl get computeglobaladdress anthology-lb-ip -n anthology-ai -o jsonpath='{.status.address}')
 
 # 2. Configure Backend
 gcloud compute backend-services update lb-ip-2100-cool-backend \
