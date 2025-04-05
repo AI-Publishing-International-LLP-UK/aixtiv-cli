@@ -21,6 +21,13 @@ const agentGrant = require('../commands/agent/grant');
 const agentRevoke = require('../commands/agent/revoke');
 const resourceScan = require('../commands/resource/scan');
 
+// Co-pilot command imports
+const copilotLink = require('../commands/copilot/link');
+const copilotUnlink = require('../commands/copilot/unlink');
+const copilotList = require('../commands/copilot/list');
+const copilotVerify = require('../commands/copilot/verify');
+const copilotGrant = require('../commands/copilot/grant');
+
 // Configure program
 program
   .version(packageJson.version)
@@ -89,6 +96,46 @@ program
       });
     }
   });
+
+// Co-pilot commands
+program
+  .command('copilot:link')
+  .description('Link a co-pilot to a principal')
+  .requiredOption('-e, --email <email>', 'Principal email')
+  .requiredOption('-c, --copilot <copilot>', 'Co-pilot email or name (if just name, will use name@drname.live format)')
+  .option('-l, --level <level>', 'Trust level (standard, enhanced, executive)', 'standard')
+  .action(copilotLink);
+
+program
+  .command('copilot:unlink')
+  .description('Unlink a co-pilot from a principal')
+  .requiredOption('-e, --email <email>', 'Principal email')
+  .requiredOption('-c, --copilot <copilot>', 'Co-pilot email or name')
+  .action(copilotUnlink);
+
+program
+  .command('copilot:list')
+  .description('List co-pilots linked to a principal')
+  .option('-e, --email <email>', 'Principal email (if omitted, lists all relationships)')
+  .option('-s, --status <status>', 'Filter by status (active, pending, all)', 'active')
+  .action(copilotList);
+
+program
+  .command('copilot:verify')
+  .description('Verify co-pilot identity and cultural empathy')
+  .requiredOption('-e, --email <email>', 'Co-pilot email')
+  .requiredOption('-p, --principal <principal>', 'Principal email')
+  .option('-c, --code <code>', 'Cultural Empathy Code')
+  .action(copilotVerify);
+
+program
+  .command('copilot:grant')
+  .description('Grant co-pilot access to a resource')
+  .requiredOption('-e, --email <email>', 'Principal email')
+  .requiredOption('-c, --copilot <copilot>', 'Co-pilot email or name')
+  .requiredOption('-r, --resource <resource>', 'Resource ID')
+  .option('-t, --type <type>', 'Access type (readonly, delegated, full)', 'readonly')
+  .action(copilotGrant);
 
 // Parse command line arguments
 program.parse(process.argv);
