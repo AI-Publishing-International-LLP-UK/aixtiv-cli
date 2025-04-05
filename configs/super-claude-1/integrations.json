@@ -1,0 +1,19 @@
+{
+  "integrations": {
+    "dr_lucy_auto": {
+      "endpoint_id": "7434048804044668928",
+      "region": "us-west1",
+      "type": "automation"
+    },
+    "voice_synthesis": {
+      "profile": "dana",
+      "provider": "openai",
+      "type": "voice"
+    },
+    "security": {
+      "type": "quantum-secured",
+      "protocol": "platinum-diamond",
+      "authentication": "triple-factor"
+    }
+  }
+}

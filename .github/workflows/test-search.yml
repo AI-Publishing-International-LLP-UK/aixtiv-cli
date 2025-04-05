@@ -1,0 +1,40 @@
+# Test Search API workflow
+name: Test Search API
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - id: auth
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+        service_account: github-actions-deploy@api-for-warp-drive.iam.gserviceaccount.com
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: Verify access
+      run: |
+        gcloud compute instances list --filter="name~'^mcp-server' AND zone:(us-west1-a OR us-west1-b)"
+
+    - name: Test Search on VM
+      run: |
+        gcloud compute ssh mcp-server --zone=us-west1-b --tunnel-through-iap --command='
+          curl -X POST http://localhost:3000/api/search \
+            -H "Content-Type: application/json" \
+            -d "{\"query\":\"coaching 2100 latest\"}"
+        '

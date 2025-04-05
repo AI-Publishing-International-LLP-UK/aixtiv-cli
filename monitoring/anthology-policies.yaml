@@ -1,0 +1,61 @@
+apiVersion: monitoring.googleapis.com/v1
+kind: AlertPolicy
+metadata:
+  name: anthology-latency
+  namespace: anthology-ai
+spec:
+  displayName: "Anthology API Latency"
+  combiner: OR
+  conditions:
+  - displayName: "HTTP Latency > 500ms"
+    conditionThreshold:
+      filter: "metric.type=\"loadbalancing.googleapis.com/https/request_latency\" resource.type=\"https_lb_rule\""
+      aggregations:
+      - alignmentPeriod: 60s
+        crossSeriesReducer: REDUCE_PERCENTILE_95
+        perSeriesAligner: ALIGN_DELTA
+      comparison: COMPARISON_GT
+      thresholdValue: 500
+      duration: 300s
+---
+apiVersion: monitoring.googleapis.com/v1
+kind: AlertPolicy
+metadata:
+  name: anthology-errors
+  namespace: anthology-ai
+spec:
+  displayName: "Anthology Error Rate"
+  combiner: OR
+  conditions:
+  - displayName: "HTTP Error Rate > 1%"
+    conditionThreshold:
+      filter: "metric.type=\"loadbalancing.googleapis.com/https/request_count\" resource.type=\"https_lb_rule\""
+      denominator:
+        filter: "metric.type=\"loadbalancing.googleapis.com/https/total_latencies\" resource.type=\"https_lb_rule\""
+      comparison: COMPARISON_GT
+      thresholdValue: 0.01
+      duration: 300s
+---
+apiVersion: monitoring.googleapis.com/v1
+kind: DashboardPolicy
+metadata:
+  name: anthology-overview
+  namespace: anthology-ai
+spec:
+  displayName: "Anthology Service Overview"
+  gridLayout:
+    columns: "2"
+    widgets:
+    - title: "Request Latency (p95)"
+      xyChart:
+        dataSets:
+        - timeSeriesQuery:
+            timeSeriesFilter:
+              filter: "metric.type=\"loadbalancing.googleapis.com/https/request_latency\""
+            unitOverride: "ms"
+    - title: "Error Rate"
+      xyChart:
+        dataSets:
+        - timeSeriesQuery:
+            timeSeriesFilter:
+              filter: "metric.type=\"loadbalancing.googleapis.com/https/request_count\""

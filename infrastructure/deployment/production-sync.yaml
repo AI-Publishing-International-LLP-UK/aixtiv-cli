@@ -1,0 +1,22 @@
+productionSync:
+  source: "staging.2100.cool"
+  target: "2100.cool"
+  
+  deployment:
+    strategy: "blueGreen"
+    zeroDowntime: true
+    rollback: true
+    
+  validation:
+    preSync: true
+    postSync: true
+    healthChecks: true
+    
+  security:
+    sslTransfer: true
+    configSync: true
+    monitoring: true
+    
+  dns:
+    update: true
+    verify: true

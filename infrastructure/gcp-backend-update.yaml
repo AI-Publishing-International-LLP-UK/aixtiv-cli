@@ -1,0 +1,38 @@
+steps:
+- name: 'gcr.io/cloud-builders/gcloud'
+  args:
+  - compute
+  - backend-services
+  - update
+  - lb-ip-2100-cool-backend
+  - --global
+  - --enable-cdn
+  - --timeout=60s
+  - --session-affinity=CLIENT_IP
+  - --custom-request-headers=X-Content-Type-Options:nosniff,X-Frame-Options:DENY
+  - --connection-draining-timeout=60s
+  - --port=443
+  - --protocol=HTTPS
+
+- name: 'gcr.io/cloud-builders/gcloud'
+  args:
+  - compute
+  - health-checks
+  - update
+  - tcp
+  - tcp-443-health-check
+  - --port=443
+  - --global
+  - --check-interval=5s
+  - --timeout=5s
+  - --unhealthy-threshold=2
+  - --healthy-threshold=2
+
+- name: 'gcr.io/cloud-builders/gcloud'
+  args:
+  - compute
+  - security-policies
+  - import
+  - anthology-security
+  - --source=security-rules.yaml
+  - --global

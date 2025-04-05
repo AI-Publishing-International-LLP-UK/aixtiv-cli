@@ -1,0 +1,22 @@
+dnsConfig:
+  zone: "2100.cool"
+  records:
+    - name: "staging"
+      type: "A"
+      ttl: 300
+      value: "34.54.155.123"
+    - name: "staging"
+      type: "CNAME"
+      ttl: 300
+      value: "2100.cool"
+
+stagingEnvironment:
+  enabled: true
+  loadBalancer:
+    ip: "34.54.155.123"
+    healthCheck:
+      enabled: true
+      interval: "5s"
+  ssl:
+    enabled: true
+    provider: "lets-encrypt"

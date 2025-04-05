@@ -1,0 +1,30 @@
+monitoring:
+  endpoints:
+    - url: "https://staging.2100.cool"
+      interval: "30s"
+      alerts: true
+    - url: "https://staging.2100.cool/claude"
+      interval: "30s"
+      alerts: true
+
+  metrics:
+    - type: "uptime"
+      threshold: "99.99%"
+    - type: "latency"
+      threshold: "100ms"
+    - type: "ssl"
+      expiry: "30d"
+    - type: "dns"
+      propagation: true
+
+  alerts:
+    channels:
+      - slack
+      - email
+      - pagerduty
+    priority: "p1"
+
+  dashboard:
+    enabled: true
+    url: "https://staging.2100.cool/status"
+    realtime: true

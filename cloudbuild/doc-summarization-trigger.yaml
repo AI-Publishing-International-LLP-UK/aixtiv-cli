@@ -1,0 +1,22 @@
+name: "gen-ai-doc-summarization-trigger"
+description: "Trigger for Generative AI Document Summarization deployment"
+filename: "cloudbuild.yaml"
+github:
+  owner: "C2100-PR"
+  name: "api-for-warp-drive"
+  push:
+    branch: "^main$"
+location: "us-west1"
+serviceAccount: "projects/api-for-warp-drive/serviceAccounts/goog-sc-generative-ai-docu-147@api-for-warp-drive.iam.gserviceaccount.com"
+substitutions:
+  _DEPLOYMENT_NAME: "generative-ai-document-summarization"
+  _REGION: "us-central1"
+  _BUCKET_NAME: "859242575175-us-central1-blueprint-config"
+  _SOURCE_REF: "sic-jss"
+tags:
+  - "gen-ai"
+  - "doc-summarization"
+  - "production"
+includedFiles:
+  - "deployments/doc-summarization/**"
+  - "cloudbuild.yaml"

@@ -1,0 +1,25 @@
+kind: dns#resourceRecordSet
+apiVersion: dns.googleapis.com/v1
+metadata:
+  name: staging-dns
+  namespace: anthology-ai
+spec:
+  managedZone: anthology-dns-zone
+  name: staging.2100.cool.
+  type: A
+  ttl: 300
+  rrdatas:
+  - ${LOAD_BALANCER_IP}  # This will be replaced with the actual IP
+---
+kind: dns#resourceRecordSet
+apiVersion: dns.googleapis.com/v1
+metadata:
+  name: staging-dns-ssl
+  namespace: anthology-ai
+spec:
+  managedZone: anthology-dns-zone
+  name: staging.2100.cool.
+  type: CNAME
+  ttl: 300
+  rrdatas:
+  - sc2100cool.anthology-ai.svc.cluster.local.

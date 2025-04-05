@@ -1,0 +1,65 @@
+version: 1.0
+
+network:
+  name: anthology-ai-vpc
+  project: api-for-warp-drive
+  auto_create_subnetworks: false
+  mtu: 1500
+  routing_mode: GLOBAL
+
+subnets:
+  ai_workload:
+    name: ai-workload-subnet
+    region: us-west1
+    range: 10.10.0.0/20
+    secondary_ranges:
+      pods: 10.11.0.0/16
+      services: 10.12.0.0/16
+    private_ip_google_access: true
+    
+  vertex_ai:
+    name: vertex-subnet
+    region: us-west1
+    range: 10.20.0.0/20
+    private_ip_google_access: true
+    
+  serverless:
+    name: serverless-subnet
+    region: us-west1
+    range: 10.30.0.0/20
+    private_ip_google_access: true
+
+firewall:
+  rules:
+    - name: allow-internal
+      network: anthology-ai-vpc
+      direction: INGRESS
+      priority: 1000
+      source_ranges: ["10.0.0.0/8"]
+      allow:
+        - protocol: all
+    
+    - name: allow-health-checks
+      network: anthology-ai-vpc
+      direction: INGRESS
+      priority: 1000
+      source_ranges: ["35.191.0.0/16", "130.211.0.0/22"]
+      allow:
+        - protocol: tcp
+          ports: ["80", "443", "8080"]
+
+nat:
+  name: anthology-ai-nat
+  router: anthology-ai-router
+  region: us-west1
+  nat_ip_allocate_option: AUTO_ONLY
+  source_subnetwork_ip_ranges_to_nat: ALL_SUBNETWORKS_ALL_IP_RANGES
+  enable_endpoint_independent_mapping: true
+
+peering:
+  vertex_ai:
+    name: vertex-ai-peering
+    network: anthology-ai-vpc
+    peer_network: "projects/vertex-ai-project/global/networks/vertex-network"
+    export_custom_routes: true
+    import_custom_routes: true

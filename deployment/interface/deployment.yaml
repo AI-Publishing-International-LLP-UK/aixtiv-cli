@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: super-claude-interface
+  namespace: anthology-ai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: super-claude-ui
+  template:
+    metadata:
+      labels:
+        app: super-claude-ui
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: us-west4-c
+      containers:
+        - name: super-claude-ui
+          image: gcr.io/api-for-warp-drive/super-claude-ui:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: API_ENDPOINT
+              value: "https://us-west4-api-for-warp-drive.cloudfunctions.net/super-claude"
+            - name: VISION_LAKE_BUCKET
+              value: "vision-lake-main"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "200m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000

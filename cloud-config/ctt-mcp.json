@@ -1,0 +1,50 @@
+{
+  "servers": {
+    "ctt-cloud": {
+      "url": "https://us-west1-mcp.anthropic.com",
+      "region": "us-west1",
+      "project": "api-for-warp-drive",
+      "teams": {
+        "client": {
+          "enabled": true,
+          "access": ["search", "github", "ai"]
+        },
+        "tech": {
+          "enabled": true,
+          "access": ["development", "review", "deployment"]
+        },
+        "admin": {
+          "enabled": true,
+          "access": ["all"]
+        }
+      },
+      "services": {
+        "search": {
+          "enabled": true,
+          "type": "google",
+          "scope": "client_resources"
+        },
+        "github": {
+          "enabled": true,
+          "repos": ["C2100-PR/api-for-warp-drive"],
+          "access": "team_based"
+        },
+        "ai": {
+          "enabled": true,
+          "models": ["gpt-4", "gpt-3.5-turbo"],
+          "tools": ["search", "code-interpreter"],
+          "workflows": [
+            "client-support",
+            "tech-review",
+            "team-collaboration"
+          ]
+        }
+      },
+      "security": {
+        "auth": "cloud_identity",
+        "rbac": true,
+        "audit_logging": true
+      }
+    }
+  }
+}

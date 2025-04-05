@@ -1,0 +1,13 @@
+{
+  "project": {
+    "id": "api-for-warp-drive",
+    "owner": "pr@coaching2100.com",
+    "regions": {
+      "primary": "us-west1-b",
+      "backup": {
+        "region": "us-central1",
+        "location": "Iowa"
+      }
+    }
+  }
+}

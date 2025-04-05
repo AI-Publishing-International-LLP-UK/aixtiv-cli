@@ -1,0 +1,12 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeForwardingRule
+metadata:
+  name: anthology-lb-rule
+  namespace: anthology-ai
+spec:
+  description: "HTTPS forwarding rule for anthology-ai"
+  IPAddress: "${ANTHOLOGY_LB_IP}"
+  portRange: "443"
+  loadBalancingScheme: EXTERNAL
+  target: "projects/api-for-warp-drive/global/targetHttpsProxies/anthology-https-proxy"
+  networkTier: PREMIUM

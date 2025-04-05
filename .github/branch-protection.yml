@@ -1,0 +1,3 @@
+protect: true
+require_reviews: true
+enforce_admins: true
