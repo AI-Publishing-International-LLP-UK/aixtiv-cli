@@ -1,0 +1,31 @@
+{
+  "name": "aixtiv-cli",
+  "version": "1.0.0",
+  "description": "CLI for managing SalleyPort security and agent-resource access",
+  "main": "bin/aixtiv.js",
+  "bin": {
+    "aixtiv": "bin/aixtiv.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "aixtiv",
+    "security",
+    "cli",
+    "salleyport"
+  ],
+  "author": "Aixtiv Symphony",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^9.4.1",
+    "firebase-admin": "^11.5.0",
+    "inquirer": "^8.2.5",
+    "ora": "^5.4.1",
+    "table": "^6.8.1",
+    "figlet": "^1.5.2",
+    "dotenv": "^16.0.3",
+    "axios": "^1.3.4"
+  }
+}
