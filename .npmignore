@@ -1,0 +1,41 @@
+# GitHub Actions
+.github/
+
+# Build directories
+build/
+automation/
+cloud-build/
+cloud-config/
+cloudbuild/
+cloudbuild*.yaml
+configs/
+deploy/
+deployment/
+deployments/
+infrastructure/
+interface/
+
+# Documentation
+docs/
+ASOOS/
+reports/
+
+# Configuration
+terraform/
+iam/
+monitoring/
+security/
+vision_lake/
+src/
+workflows/
+tests/
+
+# Additional files
+Dockerfile
+app.yaml
+*.py
+*.sh
+requirements.txt
+server.js
+COPYRIGHT_HEADERS.md
+TRADEMARK_NOTICE.md
