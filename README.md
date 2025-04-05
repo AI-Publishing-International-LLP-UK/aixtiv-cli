@@ -115,6 +115,33 @@ aixtiv resource:scan --agent 001
 aixtiv resource:scan --email pr@coaching2100.com
 ```
 
+### 👨‍✈️ Co-Pilot Management
+
+Link and manage co-pilots with these commands:
+
+```bash
+# Link a co-pilot to a principal (supports drname.live domains)
+aixtiv copilot:link --email pr@coaching2100.com --copilot lucy
+
+# Link with enhanced access level
+aixtiv copilot:link --email pr@coaching2100.com --copilot grant@drgrant.live --level executive
+
+# List all co-pilots
+aixtiv copilot:list
+
+# List co-pilots for a specific principal
+aixtiv copilot:list --email pr@coaching2100.com
+
+# Verify co-pilot for higher access levels
+aixtiv copilot:verify --email lucy@drlucy.live --principal pr@coaching2100.com
+
+# Grant co-pilot access to a resource
+aixtiv copilot:grant --email pr@coaching2100.com --copilot lucy --resource pr-2bd91160bf21ba21 --type delegated
+
+# Unlink a co-pilot
+aixtiv copilot:unlink --email pr@coaching2100.com --copilot lucy
+```
+
 ### ⚡ Special Commands
 
 Handle PR access specifically:
@@ -141,8 +168,14 @@ aixtiv-cli/
 │   ├── agent/
 │   │   ├── grant.js
 │   │   └── revoke.js
-│   └── resource/
-│       └── scan.js
+│   ├── resource/
+│   │   └── scan.js
+│   └── copilot/             # Co-pilot commands
+│       ├── link.js
+│       ├── unlink.js
+│       ├── list.js
+│       ├── verify.js
+│       └── grant.js
 ├── lib/
 │   ├── firestore.js         # All DB ops
 │   └── utils.js             # Shared utils
