@@ -1,0 +1,62 @@
+jira:
+  instance: c2100pcr.atlassian.net
+  project_key: WD  # Warp Drive
+  apis:
+    - name: anthology-publishing-api
+      component: Publishing
+      labels: ["api", "publishing", "automated"]
+      
+    - name: agent-management-api
+      component: AI Agents
+      labels: ["api", "agents", "automated"]
+      
+    - name: vision-lake-api
+      component: Data Lake
+      labels: ["api", "storage", "automated"]
+      
+    - name: content-automation-api
+      component: Content
+      labels: ["api", "automation", "automated"]
+      
+    - name: analytics-api
+      component: Analytics
+      labels: ["api", "metrics", "automated"]
+      
+    - name: security-api
+      component: Security
+      labels: ["api", "security", "automated"]
+      
+    - name: integration-api
+      component: Integration
+      labels: ["api", "external", "automated"]
+
+  automation:
+    deployment:
+      issue_type: Deployment
+      components: ["DevOps", "API"]
+      status_mapping:
+        deploying: "In Progress"
+        deployed: "Done"
+        failed: "Failed"
+        
+    monitoring:
+      issue_type: Monitor
+      components: ["Operations"]
+      transitions:
+        - from: Operational
+          to: Degraded
+          trigger: performance_alert
+        - from: Operational
+          to: Down
+          trigger: service_failure
+          
+    synchronization:
+      issue_type: Sync
+      components: ["Integration"]
+      status_sync: true
+
+notifications:
+  error_channel: api-alerts
+  success_channel: api-deployments
+  mention_on_error: 
+    - pr@coaching2100.com

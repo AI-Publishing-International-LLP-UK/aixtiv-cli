@@ -1,0 +1,25 @@
+healthCheck:
+  checkIntervalSec: 5
+  timeoutSec: 5
+  unhealthyThreshold: 2
+  healthyThreshold: 2
+  type: HTTPS
+  port: 443
+  requestPath: "/"
+
+backendConfig:
+  timeout: "30s"
+  connectionDraining:
+    drainingTimeoutSec: 300
+
+failover:
+  enabled: true
+  backupPool: "backup-pool"
+  failoverRatio: 0.1
+
+monitoring:
+  enabled: true
+  metricsInterval: "60s"
+  alerting:
+    latencyThreshold: "500ms"
+    errorRateThreshold: 0.01

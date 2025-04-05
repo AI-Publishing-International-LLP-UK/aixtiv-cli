@@ -8,10 +8,30 @@ lerna-debug.log*
 
 # Dependency directories
 node_modules/
-jspm_packages/
 
-# Coverage directory
+# Environment
+.env
+.env.test
+
+# Service account files
+service-account-key.json
+*-service-account-key.json
+*-firebase-adminsdk-*.json
+
+# OS generated
+.DS_Store
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Testing
 coverage/
+
+# Output of 'npm pack'
+*.tgz
 
 # Optional npm cache directory
 .npm
@@ -21,24 +41,3 @@ coverage/
 
 # Optional REPL history
 .node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# dotenv environment variables file
-.env
-.env.test
-
-# Service account files
-service-account-key.json
-*-service-account-key.json
-*-firebase-adminsdk-*.json
-
-# macOS
-.DS_Store
-
-# Editors
-.idea/
-.vscode/
-*.swp
-*.swo

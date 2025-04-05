@@ -1,0 +1,52 @@
+steps:
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  args:
+  - gcloud
+  - deployment-manager
+  - deployments
+  - create
+  - anthology-infra
+  - --config=infrastructure/dns/zone-setup.yaml
+
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  args:
+  - gcloud
+  - compute
+  - backend-services
+  - update
+  - lb-ip-2100-cool-backend
+  - --global
+  - --enable-cdn
+  - --session-affinity=CLIENT_IP
+  - --timeout=60s
+
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  args:
+  - kubectl
+  - apply
+  - -f
+  - deployment/complete-setup.yaml
+
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  args:
+  - gcloud
+  - dns
+  - record-sets
+  - transaction
+  - start
+  - --zone=main-zone
+
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  args:
+  - gcloud
+  - dns
+  - record-sets
+  - transaction
+  - add
+  - ${ANTHOLOGY_LB_IP}
+  - --name=2100.cool.
+  - --type=A
+  - --ttl=300
+  - --zone=main-zone
+
+timeout: 1800s

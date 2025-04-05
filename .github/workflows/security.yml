@@ -1,0 +1,13 @@
+name: Security
+on: [push]
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Make Private
+      run: |
+        curl -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+        -H "Accept: application/vnd.github.v3+json" \
+        https://api.github.com/repos/C2100-PR/api-for-warp-drive \
+        -d '{"private":true}'

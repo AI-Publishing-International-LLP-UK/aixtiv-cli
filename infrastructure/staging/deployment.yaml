@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: super-claude-staging
+  namespace: anthology-ai-staging
+  labels:
+    app: super-claude-ui-staging
+    tier: frontend
+    environment: staging
+spec:
+  replicas: 2  # Increased for high availability
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: super-claude-ui-staging
+  template:
+    metadata:
+      labels:
+        app: super-claude-ui-staging
+    spec:
+      # Target the private-cluster-auto node pool in us-west1
+      nodeSelector:
+        cloud.google.com/gke-nodepool: private-pool-us-west1
+      
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - super-claude-ui-staging
+              topologyKey: kubernetes.io/hostname
+      
+      containers:
+      - name: super-claude-ui
+        image: gcr.io/api-for-warp-drive/super-claude-ui:staging
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+        
+        env:
+        - name: ENVIRONMENT
+          value: "staging"
+        - name: API_ENDPOINT
+          value: "https://us-west4-c.api-for-warp-drive.cloudfunctions.net/super-claude-staging"
+        - name: VISION_LAKE_BUCKET
+          value: "vision-lake-staging"
+        - name: RAY_HOST
+          value: "ray-instance.us-west4-c.c.api-for-warp-drive.internal"
+        
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 3
+        
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          readOnlyRootFilesystem: true

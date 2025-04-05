@@ -1,0 +1,43 @@
+cleanup:
+  target_deployments:
+    - name: generative-ai-kb
+      bucket: "859242575175-us-central1-blueprint-config/generative-ai-kb"
+      location: us-west1
+      resources:
+        - type: aiplatform.googleapis.com/Endpoint
+        - type: storage.googleapis.com/Bucket
+        - type: bigquery.googleapis.com/Dataset
+
+    - name: rag-cloudsql
+      bucket: "859242575175-us-central1-blueprint-config/rag-cloudsql"
+      location: us-west1
+      resources:
+        - type: sqladmin.googleapis.com/Instance
+        - type: aiplatform.googleapis.com/Endpoint
+        - type: storage.googleapis.com/Bucket
+
+    - name: dynamic-web-apps
+      bucket: "859242575175-us-central1-blueprint-config/web-apps"
+      location: us-west1
+      resources:
+        - type: run.googleapis.com/Service
+        - type: cloudbuild.googleapis.com/Trigger
+        - type: storage.googleapis.com/Bucket
+
+reset_sequence:
+  - step: "backup_configs"
+    action: "export existing configurations"
+    backup_location: "gs://859242575175-us-central1-blueprint-config/backups"
+
+  - step: "cleanup_resources"
+    action: "remove problematic resources"
+    ignore_errors: true
+
+  - step: "reset_state"
+    action: "clean terraform state"
+    
+  - step: "reinitialize"
+    action: "prepare for new deployment"
+
+service_account: "goog-sc-generative-ai-docu-147@api-for-warp-drive.iam.gserviceaccount.com"
+project_id: "api-for-warp-drive"

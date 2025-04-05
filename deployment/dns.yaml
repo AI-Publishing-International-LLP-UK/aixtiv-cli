@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dns-config
+  namespace: anthology-ai
+data:
+  domain: 2100.cool
+  staging: staging.2100.cool
+  records:
+    - type: A
+      name: "@"
+      value: ${LOAD_BALANCER_IP}
+    - type: A
+      name: staging
+      value: ${STAGING_IP}
+    - type: CNAME
+      name: www
+      value: 2100.cool.

@@ -5,6 +5,12 @@ A command-line interface for managing SalleyPort agent-resource security infrast
 [![GitHub Repository](https://img.shields.io/badge/GitHub-AIXTIV--SYMPHONY-blue?logo=github)](https://github.com/AI-Publishing-International-LLP-UK/AIXTIV-SYMPHONY)
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
 
+## ⚡ About
+
+This CLI tool is part of the API for Warp Drive ecosystem.
+- Owner: Phillip Corey Roark (pr@coaching2100.com)
+- Organization: coaching2100.com
+
 ## Features
 
 - 🔐 Secure delegation and access control
@@ -152,6 +158,18 @@ aixtiv-cli/
 npm version [patch|minor|major]
 npm publish
 ```
+
+## Infrastructure Overview
+
+- Primary Region: US-WEST1-B
+- Backup Region: US-CENTRAL1 (Iowa)
+
+## Golden Standards Compliance
+
+- 24/7 Monitoring
+- Automated Deployments
+- Infrastructure as Code
+- Secure Secret Management
 
 ## Security 🔒
 

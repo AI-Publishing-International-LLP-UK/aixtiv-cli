@@ -1,0 +1,33 @@
+name: Security Key Rotation
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'  # Monthly
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  rotate-keys:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: github-actions-deploy@api-for-warp-drive.iam.gserviceaccount.com
+      
+      - name: Create new service account key
+        run: |
+          gcloud iam service-accounts keys create new-key.json \
+            --iam-account=github-actions-deploy@api-for-warp-drive.iam.gserviceaccount.com
+          
+          # Update secret
+          echo "${{ secrets.GCP_SA_KEY }}" > backup-key.json
+          gcloud secrets versions add GCP_SA_KEY --data-file=new-key.json
+          
+          # Verify new key works
+          gcloud auth activate-service-account --key-file=new-key.json
+          gcloud compute instances list

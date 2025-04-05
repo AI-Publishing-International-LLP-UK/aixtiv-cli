@@ -1,0 +1,11 @@
+synthetic_monitor:
+  display_name: "Critical Path Monitor"
+  regions: ["us-central1", "europe-west1", "asia-east1"]
+  run_config:
+    execution_schedule:
+      period: "5m"
+  alert_config:
+    notification_channels: ["email"]
+    conditions:
+      - metric: "synthetics/availability"
+        threshold: 0.99

@@ -1,0 +1,9 @@
+deployment:
+  target: "staging.2100.cool/claude"
+  strategy: "blueGreen"
+  components: ["interface", "memory", "analytics"]
+  security: 
+    ssl: true
+    auth: true
+  monitoring: true
+  rollback: true

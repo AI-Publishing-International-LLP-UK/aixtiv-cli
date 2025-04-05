@@ -1,0 +1,72 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeForwardingRule
+metadata:
+  name: anthology-lb-rule
+  namespace: anthology-ai
+spec:
+  description: "Frontend load balancer for 2100.cool"
+  loadBalancingScheme: EXTERNAL
+  portRange: "443"
+  IPProtocol: TCP
+  target: ${TARGET_PROXY}
+  networkTier: PREMIUM
+
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeHealthCheck
+metadata:
+  name: tcp-443-health-check
+  namespace: anthology-ai
+spec:
+  checkIntervalSec: 5
+  timeoutSec: 5
+  unhealthyThreshold: 2 
+  healthyThreshold: 2
+  tcpHealthCheck:
+    port: 443
+    proxyHeader: NONE
+
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeSSLPolicy
+metadata:
+  name: anthology-ssl-policy
+  namespace: anthology-ai
+spec:
+  minTlsVersion: TLS_1_2
+  profile: MODERN
+  customFeatures:
+    - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+    - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeTargetHttpsProxy
+metadata:
+  name: anthology-https-proxy
+  namespace: anthology-ai
+spec:
+  sslCertificates:
+    - name: sc2100cool
+  urlMap: ${URL_MAP}
+  sslPolicy: anthology-ssl-policy
+
+---
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeBackendService
+metadata:
+  name: lb-ip-2100-cool-backend
+  namespace: anthology-ai
+spec:
+  healthChecks:
+    - tcp-443-health-check
+  portName: https
+  protocol: HTTPS
+  timeoutSec: 60
+  connectionDraining:
+    drainingTimeoutSec: 60
+  sessionAffinity: CLIENT_IP
+  enableCDN: true
+  backends:
+    - group: ${NEG_GROUP}
+      balancingMode: UTILIZATION

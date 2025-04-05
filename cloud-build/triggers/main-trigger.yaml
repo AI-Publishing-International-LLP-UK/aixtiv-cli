@@ -1,0 +1,32 @@
+name: "zena-main-trigger"
+description: "Main trigger for Zena Enterprise deployments"
+filename: "cloudbuild/live-deployment.yaml"
+github:
+  owner: "C2100-PR"
+  name: "api-for-warp-drive"
+  push:
+    branch: "^main$"
+location: "us-west1"
+triggerTemplate:
+  projectId: "api-for-warp-drive"
+  repoName: "api-for-warp-drive"
+  branchName: "^main$"
+
+includedFiles:
+  - "cloudbuild/**"
+  - "deployments/**"
+  - "Dockerfile"
+  - "*.yaml"
+
+substitutions:
+  _DEPLOYMENT_NAME: "generative-ai-document-summarization"
+  _REGION: "us-west1"
+  _VERSION: "v1.0.0"
+  _ENV: "production"
+
+tags:
+  - "main"
+  - "production"
+  - "us-west1"
+
+serviceAccount: "goog-sc-generative-ai-docu-147@api-for-warp-drive.iam.gserviceaccount.com"

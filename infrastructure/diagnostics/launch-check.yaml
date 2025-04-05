@@ -1,0 +1,36 @@
+diagnostics:
+  system:
+    - dns:
+        check: "propagation"
+        regions: ["global"]
+    - ssl:
+        check: "chain"
+        validation: true
+    - loadBalancer:
+        check: "routing"
+        health: true
+  
+  performance:
+    latency:
+      threshold: "50ms"
+      regions: ["us", "eu", "asia"]
+    throughput:
+      minimum: "10000rps"
+      sustained: true
+      
+  security:
+    checks:
+      - ssl
+      - waf
+      - ddos
+      - intrusion
+    penetrationTest: true
+    
+  availability:
+    failover: true
+    recovery: true
+    backups: true
+    
+notifications:
+  realtime: true
+  channels: ["slack", "pagerduty"]

@@ -1,0 +1,31 @@
+kind: compute#securityPolicy
+name: anthology-security
+rules:
+- action: allow
+  priority: 1000
+  match:
+    versionedExpr: SRC_IPS_V1
+    config:
+      srcIpRanges:
+      - '*'
+  description: "Allow all traffic"
+- action: deny(403)
+  priority: 2000
+  match:
+    expr:
+      getRegion().matchesRegex('CN|RU|IR|KP')
+  description: "Deny specific regions"
+- action: throttle
+  priority: 3000
+  match:
+    versionedExpr: SRC_IPS_V1
+    config:
+      srcIpRanges:
+      - '*'
+  rateLimitOptions:
+    conformAction: allow
+    exceedAction: deny(429)
+    enforceOnKey: IP
+    rateLimitThreshold:
+      count: 100
+      intervalSec: 60

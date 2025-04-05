@@ -1,0 +1,15 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeURLMap
+metadata:
+  name: anthology-url-map
+  namespace: anthology-ai
+spec:
+  defaultService: "projects/api-for-warp-drive/global/backendServices/lb-ip-2100-cool-backend"
+  hostRules:
+  - hosts:
+    - "2100.cool"
+    - "*.2100.cool"
+    pathMatcher: "main"
+  pathMatchers:
+  - name: "main"
+    defaultService: "projects/api-for-warp-drive/global/backendServices/lb-ip-2100-cool-backend"

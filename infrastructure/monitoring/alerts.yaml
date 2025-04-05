@@ -1,0 +1,28 @@
+monitoring:
+  endpoints:
+    - name: "production"
+      url: "https://2100.cool"
+      interval: "1m"
+    - name: "staging"
+      url: "https://staging.2100.cool"
+      interval: "1m"
+
+alerts:
+  uptime:
+    threshold: "99.9%"
+    window: "24h"
+  latency:
+    threshold: "500ms"
+    window: "5m"
+  ssl:
+    expiryWarning: "30d"
+    
+notifications:
+  email: "admin@2100.cool"
+  slack: true
+  pagerduty: true
+
+staging:
+  enabled: true
+  domain: "staging.2100.cool"
+  mirror: true
