@@ -28,6 +28,8 @@ const copilotList = require('../commands/copilot/list');
 const copilotVerify = require('../commands/copilot/verify');
 const copilotGrant = require('../commands/copilot/grant');
 
+// Visionary commands
+const summonVisionary = require('../commands/summon/visionary');
 // Configure program
 program
   .version(packageJson.version)
@@ -136,6 +138,14 @@ program
   .requiredOption('-r, --resource <resource>', 'Resource ID')
   .option('-t, --type <type>', 'Access type (readonly, delegated, full)', 'readonly')
   .action(copilotGrant);
+
+// Visionary commands
+program
+  .command('summon:visionary')
+  .description('Summon Visionary 1 Command Suite with audio-visual effects')
+  .option('-s, --silent', 'Run without audio effects')
+  .option('--install-assets', 'Install or reinstall audio assets')
+  .action(summonVisionary);
 
 // Parse command line arguments
 program.parse(process.argv);
