@@ -1,5 +1,0 @@
-# IP Creation Log
-Command: gcloud compute addresses create anthology-lb-ip --global
-Status: Executing
-Result: Creating global IP for anthology-lb-ip
-Expected Completion: ~30 seconds

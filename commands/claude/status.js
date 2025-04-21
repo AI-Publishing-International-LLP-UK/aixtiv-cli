@@ -1,6 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
+const boxen = require('boxen');
+const gradient = require('gradient-string');
+const ora = require('ora');
 const { parseOptions, withSpinner, displayResult } = require('../../lib/utils');
 const Table = require('cli-table3');
 
