@@ -192,6 +192,13 @@ program
   .option('-c, --context <files>', 'Comma-separated list of context files')
   .action(claudeCodeGenerate);
 
+// Claude Status command
+program
+  .command('claude:status')
+  .description('Check status of Dr. Claude agents and their workloads')
+  .option('-a, --agent <agent>', 'Specific agent to check (omit for all agents)')
+  .action(claudeStatus);
+
 // Legacy command for backward compatibility
 program
   .command('claude:delegate')
