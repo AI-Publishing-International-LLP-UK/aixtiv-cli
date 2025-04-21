@@ -6,11 +6,6 @@ const figlet = require('figlet');
 const packageJson = require('../package.json');
 require('dotenv').config();
 
-// Helper for date formatting
-function formatDate(date) {
-  return date.toISOString().split('T')[0];
-}
-
 // Display banner
 console.log(
   chalk.cyan(
@@ -37,11 +32,7 @@ const copilotGrant = require('../commands/copilot/grant');
 const summonVisionary = require('../commands/summon/visionary');
 
 // Dr. Claude commands
-const claudeAgentDelegate = require('../commands/claude/agent/delegate');
-const claudeAutomationGithub = require('../commands/claude/automation/github');
-const claudeCodeGenerate = require('../commands/claude/code/generate');
-const claudeStatus = require('../commands/claude/status');
-
+const claudeDelegate = require('../commands/claude/delegate');
 // Configure program
 program
   .version(packageJson.version)
@@ -153,66 +144,13 @@ program
 
 // Visionary commands
 program
-  .command('summon:visionary')
-  .description('Summon Visionary 1 Command Suite with audio-visual effects')
-  .option('-s, --silent', 'Run without audio effects')
-  .option('--install-assets', 'Install or reinstall audio assets')
-  .action(summonVisionary);
-
-// Dr. Claude Agent commands
-program
-  .command('claude:agent:delegate')
-  .description('Delegate a project to Dr. Claude as project manager')
-  .requiredOption('-p, --project <name>', 'Project name')
-  .requiredOption('-d, --description <description>', 'Project description')
-  .option('--priority <priority>', 'Project priority (low, medium, high)', 'medium')
-  .option('--deadline <date>', 'Project deadline (YYYY-MM-DD)', formatDate(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)))
-  .option('--tags <tags>', 'Comma-separated list of project tags')
-  .option('--assign-to <agent>', 'Directly assign to specific agent (e.g., dr-lucy, dr-match)')
-  .action(claudeAgentDelegate);
-
-// Dr. Claude Automation commands
-program
-  .command('claude:automation:github')
-  .description('Use Dr. Claude Automation to manage GitHub repositories')
-  .requiredOption('-r, --repository <repo>', 'Repository name or "all" for all repositories')
-  .requiredOption('-a, --action <action>', 'Action to perform (align, clean, secure, memoria-assist, sync)')
-  .option('-b, --branch <branch>', 'Branch name', 'main')
-  .option('-o, --organization <org>', 'GitHub organization (default: AI-Publishing-International-LLP-UK)')
-  .option('--security-check <boolean>', 'Perform security checks', 'true')
-  .action(claudeAutomationGithub);
-
-// Claude Code commands
-program
-  .command('claude:code:generate')
-  .description('Generate code using Claude Code assistant')
-  .requiredOption('-t, --task <task>', 'Coding task description')
-  .option('-l, --language <language>', 'Programming language', 'javascript')
-  .option('-o, --output-file <path>', 'Output file path')
-  .option('-c, --context <files>', 'Comma-separated list of context files')
-  .action(claudeCodeGenerate);
-
-// Legacy command for backward compatibility
-program
   .command('claude:delegate')
-  .description('Delegate a task to an agent (legacy command - use claude:agent:delegate instead)')
+  .description('Delegate a task to an agent via Dr. Claude orchestration')
   .requiredOption('-a, --agent <agent>', 'Agent ID to assign the task to')
   .requiredOption('-t, --task <task>', 'Task details (use quotes for multi-word tasks)')
   .option('-p, --priority <priority>', 'Task priority (low, normal, high)', 'normal')
   .option('-e, --env <environment>', 'Environment (dev, prod)', 'prod')
-  .action((options) => {
-    console.log(chalk.yellow('Warning: claude:delegate is deprecated. Please use claude:agent:delegate instead.'));
-    console.log('');
-    
-    // Convert to project-style delegation
-    claudeAgentDelegate({
-      project: `Task for ${options.agent}`,
-      description: options.task,
-      priority: options.priority,
-      assignTo: options.agent,
-      env: options.env
-    });
-  });
+  .action(claudeDelegate);
 
 // Parse command line arguments
 program.parse(process.argv);
