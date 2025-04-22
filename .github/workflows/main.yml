@@ -5,14 +5,46 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: 'Deployment Target'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - firebase
+          - godaddy
+          - npm
+      organization:
+        description: 'Target Organization'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - AI-Publishing-International-LLP-UK
+          - C2100-PR
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        organization: [AI-Publishing-International-LLP-UK, C2100-PR]
+        include:
+          - organization: AI-Publishing-International-LLP-UK
+            repo_url: 'https://github.com/AI-Publishing-International-LLP-UK/aixtiv-cli'
+          - organization: C2100-PR
+            repo_url: 'https://github.com/C2100-PR/aixtiv-cli'
 
     steps:
     - uses: actions/checkout@v3
-    
+      with:
+        fetch-depth: 0
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
@@ -22,11 +54,19 @@ jobs:
     - name: Install dependencies
       run: npm ci
     
+    - name: Security audit
+      run: npm audit --production || echo "Security vulnerabilities found"
+    
     - name: Run linting
       run: npm run lint || echo "No linting configured"
     
     - name: Run tests
       run: npm test || echo "No tests configured"
+      
+    - name: Validate configuration
+      run: |
+        echo "Validating configuration for ${{ matrix.organization }}"
+        node -e "try { require('./config/project.yaml'); console.log('Config validation passed'); } catch(e) { console.error(e); process.exit(1); }"
     
     - name: Create package
       run: npm pack
@@ -34,21 +74,110 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: aixtiv-cli
+        name: aixtiv-cli-${{ matrix.organization }}
         path: aixtiv-cli-*.tgz
         
-  # Uncomment when ready for deployment
-  # publish:
-  #   needs: build
-  #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: '18'
-  #         registry-url: 'https://registry.npmjs.org'
-  #     - run: npm ci
-  #     - run: npm publish
-  #       env:
-  #         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  prepare-deployments:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v3
+        
+      - name: Prepare Firebase deployment
+        if: github.event.inputs.deploy_target == 'all' || github.event.inputs.deploy_target == 'firebase' || github.event_name == 'push'
+        run: |
+          echo "Preparing Firebase deployment files"
+          mkdir -p firebase-deploy
+          cp -r public firebase-deploy/
+          cp firebase.json firebase-deploy/
+          echo "Firebase deployment prepared"
+      
+      - name: Prepare GoDaddy deployment
+        if: github.event.inputs.deploy_target == 'all' || github.event.inputs.deploy_target == 'godaddy' || github.event_name == 'push'
+        run: |
+          echo "Preparing GoDaddy deployment files"
+          mkdir -p godaddy-deploy
+          cp -r public godaddy-deploy/
+          echo "GoDaddy deployment prepared"
+          
+      - name: Upload Firebase deployment artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: firebase-deployment
+          path: firebase-deploy
+          
+      - name: Upload GoDaddy deployment artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: godaddy-deployment
+          path: godaddy-deploy
+        
+  publish:
+    needs: prepare-deployments
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && (github.event.inputs.deploy_target == 'all' || github.event.inputs.deploy_target == 'npm'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm ci
+      - name: Publish to NPM
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
+  deploy-firebase:
+    needs: prepare-deployments
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && (github.event.inputs.deploy_target == 'all' || github.event.inputs.deploy_target == 'firebase'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: firebase-deployment
+          path: firebase-deploy
+          
+      - name: Setup Firebase CLI
+        run: npm install -g firebase-tools
+        
+      - name: Deploy to Firebase
+        run: |
+          cd firebase-deploy
+          firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          
+  deploy-godaddy:
+    needs: prepare-deployments
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && (github.event.inputs.deploy_target == 'all' || github.event.inputs.deploy_target == 'godaddy'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: godaddy-deployment
+          path: godaddy-deploy
+          
+      - name: Setup SSH for GoDaddy
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.GODADDY_SSH_KEY }}
+          
+      - name: Deploy to GoDaddy
+        run: |
+          echo "Deploying to GoDaddy hosting"
+          rsync -avz --delete godaddy-deploy/ ${{ secrets.GODADDY_USERNAME }}@${{ secrets.GODADDY_HOST }}:${{ secrets.GODADDY_PATH }}/
+          echo "GoDaddy deployment completed"
