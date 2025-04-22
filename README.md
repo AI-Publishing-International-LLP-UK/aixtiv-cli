@@ -1,6 +1,7 @@
 # 🌟 Aixtiv CLI
 
-A command-line interface for managing SalleyPort agent-resource security infrastructure with full support for grant, revoke, verify, and scan operations.
+A command-line interface for managing Sally Port the secure authentication access point phase 1 to authentication,
+security infrastructure with full support for grant, revoke, verify, and scan operations.
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-AIXTIV--SYMPHONY-blue?logo=github)](https://github.com/AI-Publishing-International-LLP-UK/AIXTIV-SYMPHONY)
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
