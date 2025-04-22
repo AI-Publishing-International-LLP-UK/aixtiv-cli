@@ -21,6 +21,7 @@ console.log(chalk.blue(`v${packageJson.version} - SalleyPort Security Management
 console.log();
 
 // Command imports
+const initProject = require('../commands/init');
 const authVerify = require('../commands/auth/verify');
 const agentGrant = require('../commands/agent/grant');
 const agentRevoke = require('../commands/agent/revoke');
@@ -46,6 +47,14 @@ const claudeStatus = require('../commands/claude/status');
 program
   .version(packageJson.version)
   .description('Aixtiv CLI for SalleyPort security management');
+
+// Project commands
+program
+  .command('init')
+  .description('Initialize a new aixtiv project with basic structure')
+  .option('-n, --name <name>', 'Project name', 'aixtiv-project')
+  .option('-f, --force', 'Force overwrite if project directory exists')
+  .action(initProject);
 
 // Auth commands
 program

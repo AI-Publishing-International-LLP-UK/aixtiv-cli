@@ -155,6 +155,28 @@ aixtiv fix:pr
 aixtiv fix:pr --cleanup
 ```
 
+### 🚀 Project Initialization
+
+Initialize a new aixtiv project with basic structure:
+
+```bash
+# Create a new project with default name (aixtiv-project)
+aixtiv init
+
+# Create a new project with a custom name
+aixtiv init --name my-awesome-project
+
+# Force overwrite an existing project directory
+aixtiv init --name existing-project --force
+```
+
+The initialization process creates:
+- Basic project structure (src, config, assets, docs)
+- Configuration files (.env.example, config/default.json)
+- Package.json with required dependencies
+- README.md with project documentation
+- Entry point (src/index.js) with CLI boilerplate
+
 ## Development 👨‍💻
 
 ### 📁 Project Structure
@@ -164,6 +186,8 @@ aixtiv-cli/
 ├── bin/
 │   └── aixtiv.js            # Entrypoint
 ├── commands/
+│   ├── init/                # Project initialization
+│   │   └── index.js
 │   ├── auth/
 │   │   └── verify.js
 │   ├── agent/
