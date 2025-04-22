@@ -40,5 +40,7 @@ coverage/
 .eslintcache
 
 # Optional REPL history
-.node_repl_historynode-installer.pkg
+.node_repl_history
+node-installer.pkg
 aixtiv-cli-1.0.1.tgz
+.github/workflows/claude-automation-github.yml
