@@ -1,7 +1,7 @@
 /**
  * Dr. Grant's Authenticator & Sally Port Security Framework
  * 
- * Part of the AIXTIV SYMPHONY OPUS OPERATING SYSTEM (ASOOS)
+ * Part of the AIXTIV SYMPHONY ORCHESTRATING OPERATING SYSTEM (ASOOS)
  * 
  * A comprehensive next-generation authentication system integrating
  * passwordless verification, zero-trust architecture, continuous authorization,
@@ -10,7 +10,8 @@
  * The Sally Port concept creates a secure holding area between verification stages,
  * ensuring comprehensive identity verification before granting system access.
  * 
- * Configured for API FOR WARP DRIVE project and optimized for multi-domain 
+ * Configured for GOOGLE CLOUD PLATFORM & FIRBASE PROJECT ID: 
+ * API FOR WARP DRIVE optimized for multi-domain 
  * environments (supporting 250+ domains) with Firebase integration.
  */
 
