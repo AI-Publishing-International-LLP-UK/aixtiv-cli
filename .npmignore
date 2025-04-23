@@ -39,3 +39,6 @@ requirements.txt
 server.js
 COPYRIGHT_HEADERS.md
 TRADEMARK_NOTICE.md
+# Large files
+aixtiv-cli-*.tgz
+node-installer.pkg
