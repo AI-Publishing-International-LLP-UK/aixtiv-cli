@@ -4,10 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const { parseOptions, withSpinner, displayResult } = require('../../../lib/utils');
 
-// AIXTIV SYMPHONY vision statement for alignment with ASOOS principles
-const AIXTIV_SYMPHONY_VISION = `AIXTIV SYMPHONY ORCHESTRATING OPERATING SYSTEM - The Definitive Architecture & Vision Statement
-
-ASOOS defines a new technology category with OS of ASOOS referring to the first AI-Human focused OS. A smart Operating System designed to accelerate AI-Human-Synchronization. The acceleration increases AI-Human Synchronosity (AI-H-SYN) through an array of methods that involves the overall authentication process, professional skills, experience, and deep behavioral research modeling for a highly reliable outcome that forms the foundation of many key functions of the innovative OS, ASOOS.`;
 /**
  * Generate code using Claude Code assistant
  * @param {object} options - Command options
@@ -17,7 +13,7 @@ module.exports = async function generateCode(options) {
   
   try {
     // Code generation endpoint
-    const functionUrl = 'https://us-west1-api-for-warp-drive.cloudfunctions.net/claude-code-generate';
+    const functionUrl = 'https://us-west1-aixtiv-symphony.cloudfunctions.net/claude-code-generate';
     
     // Read context files if provided
     let contextFiles = [];
@@ -54,8 +50,7 @@ module.exports = async function generateCode(options) {
               task: task,
               language: language || 'javascript',
               context_files: contextFiles,
-              timestamp: new Date().toISOString(),
-              asoos_vision: AIXTIV_SYMPHONY_VISION // Add the vision statement as a new field
+              timestamp: new Date().toISOString()
             }),
           });
           
