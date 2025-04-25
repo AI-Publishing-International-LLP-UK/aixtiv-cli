@@ -43,6 +43,9 @@ const claudeAutomationGithub = require('../commands/claude/automation/github');
 const claudeCodeGenerate = require('../commands/claude/code/generate');
 const claudeStatus = require('../commands/claude/status');
 
+// Domain Management Commands
+const registerDomainCommands = require('../commands/domain');
+
 // Configure program
 program
   .version(packageJson.version)
@@ -229,6 +232,9 @@ program
       env: options.env
     });
   });
+
+// Register domain management commands
+registerDomainCommands(program);
 
 // Parse command line arguments
 program.parse(process.argv);

@@ -17,7 +17,7 @@ module.exports = async function generateCode(options) {
   
   try {
     // Code generation endpoint
-    const functionUrl = 'https://us-west1-api-for-warp-drive.cloudfunctions.net/claude-code-generate';
+    const functionUrl = 'https://2100.cool/claude/api/code-generate';
     
     // Read context files if provided
     let contextFiles = [];
