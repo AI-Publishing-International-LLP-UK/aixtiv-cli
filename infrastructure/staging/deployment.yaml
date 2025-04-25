@@ -51,11 +51,11 @@ spec:
         - name: ENVIRONMENT
           value: "staging"
         - name: API_ENDPOINT
-          value: "https://us-west4-c.api-for-warp-drive.cloudfunctions.net/super-claude-staging"
+          value: "https://us-west1-api-for-warp-drive.cloudfunctions.net/super-claude-staging"
         - name: VISION_LAKE_BUCKET
           value: "vision-lake-staging"
         - name: RAY_HOST
-          value: "ray-instance.us-west4-c.c.api-for-warp-drive.internal"
+          value: "ray-instance.us-west1.c.api-for-warp-drive.internal"
         
         resources:
           requests:

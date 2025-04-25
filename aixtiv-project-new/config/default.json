@@ -1,0 +1,24 @@
+{
+  "project": {
+    "name": "aixtiv-project-new",
+    "version": "1.0.0"
+  },
+  "api": {
+    "salleyport": {
+      "timeout": 30000,
+      "retries": 3
+    },
+    "claude": {
+      "timeout": 60000,
+      "maxTokens": 4096
+    }
+  },
+  "logging": {
+    "level": "info",
+    "format": "simple"
+  },
+  "security": {
+    "authRequired": true,
+    "allowedAgents": []
+  }
+}
