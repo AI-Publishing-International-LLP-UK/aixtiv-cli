@@ -93,6 +93,43 @@ function registerCommands(program) {
       await setupGoDaddy(domain, options);
     });
 
+  // SSL certificate check command
+  domainCommand
+    .command('ssl-check [domain]')
+    .description('Check SSL certificate status for domain(s)')
+    .option('-a, --all', 'Check all domains')
+    .option('-v, --verbose', 'Show detailed certificate information')
+    .action(async (domain, options) => {
+      const { checkSSL, checkAllSSL } = require('./ssl');
+      if (options.all || !domain) {
+        await checkAllSSL(options);
+      } else {
+        await checkSSL(domain, options);
+      }
+    });
+
+  // SSL certificate provision command
+  domainCommand
+    .command('ssl-provision <domain>')
+    .description('Provision a new SSL certificate for a domain')
+    .option('-t, --type <type>', 'Hosting type (firebase or gcp)')
+    .option('-p, --project <projectId>', 'Project ID (Firebase or GCP)')
+    .action(async (domain, options) => {
+      const { provisionSSL } = require('./ssl');
+      await provisionSSL(domain, options);
+    });
+
+  // SSL certificate renew command
+  domainCommand
+    .command('ssl-renew <domain>')
+    .description('Renew SSL certificate for a domain')
+    .option('-t, --type <type>', 'Hosting type (firebase or gcp)')
+    .option('-p, --project <projectId>', 'Project ID (Firebase or GCP)')
+    .action(async (domain, options) => {
+      const { renewSSL } = require('./ssl');
+      await renewSSL(domain, options);
+    });
+
   return program;
 }
 

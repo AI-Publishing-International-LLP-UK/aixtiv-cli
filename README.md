@@ -18,6 +18,8 @@ This CLI tool is part of the API for Warp Drive ecosystem.
 - 🚀 Easy command-line interaction with Firestore backend
 - 🧠 Intelligent handling of special cases like PR Fix
 - 🎛️ Modular architecture
+- 🔒 Automated SSL certificate provisioning and management
+- 🌐 Domain management with Firebase and GCP integration
 
 ## Usage
 
@@ -177,6 +179,38 @@ The initialization process creates:
 - README.md with project documentation
 - Entry point (src/index.js) with CLI boilerplate
 
+## Domain and SSL Management 🌐
+
+Manage domains and SSL certificates in the AIXTIV Symphony ecosystem:
+
+```bash
+# List all domains
+aixtiv domain list
+
+# Add a new domain
+aixtiv domain add drclaude.live --type character --firebase-project dr-claude-live
+
+# Verify domain configuration
+aixtiv domain verify drclaude.live
+
+# Set up Firebase Hosting for a domain
+aixtiv domain firebase-setup drclaude.live
+
+# Check SSL certificate status for a domain
+aixtiv domain ssl-check drclaude.live
+
+# Check all domains
+aixtiv domain ssl-check --all
+
+# Provision a new SSL certificate 
+aixtiv domain ssl-provision drclaude.live --type firebase
+
+# Renew an SSL certificate
+aixtiv domain ssl-renew drclaude.live
+```
+
+The CLI includes automated SSL certificate provisioning through GitHub Actions. See the workflow in `workflows/ssl-automation.yaml`.
+
 ## Development 👨‍💻
 
 ### 📁 Project Structure
@@ -193,6 +227,10 @@ aixtiv-cli/
 │   ├── agent/
 │   │   ├── grant.js
 │   │   └── revoke.js
+│   ├── domain/              # Domain management
+│   │   ├── index.js
+│   │   ├── manage.js
+│   │   └── ssl.js
 │   ├── resource/
 │   │   └── scan.js
 │   └── copilot/             # Co-pilot commands
@@ -204,6 +242,10 @@ aixtiv-cli/
 ├── lib/
 │   ├── firestore.js         # All DB ops
 │   └── utils.js             # Shared utils
+├── scripts/
+│   └── domain-ssl-check.sh  # SSL certificate checker
+├── workflows/
+│   └── ssl-automation.yaml  # GitHub Actions workflow
 ├── config/
 │   └── firebase.json        # Optional override
 ├── package.json

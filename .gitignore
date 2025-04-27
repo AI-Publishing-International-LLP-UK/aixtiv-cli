@@ -44,3 +44,4 @@ coverage/
 node-installer.pkg
 aixtiv-cli-1.0.1.tgz
 .github/workflows/claude-automation-github.yml
+logs/
