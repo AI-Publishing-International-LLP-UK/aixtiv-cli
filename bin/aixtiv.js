@@ -43,6 +43,9 @@ const claudeAutomationGithub = require('../commands/claude/automation/github');
 const claudeCodeGenerate = require('../commands/claude/code/generate');
 const claudeStatus = require('../commands/claude/status');
 
+// SERPEW Commands
+const registerSerpewCommands = require("../commands/serpew");
+
 // Domain Management Commands
 const registerDomainCommands = require('../commands/domain');
 
@@ -234,6 +237,10 @@ program
   });
 
 // Register domain management commands
+
+// Register SERPEW commands
+registerSerpewCommands(program);
+
 registerDomainCommands(program);
 
 // Parse command line arguments
