@@ -11,7 +11,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "agent:monitor": "bash monitoring/agent-monitor.sh",
     "agent:report": "node scripts/generate-agent-report.js",
-    "agent:cleanup": "node scripts/cleanup-agent-logs.js"
+    "agent:cleanup": "node scripts/cleanup-agent-logs.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "keywords": [
     "aixtiv",
@@ -38,5 +42,13 @@
     "ora": "^5.4.1",
     "play-sound": "^1.1.6",
     "table": "^6.8.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^10.1.2",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.2.6",
+    "prettier": "^3.5.3"
   }
 }
