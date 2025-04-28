@@ -8,7 +8,10 @@
   },
   "scripts": {
     "start": "node bin/aixtiv.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "agent:monitor": "bash monitoring/agent-monitor.sh",
+    "agent:report": "node scripts/generate-agent-report.js",
+    "agent:cleanup": "node scripts/cleanup-agent-logs.js"
   },
   "keywords": [
     "aixtiv",
@@ -25,6 +28,7 @@
     "chalk": "^4.1.2",
     "cli-table3": "^0.6.5",
     "commander": "^9.4.1",
+    "console-table-printer": "^2.12.1",
     "dotenv": "^16.5.0",
     "express": "^4.18.2",
     "figlet": "^1.5.2",

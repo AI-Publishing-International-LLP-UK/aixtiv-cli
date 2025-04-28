@@ -132,7 +132,7 @@ if __name__ == "__main__":
 /**
  * Project delegation command implementation
  */
-async function delegateCommand(options, { spinner }) {
+async function delegateCommand(options, { spinner } = {}) {
   // If wizard mode, use interactive interface
   if (options.wizard) {
     const wizard = new WizardBuilder('Delegate Project to Dr. Claude')
@@ -265,7 +265,7 @@ async function delegateCommand(options, { spinner }) {
 /**
  * Code generation command implementation
  */
-async function codeGenerateCommand(options, { spinner }) {
+async function codeGenerateCommand(options, { spinner } = {}) {
   // If wizard mode, use interactive interface
   if (options.wizard) {
     const wizard = new WizardBuilder('Generate Code with Claude')
@@ -403,7 +403,7 @@ async function codeGenerateCommand(options, { spinner }) {
 /**
  * Agent status command implementation
  */
-async function statusCommand(options, { spinner }) {
+async function statusCommand(options, { spinner } = {}) {
   if (spinner) spinner.text = 'Connecting to Dr. Claude Orchestration...';
   await new Promise(resolve => setTimeout(resolve, 400));
   
@@ -642,5 +642,3 @@ function registerCommands(register) {
 module.exports = {
   registerCommands
 };
-        { id: 'task-5', name: 'Deployment', status: 'not-
-
