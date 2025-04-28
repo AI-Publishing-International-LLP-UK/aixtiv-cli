@@ -1,0 +1,21 @@
+{
+  "indexes": [
+    {
+      "collectionId": "agentActions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "agent_id", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionId": "agentActions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "action_type", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
