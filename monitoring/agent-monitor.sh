@@ -30,7 +30,16 @@ process_logs() {
         if [[ "$(basename "$file")" =~ agent-actions-([0-9]{4}-[0-9]{2}-[0-9]{2}).log ]]; then
             date="${BASH_REMATCH[1]}"
             # Only process last 7 days
-            days_old=$(( ( $(date -u +%s) - $(date -u -d "$date" +%s) ) / 86400 ))
+            # Cross-platform date-to-epoch handling
+            if [[ "$(uname)" == "Darwin" ]]; then
+                # macOS: use date -j -f
+                date_epoch=$(date -j -f "%Y-%m-%d" "$date" +%s 2>/dev/null)
+            else
+                # Linux: use date -d
+                date_epoch=$(date -u -d "$date" +%s 2>/dev/null)
+            fi
+            now_epoch=$(date -u +%s)
+            days_old=$(( (now_epoch - date_epoch) / 86400 ))
             
             if [ "$days_old" -le 7 ]; then
                 echo "Processing $file..."
@@ -49,14 +58,14 @@ process_logs() {
     done
     
     # Generate JSON for dashboard
-    echo "{" > "$ROOT_DIR/reports/agent-activity-$TODAY.json"
-    echo "  \"generated\": \"$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)\"," >> "$ROOT_DIR/reports/agent-activity-$TODAY.json"
-    echo "  \"summary\": {" >> "$ROOT_DIR/reports/agent-activity-$TODAY.json"
-    echo "    \"total_actions\": 0," >> "$ROOT_DIR/reports/agent-activity-$TODAY.json"
-    echo "    \"actions_by_agent\": {}," >> "$ROOT_DIR/reports/agent-activity-$TODAY.json"
-    echo "    \"top_actions\": []" >> "$ROOT_DIR/reports/agent-activity-$TODAY.json"
-    echo "  }" >> "$ROOT_DIR/reports/agent-activity-$TODAY.json"
-    echo "}" >> "$ROOT_DIR/reports/agent-activity-$TODAY.json"
+    echo "{" > "$REPORT_DIR/agent-activity-$TODAY.json"
+    echo "  \"generated\": \"$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)\"," >> "$REPORT_DIR/agent-activity-$TODAY.json"
+    echo "  \"summary\": {" >> "$REPORT_DIR/agent-activity-$TODAY.json"
+    echo "    \"total_actions\": 0," >> "$REPORT_DIR/agent-activity-$TODAY.json"
+    echo "    \"actions_by_agent\": {}," >> "$REPORT_DIR/agent-activity-$TODAY.json"
+    echo "    \"top_actions\": []" >> "$REPORT_DIR/agent-activity-$TODAY.json"
+    echo "  }" >> "$REPORT_DIR/agent-activity-$TODAY.json"
+    echo "}" >> "$REPORT_DIR/agent-activity-$TODAY.json"
 }
 
 # Cleanup old logs
