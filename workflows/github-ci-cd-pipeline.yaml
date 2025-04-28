@@ -1,0 +1,378 @@
+name: Aixtiv CI/CD/CTTT Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: 'Deployment Target'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      run_tests:
+        description: 'Run tests'
+        required: true
+        default: true
+        type: boolean
+
+env:
+  PROJECT_ID: api-for-warp-drive
+  AGENT_ID: GITHUB_WORKFLOW_AUTOMATION
+
+jobs:
+  setup-agent-tracking:
+    runs-on: ubuntu-latest
+    outputs:
+      run_id: ${{ steps.generate-id.outputs.run_id }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Generate unique run ID
+        id: generate-id
+        run: echo "run_id=$(date +%Y%m%d%H%M%S)-${{ github.run_id }}" >> $GITHUB_OUTPUT
+      
+      - name: Setup agent tracking
+        run: |
+          chmod +x scripts/setup-agent-tracking.sh
+          ./scripts/setup-agent-tracking.sh
+          source bin/agent-tracking.sh
+          log_agent_action "github_workflow_start" "Starting GitHub workflow pipeline: ${{ steps.generate-id.outputs.run_id }}"
+
+  lint-and-test:
+    needs: setup-agent-tracking
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Setup agent tracking for this job
+        run: |
+          source bin/agent-tracking.sh
+          export AGENT_ID=GITHUB_WORKFLOW_AUTOMATION
+          log_agent_action "lint_test_start" "Starting lint and test job"
+      
+      - name: Lint code
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "lint_start" "Starting code linting"
+          npm run lint
+          log_agent_action "lint_complete" "Completed code linting"
+      
+      - name: Run tests
+        if: ${{ inputs.run_tests != false }}
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "test_start" "Starting test execution"
+          npm test
+          log_agent_action "test_complete" "Completed test execution"
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: coverage/
+          retention-days: 7
+
+  build:
+    needs: [setup-agent-tracking, lint-and-test]
+    runs-on: ubuntu-latest
+    outputs:
+      build_id: ${{ steps.generate-build-id.outputs.build_id }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Setup agent tracking for this job
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "build_start" "Starting build job"
+      
+      - name: Build application
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "app_build_start" "Starting application build"
+          npm run build
+          log_agent_action "app_build_complete" "Completed application build"
+      
+      - name: Generate build ID
+        id: generate-build-id
+        run: echo "build_id=$(date +%Y%m%d%H%M%S)-${{ github.sha }}" >> $GITHUB_OUTPUT
+      
+      - name: Package application
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "app_package_start" "Starting application packaging"
+          tar -czf aixtiv-cli-${{ steps.generate-build-id.outputs.build_id }}.tar.gz dist/ package.json bin/ config/
+          log_agent_action "app_package_complete" "Completed application packaging"
+      
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: aixtiv-cli-build
+          path: aixtiv-cli-${{ steps.generate-build-id.outputs.build_id }}.tar.gz
+          retention-days: 7
+
+  cttt-pipeline:
+    needs: [setup-agent-tracking, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          npm ci
+      
+      - name: Setup agent tracking for this job
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "cttt_start" "Starting CTTT pipeline job"
+      
+      - name: Run CTTT pipeline
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "cttt_execution_start" "Starting CTTT pipeline execution"
+          python automation/cttt-pipeline.py --project-id $PROJECT_ID --agent-id $AGENT_ID
+          log_agent_action "cttt_execution_complete" "Completed CTTT pipeline execution"
+      
+      - name: Upload CTTT results
+        uses: actions/upload-artifact@v3
+        with:
+          name: cttt-results
+          path: reports/cttt/
+          retention-days: 7
+
+  deploy-to-staging:
+    needs: [setup-agent-tracking, build, cttt-pipeline]
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+    environment: staging
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: aixtiv-cli-build
+      
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      
+      - name: Setup agent tracking for this job
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "staging_deploy_start" "Starting deployment to staging"
+      
+      - name: Extract build artifact
+        run: |
+          mkdir -p deploy
+          tar -xzf aixtiv-cli-*.tar.gz -C deploy/
+      
+      - name: Deploy to Cloud Run (Staging)
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v1
+        with:
+          service: aixtiv-cli-staging
+          region: us-west1
+          source: deploy/
+          env_vars: |
+            AGENT_ID=GITHUB_WORKFLOW_AUTOMATION
+            ENVIRONMENT=staging
+      
+      - name: Log deployment completion
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "staging_deploy_complete" "Completed deployment to staging: ${{ steps.deploy.outputs.url }}"
+      
+      - name: Run post-deployment verification
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "staging_verify_start" "Starting staging verification"
+          curl -s -o /dev/null -w "%{http_code}" ${{ steps.deploy.outputs.url }}/health
+          log_agent_action "staging_verify_complete" "Completed staging verification"
+
+  deploy-to-production:
+    needs: [setup-agent-tracking, deploy-to-staging]
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_target == 'production' }}
+    environment:
+      name: production
+      url: https://api-for-warp-drive.app
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: aixtiv-cli-build
+      
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      
+      - name: Setup agent tracking for this job
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "prod_deploy_start" "Starting deployment to production"
+      
+      - name: Extract build artifact
+        run: |
+          mkdir -p deploy
+          tar -xzf aixtiv-cli-*.tar.gz -C deploy/
+      
+      - name: Deploy to GKE (Production)
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "gke_deploy_start" "Starting GKE deployment"
+          
+          # Authenticate to GKE
+          gcloud container clusters get-credentials private-cluster-auto --zone us-west1 --project $PROJECT_ID
+          
+          # Update deployment.yaml with new image tag
+          sed -i "s|gcr.io/api-for-warp-drive/aixtiv-cli:.*|gcr.io/api-for-warp-drive/aixtiv-cli:${{ needs.build.outputs.build_id }}|g" infrastructure/deployment.yaml
+          
+          # Apply configuration
+          kubectl apply -f infrastructure/deployment.yaml
+          kubectl apply -f infrastructure/load-balancer/backend-config.yaml
+          kubectl apply -f infrastructure/load-balancer/frontend-service.yaml
+          
+          log_agent_action "gke_deploy_complete" "Completed GKE deployment"
+      
+      - name: Run SSL certificate check and update
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "ssl_check_start" "Starting SSL certificate check"
+          
+          # Check SSL certificate
+          ./scripts/domain-ssl-check.sh api-for-warp-drive.app
+          
+          log_agent_action "ssl_check_complete" "Completed SSL certificate check"
+      
+      - name: Verify production deployment
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "prod_verify_start" "Starting production verification"
+          
+          # Wait for deployment to complete
+          kubectl rollout status deployment/aixtiv-cli -n anthology-ai
+          
+          # Check health endpoint
+          HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://api-for-warp-drive.app/health)
+          if [ "$HEALTH_STATUS" -eq 200 ]; then
+            echo "✅ Production deployment successful"
+            log_agent_action "prod_verify_complete" "Production verification successful"
+          else
+            echo "❌ Production deployment verification failed"
+            log_agent_action "prod_verify_failed" "Production verification failed"
+            exit 1
+          fi
+      
+      - name: Update deployment status
+        if: always()
+        run: |
+          source bin/agent-tracking.sh
+          if [ ${{ job.status }} == "success" ]; then
+            log_agent_action "prod_deploy_success" "Production deployment completed successfully"
+          else
+            log_agent_action "prod_deploy_failed" "Production deployment failed"
+          fi
+
+  notify-completion:
+    needs: [setup-agent-tracking, lint-and-test, build, cttt-pipeline, deploy-to-staging, deploy-to-production]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup agent tracking for this job
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "workflow_completion" "GitHub workflow pipeline completed"
+      
+      - name: Determine overall workflow status
+        id: status
+        run: |
+          if [[ "${{ needs.lint-and-test.result }}" == "success" && 
+                "${{ needs.build.result }}" == "success" && 
+                "${{ needs.cttt-pipeline.result }}" == "success" && 
+                ("${{ needs.deploy-to-staging.result }}" == "success" || "${{ needs.deploy-to-staging.result }}" == "skipped") && 
+                ("${{ needs.deploy-to-production.result }}" == "success" || "${{ needs.deploy-to-production.result }}" == "skipped") ]]; then
+            echo "workflow_status=success" >> $GITHUB_OUTPUT
+          else
+            echo "workflow_status=failure" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create GitHub deployment status
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          state: ${{ steps.status.outputs.workflow_status }}
+          deployment-id: ${{ github.run_id }}
+          description: "CI/CD/CTTT Pipeline ${{ steps.status.outputs.workflow_status == 'success' && 'succeeded' || 'failed' }}"
+      
+      - name: Create Firestore record
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "workflow_record" "Creating workflow record in Firestore"
+          
+          # Check if gcloud is installed
+          if command -v gcloud &> /dev/null; then
+            # Create Firestore document with workflow results
+            gcloud firestore documents create \
+              projects/$PROJECT_ID/databases/(default)/documents/workflows/${{ needs.setup-agent-tracking.outputs.run_id }} \
+              --fields="status=${{ steps.status.outputs.workflow_status }},timestamp=$(date +%s),agent=$AGENT_ID,workflow_id=${{ github.run_id }},commit_sha=${{ github.sha }}"
+          fi
