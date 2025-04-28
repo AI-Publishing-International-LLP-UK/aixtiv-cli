@@ -173,13 +173,12 @@ async function mockFetchDomains() {
     }
   ];
 }
-}
 
+/**
 /**
  * Domain remove command implementation
  */
-async function removeDomainCommand(domain, options, { spinner }) {
-  // Validate domain name
+async function removeDomainCommand(domain, options, { spinner } = {}) {
   if (!domain) {
     utils.ui.feedback.error('Domain name is required');
     return;
@@ -257,7 +256,7 @@ async function removeDomainCommand(domain, options, { spinner }) {
 /**
  * Domain list command implementation
  */
-async function listDomainsCommand(options, { spinner }) {
+async function listDomainsCommand(options, { spinner } = {}) {
   if (spinner) spinner.text = 'Fetching domains...';
   
   try {
@@ -355,72 +354,10 @@ async function listDomainsCommand(options, { spinner }) {
 }
 
 /**
- * Domain add command implementation
- */
-async function addDomainCommand(domain, options, { spinner }) {
-  // Validate domain name
-  if (!domain) {
-    utils.ui.feedback.error('Domain name is required');
-    return;
-  }
-  
-  if (!validateDomainName(domain)) {
-    utils.ui.feedback.error('Invalid domain name format');
-    return;
-  }
-  
-  if (spinner) spinner.text = `Adding domain ${domain}...`;
-  
-  try {
-    // Get domain info from options
-    const domainInfo = {
-      type: options.type || 'brand',
-      firebaseProject: options.firebaseProject || domain.replace(/\./g, '-'),
-      expiryDate: options.expiryDate || getDefaultExpiryDate(),
-      status: 'pending'
-    };
-    
-    // Check if domain already exists in cache
-    const cache = loadDomainCache();
-    const existingDomainIndex = cache.domains.findIndex(d => d.name === domain);
-    
-    if (existingDom
-    }
-    
-    filteredDomains.forEach(domain => {
-      const row = {
-        name: domain.name,
-        type: domain.type,
-        status: utils.ui.colorizeStatus(domain.status),
-        expiryDate: domain.expiryDate
-      };
-      
-      if (!options.compact) {
-        row.firebaseProject = domain.firebaseProject;
-      }
-      
-      table.addRow(row);
-    });
-    
-    table.printTable();
-    console.log(`\nTotal domains: ${filteredDomains.length}`);
-    
-    // Show cache info
-    if (!options.refresh && filteredDomains.length > 0) {
-      console.log(chalk.dim(`\nCache last updated: ${new Date(cache.lastUpdated).toLocaleString()}`));
-      console.log(chalk.dim('Use --refresh to fetch the latest data from the server'));
-    }
-  } catch (error) {
-    if (spinner) spinner.fail('Failed to fetch domains');
-    utils.ui.feedback.error(`Error fetching domains: ${error.message}`);
-  }
-}
-
 /**
  * Domain add command implementation
  */
-async function addDomainCommand(domain, options, { spinner }) {
-  // Validate domain name
+async function addDomainCommand(domain, options, { spinner } = {}) {
   if (!domain) {
     utils.ui.feedback.error('Domain name is required');
     return;
@@ -524,7 +461,7 @@ Next Steps:
 /**
  * Domain verify command implementation
  */
-async function verifyDomainCommand(domain, options, { spinner }) {
+async function verifyDomainCommand(domain, options, { spinner } = {}) {
   // Validate domain name
   if (!domain) {
     utils.ui.feedback.error('Domain name is required');
@@ -555,5 +492,198 @@ async function verifyDomainCommand(domain, options, { spinner }) {
       firebase: [
         { check: 'Project Connection', status: 'ok', value: 'Connected' },
         { check: 'Hosting Config', status: 'ok', value: 'Configured' },
-        
+        { check: 'Domain Verification', status: 'ok', value: 'Verified' }
+      ],
+      ssl: [
+        { check: 'SSL Certificate', status: 'ok', value: 'Valid' },
+        { check: 'Certificate Expiry', status: 'ok', value: '2025-04-20' },
+        { check: 'SSL Protocols', status: 'ok', value: 'TLS 1.2, TLS 1.3' }
+      ]
+    };
 
+    // Output verification results
+    const program = require('commander').program;
+    if (program.opts().json) {
+      const resultOutput = {
+        domain,
+        verification: {}
+      };
+      
+      if (verifyDNS) resultOutput.verification.dns = results.dns;
+      if (verifyFirebase) resultOutput.verification.firebase = results.firebase;
+      if (verifySSL) resultOutput.verification.ssl = results.ssl;
+      
+      console.log(JSON.stringify(resultOutput, null, 2));
+      return;
+    }
+    
+    // Display verification results
+    console.log(chalk.bold(`\nVerification Results for ${domain}:`));
+    
+    // Display DNS verification
+    if (verifyDNS) {
+      console.log(chalk.cyan('\nDNS Configuration:'));
+      const { Table } = require('console-table-printer');
+      const dnsTable = new Table({
+        columns: [
+          { name: 'check', title: 'Check' },
+          { name: 'status', title: 'Status' },
+          { name: 'value', title: 'Value' }
+        ]
+      });
+      
+      results.dns.forEach(item => {
+        dnsTable.addRow({
+          check: item.check,
+          status: utils.ui.colorizeStatus(item.status),
+          value: item.value
+        });
+      });
+      
+      dnsTable.printTable();
+    }
+    
+    // Display Firebase verification
+    if (verifyFirebase) {
+      console.log(chalk.cyan('\nFirebase Configuration:'));
+      const { Table } = require('console-table-printer');
+      const firebaseTable = new Table({
+        columns: [
+          { name: 'check', title: 'Check' },
+          { name: 'status', title: 'Status' },
+          { name: 'value', title: 'Value' }
+        ]
+      });
+      
+      results.firebase.forEach(item => {
+        firebaseTable.addRow({
+          check: item.check,
+          status: utils.ui.colorizeStatus(item.status),
+          value: item.value
+        });
+      });
+      
+      firebaseTable.printTable();
+    }
+    
+    // Display SSL verification
+    if (verifySSL) {
+      console.log(chalk.cyan('\nSSL Configuration:'));
+      const { Table } = require('console-table-printer');
+      const sslTable = new Table({
+        columns: [
+          { name: 'check', title: 'Check' },
+          { name: 'status', title: 'Status' },
+          { name: 'value', title: 'Value' }
+        ]
+      });
+      
+      results.ssl.forEach(item => {
+        sslTable.addRow({
+          check: item.check,
+          status: utils.ui.colorizeStatus(item.status),
+          value: item.value
+        });
+      });
+      
+      sslTable.printTable();
+    }
+    
+    // Update domain status if all checks pass
+    const allChecksPassed = 
+      (!verifyDNS || results.dns.every(item => item.status === 'ok')) &&
+      (!verifyFirebase || results.firebase.every(item => item.status === 'ok')) &&
+      (!verifySSL || results.ssl.every(item => item.status === 'ok'));
+    
+    if (allChecksPassed) {
+      // Update domain status in cache
+      const cache = loadDomainCache();
+      const domainIndex = cache.domains.findIndex(d => d.name === domain);
+      
+      if (domainIndex !== -1 && cache.domains[domainIndex].status === 'pending') {
+        cache.domains[domainIndex].status = 'active';
+        saveDomainCache({
+          domains: cache.domains,
+          lastUpdated: new Date().toISOString()
+        });
+        
+        console.log(chalk.green('\n✓ All verification checks passed. Domain status updated to active.'));
+      } else if (domainIndex !== -1) {
+        console.log(chalk.green('\n✓ All verification checks passed.'));
+      }
+    } else {
+      console.log(chalk.yellow('\n⚠ Some verification checks failed. Please review and fix the issues.'));
+    }
+  } catch (error) {
+    if (spinner) spinner.fail(`Failed to verify domain ${domain}`);
+    utils.ui.feedback.error(`Error verifying domain: ${error.message}`);
+  }
+}
+
+/**
+ * Register all domain commands
+ */
+function registerCommands(register) {
+  // Domain list command
+  register(
+    'domain',
+    'domain:list',
+    'List domains in the Aixtiv Symphony ecosystem',
+    [
+      { flags: '--type <type>', description: 'Filter by domain type', choices: DOMAIN_TYPES },
+      { flags: '--status <status>', description: 'Filter by status (active, pending, transferring)' },
+      { flags: '--refresh', description: 'Refresh domain data from server' },
+      { flags: '--compact', description: 'Show compact view (hide Firebase project)' },
+      { flags: '--cache-ttl <seconds>', description: 'Cache TTL in seconds', defaultValue: 3600 }
+    ],
+    listDomainsCommand,
+    ['', '--type character', '--refresh --compact']
+  );
+  
+  // Domain add command
+  register(
+    'domain',
+    'domain:add',
+    'Add a new domain to the Aixtiv Symphony ecosystem',
+    [
+      { flags: '<domain>', description: 'Domain name to add' },
+      { flags: '--type <type>', description: 'Domain type', choices: DOMAIN_TYPES, defaultValue: 'brand' },
+      { flags: '--firebase-project <project>', description: 'Firebase project ID' },
+      { flags: '--expiry-date <date>', description: 'Expiry date (YYYY-MM-DD)' }
+    ],
+    addDomainCommand,
+    ['example.com', 'example.com --type character', 'myapp.live --firebase-project myapp-live']
+  );
+  
+  // Domain remove command
+  register(
+    'domain',
+    'domain:remove',
+    'Remove a domain from the Aixtiv Symphony ecosystem',
+    [
+      { flags: '<domain>', description: 'Domain name to remove' },
+      { flags: '--force', description: 'Force removal without confirmation' }
+    ],
+    removeDomainCommand,
+    ['example.com', 'example.com --force']
+  );
+  
+  // Domain verify command
+  register(
+    'domain',
+    'domain:verify',
+    'Verify domain configuration',
+    [
+      { flags: '<domain>', description: 'Domain name to verify' },
+      { flags: '--dns-only', description: 'Only verify DNS records' },
+      { flags: '--firebase-only', description: 'Only verify Firebase configuration' },
+      { flags: '--ssl-only', description: 'Only verify SSL configuration' }
+    ],
+    verifyDomainCommand,
+    ['example.com', 'example.com --dns-only', 'example.com --firebase-only']
+  );
+}
+
+module.exports = {
+  registerCommands
+};

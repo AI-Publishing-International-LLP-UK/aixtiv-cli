@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const { parseOptions, withSpinner, displayResult } = require('../../../lib/utils');
+const { logAgentAction, getCurrentAgentId } = require('../../../lib/agent-tracking');
 
 // AIXTIV SYMPHONY vision statement for alignment with ASOOS principles
 const AIXTIV_SYMPHONY_VISION = `AIXTIV SYMPHONY ORCHESTRATING OPERATING SYSTEM - The Definitive Architecture & Vision Statement
@@ -19,6 +20,14 @@ const functionUrl = 'https://drclaude.live/code-generate';
  */
 module.exports = async function generateCode(options) {
   const { task, language, outputFile, context } = parseOptions(options);
+  
+  // Log the code generation request with agent attribution
+  logAgentAction('code_generation_request', {
+    task,
+    language: language || 'javascript',
+    has_context: !!context,
+    agent_id: getCurrentAgentId()
+  });
   
   try {
     // Read context files if provided
@@ -54,7 +63,8 @@ module.exports = async function generateCode(options) {
             timestamp: new Date().toISOString(),
             asoos_vision: AIXTIV_SYMPHONY_VISION,
             model: 'claude-3-7-v2', // Specify SuperClaude3 model version
-            datapipe: 'true'        // Enable data pipe for improved performance
+            datapipe: 'true',        // Enable data pipe for improved performance
+            performed_by: getCurrentAgentId() // Add agent attribution
           };
           
           // Create an agent that ignores SSL certificate validation
@@ -67,7 +77,8 @@ module.exports = async function generateCode(options) {
             headers: {
               'Content-Type': 'application/json',
               'X-Aixtiv-Region': 'us-west1-b',
-              'X-Aixtiv-Datapipe': 'superclaude3'
+              'X-Aixtiv-Datapipe': 'superclaude3',
+              'X-Agent-ID': getCurrentAgentId() // Add agent ID in headers for tracking
             },
             body: JSON.stringify(payload),
             agent: httpsAgent // Add this line to ignore SSL certificate validation
@@ -84,13 +95,22 @@ module.exports = async function generateCode(options) {
       }
     );
     
+    // Log the result with agent attribution
+    logAgentAction('code_generation_result', {
+      success: result.status === 'completed',
+      task,
+      language: language || 'javascript',
+      agent_id: getCurrentAgentId()
+    });
+    
     // Display result
     displayResult({
       success: result.status === 'completed',
       message: `Code generation ${result.status === 'completed' ? 'successfully completed' : 'failed'}`,
       details: {
         task: task,
-        language: language || 'javascript'
+        language: language || 'javascript',
+        performed_by: getCurrentAgentId()
       }
     });
     
@@ -110,8 +130,22 @@ module.exports = async function generateCode(options) {
           
           fs.writeFileSync(outputFile, result.code);
           console.log(chalk.green(`\nCode saved to ${outputFile}`));
+          
+          // Log file save action
+          logAgentAction('code_saved_to_file', {
+            output_file: outputFile,
+            language: language || 'javascript',
+            agent_id: getCurrentAgentId()
+          });
         } catch (err) {
           console.error(chalk.red(`\nError saving to file: ${err.message}`));
+          
+          // Log error
+          logAgentAction('code_save_error', {
+            output_file: outputFile,
+            error: err.message,
+            agent_id: getCurrentAgentId()
+          });
         }
       }
       
@@ -122,6 +156,14 @@ module.exports = async function generateCode(options) {
     }
   } catch (error) {
     console.error(chalk.red('\nCode generation failed:'), error.message);
+    
+    // Log error with agent attribution
+    logAgentAction('code_generation_error', {
+      error: error.message,
+      task,
+      language: language || 'javascript',
+      agent_id: getCurrentAgentId()
+    });
     
     // Show more helpful error information
     if (error.message.includes('ECONNREFUSED') || error.message.includes('404')) {
