@@ -1,0 +1,251 @@
+#!/usr/bin/env node
+
+const { program } = require('commander');
+const chalk = require('chalk');
+const figlet = require('figlet');
+const packageJson = require('../package.json');
+require('dotenv').config();
+
+// Helper for date formatting
+function formatDate(date) {
+  return date.toISOString().split('T')[0];
+}
+
+// Display banner
+console.log(
+  chalk.cyan(
+    figlet.textSync('Aixtiv CLI', { horizontalLayout: 'full' })
+  )
+);
+console.log(chalk.blue(`v${packageJson.version} - SalleyPort Security Management`));
+console.log();
+
+// Command imports
+const initProject = require('../commands/init');
+const authVerify = require('../commands/auth/verify');
+const agentGrant = require('../commands/agent/grant');
+const agentRevoke = require('../commands/agent/revoke');
+const resourceScan = require('../commands/resource/scan');
+
+// Co-pilot command imports
+const copilotLink = require('../commands/copilot/link');
+const copilotUnlink = require('../commands/copilot/unlink');
+const copilotList = require('../commands/copilot/list');
+const copilotVerify = require('../commands/copilot/verify');
+const copilotGrant = require('../commands/copilot/grant');
+
+// Visionary commands
+const summonVisionary = require('../commands/summon/visionary');
+
+// Dr. Claude commands
+const claudeAgentDelegate = require('../commands/claude/agent/delegate');
+const claudeAutomationGithub = require('../commands/claude/automation/github');
+const claudeCodeGenerate = require('../commands/claude/code/generate');
+const claudeStatus = require('../commands/claude/status');
+
+// SERPEW Commands
+const registerSerpewCommands = require("../commands/serpew");
+
+// Domain Management Commands
+const registerDomainCommands = require('../commands/domain');
+
+// Configure program
+program
+  .version(packageJson.version)
+  .description('Aixtiv CLI for SalleyPort security management');
+
+// Project commands
+program
+  .command('init')
+  .description('Initialize a new aixtiv project with basic structure')
+  .option('-n, --name <name>', 'Project name', 'aixtiv-project')
+  .option('-f, --force', 'Force overwrite if project directory exists')
+  .action(initProject);
+
+// Auth commands
+program
+  .command('auth:verify')
+  .description('Verify authentication with SalleyPort')
+  .option('-e, --email <email>', 'Email to verify')
+  .option('-a, --agent <agent>', 'Agent to verify')
+  .action(authVerify);
+
+// Agent commands
+program
+  .command('agent:grant')
+  .description('Grant agent access to a resource')
+  .requiredOption('-e, --email <email>', 'Principal email')
+  .requiredOption('-a, --agent <agent>', 'Agent ID')
+  .requiredOption('-r, --resource <resource>', 'Resource ID')
+  .option('-t, --type <type>', 'Access type (full, readonly, delegated)', 'full')
+  .action(agentGrant);
+
+program
+  .command('agent:revoke')
+  .description('Revoke agent access to a resource')
+  .requiredOption('-e, --email <email>', 'Principal email')
+  .requiredOption('-a, --agent <agent>', 'Agent ID')
+  .requiredOption('-r, --resource <resource>', 'Resource ID')
+  .action(agentRevoke);
+
+// Resource commands
+program
+  .command('resource:scan')
+  .description('Scan resources for access patterns')
+  .option('-r, --resource <resource>', 'Resource ID to scan')
+  .option('-a, --agent <agent>', 'Filter by agent ID')
+  .option('-e, --email <email>', 'Filter by principal email')
+  .action(resourceScan);
+
+// Handle PR special case directly
+program
+  .command('fix:pr')
+  .description('Apply special PR fix for pr@coaching2100.com with agent 001')
+  .option('-c, --cleanup', 'Clean up the PR fix instead of applying it')
+  .action(async (options) => {
+    const { cleanup } = options;
+    const agent = '001';
+    const principal = 'pr@coaching2100.com';
+    const resource = 'pr-2bd91160bf21ba21';
+    
+    if (cleanup) {
+      const revoke = require('../commands/agent/revoke');
+      await revoke({
+        email: principal,
+        agent: agent,
+        resource: resource
+      });
+    } else {
+      const grant = require('../commands/agent/grant');
+      await grant({
+        email: principal,
+        agent: agent,
+        resource: resource,
+        type: 'full'
+      });
+    }
+  });
+
+// Co-pilot commands
+program
+  .command('copilot:link')
+  .description('Link a co-pilot to a principal')
+  .requiredOption('-e, --email <email>', 'Principal email')
+  .requiredOption('-c, --copilot <copilot>', 'Co-pilot email or name (if just name, will use name@drname.live format)')
+  .option('-l, --level <level>', 'Trust level (standard, enhanced, executive)', 'standard')
+  .action(copilotLink);
+
+program
+  .command('copilot:unlink')
+  .description('Unlink a co-pilot from a principal')
+  .requiredOption('-e, --email <email>', 'Principal email')
+  .requiredOption('-c, --copilot <copilot>', 'Co-pilot email or name')
+  .action(copilotUnlink);
+
+program
+  .command('copilot:list')
+  .description('List co-pilots linked to a principal')
+  .option('-e, --email <email>', 'Principal email (if omitted, lists all relationships)')
+  .option('-s, --status <status>', 'Filter by status (active, pending, all)', 'active')
+  .action(copilotList);
+
+program
+  .command('copilot:verify')
+  .description('Verify co-pilot identity and cultural empathy')
+  .requiredOption('-e, --email <email>', 'Co-pilot email')
+  .requiredOption('-p, --principal <principal>', 'Principal email')
+  .option('-c, --code <code>', 'Cultural Empathy Code')
+  .action(copilotVerify);
+
+program
+  .command('copilot:grant')
+  .description('Grant co-pilot access to a resource')
+  .requiredOption('-e, --email <email>', 'Principal email')
+  .requiredOption('-c, --copilot <copilot>', 'Co-pilot email or name')
+  .requiredOption('-r, --resource <resource>', 'Resource ID')
+  .option('-t, --type <type>', 'Access type (readonly, delegated, full)', 'readonly')
+  .action(copilotGrant);
+
+// Visionary commands
+program
+  .command('summon:visionary')
+  .description('Summon Visionary 1 Command Suite with audio-visual effects')
+  .option('-s, --silent', 'Run without audio effects')
+  .option('--install-assets', 'Install or reinstall audio assets')
+  .action(summonVisionary);
+
+// Dr. Claude Agent commands
+program
+  .command('claude:agent:delegate')
+  .description('Delegate a project to Dr. Claude as project manager')
+  .requiredOption('-p, --project <name>', 'Project name')
+  .requiredOption('-d, --description <description>', 'Project description')
+  .option('--priority <priority>', 'Project priority (low, medium, high)', 'medium')
+  .option('--deadline <date>', 'Project deadline (YYYY-MM-DD)', formatDate(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)))
+  .option('--tags <tags>', 'Comma-separated list of project tags')
+  .option('--assign-to <agent>', 'Directly assign to specific agent (e.g., dr-lucy, dr-match)')
+  .action(claudeAgentDelegate);
+
+// Dr. Claude Automation commands
+program
+  .command('claude:automation:github')
+  .description('Use Dr. Claude Automation to manage GitHub repositories')
+  .requiredOption('-r, --repository <repo>', 'Repository name or "all" for all repositories')
+  .requiredOption('-a, --action <action>', 'Action to perform (align, clean, secure, memoria-assist, sync)')
+  .option('-b, --branch <branch>', 'Branch name', 'main')
+  .option('-o, --organization <org>', 'GitHub organization (default: AI-Publishing-International-LLP-UK)')
+  .option('--security-check <boolean>', 'Perform security checks', 'true')
+  .action(claudeAutomationGithub);
+
+// Claude Code commands
+program
+  .command('claude:code:generate')
+  .description('Generate code using Claude Code assistant')
+  .requiredOption('-t, --task <task>', 'Coding task description')
+  .option('-l, --language <language>', 'Programming language', 'javascript')
+  .option('-o, --output-file <path>', 'Output file path')
+  .option('-c, --context <files>', 'Comma-separated list of context files')
+  .action(claudeCodeGenerate);
+
+// Claude Status command
+program
+  .command('claude:status')
+  .description('Check status of Dr. Claude agents and their workloads')
+  .option('-a, --agent <agent>', 'Specific agent to check (omit for all agents)')
+  .action(claudeStatus);
+
+// Legacy command for backward compatibility
+program
+  .command('claude:delegate')
+  .description('Delegate a task to an agent (legacy command - use claude:agent:delegate instead)')
+  .requiredOption('-a, --agent <agent>', 'Agent ID to assign the task to')
+  .requiredOption('-t, --task <task>', 'Task details (use quotes for multi-word tasks)')
+  .option('-p, --priority <priority>', 'Task priority (low, normal, high)', 'normal')
+  .option('-e, --env <environment>', 'Environment (dev, prod)', 'prod')
+  .action((options) => {
+    console.log(chalk.yellow('Warning: claude:delegate is deprecated. Please use claude:agent:delegate instead.'));
+    console.log('');
+    
+    // Convert to project-style delegation
+    claudeAgentDelegate({
+      project: `Task for ${options.agent}`,
+      description: options.task,
+      priority: options.priority,
+      assignTo: options.agent,
+      env: options.env
+    });
+  });
+
+// Register SERPEW commands
+registerSerpewCommands(program);
+
+// Register domain management commands
+registerDomainCommands(program);
+
+// Parse command line arguments
+program.parse(process.argv);
+
+// Display help if no arguments provided
+if (process.argv.length === 2) {
+  program.outputHelp();
+}
