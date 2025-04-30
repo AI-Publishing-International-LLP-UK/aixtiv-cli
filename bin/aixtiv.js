@@ -33,6 +33,7 @@ const copilotUnlink = require('../commands/copilot/unlink');
 const copilotList = require('../commands/copilot/list');
 const copilotVerify = require('../commands/copilot/verify');
 const copilotGrant = require('../commands/copilot/grant');
+const copilotExpiration = require('../commands/copilot/expiration');
 
 // Visionary commands
 const summonVisionary = require('../commands/summon/visionary');
@@ -44,7 +45,7 @@ const claudeCodeGenerate = require('../commands/claude/code/generate');
 const claudeStatus = require('../commands/claude/status');
 
 // SERPEW Commands
-const registerSerpewCommands = require("../commands/serpew");
+// const registerSerpewCommands = require("../commands/serpew"); // Temporarily commented out
 
 // Domain Management Commands
 const registerDomainCommands = require('../commands/domain');
@@ -166,6 +167,17 @@ program
   .option('-t, --type <type>', 'Access type (readonly, delegated, full)', 'readonly')
   .action(copilotGrant);
 
+// Add new copilot:expiration command
+program
+  .command('copilot:expiration')
+  .description('Set an expiration period for a co-pilot relationship')
+  .option('-e, --email <email>', 'Principal email')
+  .option('-c, --copilot <copilot>', 'Co-pilot email or name')
+  .requiredOption('-p, --period <period>', 'Time period value (e.g., 30)')
+  .option('-u, --unit <unit>', 'Time unit (minutes, hours, days, weeks, months)', 'days')
+  .option('-l, --latest', 'Target the most recently created co-pilot relationship')
+  .action(copilotExpiration);
+
 // Visionary commands
 program
   .command('summon:visionary')
@@ -237,11 +249,10 @@ program
   });
 
 // Register domain management commands
+registerDomainCommands(program);
 
 // Register SERPEW commands
-registerSerpewCommands(program);
-
-registerDomainCommands(program);
+// registerSerpewCommands(program); // Temporarily commented out
 
 // Parse command line arguments
 program.parse(process.argv);
