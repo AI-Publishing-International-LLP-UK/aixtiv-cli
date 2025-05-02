@@ -5,7 +5,8 @@
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "agent_id", "order": "ASCENDING" },
-        { "fieldPath": "timestamp", "order": "DESCENDING" }
+        { "fieldPath": "timestamp", "order": "DESCENDING" },
+        { "fieldPath": "__name__", "order": "DESCENDING" }
       ]
     },
     {
@@ -14,6 +15,24 @@
       "fields": [
         { "fieldPath": "action_type", "order": "ASCENDING" },
         { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionId": "pilots",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" },
+        { "fieldPath": "__name__", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionId": "sessions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" },
+        { "fieldPath": "__name__", "order": "DESCENDING" }
       ]
     }
   ],

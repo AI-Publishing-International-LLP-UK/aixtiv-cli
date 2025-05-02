@@ -44,11 +44,22 @@ const claudeAutomationGithub = require('../commands/claude/automation/github');
 const claudeCodeGenerate = require('../commands/claude/code/generate');
 const claudeStatus = require('../commands/claude/status');
 
-// SERPEW Commands
-// const registerSerpewCommands = require("../commands/serpew"); // Temporarily commented out
+// Natural Language Processing command
+let nlpCommand;
+try {
+  nlpCommand = require('../commands/nlp');
+  console.log(chalk.green('NLP command module loaded successfully'));
+} catch (error) {
+  console.error(chalk.yellow('NLP module could not be loaded:'), chalk.dim(error.message));
+  console.error(chalk.yellow('NLP commands will be unavailable'));
+  nlpCommand = null;
+}
 
 // Domain Management Commands
 const registerDomainCommands = require('../commands/domain');
+
+// SERPEW Commands (temporarily commented out)
+// const registerSerpewCommands = require('../commands/serpew');
 
 // Configure program
 program
@@ -205,7 +216,7 @@ program
   .requiredOption('-r, --repository <repo>', 'Repository name or "all" for all repositories')
   .requiredOption('-a, --action <action>', 'Action to perform (align, clean, secure, memoria-assist, sync)')
   .option('-b, --branch <branch>', 'Branch name', 'main')
-  .option('-o, --organization <org>', 'GitHub organization (default: AI-Publishing-International-LLP-UK)')
+  .option('-o, --organization <org>', 'GitHub organization', 'AI-Publishing-International-LLP-UK')
   .option('--security-check <boolean>', 'Perform security checks', 'true')
   .action(claudeAutomationGithub);
 
@@ -248,16 +259,21 @@ program
     });
   });
 
+// Register NLP command if available
+if (nlpCommand) {
+  try {
+    program.addCommand(nlpCommand);
+    console.log(chalk.green('NLP command registered successfully'));
+  } catch (error) {
+    console.error(chalk.yellow('Failed to register NLP command:'), chalk.dim(error.message));
+  }
+}
+
 // Register domain management commands
 registerDomainCommands(program);
 
-// Register SERPEW commands
-// registerSerpewCommands(program); // Temporarily commented out
+// Register SERPEW commands (temporarily commented out)
+// registerSerpewCommands(program);
 
 // Parse command line arguments
 program.parse(process.argv);
-
-// Display help if no arguments provided
-if (process.argv.length === 2) {
-  program.outputHelp();
-}
