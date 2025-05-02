@@ -97,7 +97,7 @@ module.exports = async function generateCode(options) {
             method: 'POST',  // Explicitly set HTTP method to POST
             headers: {
         'Content-Type': 'application/json',
-        'anthropic-api-key': process.env.ANTHROPIC_API_KEY || '',
+        'anthropic-api-key': process.env.ANTHROPIC_API_KEY || process.env.DR_CLAUDE_API || '',
         'anthropic-version': '2023-06-01',
         'X-Agent-ID': getCurrentAgentId() // Add agent ID in headers for tracking
       },
