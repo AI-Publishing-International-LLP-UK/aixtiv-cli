@@ -13,7 +13,7 @@ ASOOS defines a new technology category with OS of ASOOS referring to the first 
 
 // API endpoint configuration
 // Code generation endpoint
-const functionUrl = 'https://drclaude.live/code-generate';
+const functionUrl = process.env.CLAUDE_API_ENDPOINT || 'https://api.anthropic.com/v1/messages';
 /**
  * Generate code using Claude Code assistant
  * @param {object} options - Command options
@@ -57,15 +57,36 @@ module.exports = async function generateCode(options) {
       async () => {
         try {
           const payload = {
-            task: task,
-            language: language || 'javascript',
-            context_files: contextFiles,
-            timestamp: new Date().toISOString(),
-            asoos_vision: AIXTIV_SYMPHONY_VISION,
-            model: 'claude-3-7-v2', // Specify SuperClaude3 model version
-            datapipe: 'true',        // Enable data pipe for improved performance
-            performed_by: getCurrentAgentId() // Add agent attribution
+            model: "claude-3-sonnet-20240229", // Use a valid model name
+            max_tokens: 4000,
+            messages: [
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "text",
+                    text: `Task: ${task}\n\nPlease generate code in ${language || 'javascript'} for the task described above.${contextFiles.length > 0 ? '\n\nHere is additional context:' : ''}`
+                  }
+                ]
+              }
+            ]
           };
+
+          // Add context files to the content array if they exist
+          if (contextFiles.length > 0) {
+            for (const file of contextFiles) {
+              payload.messages[0].content.push({
+                type: "text",
+                text: `File: ${file.path}\n\n${file.content}`
+              });
+            }
+            
+            // Add the vision statement as the final context element
+            payload.messages[0].content.push({
+              type: "text",
+              text: `Vision Context: ${AIXTIV_SYMPHONY_VISION}`
+            });
+          }
           
           // Create an agent that ignores SSL certificate validation
           const httpsAgent = new https.Agent({
@@ -75,20 +96,47 @@ module.exports = async function generateCode(options) {
           const response = await fetch(functionUrl, {
             method: 'POST',  // Explicitly set HTTP method to POST
             headers: {
-              'Content-Type': 'application/json',
-              'X-Aixtiv-Region': 'us-west1-b',
-              'X-Aixtiv-Datapipe': 'superclaude3',
-              'X-Agent-ID': getCurrentAgentId() // Add agent ID in headers for tracking
-            },
+        'Content-Type': 'application/json',
+        'anthropic-api-key': process.env.ANTHROPIC_API_KEY || '',
+        'anthropic-version': '2023-06-01',
+        'X-Agent-ID': getCurrentAgentId() // Add agent ID in headers for tracking
+      },
             body: JSON.stringify(payload),
             agent: httpsAgent // Add this line to ignore SSL certificate validation
           });
           
           if (!response.ok) {
-            throw new Error(`API responded with status ${response.status}`);
+            // Capture the error response details
+            try {
+              const errorBody = await response.text();
+              console.error(`Anthropic API Error (${response.status}):\n`, errorBody);
+              throw new Error(`API responded with status ${response.status}: ${errorBody}`);
+            } catch (e) {
+              throw new Error(`API responded with status ${response.status}`);
+            }
           }
-          
-          return await response.json();
+
+          const jsonResponse = await response.json();
+
+          // Extract the code from the assistant's response
+          let code = '';
+          let explanation = '';
+
+          if (jsonResponse.content && jsonResponse.content.length > 0) {
+            // The Claude API response includes an array of content blocks
+            // We need to extract the code blocks from the response
+            for (const block of jsonResponse.content) {
+              if (block.type === 'text') {
+                code += block.text;
+              }
+            }
+          }
+
+          return {
+            status: 'completed',
+            code: code,
+            explanation: explanation
+          };
         } catch (error) {
           throw new Error(`Failed to generate code: ${error.message}`);
         }

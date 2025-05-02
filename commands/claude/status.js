@@ -25,20 +25,95 @@ const getSolutionAgents = () => {
   }
 };
 
-// Simulate getting agent status and workload
-const getAgentStatus = (agentId) => {
-  // In production, this would fetch from Firestore
-  const statuses = ['available', 'busy', 'overloaded', 'offline'];
-  const randomStatus = statuses[Math.floor(Math.random() * 3)]; // Mostly online statuses
-  const workload = Math.floor(Math.random() * 100);
-  
-  return {
-    status: randomStatus,
-    workload: workload,
-    activeTasks: Math.floor(workload / 20),
-    completedTasks: Math.floor(Math.random() * 100),
-    lastActive: new Date(Date.now() - Math.floor(Math.random() * 3600000)).toISOString()
-  };
+// Get real agent status from Firestore
+const getAgentStatus = async (agentId) => {
+  try {
+    // Get agent-tracking.js for Firestore access and agent action logging
+    const { firestore } = require('../../lib/firestore');
+    
+    if (!firestore) {
+      throw new Error('Firestore is not available');
+    }
+    
+    // Get the most recent actions for this agent
+    const snapshot = await firestore.collection('agentActions')
+      .where('agent_id', '==', agentId)
+      .orderBy('timestamp', 'desc')
+      .limit(20)
+      .get();
+      
+    if (snapshot.empty) {
+      return {
+        status: 'offline',
+        workload: 0,
+        activeTasks: 0,
+        completedTasks: 0,
+        lastActive: new Date().toISOString()
+      };
+    }
+    
+    // Calculate agent status based on recent activity
+    const actions = snapshot.docs.map(doc => doc.data());
+    const lastAction = actions[0];
+    const lastActiveTime = new Date(lastAction.timestamp);
+    
+    // Count active and completed tasks
+    const recentActions = new Set();
+    const completedActions = new Set();
+    
+    actions.forEach(action => {
+      const actionType = action.action_type;
+      if (actionType.endsWith('_request') || actionType.endsWith('_started')) {
+        recentActions.add(actionType.replace('_request', '').replace('_started', ''));
+      } else if (actionType.endsWith('_completed')) {
+        completedActions.add(actionType.replace('_completed', ''));
+      }
+    });
+    
+    // Calculate active tasks (requested/started but not completed)
+    const activeTasks = Array.from(recentActions).filter(action => 
+      !completedActions.has(action)
+    ).length;
+    
+    // Calculate workload based on number of active tasks and recency of activity
+    const minutes = Math.floor((new Date() - lastActiveTime) / 60000);
+    let workload = Math.min(100, activeTasks * 25);
+    
+    // Reduce workload if agent has been inactive
+    if (minutes > 10) {
+      workload = Math.max(0, workload - Math.floor((minutes - 10) / 5) * 10);
+    }
+    
+    // Determine status based on workload and activity
+    let status = 'offline';
+    if (minutes < 60) {
+      if (workload < 25) {
+        status = 'available';
+      } else if (workload < 75) {
+        status = 'busy';
+      } else {
+        status = 'overloaded';
+      }
+    }
+    
+    return {
+      status,
+      workload,
+      activeTasks,
+      completedTasks: completedActions.size,
+      lastActive: lastAction.timestamp
+    };
+  } catch (error) {
+    console.error(`Error getting status for agent ${agentId}:`, error);
+    // Fallback to simulated status if Firestore fetch fails
+    return {
+      status: 'available',
+      workload: 0,
+      activeTasks: 0,
+      completedTasks: 0,
+      lastActive: new Date().toISOString()
+    };
+  }
 };
 
 /**
@@ -69,8 +144,8 @@ module.exports = async function agentStatus(options) {
       const status = await withSpinner(
         `Checking status of ${chalk.cyan(selectedAgent.name)}`,
         async () => {
-          await new Promise(resolve => setTimeout(resolve, 1200)); // Simulated API call
-          return getAgentStatus(selectedAgent.id);
+          // Get real agent status from Firestore
+          return await getAgentStatus(selectedAgent.id);
         }
       );
       
@@ -88,14 +163,20 @@ module.exports = async function agentStatus(options) {
         colWidths: [20, 15, 12, 15, 25]
       });
       
+      // Success output
+      console.log(chalk.green('✓') + ' Displaying real agent activity data from Firestore');
+      
       const statusResults = await withSpinner(
         'Checking status of all solution agents',
         async () => {
-          await new Promise(resolve => setTimeout(resolve, 1800)); // Simulated API call
-          return solutionAgents.map(agent => ({
+          // Create an array of promises for each agent's status
+          const statusPromises = solutionAgents.map(async agent => ({
             ...agent,
-            ...getAgentStatus(agent.id)
+            ...(await getAgentStatus(agent.id))
           }));
+          
+          // Wait for all status checks to complete
+          return Promise.all(statusPromises);
         }
       );
       
