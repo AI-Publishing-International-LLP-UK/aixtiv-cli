@@ -13,7 +13,7 @@ ASOOS defines a new technology category with OS of ASOOS referring to the first 
 
 // API endpoint configuration
 // Code generation endpoint
-const functionUrl = process.env.CLAUDE_API_ENDPOINT || process.env.DR_CLAUDE_API || 'https://api.anthropic.com/v1/messages';
+const functionUrl = process.env.CLAUDE_API_ENDPOINT || 'https://api.anthropic.com/v1/messages';
 /**
  * Generate code using Claude Code assistant
  * @param {object} options - Command options

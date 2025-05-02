@@ -1,0 +1,56 @@
+steps:
+  # Initialize with gcloud
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'initialize'
+    entrypoint: 'gcloud'
+    args:
+      - 'config'
+      - 'set'
+      - 'project'
+      - 'api-for-warp-drive'
+
+  # Setup Kubernetes access
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'k8s-setup'
+    entrypoint: 'gcloud'
+    args:
+      - 'container'
+      - 'clusters'
+      - 'get-credentials'
+      - 'private-cluster-auto'
+      - '--zone=us-west1'
+      - '--project=api-for-warp-drive'
+
+  # Apply Kubernetes manifests
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'apply-manifests'
+    entrypoint: 'kubectl'
+    args:
+      - 'apply'
+      - '-f'
+      - 'infrastructure/staging/deployment.yaml'
+      - '-f'
+      - 'infrastructure/staging/service.yaml'
+
+  # Verify deployment
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'verify-deployment'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        echo "Waiting for deployment to stabilize..."
+        sleep 15
+        
+        # Check deployment status
+        kubectl rollout status deployment/aixtiv-cli-staging -n anthology-ai-staging --timeout=60s
+        
+        echo "✅ Deployment verification complete"
+
+timeout: '300s'  # 5 minutes
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'E2_MEDIUM'
+
+serviceAccount: 'projects/api-for-warp-drive/serviceAccounts/drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com'
+
