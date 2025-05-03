@@ -126,7 +126,7 @@ steps:
       - '-c'
       - |
         # Connect to GKE cluster
-        gcloud container clusters get-credentials private-cluster-auto --zone us-west1 --project api-for-warp-drive
+        gcloud container clusters get-credentials private-cluster-auto --zone us-west1-b --project api-for-warp-drive
         
         source bin/agent-tracking.sh
         log_agent_action "staging_deploy_start" "Starting deployment to staging"
@@ -139,7 +139,7 @@ steps:
         kubectl apply -f infrastructure/staging/service.yaml
         log_agent_action "staging_deploy_complete" "Completed deployment to staging"
     env:
-      - 'CLOUDSDK_COMPUTE_ZONE=us-west1'
+      - 'CLOUDSDK_COMPUTE_ZONE=us-west1-b'
       - 'CLOUDSDK_CONTAINER_CLUSTER=private-cluster-auto'
 
   # Test Staging Deployment

@@ -35,8 +35,8 @@ steps:
         gcloud builds submit \
           --config=config-sdk \
           tf apply \
-          --backend-bucket=gs://859242575175-us-west1-blueprint-config/${_DEPLOYMENT_NAME}/state \
-          --output-bucket=gs://859242575175-us-west1-blueprint-config/${_DEPLOYMENT_NAME}/r-0/apply_results \
+          --backend-bucket=gs://859242575175-${_REGION}-blueprint-config/${_DEPLOYMENT_NAME}/state \
+          --output-bucket=gs://859242575175-${_REGION}-blueprint-config/${_DEPLOYMENT_NAME}/r-0/apply_results \
           --working-dir=/workspace/apply \
           --add-attribution-labels=true \
           --im-lock-id=1732692659334471 \
@@ -53,4 +53,4 @@ options:
 
 substitutions:
   _DEPLOYMENT_NAME: 'generative-ai-document-summarization'
-  _REGION: 'us-west1'
+  _REGION: 'us-west1-b'
