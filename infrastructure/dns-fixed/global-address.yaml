@@ -1,0 +1,9 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeGlobalAddress
+metadata:
+  name: anthology-lb-ip
+  namespace: anthology-ai
+spec:
+  addressType: EXTERNAL
+  ipVersion: IPV4
+  networkTier: PREMIUM
