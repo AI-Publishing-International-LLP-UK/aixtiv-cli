@@ -5,8 +5,8 @@ const { firestore } = require('../../../lib/firestore');
 const { logAgentAction } = require('../../../lib/agent-tracking');
 
 // Claude API endpoint
-const CLAUDE_API_ENDPOINT = process.env.CLAUDE_API_ENDPOINT || process.env.DR_CLAUDE_API || 'https://api-dr-claude-us-west1.nw.gcp.com/v3';
-const PROJECT_DELEGATE_ENDPOINT = `${CLAUDE_API_ENDPOINT}/projects-delegate`;
+const CLAUDE_API_ENDPOINT = process.env.CLAUDE_API_ENDPOINT || 'https://api-dr-claude-us-west1.nw.gcp.com/v3';
+const PROJECT_DELEGATE_ENDPOINT = `${CLAUDE_API_ENDPOINT}/projects/delegate`;
 
 /**
  * Delegate a project to Dr. Claude for FMS orchestration
@@ -49,15 +49,14 @@ module.exports = async function delegateProjectToAgent(options) {
         });
 
         // Make actual API call to Dr. Claude endpoint
-        const response = await fetch(CLAUDE_API_ENDPOINT, {
+        const response = await fetch(PROJECT_DELEGATE_ENDPOINT, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'anthropic-api-key': process.env.ANTHROPIC_API_KEY || process.env.DR_CLAUDE_API || '',
-            'anthropic-version': '2023-06-01',
+            'x-api-key': process.env.CLAUDE_API_KEY || '',
             'x-agent-id': 'dr-claude-orchestrator'
           },
-          body: JSON.stringify({...projectData, operation: 'projects-delegate'})
+          body: JSON.stringify(projectData)
         });
 
         // Handle API errors
