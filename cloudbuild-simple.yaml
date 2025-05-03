@@ -26,4 +26,4 @@ options:
 
 substitutions:
   _DEPLOYMENT_NAME: 'generative-ai-document-summarization'
-  _REGION: 'us-west1'
+  _REGION: 'us-west1-b'
