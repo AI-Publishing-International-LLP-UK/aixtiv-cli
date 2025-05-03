@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAML SSO Visualization Center</title>
+    <style>
+        :root {
+            --primary: #0366d6;
+            --dark: #24292e;
+            --light: #f6f8fa;
+            --success: #28a745;
+            --pending: #f9c513;
+            --error: #d73a49;
+            --text: #24292e;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif;
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            background-color: var(--light);
+        }
+        
+        header {
+            background-color: var(--dark);
+            color: white;
+            padding: 1rem 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .card h3 {
+            margin-top: 0;
+            color: var(--dark);
+        }
+        
+        .card .value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .user-list {
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background-color: var(--light);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 1rem;
+            border-top: 1px solid #e1e4e8;
+        }
+        
+        .status-active {
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            color: var(--pending);
+            font-weight: bold;
+        }
+        
+        .status-error {
+            color: var(--error);
+            font-weight: bold;
+        }
+        
+        .flow-diagram {
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .flow-diagram img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .search-box {
+            margin-bottom: 1rem;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e1e4e8;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .tab-container {
+            margin-bottom: 2rem;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e1e4e8;
+        }
+        
+        .tab {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            margin-right: 0.5rem;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom: 2px solid var(--primary);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SAML SSO Visualization Center</h1>
+    </header>
+    
+    <div class="container">
+        <div class="dashboard">
+            <div class="card">
+                <h3>Active SSO Users</h3>
+                <div class="value">24</div>
+            </div>
+            <div class="card">
+                <h3>Pending Invitations</h3>
+                <div class="value">3</div>
+            </div>
+            <div class="card">
+                <h3>Failed Logins (24h)</h3>
+                <div class="value">2</div>
+            </div>
+            <div class="card">
+                <h3>SSO Health</h3>
+                <div class="value" style="color: var(--success);">✓</div>
+            </div>
+        </div>
+        
+        <div class="tab-container">
+            <div class="tabs">
+                <div class="tab active" data-tab="users">User Status</div>
+                <div class="tab" data-tab="flow">Authentication Flow</div>
+                <div class="tab" data-tab="config">SSO Configuration</div>
+            </div>
+            
+            <div class="tab-content active" id="users-tab">
+                <div class="search-box">
+                    <input type="text" placeholder="Search users...">
+                </div>
+                
+                <div class="user-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Status</th>
+                                <th>Last Login</th>
+                                <th>Identity Provider</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>johnsmith</td>
+                                <td><span class="status-active">Active</span></td>
+                                <td>2025-05-03 08:45</td>
+                                <td>Okta</td>
+                                <td><a href="#">Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>sarahconnor</td>
+                                <td><span class="status-active">Active</span></td>
+                                <td>2025-05-02 14:30</td>
+                                <td>Okta</td>
+                                <td><a href="#">Details</a></td>
+                            </tr>
+                            <tr>
+                                <td>mikebrown</td>
+                                <td><span class="status-pending">Pending</span></td>
+                                <td>Never</td>
+                                <td>Okta</td>
+                                <td><a href="#">Resend</a></td>
+                            </tr>
+                            <tr>
+                                <td>janesmith</td>
+                                <td><span class="status-error">Failed</span></td>
+                                <td>2025-05-03 09:15</td>
+                                <td>Okta</td>
+                                <td><a href="#">Troubleshoot</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="flow-tab">
+                <div class="flow-diagram">
+                    <h3>SAML Authentication Flow</h3>
+                    <img src="https://mermaid.ink/img/pako:eNp1kU1rwzAMhv-K8GmD0fzAhxU22GGDwS472KeLsOMG4tgorh3G2H-fk7SdbYNdjJ7XerFkF1oLLWlHT2zZWu-kofiY7jnXlpwYX182h43cg5QP0MwLOPbfFx-eCmD-CLnzZxDbd1LFuuprct5fgt-SrsFqU2y3F1itn8n5q5OPJTUSyvNEoa_PVQPZfMEfVndUGy8Sqn6QHGzIxNFJNREXynrLorxrsFx8AqM8iZZspbhLm5VqG9o0bd9q0Z-Hcx8aOpG_X9CJa10lJ-qFNngpstGhFVJQFCJqwyw40qeoRzKQcpx4Li9ZkA9NLijx7aiXpuf4G499hX4v4PtIQh_96BjZt9yXHP4FbZ6pew?type=png" alt="SAML Authentication Flow">
+                    
+                    <h3>Component Architecture</h3>
+                    <img src="https://mermaid.ink/img/pako:eNp1kcFqwzAMhl9F-NTBoHnguGuwww4bDHbpoZeQSE5icGxkuV0p4XefnXZd05UcLH3_L-TP7oXVaKm_YVDhxDuvDBuGNZ7J0WF94cM9TbdplldVRX7YQHcT1yTOXb9bYiXM7qGY3Fmc30FW75U0YnLTHKJ9rlDNOJdgITXVFJOaQQRtTY-aZPSMWRjxfqC5c5rCSEdHYzMchj_PtOdtQtPxJgzBvFMQdX-nScnp7-YkLtG-HlOHRuNHHAfoD7YYcXbR1KKIsjJ-Mdv85Yn9cjZpsdEq-gWy2XP0ZvtmLKJb-GbhzJmFH3-4E28m-P1ooYOz9ZSXTshBaFa1zJq8JuLAlGGCZE2ilUKygmWECsVkITPRvqWOzIKlf_c8oi2fJbw5tmLM3jqK7Ie7n5z-AkJ7yPs?type=png" alt="SAML Component Architecture">
+                </div>
+            </div>
+            
+            <div class="tab-content" id="config-tab">
+                <div class="card">
+                    <h3>GitHub SAML Configuration</h3>
+                    <table>
+                        <tr>
+                            <td><strong>Organization:</strong></td>
+                            <td>AI-Publishing-International-LLP-UK</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sign-on URL:</strong></td>
+                            <td>https://your-idp.com/saml/sso</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Issuer:</strong></td>
+                            <td>https://your-idp.com</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Certificate Expiry:</strong></td>
+                            <td>2026-05-03</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SCIM Provisioning:</strong></td>
+                            <td>Enabled</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Recovery Codes:</strong></td>
+                            <td>Generated (2025-01-15)</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Simple tab switching functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab + '-tab').classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
