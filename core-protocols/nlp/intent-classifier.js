@@ -1,430 +1,307 @@
 /**
- * Aixtiv CLI - Natural Language Intent Classifier
+ * Aixtiv CLI - Intent Classifier
  * 
- * This module is responsible for:
- * - Classifying natural language inputs into intents
- * - Mapping intents to Aixtiv CLI commands
- * - Extracting parameters from natural language
+ * This module analyzes natural language input and classifies it into commands
+ * and parameters that can be executed by the Aixtiv CLI.
  */
-
-const winston = require('winston');
-const fs = require('fs');
-const path = require('path');
-
-// Make sure logs directory exists
-const logsDir = path.join(__dirname, '../../logs');
-if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir, { recursive: true });
-}
-
-// Setup logging
-const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ 
-      filename: path.join(logsDir, 'nlp-intent-classifier.log')
-    })
-  ]
-});
 
 /**
- * Main intent classification function
+ * Command patterns for intent recognition
+ * Each pattern includes:
+ * - keywords: Words that indicate this command
+ * - flags: Parameter types to extract
+ * - examples: Example phrases
+ */
+const COMMAND_PATTERNS = [
+  {
+    command: 'claude:code:generate',
+    keywords: ['generate', 'create', 'code', 'function', 'class', 'write'],
+    flags: {
+      'task': { required: true, type: 'string' },
+      'language': { required: false, type: 'string', default: 'javascript' },
+      'output-file': { required: false, type: 'string' }
+    },
+    examples: [
+      'generate code for a factorial function',
+      'create a login component in React',
+      'write a function to parse JSON'
+    ]
+  },
+  {
+    command: 'claude:agent:delegate',
+    keywords: ['delegate', 'project', 'task', 'assign'],
+    flags: {
+      'project': { required: true, type: 'string' },
+      'description': { required: true, type: 'string' },
+      'priority': { required: false, type: 'string', default: 'medium' }
+    },
+    examples: [
+      'delegate a project called website redesign',
+      'assign task email validation to claude',
+      'create a new project for API integration'
+    ]
+  },
+  {
+    command: 'claude:automation:github',
+    keywords: ['github', 'repo', 'repository', 'automate'],
+    flags: {
+      'repository': { required: true, type: 'string' },
+      'action': { required: true, type: 'string', default: 'align' }
+    },
+    examples: [
+      'check security for our main repository',
+      'align files in the AIXTIV-SYMPHONY repo',
+      'clean up pending changes in repository'
+    ]
+  },
+  {
+    command: 'copilot:link',
+    keywords: ['link', 'connect', 'copilot'],
+    flags: {
+      'email': { required: true, type: 'string' },
+      'copilot': { required: true, type: 'string' }
+    },
+    examples: [
+      'link lucy as a copilot',
+      'connect copilot dr.grant@drgrant.live',
+      'add copilot for pr@coaching2100.com'
+    ]
+  },
+  {
+    command: 'domain:list',
+    keywords: ['list', 'show', 'domains', 'domain'],
+    flags: {},
+    examples: [
+      'list all domains',
+      'show domains',
+      'display available domains'
+    ]
+  },
+  {
+    command: 'help',
+    keywords: ['help', 'guide', 'tutorial', 'instructions'],
+    flags: {},
+    examples: [
+      'show help',
+      'I need help',
+      'show me the docs'
+    ]
+  }
+];
+
+/**
+ * Classify natural language input into a command intent
  * 
- * @param {string} input - Natural language input from user
- * @returns {Object} Object containing command, flags, and confidence
+ * @param {string} input - Natural language input
+ * @returns {Object} Intent object with command, flags, and confidence score
  */
 function classifyIntent(input) {
-  logger.debug(`Classifying intent for input: "${input}"`);
-  
-  // Normalize input
   const normalizedInput = input.toLowerCase().trim();
+  const words = normalizedInput.split(/\s+/);
   
-  // Try each intent classifier in order of priority
-  const classifiers = [
-    classifyDelegateIntent,
-    classifyCodeGenerationIntent,
-    classifyGitHubIntent,
-    classifyCopilotIntent,
-    // Add more classifiers as they're implemented
-  ];
-  
-  for (const classifier of classifiers) {
-    const result = classifier(normalizedInput);
-    if (result.confidence > 0.6) { // Threshold for accepting an intent
-      logger.info(`Classified intent: ${result.command} with confidence ${result.confidence}`);
-      return result;
-    }
-  }
-  
-  // Default fallback
-  logger.warn(`Could not classify intent for input: "${input}"`);
-  return {
+  // Initialize best match with empty values
+  let bestMatch = {
     command: null,
     flags: {},
     confidence: 0,
-    needsMoreInfo: true,
-    possibleIntents: guessPossibleIntents(normalizedInput)
+    possibleIntents: []
   };
-}
-
-/**
- * Guess possible intents when confidence is too low
- */
-function guessPossibleIntents(input) {
+  
+  // Track possible intents for ambiguous inputs
   const possibleIntents = [];
   
-  if (input.match(/project|delegate|assign|task|manage/)) {
-    possibleIntents.push('project delegation');
+  // Check against each command pattern
+  for (const pattern of COMMAND_PATTERNS) {
+    // Calculate how many keywords match
+    const matchingKeywords = pattern.keywords.filter(keyword => 
+      normalizedInput.includes(keyword.toLowerCase())
+    );
+    
+    // Calculate confidence based on keyword matches
+    let confidence = matchingKeywords.length / Math.max(pattern.keywords.length, 1);
+    
+    // Adjust confidence based on word length (longer inputs need more evidence)
+    confidence = confidence * (1 - (0.01 * Math.max(0, words.length - 5)));
+    
+    // If this pattern is a possible match, record it
+    if (confidence > 0.2) {
+      possibleIntents.push(pattern.command);
+    }
+    
+    // If this pattern is the best match so far, update our result
+    if (confidence > bestMatch.confidence) {
+      const extractedFlags = extractFlags(normalizedInput, pattern);
+      
+      // Only consider complete matches where required flags are present
+      const hasRequiredFlags = Object.entries(pattern.flags)
+        .filter(([_, config]) => config.required)
+        .every(([flag, _]) => extractedFlags[flag] !== undefined);
+      
+      if (hasRequiredFlags || confidence > 0.8) {
+        bestMatch = {
+          command: pattern.command,
+          flags: extractedFlags,
+          confidence: confidence
+        };
+      }
+    }
   }
   
-  if (input.match(/code|generate|create|function|component|build/)) {
-    possibleIntents.push('code generation');
+  // If there's no clear winner but we have possible intents, provide them
+  if (bestMatch.confidence < 0.4 && possibleIntents.length > 0) {
+    bestMatch.possibleIntents = possibleIntents;
   }
   
-  if (input.match(/github|repo|repository|git|commit|branch/)) {
-    possibleIntents.push('github automation');
-  }
-  
-  if (input.match(/copilot|co-pilot|link|connect|pilot/)) {
-    possibleIntents.push('copilot management');
-  }
-  
-  return possibleIntents;
+  return bestMatch;
 }
 
 /**
- * Extract entity values from input based on patterns
+ * Extract flag values from natural language input
+ * 
+ * @param {string} input - Natural language input
+ * @param {Object} pattern - Command pattern definition
+ * @returns {Object} Extracted flags and their values
  */
-function extractEntity(input, entityType) {
-  // Extract project names (usually quoted or clearly delineated)
-  if (entityType === 'projectName') {
-    // First check for quoted project names
-    const quotedMatch = input.match(/"([^"]+)"|'([^']+)'/);
-    if (quotedMatch) {
-      return quotedMatch.find(m => m && m !== quotedMatch[0]);
+function extractFlags(input, pattern) {
+  const flags = {};
+  
+  // Extract flags based on pattern definitions
+  for (const [flag, config] of Object.entries(pattern.flags)) {
+    let value = null;
+    
+    // Simple extraction strategies based on flag type
+    switch (flag) {
+      case 'task':
+        // For code generation tasks
+        if (pattern.command === 'claude:code:generate') {
+          // Get the part after "generate", "create", "code", etc.
+          for (const keyword of ['generate', 'create', 'code', 'function', 'write']) {
+            const index = input.indexOf(keyword);
+            if (index !== -1) {
+              value = input.substr(index + keyword.length).trim();
+              break;
+            }
+          }
+        }
+        break;
+        
+      case 'project':
+        // Look for project name after "called", "named", etc.
+        const projectMarkers = [' called ', ' named ', ' for ', ' titled '];
+        for (const marker of projectMarkers) {
+          const index = input.indexOf(marker);
+          if (index !== -1) {
+            value = input.substr(index + marker.length).trim();
+            // Trim quotes and periods
+            value = value.replace(/["'.]+$/, '');
+            break;
+          }
+        }
+        break;
+        
+      case 'language':
+        // Look for programming language names
+        const languages = ['javascript', 'python', 'java', 'typescript', 'c#', 'c++', 'ruby', 'go', 'php', 'rust'];
+        for (const lang of languages) {
+          if (input.includes(lang)) {
+            value = lang;
+            break;
+          }
+        }
+        break;
+        
+      case 'repository':
+        // Look for repo names
+        const repoMarkers = [' repo ', ' repository ', ' for repo ', ' for repository '];
+        for (const marker of repoMarkers) {
+          const index = input.indexOf(marker);
+          if (index !== -1) {
+            value = input.substr(index + marker.length).split(' ')[0].trim();
+            break;
+          }
+        }
+        
+        // If no repo specified but we need one, use 'main'
+        if (!value && pattern.command === 'claude:automation:github') {
+          const actionWords = ['check', 'secure', 'align', 'clean'];
+          if (actionWords.some(word => input.includes(word))) {
+            value = 'main';
+          }
+        }
+        break;
+        
+      case 'action':
+        // For GitHub automation
+        const actions = { 
+          'security': 'secure', 
+          'secure': 'secure',
+          'clean': 'clean', 
+          'cleanup': 'clean',
+          'align': 'align',
+          'format': 'align',
+          'memoria': 'memoria-assist',
+          'sync': 'sync'
+        };
+        
+        for (const [actionWord, actionValue] of Object.entries(actions)) {
+          if (input.includes(actionWord)) {
+            value = actionValue;
+            break;
+          }
+        }
+        break;
+        
+      case 'copilot':
+        // Extract copilot name or email
+        const copilotMarkers = [' copilot ', ' co-pilot ', ' as copilot', ' as a copilot'];
+        for (const marker of copilotMarkers) {
+          const index = input.indexOf(marker);
+          if (index !== -1) {
+            // Get word before or after marker
+            const beforeText = input.substr(0, index).trim().split(' ');
+            const afterText = input.substr(index + marker.length).trim().split(' ');
+            
+            // If there's a word after the marker, use it
+            if (afterText.length > 0 && afterText[0].length > 0) {
+              value = afterText[0];
+            }
+            // Otherwise use the word before the marker
+            else if (beforeText.length > 0) {
+              value = beforeText[beforeText.length - 1];
+            }
+            
+            // Clean up value
+            if (value) {
+              value = value.replace(/[,.:;'"]/, '');
+            }
+            break;
+          }
+        }
+        
+        // If explicit names mentioned
+        const namePatterns = ['lucy', 'sabina', 'memoria', 'grant', 'claude'];
+        for (const name of namePatterns) {
+          if (input.includes(name)) {
+            value = name;
+            break;
+          }
+        }
+        break;
     }
     
-    // Then check for "called X" or "named X" patterns, allowing multi-word names
-    const calledOrNamedMatch = input.match(/called\s+([A-Za-z0-9\s-_]+?)(?:\.|\,|\s+with|\s+to|\s+that|\s+which|\s+and|\s+$)/i);
-    if (calledOrNamedMatch) {
-      return calledOrNamedMatch[1].trim();
+    // If we found a value, add it to flags
+    if (value) {
+      flags[flag] = value;
     }
-    
-    // If no clear delineation, try to find noun phrases after certain key words
-    const afterKeyword = input.match(/project\s+(?:called|named|for|on)?\s+([A-Za-z0-9\s-_]+?)(?:\.|\,|\s+with|\s+to|\s+that|\s+which|\s+and|\s+$)/i);
-    if (afterKeyword) {
-      return afterKeyword[1].trim();
-    }
-    
-    // Look for phrases like "create a X project" or "start X project"
-    const createOrStartMatch = input.match(/(?:create|start|make|build)\s+(?:a|an|the)?\s+([A-Za-z0-9\s-_]+?)\s+project/i);
-    if (createOrStartMatch) {
-      return createOrStartMatch[1].trim();
+    // Otherwise use default if specified
+    else if (config.default) {
+      flags[flag] = config.default;
     }
   }
   
-  // Extract description (usually longer text after certain keywords)
-  if (entityType === 'description') {
-    const descMatch = input.match(/(?:to|that|which)\s+(.*?)(?:\.|\,|\s+with|\s+by|\s+before|\s+$)/i);
-    if (descMatch) {
-      return descMatch[1].trim();
-    }
-  }
-  
-  // Extract priority levels
-  if (entityType === 'priority') {
-    if (input.match(/\bhigh\s+priority\b|\bimportant\b|\bcritical\b|\burgent\b/i)) {
-      return 'high';
-    }
-    if (input.match(/\blow\s+priority\b|\bnot\s+urgent\b|\bnot\s+important\b|\bminor\b/i)) {
-      return 'low';
-    }
-    return 'medium'; // Default priority
-  }
-  
-  // Extract agent names
-  if (entityType === 'agent') {
-    const agentMatch = input.match(/(?:agent|to|with|using|via)\s+(?:dr\.\s*)?([a-z]+)(?:\b|\.|\,)/i);
-    if (agentMatch) {
-      return agentMatch[1].trim().toLowerCase();
-    }
-  }
-  
-  // Extract programming language
-  if (entityType === 'language') {
-    const languageMatch = input.match(/\b(javascript|js|python|typescript|ts|java|ruby|go|rust|php|c\+\+|csharp|c#)\b/i);
-    if (languageMatch) {
-      const lang = languageMatch[1].toLowerCase();
-      
-      // Normalize language names
-      const langMap = {
-        'js': 'javascript',
-        'ts': 'typescript',
-        'c#': 'csharp'
-      };
-      
-      return langMap[lang] || lang;
-    }
-    return 'javascript'; // Default language
-  }
-  
-  // Extract repository names
-  if (entityType === 'repository') {
-    const repoMatch = input.match(/(?:repo|repository)\s+([A-Za-z0-9_-]+)/i);
-    if (repoMatch) {
-      return repoMatch[1];
-    }
-  }
-  
-  return null;
-}
-
-/**
- * Classifier for project delegation intent (claude:agent:delegate)
- */
-function classifyDelegateIntent(input) {
-  let confidence = 0;
-  const result = {
-    command: 'claude:agent:delegate',
-    flags: {},
-    confidence: 0
-  };
-  
-  // Check for delegation keywords
-  if (input.match(/delegate|delegat|assign|project|task|manage|create\s+(?:a|an|the)?\s+project|make\s+(?:a|an|the)?\s+project|start\s+(?:a|an|the)?\s+project/i)) {
-    confidence += 0.3;
-    
-    // Extract project name
-    const projectName = extractEntity(input, 'projectName');
-    if (projectName) {
-      result.flags['project'] = projectName;
-      confidence += 0.2;
-    }
-    
-    // Extract description
-    const description = extractEntity(input, 'description');
-    if (description) {
-      result.flags['description'] = description;
-      confidence += 0.2;
-    } else {
-      // Add a default description if none was provided
-      // If we have a project name, use it in the description
-      if (projectName) {
-        result.flags['description'] = `Project created for ${projectName} via natural language interface`;
-      } else {
-        result.flags['description'] = 'Project created via natural language interface';
-      }
-      // Less confidence boost for default description
-      confidence += 0.1;
-    }
-    
-    // Extract priority
-    const priority = extractEntity(input, 'priority');
-    if (priority) {
-      result.flags['priority'] = priority;
-      confidence += 0.1;
-    }
-    
-    // Extract agent assignment
-    const agent = extractEntity(input, 'agent');
-    if (agent) {
-      result.flags['assign-to'] = agent;
-      confidence += 0.1;
-    }
-    
-    // Additional confidence if certain key phrases are present
-    if (input.match(/claude.*delegate|delegate.*project|assign.*task|create.*project/i)) {
-      confidence += 0.2;
-    }
-    
-    // Higher confidence for very clear project creation phrases
-    if (input.match(/create\s+(?:a|an|the)?\s+project|make\s+(?:a|an|the)?\s+project|start\s+(?:a|an|the)?\s+project/i)) {
-      confidence += 0.1;
-    }
-  }
-  
-  result.confidence = Math.min(confidence, 1.0);
-  return result;
-}
-
-/**
- * Classifier for code generation intent (claude:code:generate)
- */
-function classifyCodeGenerationIntent(input) {
-  let confidence = 0;
-  const result = {
-    command: 'claude:code:generate',
-    flags: {},
-    confidence: 0
-  };
-  
-  // Check for code generation keywords
-  if (input.match(/generat|code|creat|build|develop|function|component|class|script|write code/i)) {
-    confidence += 0.3;
-    
-    // Extract task description
-    const description = extractEntity(input, 'description');
-    if (description) {
-      result.flags['task'] = description;
-      confidence += 0.3;
-    } else {
-      // If no specific description, use the whole input as task
-      result.flags['task'] = input;
-      confidence += 0.1;
-    }
-    
-    // Extract programming language
-    const language = extractEntity(input, 'language');
-    if (language) {
-      result.flags['language'] = language;
-      confidence += 0.2;
-    }
-    
-    // Additional confidence if certain key phrases are present
-    if (input.match(/generat.*code|create.*component|build.*function|write.*code/i)) {
-      confidence += 0.2;
-    }
-  }
-  
-  result.confidence = Math.min(confidence, 1.0);
-  return result;
-}
-
-/**
- * Classifier for GitHub automation intent (claude:automation:github)
- */
-function classifyGitHubIntent(input) {
-  let confidence = 0;
-  const result = {
-    command: 'claude:automation:github',
-    flags: {},
-    confidence: 0
-  };
-  
-  // Check for GitHub keywords
-  if (input.match(/github|git|repo|repository|branch|commit|pull request|pr|sync|align|clean|secure/i)) {
-    confidence += 0.3;
-    
-    // Extract repository name
-    const repo = extractEntity(input, 'repository');
-    if (repo) {
-      result.flags['repository'] = repo;
-      confidence += 0.2;
-    }
-    
-    // Determine action type
-    if (input.match(/align|organiz|structur|best practice/i)) {
-      result.flags['action'] = 'align';
-      confidence += 0.2;
-    } else if (input.match(/clean|cleanup|tidy|remove|delete/i)) {
-      result.flags['action'] = 'clean';
-      confidence += 0.2;
-    } else if (input.match(/secure|security|check|vulnerab|scan/i)) {
-      result.flags['action'] = 'secure';
-      confidence += 0.2;
-    } else if (input.match(/sync|synchronize|update|pull|push/i)) {
-      result.flags['action'] = 'sync';
-      confidence += 0.2;
-    } else if (input.match(/memoria|assist|anthology|document/i)) {
-      result.flags['action'] = 'memoria-assist';
-      confidence += 0.2;
-    }
-    
-    // Additional confidence if certain key phrases are present
-    if (input.match(/github.*repo|manage.*repo|clean.*github|secure.*repository/i)) {
-      confidence += 0.2;
-    }
-  }
-  
-  result.confidence = Math.min(confidence, 1.0);
-  return result;
-}
-
-/**
- * Classifier for copilot management intent
- */
-function classifyCopilotIntent(input) {
-  let confidence = 0;
-  const result = {
-    command: null,
-    flags: {},
-    confidence: 0
-  };
-  
-  // Check for copilot keywords
-  if (input.match(/copilot|co-pilot|link|connect|pilot/i)) {
-    confidence += 0.3;
-    
-    // Determine specific copilot command
-    if (input.match(/link|connect|add|create|assign|new/i)) {
-      result.command = 'copilot:link';
-      confidence += 0.2;
-      
-      // Extract copilot name/email
-      const copilot = extractEntity(input, 'agent');
-      if (copilot) {
-        result.flags['copilot'] = copilot;
-        confidence += 0.2;
-      }
-    } else if (input.match(/unlink|disconnect|remove|delete/i)) {
-      result.command = 'copilot:unlink';
-      confidence += 0.2;
-      
-      // Extract copilot name/email
-      const copilot = extractEntity(input, 'agent');
-      if (copilot) {
-        result.flags['copilot'] = copilot;
-        confidence += 0.2;
-      }
-    } else if (input.match(/list|show|display/i)) {
-      result.command = 'copilot:list';
-      confidence += 0.2;
-    } else if (input.match(/verify|check|validate|confirm/i)) {
-      result.command = 'copilot:verify';
-      confidence += 0.2;
-      
-      // Extract copilot name/email
-      const copilot = extractEntity(input, 'agent');
-      if (copilot) {
-        result.flags['copilot'] = copilot;
-        confidence += 0.2;
-      }
-    } else if (input.match(/grant|give|allow|access/i)) {
-      result.command = 'copilot:grant';
-      confidence += 0.2;
-      
-      // Extract copilot name/email
-      const copilot = extractEntity(input, 'agent');
-      if (copilot) {
-        result.flags['copilot'] = copilot;
-        confidence += 0.2;
-      }
-      
-      // Try to extract resource
-      const resource = extractEntity(input, 'repository');
-      if (resource) {
-        result.flags['resource'] = resource;
-        confidence += 0.1;
-      }
-    }
-    
-    // Additional confidence if certain key phrases are present
-    if (input.match(/link.*copilot|verify.*copilot|copilot.*access/i)) {
-      confidence += 0.2;
-    }
-  }
-  
-  result.confidence = Math.min(confidence, 1.0);
-  return result;
+  return flags;
 }
 
 module.exports = {
-  classifyIntent,
-  extractEntity
+  classifyIntent
 };
-

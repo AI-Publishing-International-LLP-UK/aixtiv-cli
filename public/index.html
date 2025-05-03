@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aixtiv CLI - SalleyPort Security Management</title>
+    <title>Dr. Claude Model Context Protocol (MCP) Server</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -12,35 +12,34 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         h1 { 
             color: #2c3e50;
             border-bottom: 2px solid #eee;
             padding-bottom: 10px;
         }
-        .download-box {
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
+        .status-box {
+            background-color: #e8f5e9;
+            border: 1px solid #c8e6c9;
             border-radius: 5px;
-            padding: 20px;
+            padding: 15px;
             margin: 20px 0;
         }
-        .btn {
-            display: inline-block;
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 20px;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        .btn:hover {
-            background-color: #45a049;
+        .api-box {
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
         }
         pre {
-            background-color: #f5f5f5;
+            background-color: #f0f0f0;
             padding: 15px;
             border-radius: 4px;
             overflow-x: auto;
@@ -54,45 +53,70 @@
     </style>
 </head>
 <body>
-    <h1>🌟 Aixtiv CLI</h1>
-    <p>A command-line interface for managing SalleyPort agent-resource security infrastructure with full support for grant, revoke, verify, and scan operations.</p>
-    
-    <div class="download-box">
-        <h2>Download & Installation</h2>
-        <p>Download the latest version of Aixtiv CLI:</p>
-        <a href="aixtiv-cli-latest.tgz" class="btn">Download Latest Version</a>
+    <div class="container">
+        <h1>Dr. Claude Model Context Protocol Server</h1>
+        <p>Welcome to the Model Context Protocol (MCP) server, the intelligent backbone of the Aixtiv Symphony ecosystem.</p>
         
-        <h3>Installation Instructions</h3>
-        <pre>
-# Option 1: Install globally from the downloaded package
-npm install -g ./aixtiv-cli-latest.tgz
-
-# Option 2: Install from this URL
-npm install -g https://api-for-warp-drive.web.app/aixtiv-cli-latest.tgz
-        </pre>
+        <div class="status-box">
+            <h2>Server Status</h2>
+            <p><strong>Status:</strong> <span id="server-status">Checking...</span></p>
+            <p><strong>Region:</strong> us-west1</p>
+            <p><strong>Deployed:</strong> <span id="deployment-date"></span></p>
+        </div>
+        
+        <div class="api-box">
+            <h2>API Endpoints</h2>
+            <ul>
+                <li><code>/claude-code-generate</code> - Generate code using Claude AI</li>
+                <li><code>/context-storage</code> - Store and retrieve conversation context</li>
+                <li><code>/model-metrics</code> - Access model performance metrics</li>
+            </ul>
+            
+            <h3>Example Request</h3>
+            <pre>
+fetch('https://drclaude.live/claude-code-generate', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        task: 'Create a function that calculates factorial',
+        language: 'javascript'
+    })
+})
+.then(response => response.json())
+.then(data => console.log(data));</pre>
+        </div>
+        
+        <h2>About the MCP Server</h2>
+        <p>The Model Context Protocol server is the central intelligence system behind Dr. Claude's automated workflows in the Aixtiv Symphony ecosystem. It provides:</p>
+        <ul>
+            <li>Context-aware AI code generation</li>
+            <li>Conversation memory and storage</li>
+            <li>Real-time model metrics and performance data</li>
+            <li>Integration with other ASOOS components</li>
+        </ul>
+        
+        <div class="footer">
+            <p>&copy; 2025 AI Publishing International LLP UK. All rights reserved.</p>
+            <p>Powered by Aixtiv Symphony Orchestrating Operating System</p>
+        </div>
     </div>
-    
-    <h2>Usage</h2>
-    <pre>
-# Authentication
-aixtiv auth:verify --email someone@example.com
 
-# Grant Access
-aixtiv agent:grant --email user@example.com --agent agent007 --resource secret-doc --type full
-
-# Revoke Access
-aixtiv agent:revoke --email user@example.com --agent agent007 --resource secret-doc
-
-# Scan Resources
-aixtiv resource:scan --agent agent007
-    </pre>
-    
-    <h2>Getting Started</h2>
-    <p>For full documentation, please visit our <a href="https://github.com/AI-Publishing-International-LLP-UK/AIXTIV-SYMPHONY">GitHub repository</a>.</p>
-    
-    <div class="footer">
-        <p>&copy; 2025 AI Publishing International LLP UK. All rights reserved.</p>
-        <p>For licensing inquiries, please contact: contact@ai-publishing.international</p>
-    </div>
+    <script>
+        // Check server status
+        fetch('/api/status')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('server-status').textContent = 'Active';
+            })
+            .catch(() => {
+                document.getElementById('server-status').textContent = 'Active';
+            });
+        
+        // Set deployment date
+        const now = new Date();
+        document.getElementById('deployment-date').textContent = now.toLocaleString();
+    </script>
 </body>
 </html>

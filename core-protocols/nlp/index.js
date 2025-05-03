@@ -7,9 +7,9 @@
 
 const winston = require('winston');
 const { execSync } = require('child_process');
-const { classifyIntent } = require('./intent-classifier');
 const fs = require('fs');
 const path = require('path');
+const { classifyIntent } = require('./intent-classifier');
 
 // Make sure logs directory exists
 const logsDir = path.join(__dirname, '../../logs');
@@ -220,4 +220,3 @@ module.exports = {
   processNaturalLanguage,
   buildCommandString
 };
-

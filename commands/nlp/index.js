@@ -14,6 +14,7 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const figlet = require('figlet');
 const Table = require('cli-table3');
+const boxen = require('boxen'); // Add this line to require boxen
 
 // Get the root directory of the project
 const projectRoot = path.resolve(__dirname, '../..');
@@ -209,6 +210,13 @@ function displayHelp() {
   console.log(chalk.cyan('│') + ' ' + chalk.yellow('Natural Language Interface to Aixtiv CLI') + ' '.repeat(14) + chalk.cyan('│'));
   console.log(chalk.cyan('└' + '─'.repeat(50) + '┘'));
   console.log('');
+}
+
+/**
+ * Process a single command in non-interactive mode
+ * 
+ * @param {string} inputString - Natural language input
+ * @param {Object} options - Command options
  * @returns {number} Exit code (0 for success, 1 for failure)
  */
 function processSingleCommand(inputString, options) {
