@@ -7,22 +7,68 @@ const ora = require('ora');
 const { parseOptions, withSpinner, displayResult } = require('../../lib/utils');
 const Table = require('cli-table3');
 
+
 // Get all VLS solutions from directory
 const getSolutionAgents = () => {
-  const solutionsPath = '/Users/as/asoos/vls/solutions';
-  try {
-    return fs.readdirSync(solutionsPath)
-      .filter(file => file.startsWith('dr-') || file.startsWith('professor-'))
-      .filter(file => fs.statSync(path.join(solutionsPath, file)).isDirectory())
-      .map(dir => ({
-        id: dir.toLowerCase(),
-        name: dir.replace(/-/g, ' '),
-        path: path.join(solutionsPath, dir)
-      }));
-  } catch (error) {
-    console.error(chalk.red('Error loading solution agents:'), error.message);
-    return [];
-  }
+  // Define our agents directly to ensure consistent display
+  return [
+    {
+      id: 'dr-burby-s2do-blockchain',
+      name: 'dr burby s2do blockchain',
+    },
+    {
+      id: 'dr-claude-orchestrator',
+      name: 'dr claude orchestrator',
+    },
+    {
+      id: 'dr-cypriot-rewards',
+      name: 'dr cypriot rewards',
+    },
+    {
+      id: 'dr-grant-cybersecurity',
+      name: 'dr grant cybersecurity',
+    },
+    {
+      id: 'dr-grant-sallyport',
+      name: 'dr grant sallyport',
+    },
+    {
+      id: 'dr-lucy-flight-memory',
+      name: 'dr lucy flight memory',
+    },
+    {
+      id: 'dr-maria-brand-director',
+      name: 'dr maria brand director',
+    },
+    {
+      id: 'dr-maria-support',
+      name: 'dr maria support',
+    },
+    {
+      id: 'dr-match-bid-suite',
+      name: 'dr match bid suite',
+    },
+    {
+      id: 'dr-memoria-anthology',
+      name: 'dr memoria anthology',
+    },
+    {
+      id: 'dr-roark-wish-visionary',
+      name: 'dr roark wish visionary',
+    },
+    {
+      id: 'dr-sabina-dream-counselor',
+      name: 'dr sabina dream counselor',
+    },
+    {
+      id: 'professor-lee-q4d-trainer',
+      name: 'professor lee q4d trainer',
+    },
+    {
+      id: 'professor-mia-team-leadership',
+      name: 'professor mia team leadership',
+    }
+  ];
 };
 
 // Get real agent status from Firestore
@@ -86,7 +132,7 @@ const getAgentStatus = async (agentId) => {
     
     // Determine status based on workload and activity
     let status = 'offline';
-    if (minutes < 60) {
+    if (minutes < 1440) {
       if (workload < 25) {
         status = 'available';
       } else if (workload < 75) {
