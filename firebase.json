@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "drclaude-live",
     "public": "public",
     "ignore": [
       "firebase.json",
@@ -8,12 +9,21 @@
     ],
     "rewrites": [
       {
-        "source": "**",
-        "destination": "/index.html"
+        "source": "/claude-code-generate",
+        "function": "claudeCodeGenerate"
+      },
+      {
+        "source": "/context-storage",
+        "function": "contextStorage"
+      },
+      {
+        "source": "/model-metrics",
+        "function": "modelMetrics"
       }
     ]
   },
   "functions": {
-    "source": "functions"
+    "source": "functions",
+    "runtime": "nodejs22"
   }
 }

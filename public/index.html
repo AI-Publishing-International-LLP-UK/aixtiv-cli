@@ -1,122 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dr. Claude Model Context Protocol (MCP) Server</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f9f9f9;
-        }
-        .container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        h1 { 
-            color: #2c3e50;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
-        .status-box {
-            background-color: #e8f5e9;
-            border: 1px solid #c8e6c9;
-            border-radius: 5px;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        .api-box {
-            background-color: #f5f5f5;
-            border-radius: 5px;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        pre {
-            background-color: #f0f0f0;
-            padding: 15px;
-            border-radius: 4px;
-            overflow-x: auto;
-        }
-        .footer {
-            margin-top: 40px;
-            color: #6c757d;
-            font-size: 0.9em;
-            text-align: center;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dr. Claude MCP Server</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f0f2f5;
+    }
+    .container {
+      max-width: 800px;
+      padding: 40px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #2c3e50;
+      margin-top: 0;
+    }
+    h2 {
+      color: #34495e;
+    }
+    pre {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    code {
+      font-family: 'Courier New', monospace;
+    }
+    .endpoint {
+      margin-bottom: 30px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Dr. Claude Model Context Protocol Server</h1>
-        <p>Welcome to the Model Context Protocol (MCP) server, the intelligent backbone of the Aixtiv Symphony ecosystem.</p>
-        
-        <div class="status-box">
-            <h2>Server Status</h2>
-            <p><strong>Status:</strong> <span id="server-status">Checking...</span></p>
-            <p><strong>Region:</strong> us-west1</p>
-            <p><strong>Deployed:</strong> <span id="deployment-date"></span></p>
-        </div>
-        
-        <div class="api-box">
-            <h2>API Endpoints</h2>
-            <ul>
-                <li><code>/claude-code-generate</code> - Generate code using Claude AI</li>
-                <li><code>/context-storage</code> - Store and retrieve conversation context</li>
-                <li><code>/model-metrics</code> - Access model performance metrics</li>
-            </ul>
-            
-            <h3>Example Request</h3>
-            <pre>
-fetch('https://drclaude.live/claude-code-generate', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        task: 'Create a function that calculates factorial',
-        language: 'javascript'
-    })
-})
-.then(response => response.json())
-.then(data => console.log(data));</pre>
-        </div>
-        
-        <h2>About the MCP Server</h2>
-        <p>The Model Context Protocol server is the central intelligence system behind Dr. Claude's automated workflows in the Aixtiv Symphony ecosystem. It provides:</p>
-        <ul>
-            <li>Context-aware AI code generation</li>
-            <li>Conversation memory and storage</li>
-            <li>Real-time model metrics and performance data</li>
-            <li>Integration with other ASOOS components</li>
-        </ul>
-        
-        <div class="footer">
-            <p>&copy; 2025 AI Publishing International LLP UK. All rights reserved.</p>
-            <p>Powered by Aixtiv Symphony Orchestrating Operating System</p>
-        </div>
-    </div>
+  <div class="container">
+    <h1>Model Context Protocol (MCP) Server</h1>
+    <p>Welcome to the Dr. Claude MCP Server. This server provides AI code generation, context storage, and model metrics.</p>
+    
+    <h2>Available Endpoints</h2>
+    
+    <div class="endpoint">
+      <h3>/claude-code-generate</h3>
+      <p>Generate code using Dr. Claude's intelligence engine.</p>
+      <pre><code>POST /claude-code-generate
+Content-Type: application/json
 
-    <script>
-        // Check server status
-        fetch('/api/status')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('server-status').textContent = 'Active';
-            })
-            .catch(() => {
-                document.getElementById('server-status').textContent = 'Active';
-            });
-        
-        // Set deployment date
-        const now = new Date();
-        document.getElementById('deployment-date').textContent = now.toLocaleString();
-    </script>
+{
+  "task": "Create a function that calculates factorial",
+  "language": "javascript"
+}</code></pre>
+    </div>
+    
+    <div class="endpoint">
+      <h3>/context-storage</h3>
+      <p>Store and retrieve conversation context.</p>
+      <pre><code>GET /context-storage
+POST /context-storage
+Content-Type: application/json
+
+{
+  "context": "Your context data here",
+  "sessionId": "unique-session-id"
+}</code></pre>
+    </div>
+    
+    <div class="endpoint">
+      <h3>/model-metrics</h3>
+      <p>Get real-time metrics about model performance.</p>
+      <pre><code>GET /model-metrics</code></pre>
+    </div>
+    
+    <p>For more information, see the <a href="https://github.com/AI-Publishing-International-LLP-UK/AIXTIV-SYMPHONY">API documentation</a>.</p>
+  </div>
 </body>
 </html>

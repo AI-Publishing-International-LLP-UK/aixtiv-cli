@@ -46,7 +46,7 @@ verify_manifests() {
     if [ ! -f "$manifest_dir/service.yaml" ]; then
         log "ERROR" "Service manifest $manifest_dir/service.yaml not found" "$RED"
         return 1
-    }
+    fi
     
     log "INFO" "All required manifest files exist" "$BLUE"
     return 0

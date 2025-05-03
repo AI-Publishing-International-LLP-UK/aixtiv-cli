@@ -2,7 +2,8 @@
 set -e
 
 # Deploy zone and get IP
-gcloud deployment-manager deployments create anthology-infra --config=infrastructure/dns/zone-setup.yaml
+gcloud deployment-manager deployments create anthology-infra --config=infrastructure/dns-fixed/dns-zone.yaml
+gcloud deployment-manager deployments create anthology-ip --config=infrastructure/dns-fixed/global-address.yaml
 LB_IP=$(gcloud compute addresses describe anthology-lb-ip --global --format='get(address)')
 
 # Update backend service
