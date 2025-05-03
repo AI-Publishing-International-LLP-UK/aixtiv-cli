@@ -100,6 +100,13 @@ program
   .requiredOption('-r, --resource <resource>', 'Resource ID')
   .action(agentRevoke);
 
+// Agent activation command
+program
+  .command('agent:activate')
+  .description('Activate agents and mark them as available')
+  .option('-a, --agent <agent>', 'Specific agent to activate (omit to activate all)')
+  .action(require('../commands/agent/activate'));
+
 // Resource commands
 program
   .command('resource:scan')
