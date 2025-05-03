@@ -1,0 +1,13 @@
+# Instructions for setting up the cron job
+
+# To add the scheduled task to run every 6 hours, run:
+# crontab -e
+
+# Then add this line:
+0 */6 * * * /absolute/path/to/aixtiv-cli/scripts/maintain-agent-status.sh >> /absolute/path/to/aixtiv-cli/logs/agent-maintenance.log 2>&1
+
+# Replace /absolute/path/to/aixtiv-cli with the actual path to your project
+# For example, for your current directory:
+0 */6 * * * /Users/as/asoos/aixtiv-cli/scripts/maintain-agent-status.sh >> /Users/as/asoos/aixtiv-cli/logs/agent-maintenance.log 2>&1
+
+# Save and exit the editor to apply the changes
