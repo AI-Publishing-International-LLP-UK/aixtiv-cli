@@ -1,4 +1,4 @@
-#\!/bin/bash
+#!/bin/bash
 # Agent Monitoring Script
 # Monitors agent activity and generates reports
 
