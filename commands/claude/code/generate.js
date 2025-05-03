@@ -5,6 +5,7 @@ const path = require('path');
 const https = require('https');
 const { parseOptions, withSpinner, displayResult } = require('../../../lib/utils');
 const { logAgentAction, getCurrentAgentId } = require('../../../lib/agent-tracking');
+const fallbackGenerator = require('./fallback-generator');
 
 // AIXTIV SYMPHONY vision statement for alignment with ASOOS principles
 const AIXTIV_SYMPHONY_VISION = `AIXTIV SYMPHONY ORCHESTRATING OPERATING SYSTEM - The Definitive Architecture & Vision Statement
@@ -14,11 +15,15 @@ ASOOS defines a new technology category with OS of ASOOS referring to the first 
 // API endpoint configuration
 // Code generation endpoint
 const functionUrl = process.env.CLAUDE_API_ENDPOINT || process.env.DR_CLAUDE_API || 'https://api.anthropic.com/v1/messages';
+
 /**
  * Generate code using Claude Code assistant
  * @param {object} options - Command options
  */
+// Debug display functionality is available through utils
+
 module.exports = async function generateCode(options) {
+  
   const { task, language, outputFile, context } = parseOptions(options);
   
   // Log the code generation request with agent attribution
@@ -53,7 +58,7 @@ module.exports = async function generateCode(options) {
     
     // Execute code generation with spinner
     const result = await withSpinner(
-      `Claude Code is generating ${chalk.cyan(language)} code for your task`,
+      `Claude Code is generating ${chalk.cyan(language || 'javascript')} code for your task`,
       async () => {
         try {
           const payload = {
@@ -93,50 +98,63 @@ module.exports = async function generateCode(options) {
             rejectUnauthorized: false
           });
           
-          const response = await fetch(functionUrl, {
-            method: 'POST',  // Explicitly set HTTP method to POST
-            headers: {
-        'Content-Type': 'application/json',
-        'anthropic-api-key': process.env.ANTHROPIC_API_KEY || process.env.DR_CLAUDE_API || '',
-        'anthropic-version': '2023-06-01',
-        'X-Agent-ID': getCurrentAgentId() // Add agent ID in headers for tracking
-      },
-            body: JSON.stringify(payload),
-            agent: httpsAgent // Add this line to ignore SSL certificate validation
-          });
-          
-          if (!response.ok) {
-            // Capture the error response details
-            try {
-              const errorBody = await response.text();
-              console.error(`Anthropic API Error (${response.status}):\n`, errorBody);
-              throw new Error(`API responded with status ${response.status}: ${errorBody}`);
-            } catch (e) {
-              throw new Error(`API responded with status ${response.status}`);
-            }
-          }
-
-          const jsonResponse = await response.json();
-
-          // Extract the code from the assistant's response
-          let code = '';
-          let explanation = '';
-
-          if (jsonResponse.content && jsonResponse.content.length > 0) {
-            // The Claude API response includes an array of content blocks
-            // We need to extract the code blocks from the response
-            for (const block of jsonResponse.content) {
-              if (block.type === 'text') {
-                code += block.text;
+          try {
+            const response = await fetch(functionUrl, {
+              method: 'POST',  // Explicitly set HTTP method to POST
+              headers: {
+                'Content-Type': 'application/json',
+                'anthropic-api-key': process.env.ANTHROPIC_API_KEY || process.env.DR_CLAUDE_API || '',
+                'anthropic-version': '2023-06-01',
+                'X-Agent-ID': getCurrentAgentId() // Add agent ID in headers for tracking
+              },
+              body: JSON.stringify(payload),
+              agent: httpsAgent, // Add this line to ignore SSL certificate validation
+              timeout: 15000 // 15 second timeout
+            });
+            
+            if (!response.ok) {
+              // Capture the error response details
+              try {
+                const errorBody = await response.text();
+                console.error(`Anthropic API Error (${response.status}):\n`, errorBody);
+                throw new Error(`API responded with status ${response.status}: ${errorBody}`);
+              } catch (e) {
+                throw new Error(`API responded with status ${response.status}`);
               }
             }
-          }
 
-          return {
-            status: 'completed',
-            code: code,
-            explanation: explanation
-          };
+            const jsonResponse = await response.json();
+
+            // Extract the code from the assistant's response
+            let code = '';
+            let explanation = '';
+
+            if (jsonResponse.content && jsonResponse.content.length > 0) {
+              // The Claude API response includes an array of content blocks
+              // We need to extract the code blocks from the response
+              for (const block of jsonResponse.content) {
+                if (block.type === 'text') {
+                  code += block.text;
+                }
+              }
+            }
+
+                      } catch (error) {
+            // If API call fails with network error or timeout, use fallback generator
+            if (error.message.includes('ECONNREFUSED') || 
+                error.message.includes('404') || 
+                error.message.includes('timeout') ||
+                error.message.includes('network')) {
+              
+              console.warn(chalk.yellow("\nCould not reach Claude API endpoint. Using local fallback generator."));
+              
+              // Use fallback generator
+              const fallbackResult = fallbackGenerator.generateCode(task, language || 'javascript');
+              
+                          } else {
+              throw error;
+            }
+          }
         } catch (error) {
           throw new Error(`Failed to generate code: ${error.message}`);
         }
@@ -148,21 +166,27 @@ module.exports = async function generateCode(options) {
       success: result.status === 'completed',
       task,
       language: language || 'javascript',
-      agent_id: getCurrentAgentId()
+      agent_id: getCurrentAgentId(),
+      usedFallback: result.isLocalFallback || false
     });
     
     // Display result
     displayResult({
       success: result.status === 'completed',
-      message: `Code generation ${result.status === 'completed' ? 'successfully completed' : 'failed'}`,
+      message: `Code generation ${result.status === 'completed' ? 'successfully completed' : 'failed'}${result.isLocalFallback ? ' (using local fallback)' : ''}`,
       details: {
         task: task,
         language: language || 'javascript',
-        performed_by: getCurrentAgentId()
+        performed_by: getCurrentAgentId(),
+        mode: result.isLocalFallback ? 'local' : 'api'
       }
     });
     
     if (result.status === 'completed' && result.code) {
+      if (result.isLocalFallback) {
+        console.log(chalk.yellow('\nNote: This code was generated using a LOCAL FALLBACK generator because the Claude API was not available.'));
+      }
+      
       console.log(chalk.bold('\nGenerated Code:'));
       console.log(chalk.gray('─'.repeat(50)));
       console.log(result.code);
@@ -183,7 +207,8 @@ module.exports = async function generateCode(options) {
           logAgentAction('code_saved_to_file', {
             output_file: outputFile,
             language: language || 'javascript',
-            agent_id: getCurrentAgentId()
+            agent_id: getCurrentAgentId(),
+            usedFallback: result.isLocalFallback || false
           });
         } catch (err) {
           console.error(chalk.red(`\nError saving to file: ${err.message}`));
@@ -222,7 +247,6 @@ module.exports = async function generateCode(options) {
       console.error('3. Make sure your network connection can reach the Claude API service');
       console.error('\nCurrent endpoint: ' + functionUrl);
     }
+    }
     
-    process.exit(1);
-  }
-};
+}
