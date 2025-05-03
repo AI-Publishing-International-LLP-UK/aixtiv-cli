@@ -17,16 +17,17 @@ module.exports = async function delegateProjectToAgent(options) {
         console.log(chalk.yellow('NOTE: This is a temporary implementation until full API integration is complete.'));
         
         // Simulate API response
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
         return {
           status: 'created',
-          project_id: 'temp-' + Math.random().toString(36).substr(2, 9),
-          name: project || 'Unnamed Project',
-          description: description || 'No description provided',
-          priority: priority || 'medium',
-          deadline: deadline || 'not specified',
+          project_id: 'pr-' + Math.random().toString(16).substring(2, 10),
+          created_at: new Date().toISOString(),
           orchestrator: 'dr-claude',
           assigned_to: assignTo || null,
-          created_at: new Date().toISOString()
+          priority: priority || 'medium',
+          deadline: deadline || null,
+          tags: tags ? tags.split(',').map(t => t.trim()) : []
         };
       }
     );
