@@ -1,7 +1,15 @@
 const fetch = require('node-fetch');
 const chalk = require('chalk');
 const { parseOptions, withSpinner, displayResult } = require('../../../lib/utils');
-const authManager = require('../../../lib/auth');
+const { firestore } = require('../../../lib/firestore');
+const { logAgentAction } = require('../../../lib/agent-tracking');
+const fs = require('fs').promises;
+const path = require('path');
+const os = require('os');
+
+// GitHub API configuration
+const GITHUB_API_URL = 'https://api.github.com';
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GITHUB_PAT;
 
 // GitHub organization repositories
 const AI_PUBLISHING_REPOS = [
@@ -17,6 +25,15 @@ const GITHUB_ORG = {
   name: 'AI-Publishing-International-LLP-UK',
   url: 'https://github.com/AI-Publishing-International-LLP-UK',
   admin: 'admin@coaching2100.com'
+};
+
+// Action descriptions
+const ACTION_DESCRIPTIONS = {
+  align: 'Align repository structure with Aixtiv standards',
+  clean: 'Clean up unnecessary files and optimize repository',
+  secure: 'Perform security audit and fix vulnerabilities',
+  'memoria-assist': 'Integrate with Dr. Memoria Anthology publishing system',
+  sync: 'Synchronize repository with latest automation code'
 };
 
 /**

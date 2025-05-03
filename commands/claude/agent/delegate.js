@@ -1,5 +1,12 @@
 const chalk = require('chalk');
+const fetch = require('node-fetch');
 const { parseOptions, withSpinner, displayResult } = require('../../../lib/utils');
+const { firestore } = require('../../../lib/firestore');
+const { logAgentAction } = require('../../../lib/agent-tracking');
+
+// Claude API endpoint
+const CLAUDE_API_ENDPOINT = process.env.CLAUDE_API_ENDPOINT || 'https://api-dr-claude-us-west1.nw.gcp.com/v3';
+const PROJECT_DELEGATE_ENDPOINT = `${CLAUDE_API_ENDPOINT}/projects/delegate`;
 
 /**
  * Delegate a project to Dr. Claude for FMS orchestration
@@ -13,16 +20,77 @@ module.exports = async function delegateProjectToAgent(options) {
     const result = await withSpinner(
       `Creating project "${chalk.cyan(project || 'Unnamed')}" and delegating to Dr. Claude`,
       async () => {
-        // Temporary implementation that simulates success
-        console.log(chalk.yellow('NOTE: This is a temporary implementation until full API integration is complete.'));
-        
-        // Simulate API response
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
+        // Validate project name and description
+        if (!project) {
+          throw new Error('Project name is required');
+        }
+        if (!description) {
+          throw new Error('Project description is required');
+        }
+
+        // Create project payload
+        const projectData = {
+          name: project,
+          description: description,
+          priority: priority || 'medium',
+          deadline: deadline || null,
+          tags: tags ? tags.split(',').map(t => t.trim()) : [],
+          assigned_to: assignTo || null,
+          orchestrator: 'dr-claude',
+          created_at: new Date().toISOString()
+        };
+
+        // Log the delegation request
+        await logAgentAction('project_delegation_request', {
+          project_name: project,
+          description: description,
+          priority: priority,
+          assignee: assignTo
+        });
+
+        // Make actual API call to Dr. Claude endpoint
+        const response = await fetch(PROJECT_DELEGATE_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': process.env.CLAUDE_API_KEY || '',
+            'x-agent-id': 'dr-claude-orchestrator'
+          },
+          body: JSON.stringify(projectData)
+        });
+
+        // Handle API errors
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`API error (${response.status}): ${errorText}`);
+        }
+
+        // Parse API response
+        const apiResponse = await response.json();
+
+        // Store project in Firestore
+        if (firestore) {
+          const projectRef = firestore.collection('projects').doc(apiResponse.project_id);
+          await projectRef.set({
+            ...projectData,
+            project_id: apiResponse.project_id,
+            status: 'active',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+        }
+
+        // Log successful delegation
+        await logAgentAction('project_delegation_completed', {
+          project_id: apiResponse.project_id,
+          project_name: project,
+          assignee: assignTo
+        });
+
         return {
           status: 'created',
-          project_id: 'pr-' + Math.random().toString(16).substring(2, 10),
-          created_at: new Date().toISOString(),
+          project_id: apiResponse.project_id,
+          created_at: apiResponse.created_at || new Date().toISOString(),
           orchestrator: 'dr-claude',
           assigned_to: assignTo || null,
           priority: priority || 'medium',

@@ -1,0 +1,13 @@
+{
+  "name": "oauth2-cli",
+  "version": "1.0.0",
+  "description": "A simple OAuth2 CLI tool for Google service accounts",
+  "main": "oauth2-cli.js",
+  "bin": {
+    "oauth2": "./oauth2-cli.js"
+  },
+  "dependencies": {
+    "googleapis": "^126.0.1",
+    "google-auth-library": "^9.0.0"
+  }
+}
