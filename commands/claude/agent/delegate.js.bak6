@@ -1,14 +1,13 @@
 const chalk = require('chalk');
 const fetch = require('node-fetch');
-const https = require('https');
 const { parseOptions, withSpinner, displayResult } = require('../../../lib/utils');
 const { firestore } = require('../../../lib/firestore');
 const { logAgentAction } = require('../../../lib/agent-tracking');
 
 // Claude API endpoint
-// API endpoint configuration
-const CLAUDE_API_ENDPOINT = process.env.CLAUDE_API_ENDPOINT || process.env.DR_CLAUDE_API || 'https://us-west1-aixtiv-symphony.cloudfunctions.net';
-const CLAUDE_PROJECT_ENDPOINT = `${CLAUDE_API_ENDPOINT}/project-delegate`;
+const CLAUDE_API_ENDPOINT = process.env.CLAUDE_API_ENDPOINT || process.env.DR_CLAUDE_API || 'https://api-dr-claude-us-west1.nw.gcp.com/v3';
+const PROJECT_DELEGATE_ENDPOINT = `${CLAUDE_API_ENDPOINT}/projects-delegate`;
+
 /**
  * Delegate a project to Dr. Claude for FMS orchestration
  * @param {object} options - Command options
@@ -50,21 +49,14 @@ module.exports = async function delegateProjectToAgent(options) {
         });
 
         // Make actual API call to Dr. Claude endpoint
-        const httpsAgent = new https.Agent({
-          rejectUnauthorized: false
-        });
-
-        const response = await fetch(CLAUDE_PROJECT_ENDPOINT, {
+        const response = await fetch(PROJECT_DELEGATE_ENDPOINT, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'anthropic-api-key': process.env.ANTHROPIC_API_KEY || process.env.DR_CLAUDE_API || '',
-            'anthropic-version': '2023-06-01',
+            'x-api-key': process.env.CLAUDE_API_KEY || '',
             'x-agent-id': 'dr-claude-orchestrator'
           },
-          body: JSON.stringify({...projectData, operation: 'projects-delegate'}),
-          agent: httpsAgent, // Ignore SSL certificate validation
-          timeout: 15000 // 15 second timeout
+          body: JSON.stringify(projectData)
         });
 
         // Handle API errors
