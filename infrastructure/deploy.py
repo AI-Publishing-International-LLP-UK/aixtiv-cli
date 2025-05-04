@@ -117,7 +117,7 @@ class InfrastructureDeployer:
             min_replica_count=config['min_replica_count'],
             max_replica_count=config['max_replica_count'],
             accelerator_type=config['accelerator_type'],
-            accelerator_count=config['accelerator_count']
+            accelerator_count=config['accelerator_count'])
         )
         
     def _deploy_notebooks(self, config):
