@@ -1,0 +1,21 @@
+=============================================
+AGENT DEPLOYMENT INSTRUCTIONS
+=============================================
+
+STEP 1: ACTIVATE VIRTUAL ENVIRONMENT
+---------------------------------------------
+source venv/agent-deploy/bin/activate
+
+STEP 2: BUILD WHEEL FILE
+---------------------------------------------
+poetry build --format=wheel --output=deployment
+
+STEP 3: GO TO DEPLOYMENT DIRECTORY
+---------------------------------------------
+cd deployment
+
+STEP 4: RUN DEPLOYMENT
+---------------------------------------------
+python deploy.py --project "api-for-warp-drive" --location "us-west1" --agent-name "your-agent-name"
+
+=============================================
