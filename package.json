@@ -1,7 +1,7 @@
 {
   "name": "aixtiv-cli",
   "version": "1.0.1",
-  "description": "CLI for managing SalleyPort security and agent-resource access",
+  "description": "CLI for managing SallyPort security and agent-resource access",
   "main": "bin/aixtiv.js",
   "bin": {
     "aixtiv": "bin/aixtiv.js"
@@ -23,7 +23,7 @@
     "aixtiv",
     "security",
     "cli",
-    "salleyport",
+    "sallyport",
     "warp-drive"
   ],
   "author": "Phillip Corey Roark, And the Pilots of Vision Lake",
