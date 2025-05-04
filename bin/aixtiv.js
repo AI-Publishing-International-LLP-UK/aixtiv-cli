@@ -17,7 +17,7 @@ console.log(
     figlet.textSync('Aixtiv CLI', { horizontalLayout: 'full' })
   )
 );
-console.log(chalk.blue(`v${packageJson.version} - SalleyPort Security Management`));
+console.log(chalk.blue(`v${packageJson.version} - SallyPort Security Management`));
 console.log();
 
 // Command imports
@@ -64,7 +64,7 @@ const registerDomainCommands = require('../commands/domain');
 // Configure program
 program
   .version(packageJson.version)
-  .description('Aixtiv CLI for SalleyPort security management');
+  .description('Aixtiv CLI for SallyPort security management');
 
 // Project commands
 program
@@ -77,7 +77,7 @@ program
 // Auth commands
 program
   .command('auth:verify')
-  .description('Verify authentication with SalleyPort')
+  .description('Verify authentication with SallyPort')
   .option('-e, --email <email>', 'Email to verify')
   .option('-a, --agent <agent>', 'Agent to verify')
   .action(authVerify);
