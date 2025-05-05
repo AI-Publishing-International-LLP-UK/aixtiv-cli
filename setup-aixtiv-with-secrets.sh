@@ -51,6 +51,8 @@ echo -e "${GREEN}✅ Set DR_CLAUDE_API${NC}"
 echo -e "\n${BLUE}Setting up additional integrations...${NC}"
 fetch_secret "pineconeconnect" "PINECONE_API_KEY"
 fetch_secret "lucy-claude-01" "LUCY_CLAUDE_API_KEY"
+fetch_secret "langchain" "LANGCHAIN_01_KEY"
+fetch_secret "langchain02" "LANGCHAIN_02_KEY"
 
 # Test Aixtiv configuration
 echo -e "\n${BLUE}Testing Aixtiv CLI configuration...${NC}"
@@ -70,7 +72,9 @@ echo -e "- DR_CLAUDE_API_KEY (${#DR_CLAUDE_API_KEY} chars)"
 echo -e "- CLAUDE_API_ENDPOINT: ${CLAUDE_API_ENDPOINT}"
 echo -e "- DR_CLAUDE_API: ${DR_CLAUDE_API}"
 echo -e "- PINECONE_API_KEY (${#PINECONE_API_KEY} chars)"
-echo -e "- LUCY_CLAUDE_API_KEY (${#LUCY_CLAUDE_API_KEY} chars)"
+echo -e "- LUCY_CLAUDE_API_KEY (${#LUCY_CLAUDE_API_KEY} chars)
+echo -e "- LANGCHAIN_01_KEY (${#LANGCHAIN_01_KEY} chars)"
+echo -e "- LANGCHAIN_02_KEY (${#LANGCHAIN_02_KEY} chars)
 echo -e "\n${YELLOW}Note: These variables will only persist in the current terminal session${NC}"
 echo -e "To make them permanent, add them to your ~/.zshrc or ~/.bash_profile"
 echo -e "${BLUE}===============================${NC}"
