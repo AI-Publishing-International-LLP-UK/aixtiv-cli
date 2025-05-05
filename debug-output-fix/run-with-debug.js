@@ -2,10 +2,10 @@
 
 /**
  * Run Aixtiv CLI Commands with Debug Output
- * 
- * This script runs any Aixtiv CLI command and displays both 
+ *
+ * This script runs any Aixtiv CLI command and displays both
  * internal reasoning and execution results in a clearly separated format.
- * 
+ *
  * Usage: node run-with-debug.js <command> [arguments]
  * Example: node run-with-debug.js claude:code:generate --task "Create a factorial function"
  */
@@ -17,7 +17,9 @@ const fs = require('fs');
 
 // Banner display
 console.log(chalk.cyan('┌' + '─'.repeat(70) + '┐'));
-console.log(chalk.cyan('│') + chalk.bold.white(' AIXTIV CLI DEBUG MODE ') + ' '.repeat(52) + chalk.cyan('│'));
+console.log(
+  chalk.cyan('│') + chalk.bold.white(' AIXTIV CLI DEBUG MODE ') + ' '.repeat(52) + chalk.cyan('│')
+);
 console.log(chalk.cyan('└' + '─'.repeat(70) + '┘'));
 console.log('');
 
@@ -28,7 +30,9 @@ if (args.length === 0) {
   console.log(chalk.red('Error: No command specified'));
   console.log('');
   console.log('Usage: node run-with-debug.js <command> [arguments]');
-  console.log('Example: node run-with-debug.js claude:code:generate --task "Create a factorial function"');
+  console.log(
+    'Example: node run-with-debug.js claude:code:generate --task "Create a factorial function"'
+  );
   process.exit(1);
 }
 
@@ -60,14 +64,18 @@ const commandArgs = args.slice(1);
 // Show reasoning based on command type
 if (command.startsWith('claude:')) {
   console.log(chalk.dim('Command type: Claude AI operations'));
-  
+
   // Command-specific reasoning
   if (command === 'claude:code:generate') {
     const taskIndex = commandArgs.indexOf('--task');
-    const task = taskIndex >= 0 && taskIndex < commandArgs.length - 1 ? commandArgs[taskIndex + 1] : 'unknown';
+    const task =
+      taskIndex >= 0 && taskIndex < commandArgs.length - 1 ? commandArgs[taskIndex + 1] : 'unknown';
     const langIndex = commandArgs.indexOf('--language');
-    const language = langIndex >= 0 && langIndex < commandArgs.length - 1 ? commandArgs[langIndex + 1] : 'javascript';
-    
+    const language =
+      langIndex >= 0 && langIndex < commandArgs.length - 1
+        ? commandArgs[langIndex + 1]
+        : 'javascript';
+
     console.log(chalk.dim('Operation: Code generation'));
     console.log(chalk.dim(`Task: ${task}`));
     console.log(chalk.dim(`Language: ${language}`));
@@ -103,7 +111,7 @@ console.log(chalk.bgGreen.black(' 📊 EXECUTION RESULT '));
 console.log(chalk.green('─'.repeat(70)));
 
 const child = spawn('node', [aixitivPath, ...args], {
-  stdio: ['inherit', 'pipe', 'pipe']
+  stdio: ['inherit', 'pipe', 'pipe'],
 });
 
 let output = '';
@@ -124,10 +132,10 @@ child.stderr.on('data', (data) => {
 child.on('close', (code) => {
   const endTime = Date.now();
   const executionTime = (endTime - startTime) / 1000;
-  
+
   console.log(chalk.green('─'.repeat(70)));
   console.log('');
-  
+
   console.log(chalk.bgYellow.black(' 📈 EXECUTION SUMMARY '));
   console.log(chalk.yellow('─'.repeat(70)));
   console.log(`Exit code: ${code === 0 ? chalk.green(code) : chalk.red(code)}`);

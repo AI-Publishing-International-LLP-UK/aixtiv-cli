@@ -10,15 +10,15 @@ class SearchService {
   async getCredentials() {
     try {
       const [apiKeyVersion] = await this.client.accessSecretVersion({
-        name: `projects/${this.projectId}/secrets/google_custom_search_config/versions/latest`
+        name: `projects/${this.projectId}/secrets/google_custom_search_config/versions/latest`,
       });
       const [engineIdVersion] = await this.client.accessSecretVersion({
-        name: `projects/${this.projectId}/secrets/google_search_engine_id/versions/latest`
+        name: `projects/${this.projectId}/secrets/google_search_engine_id/versions/latest`,
       });
 
       return {
         apiKey: apiKeyVersion.payload.data.toString('utf8'),
-        searchEngineId: engineIdVersion.payload.data.toString('utf8')
+        searchEngineId: engineIdVersion.payload.data.toString('utf8'),
       };
     } catch (error) {
       console.error('Credential retrieval error:', error);
@@ -33,7 +33,7 @@ class SearchService {
       exactTerms,
       excludeTerms,
       fileType,
-      sort = 'relevance'
+      sort = 'relevance',
     } = options;
 
     try {
@@ -43,7 +43,7 @@ class SearchService {
         cx: credentials.searchEngineId,
         q: query,
         searchType: resultType,
-        sort: sort
+        sort: sort,
       });
 
       if (dateRestrict) params.append('dateRestrict', dateRestrict);

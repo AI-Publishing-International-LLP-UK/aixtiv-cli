@@ -12,7 +12,7 @@ const domainsToRemove = [
   'kennedyryan.com',
   'byfabrizio.live',
   'byfabrizio.design',
-  'philliproark.com'
+  'philliproark.com',
 ];
 
 // Config path for domain cache
@@ -29,29 +29,28 @@ if (!fs.existsSync(domainCachePath)) {
 try {
   const cacheData = fs.readFileSync(domainCachePath, 'utf8');
   const cache = JSON.parse(cacheData);
-  
+
   console.log(`Current cache has ${cache.domains.length} domains.`);
-  
+
   // Find and remove specified domains
   const initialCount = cache.domains.length;
-  cache.domains = cache.domains.filter(domain => !domainsToRemove.includes(domain.name));
+  cache.domains = cache.domains.filter((domain) => !domainsToRemove.includes(domain.name));
   const removedCount = initialCount - cache.domains.length;
-  
+
   // Update timestamp
   cache.lastUpdated = new Date().toISOString();
-  
+
   // Save updated cache
   fs.writeFileSync(domainCachePath, JSON.stringify(cache, null, 2));
-  
+
   console.log(`Removed ${removedCount} domains from cache.`);
   console.log(`Cache now has ${cache.domains.length} domains.`);
-  
+
   // List the domains that were removed
   console.log('\nRemoved domains:');
-  domainsToRemove.forEach(domain => {
+  domainsToRemove.forEach((domain) => {
     console.log(`- ${domain}`);
   });
-  
 } catch (error) {
   console.error('Error processing domain cache:', error);
   process.exit(1);

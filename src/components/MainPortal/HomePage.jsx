@@ -22,26 +22,26 @@ const MainPortal = () => {
       id: 'demo',
       title: 'Interactive System Demo',
       description: 'Experience the power of our quantum-secured AI platform',
-      features: ['Live AI Interaction', 'Voice Integration Demo', 'Real-time Analytics']
+      features: ['Live AI Interaction', 'Voice Integration Demo', 'Real-time Analytics'],
     },
     {
       id: 'customize',
       title: 'Customize Your Solution',
       description: 'Build your perfect enterprise solution',
-      features: ['Industry-Specific Templates', 'Custom Workflow Builder', 'Integration Designer']
+      features: ['Industry-Specific Templates', 'Custom Workflow Builder', 'Integration Designer'],
     },
     {
       id: 'training',
       title: 'Advanced Training Portal',
       description: 'Unlock the full potential of your system',
-      features: ['Interactive Tutorials', 'Certification Paths', 'Expert Sessions']
+      features: ['Interactive Tutorials', 'Certification Paths', 'Expert Sessions'],
     },
     {
       id: 'integrations',
       title: 'Enterprise Integration Hub',
       description: 'Seamlessly connect your existing systems',
-      features: ['FMS Integration Suite', 'Anthology Connector', 'Custom API Builder']
-    }
+      features: ['FMS Integration Suite', 'Anthology Connector', 'Custom API Builder'],
+    },
   ];
 
   const handleSectionSelect = (sectionId) => {
@@ -62,11 +62,11 @@ const MainPortal = () => {
       <main className="flex-grow container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {mainSections.map((section) => (
-            <div 
+            <div
               key={section.id}
               className={`p-6 rounded-lg transition-all duration-300 ${
-                activeSection === section.id 
-                  ? 'bg-cyan-600 transform scale-105' 
+                activeSection === section.id
+                  ? 'bg-cyan-600 transform scale-105'
                   : 'bg-gray-700 hover:bg-gray-600'
               }`}
               onClick={() => handleSectionSelect(section.id)}

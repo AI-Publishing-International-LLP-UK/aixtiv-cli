@@ -96,7 +96,7 @@ console.log(factorial(5)); // Output: 120
   return result
 
 # Example usage
-print(factorial(5))  # Output: 120`
+print(factorial(5))  # Output: 120`,
   },
   fibonacci: {
     javascript: `/**
@@ -206,7 +206,7 @@ console.log(fibonacci(10)); // Output: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]`,
   return sequence
 
 # Example usage
-print(fibonacci(10))  # Output: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]`
+print(fibonacci(10))  # Output: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]`,
   },
   sort: {
     javascript: `/**
@@ -275,8 +275,8 @@ console.log(sortArray(unsorted)); // Output: [1, 2, 3, 4, 5, 8]
 
 # Example usage
 unsorted = [5, 3, 8, 1, 2, 4]
-print(sort_array(unsorted))  # Output: [1, 2, 3, 4, 5, 8]`
-  }
+print(sort_array(unsorted))  # Output: [1, 2, 3, 4, 5, 8]`,
+  },
 };
 
 /**
@@ -295,10 +295,10 @@ print(sort_array(unsorted))  # Output: [1, 2, 3, 4, 5, 8]`
 function generateCode(task, language = 'javascript') {
   // Normalize language name
   const normalizedLanguage = language.toLowerCase();
-  
+
   // Detect task type from keywords
   let taskType = 'generic';
-  
+
   if (task.toLowerCase().includes('factorial')) {
     taskType = 'factorial';
   } else if (task.toLowerCase().includes('fibonacci')) {
@@ -306,26 +306,27 @@ function generateCode(task, language = 'javascript') {
   } else if (task.toLowerCase().includes('sort')) {
     taskType = 'sort';
   }
-  
+
   // Select appropriate language templates
   const languageTemplates = templates[taskType] || {};
-  
+
   // Get template for requested language or fallback to JavaScript
-  const codeTemplate = languageTemplates[normalizedLanguage] || 
-                      languageTemplates['javascript'] || 
-                      createGenericFallback(task, normalizedLanguage);
-  
+  const codeTemplate =
+    languageTemplates[normalizedLanguage] ||
+    languageTemplates['javascript'] ||
+    createGenericFallback(task, normalizedLanguage);
+
   // Display debug information
   debugDisplay({
     thought: internalThought,
     result: result,
-    command: 'claude:return'
+    command: 'claude:return',
   });
-  
+
   return {
     code: codeTemplate,
     explanation: `This is a local fallback implementation for "${task}" in ${normalizedLanguage}. The Claude API could not be reached, so a basic template was used.`,
-    isLocalFallback: true
+    isLocalFallback: true,
   };
 }
 
@@ -343,17 +344,20 @@ function generateCode(task, language = 'javascript') {
   returns {string} Generic function template
  */
 function createGenericFallback(task, language) {
-  const normalizedTask = task.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_').toLowerCase();
-  
+  const normalizedTask = task
+    .replace(/[^\w\s]/gi, '')
+    .replace(/\s+/g, '_')
+    .toLowerCase();
+
   if (language === 'python') {
     // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  return `def ${normalizedTask}_function():
+    debugDisplay({
+      thought: internalThought,
+      result: result,
+      command: 'claude:return',
+    });
+
+    return `def ${normalizedTask}_function():
     """
     Implementation for: ${task}
     
@@ -366,15 +370,15 @@ function createGenericFallback(task, language) {
 # result = ${normalizedTask}_function()
 # print(result)`;
   }
-  
+
   // Default to JavaScript
   // Display debug information
   debugDisplay({
     thought: internalThought,
     result: result,
-    command: 'claude:return'
+    command: 'claude:return',
   });
-  
+
   return `/**
  * ${task}
  * @// Display debug information
@@ -405,5 +409,5 @@ function ${normalizedTask}Function() {
 }
 
 module.exports = {
-  generateCode
+  generateCode,
 };

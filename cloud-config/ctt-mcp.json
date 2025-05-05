@@ -33,11 +33,7 @@
           "enabled": true,
           "models": ["gpt-4", "gpt-3.5-turbo"],
           "tools": ["search", "code-interpreter"],
-          "workflows": [
-            "client-support",
-            "tech-review",
-            "team-collaboration"
-          ]
+          "workflows": ["client-support", "tech-review", "team-collaboration"]
         }
       },
       "security": {

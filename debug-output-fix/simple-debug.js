@@ -2,7 +2,7 @@
 
 /**
  * Simple Debug Wrapper for Aixtiv CLI
- * 
+ *
  * This script provides a debug wrapper around any Aixtiv CLI command
  * without modifying the original files.
  */
@@ -17,7 +17,9 @@ const args = process.argv.slice(2);
 if (args.length === 0) {
   console.log(chalk.red('Error: No command specified'));
   console.log('Usage: node debug-output-fix/simple-debug.js <command> [arguments]');
-  console.log('Example: node debug-output-fix/simple-debug.js claude:code:generate --task "Create a factorial function"');
+  console.log(
+    'Example: node debug-output-fix/simple-debug.js claude:code:generate --task "Create a factorial function"'
+  );
   process.exit(1);
 }
 
@@ -25,7 +27,9 @@ const aixitivPath = path.join(__dirname, '..', 'bin', 'aixtiv.js');
 
 // Display the banner and internal reasoning
 console.log(chalk.cyan('┌' + '─'.repeat(70) + '┐'));
-console.log(chalk.cyan('│') + chalk.bold.white(' AIXTIV CLI DEBUG MODE ') + ' '.repeat(48) + chalk.cyan('│'));
+console.log(
+  chalk.cyan('│') + chalk.bold.white(' AIXTIV CLI DEBUG MODE ') + ' '.repeat(48) + chalk.cyan('│')
+);
 console.log(chalk.cyan('└' + '─'.repeat(70) + '┘'));
 console.log('');
 
@@ -40,10 +44,10 @@ console.log(`Arguments provided: ${args.slice(1).join(' ')}`);
 // Add command-specific reasoning
 if (command.startsWith('claude:code:generate')) {
   console.log('Processing code generation request:');
-  
+
   let task = '';
   let language = 'javascript';
-  
+
   // Parse arguments
   for (let i = 1; i < args.length; i++) {
     if (args[i] === '--task' && i + 1 < args.length) {
@@ -53,7 +57,7 @@ if (command.startsWith('claude:code:generate')) {
       language = args[i + 1];
     }
   }
-  
+
   console.log(`- Task: ${task}`);
   console.log(`- Language: ${language}`);
   console.log('- Will attempt to generate appropriate code for this task');
@@ -87,7 +91,7 @@ console.log(chalk.green('─'.repeat(70)));
 // Run the original command
 const startTime = Date.now();
 const result = spawnSync('node', [aixitivPath, ...args], {
-  stdio: 'inherit'
+  stdio: 'inherit',
 });
 
 // Show execution summary
@@ -99,7 +103,9 @@ console.log('');
 
 console.log(chalk.bgYellow.black(' 📈 EXECUTION SUMMARY '));
 console.log(chalk.yellow('─'.repeat(70)));
-console.log(`Exit code: ${result.status === 0 ? chalk.green(result.status) : chalk.red(result.status)}`);
+console.log(
+  `Exit code: ${result.status === 0 ? chalk.green(result.status) : chalk.red(result.status)}`
+);
 console.log(`Execution time: ${chalk.cyan(executionTime.toFixed(2))} seconds`);
 
 if (result.error) {

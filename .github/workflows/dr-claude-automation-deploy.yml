@@ -1,0 +1,125 @@
+name: Deploy Dr. Claude Orchestration Function
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'cloud-functions/dr-claude/**'
+      - '.github/workflows/dr-claude-automation-deploy.yml'
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: 'Force deployment even if no changes detected'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  FIREBASE_PROJECT: api-for-warp-drive
+  TARGET_REGION: us-west1
+  FUNCTION_NAME: drClaude
+  NODE_VERSION: '22'
+
+jobs:
+  deploy:
+    name: Deploy Dr. Claude Function
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Prepare Dr. Claude Function
+        run: |
+          echo "Preparing Dr. Claude function deployment..."
+          
+          # Copy Dr. Claude function files to functions directory
+          cp cloud-functions/dr-claude/index.js functions/dr-claude.js
+          
+          # Update package.json if needed
+          if grep -q '"firebase-admin": "\^13' functions/package.json; then
+            echo "Downgrading firebase-admin version for compatibility..."
+            sed -i 's/"firebase-admin": "\^13[^"]*"/"firebase-admin": "^12.7.0"/g' functions/package.json
+          fi
+          
+          # Install dependencies with legacy peer deps flag
+          cd functions
+          npm install --legacy-peer-deps
+          cd ..
+
+      - name: Deploy to Firebase
+        run: |
+          firebase use ${{ env.FIREBASE_PROJECT }}
+          firebase deploy --only functions:${{ env.FUNCTION_NAME }} --region=${{ env.TARGET_REGION }}
+
+      - name: Verify Deployment
+        run: |
+          echo "Verifying function deployment..."
+          # Wait for function to be fully deployed
+          sleep 15
+          
+          # Get the function URL
+          FUNCTION_URL=$(firebase functions:list | grep ${{ env.FUNCTION_NAME }} | grep -o 'https://[^ ]*')
+          
+          # Check health endpoint
+          HEALTH_STATUS=$(curl -s $FUNCTION_URL)
+          
+          if [[ $HEALTH_STATUS == *"status"*"ok"* ]]; then
+            echo "✅ Function is healthy: $HEALTH_STATUS"
+          else
+            echo "❌ Function health check failed: $HEALTH_STATUS"
+            exit 1
+          fi
+
+      - name: Configure IAM Permissions
+        run: |
+          echo "Configuring function IAM permissions..."
+          gcloud functions add-iam-policy-binding ${{ env.FUNCTION_NAME }} \
+            --region=${{ env.TARGET_REGION }} \
+            --member=allUsers \
+            --role=roles/cloudfunctions.invoker
+          
+          # Also ensure proper IAM for Firestore access
+          gcloud functions add-iam-policy-binding ${{ env.FUNCTION_NAME }} \
+            --region=${{ env.TARGET_REGION }} \
+            --member=serviceAccount:${{ env.FIREBASE_PROJECT }}@appspot.gserviceaccount.com \
+            --role=roles/datastore.user
+
+      - name: Register with Integration Gateway
+        run: |
+          echo "Registering function with Integration Gateway..."
+          # Use the Aixtiv CLI to register the function
+          node bin/aixtiv.js copilot:link -e pr@coaching2100.com -c dr-claude -l executive
+          node bin/aixtiv.js copilot:grant -e pr@coaching2100.com -c dr-claude@drdr-claude.live -r integration-gateway -t delegated
+
+      - name: Post Deployment Summary
+        run: |
+          echo "### Dr. Claude Orchestration Function Deployed ✅" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The Dr. Claude function has been successfully deployed to:" >> $GITHUB_STEP_SUMMARY
+          echo "**https://${{ env.TARGET_REGION }}-${{ env.FIREBASE_PROJECT }}.cloudfunctions.net/${{ env.FUNCTION_NAME }}**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Deployment region: **${{ env.TARGET_REGION }}**" >> $GITHUB_STEP_SUMMARY
+          echo "Project ID: **${{ env.FIREBASE_PROJECT }}**" >> $GITHUB_STEP_SUMMARY
+          echo "Function name: **${{ env.FUNCTION_NAME }}**" >> $GITHUB_STEP_SUMMARY
+          echo "Deployment timestamp: **$(date -u +'%Y-%m-%d %H:%M:%S UTC')**" >> $GITHUB_STEP_SUMMARY
+

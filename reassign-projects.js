@@ -8,7 +8,7 @@ const readline = require('readline');
 // Create readline interface for user input
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
 // Calculate date from two days ago
@@ -16,7 +16,10 @@ const twoDaysAgo = new Date();
 twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
 const twoDaysAgoISO = twoDaysAgo.toISOString();
 
-console.log(chalk.cyan('🔍 Finding projects created on or after:'), chalk.yellow(twoDaysAgoISO.split('T')[0]));
+console.log(
+  chalk.cyan('🔍 Finding projects created on or after:'),
+  chalk.yellow(twoDaysAgoISO.split('T')[0])
+);
 
 async function findProjects() {
   try {
@@ -26,21 +29,22 @@ async function findProjects() {
     }
 
     console.log(chalk.cyan('⌛ Querying Firestore for projects...'));
-    
+
     // Query projects created two days ago or newer
-    const snapshot = await firestore.collection('projects')
+    const snapshot = await firestore
+      .collection('projects')
       .where('created_at', '>=', twoDaysAgoISO)
       .orderBy('created_at', 'desc')
       .get();
-    
+
     if (snapshot.empty) {
       console.log(chalk.yellow('No projects found from the last two days.'));
       process.exit(0);
     }
-    
+
     const projects = [];
-    
-    snapshot.forEach(doc => {
+
+    snapshot.forEach((doc) => {
       const data = doc.data();
       projects.push({
         project_id: doc.id,
@@ -48,13 +52,13 @@ async function findProjects() {
         description: data.description,
         assigned_to: data.assigned_to || 'Unassigned',
         created_at: data.created_at,
-        priority: data.priority
+        priority: data.priority,
       });
     });
-    
+
     console.log(chalk.green(`✅ Found ${projects.length} projects from the last two days:`));
     console.log('');
-    
+
     // Display projects in a table-like format
     projects.forEach((project, index) => {
       console.log(chalk.cyan(`Project ${index + 1}:`));
@@ -66,7 +70,7 @@ async function findProjects() {
       console.log(`Priority: ${getPriorityColor(project.priority)}`);
       console.log('');
     });
-    
+
     return projects;
   } catch (error) {
     console.error(chalk.red('Error querying projects:'), error);
@@ -89,33 +93,38 @@ function getPriorityColor(priority) {
 
 async function reassignProjects(projects, newAssignee) {
   try {
-    console.log(chalk.cyan(`⌛ Reassigning ${projects.length} projects to ${chalk.yellow(newAssignee)}...`));
-    
+    console.log(
+      chalk.cyan(`⌛ Reassigning ${projects.length} projects to ${chalk.yellow(newAssignee)}...`)
+    );
+
     const batch = firestore.batch();
     const timestamp = new Date().toISOString();
-    
-    projects.forEach(project => {
+
+    projects.forEach((project) => {
       const projectRef = firestore.collection('projects').doc(project.project_id);
       batch.update(projectRef, {
         assigned_to: newAssignee,
-        updated_at: timestamp
+        updated_at: timestamp,
       });
     });
-    
+
     await batch.commit();
-    
+
     // Log the action for each project
     for (const project of projects) {
       await logAgentAction('project_reassignment', {
         project_id: project.project_id,
         project_name: project.name,
         previous_assignee: project.assigned_to,
-        new_assignee: newAssignee
+        new_assignee: newAssignee,
       });
     }
-    
-    console.log(chalk.green(`✅ Successfully reassigned ${projects.length} projects to ${chalk.yellow(newAssignee)}`));
-    
+
+    console.log(
+      chalk.green(
+        `✅ Successfully reassigned ${projects.length} projects to ${chalk.yellow(newAssignee)}`
+      )
+    );
   } catch (error) {
     console.error(chalk.red('Error reassigning projects:'), error);
     process.exit(1);
@@ -125,28 +134,36 @@ async function reassignProjects(projects, newAssignee) {
 async function main() {
   try {
     const projects = await findProjects();
-    
+
     if (projects.length === 0) {
       rl.close();
       return;
     }
-    
-    rl.question(chalk.cyan('Enter the new assignee ID to reassign all projects: '), async (newAssignee) => {
-      if (!newAssignee.trim()) {
-        console.log(chalk.yellow('Reassignment cancelled. No assignee provided.'));
-        rl.close();
-        return;
-      }
-      
-      rl.question(chalk.yellow(`Are you sure you want to reassign all ${projects.length} projects to ${chalk.cyan(newAssignee)}? (y/N): `), async (answer) => {
-        if (answer.toLowerCase() === 'y') {
-          await reassignProjects(projects, newAssignee);
-        } else {
-          console.log(chalk.yellow('Reassignment cancelled.'));
+
+    rl.question(
+      chalk.cyan('Enter the new assignee ID to reassign all projects: '),
+      async (newAssignee) => {
+        if (!newAssignee.trim()) {
+          console.log(chalk.yellow('Reassignment cancelled. No assignee provided.'));
+          rl.close();
+          return;
         }
-        rl.close();
-      });
-    });
+
+        rl.question(
+          chalk.yellow(
+            `Are you sure you want to reassign all ${projects.length} projects to ${chalk.cyan(newAssignee)}? (y/N): `
+          ),
+          async (answer) => {
+            if (answer.toLowerCase() === 'y') {
+              await reassignProjects(projects, newAssignee);
+            } else {
+              console.log(chalk.yellow('Reassignment cancelled.'));
+            }
+            rl.close();
+          }
+        );
+      }
+    );
   } catch (error) {
     console.error(chalk.red('Error:'), error);
     rl.close();

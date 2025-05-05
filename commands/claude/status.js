@@ -7,7 +7,6 @@ const ora = require('ora');
 const { parseOptions, withSpinner, displayResult } = require('../../lib/utils');
 const Table = require('cli-table3');
 
-
 // Get all VLS solutions from directory
 const getSolutionAgents = () => {
   // Define our agents directly to ensure consistent display
@@ -67,7 +66,7 @@ const getSolutionAgents = () => {
     {
       id: 'professor-mia-team-leadership',
       name: 'professor mia team leadership',
-    }
+    },
   ];
 };
 
@@ -76,38 +75,39 @@ const getAgentStatus = async (agentId) => {
   try {
     // Get agent-tracking.js for Firestore access and agent action logging
     const { firestore } = require('../../lib/firestore');
-    
+
     if (!firestore) {
       throw new Error('Firestore is not available');
     }
-    
+
     // Get the most recent actions for this agent
-    const snapshot = await firestore.collection('agentActions')
+    const snapshot = await firestore
+      .collection('agentActions')
       .where('agent_id', '==', agentId)
       .orderBy('timestamp', 'desc')
       .limit(20)
       .get();
-      
+
     if (snapshot.empty) {
       return {
         status: 'offline',
         workload: 0,
         activeTasks: 0,
         completedTasks: 0,
-        lastActive: new Date().toISOString()
+        lastActive: new Date().toISOString(),
       };
     }
-    
+
     // Calculate agent status based on recent activity
-    const actions = snapshot.docs.map(doc => doc.data());
+    const actions = snapshot.docs.map((doc) => doc.data());
     const lastAction = actions[0];
     const lastActiveTime = new Date(lastAction.timestamp);
-    
+
     // Count active and completed tasks
     const recentActions = new Set();
     const completedActions = new Set();
-    
-    actions.forEach(action => {
+
+    actions.forEach((action) => {
       const actionType = action.action_type;
       if (actionType.endsWith('_request') || actionType.endsWith('_started')) {
         recentActions.add(actionType.replace('_request', '').replace('_started', ''));
@@ -115,21 +115,21 @@ const getAgentStatus = async (agentId) => {
         completedActions.add(actionType.replace('_completed', ''));
       }
     });
-    
+
     // Calculate active tasks (requested/started but not completed)
-    const activeTasks = Array.from(recentActions).filter(action => 
-      !completedActions.has(action)
+    const activeTasks = Array.from(recentActions).filter(
+      (action) => !completedActions.has(action)
     ).length;
-    
+
     // Calculate workload based on number of active tasks and recency of activity
     const minutes = Math.floor((new Date() - lastActiveTime) / 60000);
     let workload = Math.min(100, activeTasks * 25);
-    
+
     // Reduce workload if agent has been inactive
     if (minutes > 10) {
       workload = Math.max(0, workload - Math.floor((minutes - 10) / 5) * 10);
     }
-    
+
     // Determine status based on workload and activity
     let status = 'offline';
     if (minutes < 1440) {
@@ -141,13 +141,13 @@ const getAgentStatus = async (agentId) => {
         status = 'overloaded';
       }
     }
-    
+
     return {
       status,
       workload,
       activeTasks,
       completedTasks: completedActions.size,
-      lastActive: lastAction.timestamp
+      lastActive: lastAction.timestamp,
     };
   } catch (error) {
     console.error(`Error getting status for agent ${agentId}:`, error);
@@ -157,7 +157,7 @@ const getAgentStatus = async (agentId) => {
       workload: 0,
       activeTasks: 0,
       completedTasks: 0,
-      lastActive: new Date().toISOString()
+      lastActive: new Date().toISOString(),
     };
   }
 };
@@ -168,25 +168,27 @@ const getAgentStatus = async (agentId) => {
  */
 module.exports = async function agentStatus(options) {
   const { agent } = parseOptions(options);
-  
+
   try {
     // Get all solution agents
     const solutionAgents = getSolutionAgents();
-    
+
     if (solutionAgents.length === 0) {
       console.log(chalk.yellow('No solution agents found.'));
       return;
     }
-    
+
     // If specific agent requested
     if (agent) {
-      const selectedAgent = solutionAgents.find(s => s.id === agent || s.id === `dr-${agent}` || s.id.includes(agent));
-      
+      const selectedAgent = solutionAgents.find(
+        (s) => s.id === agent || s.id === `dr-${agent}` || s.id.includes(agent)
+      );
+
       if (!selectedAgent) {
         console.error(chalk.red('Error:'), `Agent "${agent}" not found.`);
         return;
       }
-      
+
       const status = await withSpinner(
         `Checking status of ${chalk.cyan(selectedAgent.name)}`,
         async () => {
@@ -194,48 +196,47 @@ module.exports = async function agentStatus(options) {
           return await getAgentStatus(selectedAgent.id);
         }
       );
-      
+
       console.log(chalk.bold(`\nStatus for ${chalk.cyan(selectedAgent.name)}:`));
       console.log(`Status: ${getStatusColor(status.status, status.status)}`);
       console.log(`Workload: ${getWorkloadColor(status.workload)}%`);
       console.log(`Active Tasks: ${status.activeTasks}`);
       console.log(`Completed Tasks: ${status.completedTasks}`);
       console.log(`Last Active: ${status.lastActive}`);
-      
     } else {
       // Show all agents
       const table = new Table({
         head: ['Agent', 'Status', 'Workload', 'Active Tasks', 'Last Active'],
-        colWidths: [20, 15, 12, 15, 25]
+        colWidths: [20, 15, 12, 15, 25],
       });
-      
+
       // Success output
       console.log(chalk.green('✓') + ' Displaying real agent activity data from Firestore');
-      
+
       const statusResults = await withSpinner(
         'Checking status of all solution agents',
         async () => {
           // Create an array of promises for each agent's status
-          const statusPromises = solutionAgents.map(async agent => ({
+          const statusPromises = solutionAgents.map(async (agent) => ({
             ...agent,
-            ...(await getAgentStatus(agent.id))
+            ...(await getAgentStatus(agent.id)),
           }));
-          
+
           // Wait for all status checks to complete
           return Promise.all(statusPromises);
         }
       );
-      
-      statusResults.forEach(agent => {
+
+      statusResults.forEach((agent) => {
         table.push([
           agent.name,
           getStatusColor(agent.status, agent.status),
           getWorkloadColor(agent.workload) + '%',
           agent.activeTasks.toString(),
-          agent.lastActive.split('T')[0] + ' ' + agent.lastActive.split('T')[1].substring(0, 8)
+          agent.lastActive.split('T')[0] + ' ' + agent.lastActive.split('T')[1].substring(0, 8),
         ]);
       });
-      
+
       console.log(table.toString());
     }
   } catch (error) {

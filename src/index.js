@@ -17,7 +17,7 @@ app.use((err, req, res, next) => {
   console.error('Application error:', err);
   res.status(500).json({
     error: err.message,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 

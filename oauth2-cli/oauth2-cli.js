@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
-const {google} = require('googleapis');
+const { google } = require('googleapis');
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -13,8 +13,12 @@ function showHelp() {
   console.log('');
   console.log('Usage:');
   console.log('  oauth2-cli help                       Show this help message');
-  console.log('  oauth2-cli auth <keyfile>             Authenticate with a service account key file');
-  console.log('  oauth2-cli token <keyfile> [scope]    Get an access token using a service account');
+  console.log(
+    '  oauth2-cli auth <keyfile>             Authenticate with a service account key file'
+  );
+  console.log(
+    '  oauth2-cli token <keyfile> [scope]    Get an access token using a service account'
+  );
   console.log('');
   console.log('Examples:');
   console.log('  oauth2-cli auth ./key.json');
@@ -29,10 +33,10 @@ async function authenticateServiceAccount(keyFile) {
       console.error(`Error: Key file '${keyFile}' not found`);
       process.exit(1);
     }
-    
+
     // Load the service account key file
     const keyFileContent = JSON.parse(fs.readFileSync(keyFile, 'utf8'));
-    
+
     // Create a JWT client using the service account credentials
     const jwtClient = new google.auth.JWT(
       keyFileContent.client_email,
@@ -40,13 +44,13 @@ async function authenticateServiceAccount(keyFile) {
       keyFileContent.private_key,
       ['https://www.googleapis.com/auth/cloud-platform']
     );
-    
+
     // Authenticate
     await jwtClient.authorize();
-    
+
     console.log(`Successfully authenticated as: ${keyFileContent.client_email}`);
     console.log(`Project ID: ${keyFileContent.project_id}`);
-    
+
     return jwtClient;
   } catch (error) {
     console.error('Authentication error:', error.message);
@@ -60,10 +64,10 @@ async function getAccessToken(keyFile, scope) {
     // Default scope
     const defaultScope = 'https://www.googleapis.com/auth/cloud-platform';
     const authScope = scope || defaultScope;
-    
+
     // Load the service account key file
     const keyFileContent = JSON.parse(fs.readFileSync(keyFile, 'utf8'));
-    
+
     // Create a JWT client using the service account credentials
     const jwtClient = new google.auth.JWT(
       keyFileContent.client_email,
@@ -71,14 +75,14 @@ async function getAccessToken(keyFile, scope) {
       keyFileContent.private_key,
       [authScope]
     );
-    
+
     // Get the access token
     const token = await jwtClient.getAccessToken();
-    
+
     console.log(`Service Account: ${keyFileContent.client_email}`);
     console.log(`Scope: ${authScope}`);
     console.log(`Access Token: ${token.token}`);
-    
+
     return token;
   } catch (error) {
     console.error('Error getting access token:', error.message);
@@ -92,7 +96,7 @@ async function processCommand() {
     case 'help':
       showHelp();
       break;
-    
+
     case 'auth':
       const keyFile = args[1];
       if (!keyFile) {
@@ -102,7 +106,7 @@ async function processCommand() {
       }
       await authenticateServiceAccount(keyFile);
       break;
-    
+
     case 'token':
       const tokenKeyFile = args[1];
       const scope = args[2];
@@ -113,7 +117,7 @@ async function processCommand() {
       }
       await getAccessToken(tokenKeyFile, scope);
       break;
-    
+
     default:
       console.error(`Error: Unknown command '${command}'`);
       showHelp();

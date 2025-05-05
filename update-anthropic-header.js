@@ -1,6 +1,6 @@
 /**
  * Update Anthropic Header Script
- * 
+ *
  * This script updates the existing 'anthropic-api-key' header in the Claude code generation file
  * to use either ANTHROPIC_API_KEY or DR_CLAUDE_API environment variables.
  */
@@ -42,7 +42,9 @@ const updatedContent = content.replace(
 try {
   fs.writeFileSync(filePath, updatedContent);
   console.log('Successfully updated anthropic-api-key header in generate.js');
-  console.log('The Claude code generation feature should now work with either ANTHROPIC_API_KEY or DR_CLAUDE_API environment variables');
+  console.log(
+    'The Claude code generation feature should now work with either ANTHROPIC_API_KEY or DR_CLAUDE_API environment variables'
+  );
 } catch (error) {
   console.error(`Error writing to file: ${error.message}`);
   process.exit(1);

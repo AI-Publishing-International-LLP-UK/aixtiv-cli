@@ -1,6 +1,6 @@
 /**
  * Fix CLI Output Display
- * 
+ *
  * This script enhances the Aixtiv CLI to display both internal reasoning (thought process)
  * and execution outputs explicitly labeled.
  */
@@ -16,9 +16,9 @@ const displayResultPath = path.join(__dirname, '..', 'src', 'display.js');
 function modifyUtils() {
   if (fs.existsSync(utilsPath)) {
     console.log(`Modifying ${utilsPath} to enhance output display...`);
-    
+
     let utilsContent = fs.readFileSync(utilsPath, 'utf8');
-    
+
     // Find the displayResult function or similar
     if (utilsContent.includes('displayResult')) {
       // Add debug output wrapper
@@ -39,14 +39,14 @@ function modifyUtils() {
   console.log('\\n📊 EXECUTION RESULT:');
   console.log('-'.repeat(50));`
       );
-      
+
       // Close the function with additional separator
       utilsContent = utilsContent.replace(
         /}(\s*\/\/\s*end of displayResult|\s*$)/,
         `  console.log('-'.repeat(50));
 }$1`
       );
-      
+
       // Write modified content
       fs.writeFileSync(utilsPath, utilsContent);
       console.log('✅ Successfully enhanced output display in utils.js');
@@ -61,9 +61,9 @@ function modifyUtils() {
 // Create a debug display module if it doesn't exist
 function createDebugDisplay() {
   const debugDisplayPath = path.join(__dirname, '..', 'lib', 'debug-display.js');
-  
+
   console.log(`Creating debug display module at ${debugDisplayPath}...`);
-  
+
   const debugDisplayContent = `/**
  * Debug Display Module for Aixtiv CLI
  * 
@@ -118,7 +118,7 @@ module.exports = {
 
   fs.writeFileSync(debugDisplayPath, debugDisplayContent);
   console.log('✅ Created debug display module');
-  
+
   return debugDisplayPath;
 }
 
@@ -126,25 +126,27 @@ module.exports = {
 function enhanceCommandModules() {
   // Target the claude commands as an example
   const claudeCommandDir = path.join(__dirname, '..', 'commands', 'claude');
-  
+
   if (fs.existsSync(claudeCommandDir)) {
     // Find subcommands
-    const subcommandDirs = fs.readdirSync(claudeCommandDir, { withFileTypes: true })
-      .filter(dirent => dirent.isDirectory())
-      .map(dirent => dirent.name);
-    
+    const subcommandDirs = fs
+      .readdirSync(claudeCommandDir, { withFileTypes: true })
+      .filter((dirent) => dirent.isDirectory())
+      .map((dirent) => dirent.name);
+
     for (const subDir of subcommandDirs) {
       const subDirPath = path.join(claudeCommandDir, subDir);
-      const files = fs.readdirSync(subDirPath, { withFileTypes: true })
-        .filter(dirent => dirent.isFile() && dirent.name.endsWith('.js'))
-        .map(dirent => dirent.name);
-      
+      const files = fs
+        .readdirSync(subDirPath, { withFileTypes: true })
+        .filter((dirent) => dirent.isFile() && dirent.name.endsWith('.js'))
+        .map((dirent) => dirent.name);
+
       for (const file of files) {
         const filePath = path.join(subDirPath, file);
         console.log(`Enhancing command module: ${filePath}`);
-        
+
         let content = fs.readFileSync(filePath, 'utf8');
-        
+
         // Add debug display to module exports
         content = content.replace(
           /module\.exports\s*=\s*async\s*function\s*([a-zA-Z0-9_]+)\s*\(([^)]*)\)\s*\{/,
@@ -156,7 +158,7 @@ module.exports = async function $1($2) {
   const internalThought = \`Processing $1 command with parameters: \${JSON.stringify(arguments[0])}\`;
 `
         );
-        
+
         // Add debug display before return or at the end
         if (content.includes('return') || content.includes('process.exit')) {
           content = content.replace(
@@ -182,7 +184,7 @@ module.exports = async function $1($2) {
 }$1`
           );
         }
-        
+
         fs.writeFileSync(filePath, content);
         console.log(`✅ Enhanced ${file}`);
       }
@@ -195,7 +197,7 @@ module.exports = async function $1($2) {
 // Create a README file
 function createReadme() {
   const readmePath = path.join(__dirname, 'README.md');
-  
+
   const readmeContent = `# Aixtiv CLI Output Enhancement
 
 This project enhances the Aixtiv CLI to display both internal reasoning and execution results.
@@ -232,22 +234,24 @@ You can modify the debug-display.js module to customize how the output is format
 // Main execution
 function main() {
   console.log('🔍 Starting Aixtiv CLI output enhancement...');
-  
+
   // Create debug display module
   const debugDisplayPath = createDebugDisplay();
-  
+
   // Modify utils.js if it exists
   modifyUtils();
-  
+
   // Enhance command modules
   enhanceCommandModules();
-  
+
   // Create README
   createReadme();
-  
+
   console.log('✅ CLI output enhancement complete!');
   console.log('');
-  console.log('Now run your Aixtiv CLI commands to see both internal reasoning and execution results.');
+  console.log(
+    'Now run your Aixtiv CLI commands to see both internal reasoning and execution results.'
+  );
   console.log('Example: ./bin/aixtiv.js claude:code:generate --task "Create a factorial function"');
 }
 

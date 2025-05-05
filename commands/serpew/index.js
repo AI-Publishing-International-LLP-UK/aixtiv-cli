@@ -1,7 +1,7 @@
 /**
  * SERPEW (Squadron Extended Repository for Performance Enhancement and Wisdom)
  * Command registration module
- * 
+ *
  * Registers all SERPEW-related commands with the CLI
  */
 
@@ -18,7 +18,7 @@ function registerCommands(program) {
     .command('serpew:init')
     .description('Initialize the SERPEW system')
     .action(require('./init'));
-  
+
   // Repository commands
   program
     .command('serpew:repository:add')
@@ -31,7 +31,7 @@ function registerCommands(program) {
     .option('--tags <tags>', 'Comma-separated list of tags')
     .option('--format <format>', 'Content format (text, json, markdown)', 'text')
     .action(require('./repository/add'));
-  
+
   program
     .command('serpew:repository:query')
     .description('Query knowledge from repositories')
@@ -42,7 +42,7 @@ function registerCommands(program) {
     .option('--tags <tags>', 'Comma-separated list of tags to filter by')
     .option('--limit <limit>', 'Maximum number of results', '10')
     .action(require('./repository/query'));
-  
+
   // Sentiment tracking commands
   program
     .command('serpew:sentiment:track')
@@ -57,7 +57,7 @@ function registerCommands(program) {
     .option('--tags <tags>', 'Comma-separated list of tags')
     .option('--source <source>', 'Data source', 'manual')
     .action(require('./sentiment/track'));
-  
+
   // Performance reporting commands
   program
     .command('serpew:performance:report')
@@ -67,7 +67,7 @@ function registerCommands(program) {
     .option('-p, --period <period>', 'Time period (24h, 7d, 30d, 90d, or number of days)', '7d')
     .option('-f, --format <format>', 'Output format (table, json)', 'table')
     .action(require('./performance/report'));
-  
+
   return program;
 }
 

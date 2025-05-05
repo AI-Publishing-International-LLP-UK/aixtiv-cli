@@ -1,4 +1,4 @@
-const {Client} = require('@googlemaps/google-maps-services-js');
+const { Client } = require('@googlemaps/google-maps-services-js');
 const config = require('../config/google-config');
 
 const client = new Client({});
@@ -8,10 +8,10 @@ async function localSearch(query, location) {
     const response = await client.textSearch({
       params: {
         query: query,
-        key: config.placesApiKey
-      }
+        key: config.placesApiKey,
+      },
     });
-    
+
     return response.data.results;
   } catch (error) {
     console.error('Error performing local search:', error);
@@ -20,5 +20,5 @@ async function localSearch(query, location) {
 }
 
 module.exports = {
-  localSearch
+  localSearch,
 };

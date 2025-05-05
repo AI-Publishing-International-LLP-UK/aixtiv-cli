@@ -2,10 +2,10 @@
 
 /**
  * Domain Management Command for Aixtiv CLI
- * 
+ *
  * Provides functionality to manage domains in the Aixtiv Symphony ecosystem,
  * including listing, adding, verifying, and removing domains from the system.
- * 
+ *
  * © 2025 AI Publishing International LLP
  */
 
@@ -23,27 +23,27 @@ const ora = require('ora');
 // Domain types based on the holistic domain map
 const DOMAIN_TYPES = [
   'character', // Character-based domains (e.g., drclaude.live, queenlucy.live)
-  'command',   // Command systems (e.g., dreamcommand.live, visioncommand.live)
-  'wing',      // Wing domains (e.g., wing-1.live)
-  'squadron',  // Squadron domains (e.g., squadron-1.live)
-  'brand',     // Brand domains (e.g., coaching2100.com, 2100.cool)
-  'aixtiv',    // Aixtiv family domains (e.g., aixtiv.com, aixtiv-symphony.com)
-  'learning',  // Learning domains (e.g., academy2100.com, getready2100.com)
-  'commerce',  // Commerce domains (e.g., giftshop2100.com, marketplace2100.com)
-  'governance' // Governance domains (e.g., law2100.com, governance2100.com)
+  'command', // Command systems (e.g., dreamcommand.live, visioncommand.live)
+  'wing', // Wing domains (e.g., wing-1.live)
+  'squadron', // Squadron domains (e.g., squadron-1.live)
+  'brand', // Brand domains (e.g., coaching2100.com, 2100.cool)
+  'aixtiv', // Aixtiv family domains (e.g., aixtiv.com, aixtiv-symphony.com)
+  'learning', // Learning domains (e.g., academy2100.com, getready2100.com)
+  'commerce', // Commerce domains (e.g., giftshop2100.com, marketplace2100.com)
+  'governance', // Governance domains (e.g., law2100.com, governance2100.com)
 ];
 
 // Domain TLDs
 const DOMAIN_TLDS = [
-  'live',    // Human/narrative world
-  'ai',      // Artificial intelligence realm
-  'com',     // Commercial entities
-  'org',     // Organizational entities
-  'net',     // Network entities
-  'co.uk',   // UK specific
-  'mx',      // Mexico specific
-  'eu',      // European Union specific
-  'world'    // Global presence
+  'live', // Human/narrative world
+  'ai', // Artificial intelligence realm
+  'com', // Commercial entities
+  'org', // Organizational entities
+  'net', // Network entities
+  'co.uk', // UK specific
+  'mx', // Mexico specific
+  'eu', // European Union specific
+  'world', // Global presence
 ];
 
 // Config path for domain cache
@@ -57,10 +57,13 @@ if (!fs.existsSync(configDir)) {
 
 // Initialize domain cache if it doesn't exist
 if (!fs.existsSync(domainCachePath)) {
-  fs.writeFileSync(domainCachePath, JSON.stringify({
-    domains: [],
-    lastUpdated: new Date().toISOString()
-  }));
+  fs.writeFileSync(
+    domainCachePath,
+    JSON.stringify({
+      domains: [],
+      lastUpdated: new Date().toISOString(),
+    })
+  );
 }
 
 /**
@@ -92,51 +95,53 @@ function saveDomainCache(data) {
  */
 async function listDomains(options) {
   const spinner = ora('Fetching domains...').start();
-  
+
   try {
     let domains = [];
-    
+
     // If force refresh or cache is older than 1 hour, fetch from API
     const cache = loadDomainCache();
     const cacheAge = new Date() - new Date(cache.lastUpdated);
     const cacheExpired = cacheAge > 60 * 60 * 1000; // 1 hour
-    
+
     if (options.refresh || cacheExpired) {
       // In a real implementation, this would make an API call to fetch domains
       // For demo purposes, we'll use mock data
       domains = await mockFetchDomains();
-      
+
       // Update cache
       saveDomainCache({
         domains,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       });
-      
+
       spinner.succeed('Domains refreshed from server');
     } else {
       domains = cache.domains;
       spinner.succeed('Domains loaded from cache');
     }
-    
+
     // Filter domains if type is specified
     if (options.type) {
-      domains = domains.filter(domain => domain.type === options.type);
+      domains = domains.filter((domain) => domain.type === options.type);
     }
-    
+
     // Filter domains if status is specified
     if (options.status) {
-      domains = domains.filter(domain => domain.status === options.status);
+      domains = domains.filter((domain) => domain.status === options.status);
     }
-    
+
     // Display domains in a table
     displayDomains(domains);
-    
+
     // Show cache status
     if (!options.refresh && domains.length > 0) {
-      console.log(chalk.dim(`\nCache last updated: ${new Date(cache.lastUpdated).toLocaleString()}`));
+      console.log(
+        chalk.dim(`\nCache last updated: ${new Date(cache.lastUpdated).toLocaleString()}`)
+      );
       console.log(chalk.dim(`Use --refresh to fetch the latest data from the server`));
     }
-    
+
     return domains;
   } catch (error) {
     spinner.fail('Failed to fetch domains');
@@ -152,30 +157,30 @@ function displayDomains(domains) {
     console.log(chalk.yellow('\nNo domains found matching the criteria'));
     return;
   }
-  
+
   const table = new Table({
     head: [
       chalk.cyan('Domain'),
       chalk.cyan('Type'),
       chalk.cyan('Status'),
       chalk.cyan('Expiry Date'),
-      chalk.cyan('Firebase Project')
+      chalk.cyan('Firebase Project'),
     ],
-    colWidths: [30, 15, 15, 15, 25]
+    colWidths: [30, 15, 15, 15, 25],
   });
-  
-  domains.forEach(domain => {
+
+  domains.forEach((domain) => {
     const status = getStatusColor(domain.status);
-    
+
     table.push([
       domain.name,
       domain.type,
       status,
       domain.expiryDate || 'N/A',
-      domain.firebaseProject || 'N/A'
+      domain.firebaseProject || 'N/A',
     ]);
   });
-  
+
   console.log(table.toString());
   console.log(`\nTotal domains: ${domains.length}`);
 }
@@ -203,65 +208,65 @@ function getStatusColor(status) {
  */
 async function mockFetchDomains() {
   // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   return [
     {
       name: 'aixtiv.com',
       type: 'aixtiv',
       status: 'active',
       expiryDate: '2026-04-24',
-      firebaseProject: 'aixtiv-symphony'
+      firebaseProject: 'aixtiv-symphony',
     },
     {
       name: 'coaching2100.com',
       type: 'brand',
       status: 'active',
       expiryDate: '2026-03-15',
-      firebaseProject: 'coaching2100-com'
+      firebaseProject: 'coaching2100-com',
     },
     {
       name: 'drclaude.live',
       type: 'character',
       status: 'active',
       expiryDate: '2026-05-10',
-      firebaseProject: 'dr-claude-live'
+      firebaseProject: 'dr-claude-live',
     },
     {
       name: 'queenlucy.live',
       type: 'character',
       status: 'active',
       expiryDate: '2026-05-10',
-      firebaseProject: 'queen-lucy-live'
+      firebaseProject: 'queen-lucy-live',
     },
     {
       name: 'dreamcommand.live',
       type: 'command',
       status: 'active',
       expiryDate: '2026-06-20',
-      firebaseProject: 'dream-command-live'
+      firebaseProject: 'dream-command-live',
     },
     {
       name: 'wing-1.live',
       type: 'wing',
       status: 'active',
       expiryDate: '2026-07-15',
-      firebaseProject: 'wing-1-live'
+      firebaseProject: 'wing-1-live',
     },
     {
       name: 'giftshop2100.com',
       type: 'commerce',
       status: 'pending',
       expiryDate: '2026-08-01',
-      firebaseProject: 'giftshop2100-com'
+      firebaseProject: 'giftshop2100-com',
     },
     {
       name: 'drmemoria.ai',
       type: 'character',
       status: 'transferring',
       expiryDate: '2026-09-12',
-      firebaseProject: 'dr-memoria-ai'
-    }
+      firebaseProject: 'dr-memoria-ai',
+    },
   ];
 }
 
@@ -270,76 +275,78 @@ async function mockFetchDomains() {
  */
 async function addDomain(name, options) {
   const spinner = ora('Adding domain...').start();
-  
+
   try {
     // Validate domain name
     if (!name) {
       spinner.fail('Domain name is required');
       return;
     }
-    
+
     // Get additional information if not provided in options
     const domainInfo = await collectDomainInfo(name, options);
-    
+
     // In a real implementation, this would make an API call to add the domain
     // For demo purposes, we'll update the local cache
-    
+
     // Check if domain already exists
     const cache = loadDomainCache();
-    const existingDomainIndex = cache.domains.findIndex(d => d.name === name);
-    
+    const existingDomainIndex = cache.domains.findIndex((d) => d.name === name);
+
     if (existingDomainIndex !== -1) {
       spinner.fail(`Domain ${name} already exists`);
-      
+
       // Ask if user wants to update the domain
       const { update } = await inquirer.prompt([
         {
           type: 'confirm',
           name: 'update',
           message: 'Do you want to update this domain?',
-          default: false
-        }
+          default: false,
+        },
       ]);
-      
+
       if (!update) {
         return;
       }
-      
+
       // Update domain
       cache.domains[existingDomainIndex] = {
         ...cache.domains[existingDomainIndex],
-        ...domainInfo
+        ...domainInfo,
       };
-      
+
       saveDomainCache({
         domains: cache.domains,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       });
-      
+
       console.log(chalk.green(`\nDomain ${name} updated successfully`));
       return;
     }
-    
+
     // Add new domain
     cache.domains.push({
       name,
       ...domainInfo,
-      status: 'pending'
+      status: 'pending',
     });
-    
+
     saveDomainCache({
       domains: cache.domains,
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     });
-    
+
     spinner.succeed(`Domain ${name} added successfully`);
-    
+
     // Display the newly added domain
-    displayDomains([{
-      name,
-      ...domainInfo,
-      status: 'pending'
-    }]);
+    displayDomains([
+      {
+        name,
+        ...domainInfo,
+        status: 'pending',
+      },
+    ]);
   } catch (error) {
     spinner.fail('Failed to add domain');
     console.error(chalk.red(`Error: ${error.message}`));
@@ -355,49 +362,49 @@ async function collectDomainInfo(name, options) {
     return {
       type: options.type,
       firebaseProject: options.firebaseProject,
-      expiryDate: options.expiryDate || getDefaultExpiryDate()
+      expiryDate: options.expiryDate || getDefaultExpiryDate(),
     };
   }
-  
+
   // Otherwise, prompt for missing information
   const questions = [];
-  
+
   if (!options.type) {
     questions.push({
       type: 'list',
       name: 'type',
       message: 'Select domain type:',
-      choices: DOMAIN_TYPES
+      choices: DOMAIN_TYPES,
     });
   }
-  
+
   if (!options.firebaseProject) {
     questions.push({
       type: 'input',
       name: 'firebaseProject',
       message: 'Enter Firebase project ID:',
-      default: name.replace(/\./g, '-')
+      default: name.replace(/\./g, '-'),
     });
   }
-  
+
   if (!options.expiryDate) {
     questions.push({
       type: 'input',
       name: 'expiryDate',
       message: 'Enter expiry date (YYYY-MM-DD):',
       default: getDefaultExpiryDate(),
-      validate: date => {
+      validate: (date) => {
         return /^\d{4}-\d{2}-\d{2}$/.test(date) || 'Please enter a valid date in YYYY-MM-DD format';
-      }
+      },
     });
   }
-  
+
   const answers = await inquirer.prompt(questions);
-  
+
   return {
     type: options.type || answers.type,
     firebaseProject: options.firebaseProject || answers.firebaseProject,
-    expiryDate: options.expiryDate || answers.expiryDate
+    expiryDate: options.expiryDate || answers.expiryDate,
   };
 }
 
@@ -418,49 +425,43 @@ async function verifyDomain(name, options) {
     console.error(chalk.red('Domain name is required'));
     return;
   }
-  
+
   const spinner = ora(`Verifying domain ${name}...`).start();
-  
+
   try {
     // In a real implementation, this would check:
     // 1. DNS records (A, CNAME, MX, TXT)
     // 2. SSL certificate
     // 3. Firebase Hosting connection
     // 4. Domain registrar settings
-    
+
     // Simulate verification process
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     spinner.succeed(`Domain ${name} verified successfully`);
-    
+
     // Show verification results
     console.log('\n' + chalk.bold('Verification Results:'));
-    
+
     const dnsChecks = [
       { check: 'A Record', status: 'ok', value: '151.101.1.195' },
       { check: 'CNAME Record', status: 'ok', value: 'aixtiv-symphony.web.app' },
       { check: 'MX Records', status: 'ok', value: 'mx.google.com' },
-      { check: 'TXT Records', status: 'ok', value: 'google-site-verification=...' }
+      { check: 'TXT Records', status: 'ok', value: 'google-site-verification=...' },
     ];
-    
-    const table = new Table({
-      head: [
-        chalk
 
-        .cyan('Check'),
-        chalk.cyan('Status'),
-        chalk.cyan('Value')
-      ]
+    const table = new Table({
+      head: [chalk.cyan('Check'), chalk.cyan('Status'), chalk.cyan('Value')],
     });
-    
-    dnsChecks.forEach(check => {
+
+    dnsChecks.forEach((check) => {
       table.push([
         check.check,
         check.status === 'ok' ? chalk.green('✓ OK') : chalk.red('✗ Failed'),
-        check.value
+        check.value,
       ]);
     });
-    
+
     console.log(table.toString());
   } catch (error) {
     spinner.fail(`Failed to verify domain ${name}`);
@@ -476,7 +477,7 @@ async function removeDomain(name, options) {
     console.error(chalk.red('Domain name is required'));
     return;
   }
-  
+
   // Confirm removal if not forced
   if (!options.force) {
     const { confirm } = await inquirer.prompt([
@@ -484,38 +485,38 @@ async function removeDomain(name, options) {
         type: 'confirm',
         name: 'confirm',
         message: `Are you sure you want to remove domain ${name}?`,
-        default: false
-      }
+        default: false,
+      },
     ]);
-    
+
     if (!confirm) {
       console.log(chalk.yellow('Domain removal cancelled'));
       return;
     }
   }
-  
+
   const spinner = ora(`Removing domain ${name}...`).start();
-  
+
   try {
     // In a real implementation, this would make an API call to remove the domain
     // For demo purposes, we'll update the local cache
-    
+
     const cache = loadDomainCache();
-    const existingDomainIndex = cache.domains.findIndex(d => d.name === name);
-    
+    const existingDomainIndex = cache.domains.findIndex((d) => d.name === name);
+
     if (existingDomainIndex === -1) {
       spinner.fail(`Domain ${name} not found`);
       return;
     }
-    
+
     // Remove domain from cache
     cache.domains.splice(existingDomainIndex, 1);
-    
+
     saveDomainCache({
       domains: cache.domains,
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     });
-    
+
     spinner.succeed(`Domain ${name} removed successfully`);
   } catch (error) {
     spinner.fail(`Failed to remove domain ${name}`);
@@ -531,37 +532,37 @@ async function setupFirebase(name, options) {
     console.error(chalk.red('Domain name is required'));
     return;
   }
-  
+
   const spinner = ora(`Setting up Firebase Hosting for ${name}...`).start();
-  
+
   try {
     // Get Firebase project and site ID
-    const firebaseProject = options.project || await promptForFirebaseProject();
-    const siteId = options.site || await promptForSiteId(name);
-    
+    const firebaseProject = options.project || (await promptForFirebaseProject());
+    const siteId = options.site || (await promptForSiteId(name));
+
     // In a real implementation, this would:
     // 1. Connect to Firebase
     // 2. Add the domain to the specified site
     // 3. Update DNS records
     // 4. Provision SSL certificate
-    
+
     // Simulate setup process
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     spinner.succeed(`Firebase Hosting set up successfully for ${name}`);
-    
+
     console.log('\n' + chalk.bold('Next Steps:'));
     console.log(chalk.cyan('1.') + ' Add the following DNS records to your domain:');
     console.log('   ' + chalk.bold('A Record:') + ' @ -> 151.101.1.195');
     console.log('   ' + chalk.bold('CNAME Record:') + ' www -> ' + siteId + '.web.app');
-    
+
     console.log(chalk.cyan('2.') + ' Verify your domain with:');
     console.log('   ' + chalk.bold('aixtiv domain verify') + ' ' + name);
-    
+
     // Update domain in cache
     updateDomainInCache(name, {
       firebaseProject,
-      status: 'pending'
+      status: 'pending',
     });
   } catch (error) {
     spinner.fail(`Failed to set up Firebase Hosting for ${name}`);
@@ -578,10 +579,10 @@ async function promptForFirebaseProject() {
       type: 'input',
       name: 'project',
       message: 'Enter Firebase project ID:',
-      validate: input => !!input || 'Firebase project ID is required'
-    }
+      validate: (input) => !!input || 'Firebase project ID is required',
+    },
   ]);
-  
+
   return project;
 }
 
@@ -590,16 +591,16 @@ async function promptForFirebaseProject() {
  */
 async function promptForSiteId(domain) {
   const defaultSiteId = domain.replace(/\./g, '-');
-  
+
   const { siteId } = await inquirer.prompt([
     {
       type: 'input',
       name: 'siteId',
       message: 'Enter Firebase Hosting site ID:',
-      default: defaultSiteId
-    }
+      default: defaultSiteId,
+    },
   ]);
-  
+
   return siteId;
 }
 
@@ -611,42 +612,42 @@ async function setupGoDaddy(name, options) {
     console.error(chalk.red('Domain name is required'));
     return;
   }
-  
+
   const spinner = ora(`Setting up domain ${name} in GoDaddy...`).start();
-  
+
   try {
     // Get nameservers if provided
     let nameservers = [];
-    
+
     if (options.nameservers) {
-      nameservers = options.nameservers.split(',').map(ns => ns.trim());
+      nameservers = options.nameservers.split(',').map((ns) => ns.trim());
     } else {
       // Prompt for nameservers if not provided
       nameservers = await promptForNameservers();
     }
-    
+
     // In a real implementation, this would:
     // 1. Connect to GoDaddy API
     // 2. Update nameservers or DNS records
-    
+
     // Simulate setup process
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     spinner.succeed(`Domain ${name} set up successfully in GoDaddy`);
-    
+
     console.log('\n' + chalk.bold('Nameservers set to:'));
-    nameservers.forEach(ns => {
+    nameservers.forEach((ns) => {
       console.log('  - ' + ns);
     });
-    
+
     console.log('\n' + chalk.bold('Next Steps:'));
     console.log(chalk.cyan('1.') + ' Wait for DNS propagation (up to 48 hours)');
     console.log(chalk.cyan('2.') + ' Set up Firebase Hosting:');
     console.log('   ' + chalk.bold('aixtiv domain firebase-setup') + ' ' + name);
-    
+
     // Update domain in cache
     updateDomainInCache(name, {
-      status: 'pending'
+      status: 'pending',
     });
   } catch (error) {
     spinner.fail(`Failed to set up domain ${name} in GoDaddy`);
@@ -663,31 +664,31 @@ async function promptForNameservers() {
       type: 'confirm',
       name: 'useCustom',
       message: 'Do you want to use custom nameservers?',
-      default: false
-    }
+      default: false,
+    },
   ]);
-  
+
   if (!useCustom) {
     // Return default nameservers for Firebase
     return [
       'ns1.googledomains.com',
       'ns2.googledomains.com',
       'ns3.googledomains.com',
-      'ns4.googledomains.com'
+      'ns4.googledomains.com',
     ];
   }
-  
+
   // Prompt for custom nameservers
   const { nameservers } = await inquirer.prompt([
     {
       type: 'input',
       name: 'nameservers',
       message: 'Enter comma-separated list of nameservers:',
-      validate: input => !!input || 'At least one nameserver is required'
-    }
+      validate: (input) => !!input || 'At least one nameserver is required',
+    },
   ]);
-  
-  return nameservers.split(',').map(ns => ns.trim());
+
+  return nameservers.split(',').map((ns) => ns.trim());
 }
 
 /**
@@ -695,25 +696,25 @@ async function promptForNameservers() {
  */
 function updateDomainInCache(name, updates) {
   const cache = loadDomainCache();
-  const existingDomainIndex = cache.domains.findIndex(d => d.name === name);
-  
+  const existingDomainIndex = cache.domains.findIndex((d) => d.name === name);
+
   if (existingDomainIndex !== -1) {
     // Update existing domain
     cache.domains[existingDomainIndex] = {
       ...cache.domains[existingDomainIndex],
-      ...updates
+      ...updates,
     };
   } else {
     // Add new domain
     cache.domains.push({
       name,
-      ...updates
+      ...updates,
     });
   }
-  
+
   saveDomainCache({
     domains: cache.domains,
-    lastUpdated: new Date().toISOString()
+    lastUpdated: new Date().toISOString(),
   });
 }
 
@@ -724,5 +725,5 @@ module.exports = {
   verifyDomain,
   removeDomain,
   setupFirebase,
-  setupGoDaddy
+  setupGoDaddy,
 };

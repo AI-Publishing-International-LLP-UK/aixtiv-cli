@@ -7,16 +7,16 @@ const functions = require('../../functions');
 // Test Claude code generation
 const mockRequest = {
   body: {
-    task: "Create a function that calculates factorial",
-    language: "javascript"
-  }
+    task: 'Create a function that calculates factorial',
+    language: 'javascript',
+  },
 };
 
 const mockResponse = {
   json: (data) => {
     console.log('Response:', JSON.stringify(data, null, 2));
     return data;
-  }
+  },
 };
 
 // Run the test

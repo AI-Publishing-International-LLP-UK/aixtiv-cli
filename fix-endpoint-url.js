@@ -9,8 +9,10 @@ let content = fs.readFileSync(filePath, 'utf8');
 
 // Replace the hardcoded endpoint with one that checks for environment variables
 // and uses a more reliable default
-const oldLine = "const functionUrl = process.env.CLAUDE_API_ENDPOINT || 'https://drclaude.live/code-generate';";
-const newLine = "const functionUrl = process.env.CLAUDE_API_ENDPOINT || 'https://api.claude.ai/v1/code-generation';";
+const oldLine =
+  "const functionUrl = process.env.CLAUDE_API_ENDPOINT || 'https://drclaude.live/code-generate';";
+const newLine =
+  "const functionUrl = process.env.CLAUDE_API_ENDPOINT || 'https://api.claude.ai/v1/code-generation';";
 
 // Replace the content
 content = content.replace(oldLine, newLine);

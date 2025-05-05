@@ -1,6 +1,6 @@
 /**
  * Debug Anthropic Headers Script
- * 
+ *
  * This script examines the Claude code generation file to understand
  * how the headers and API key are being used.
  */
@@ -27,7 +27,7 @@ try {
 function extractAndPrint(pattern, label) {
   const regex = new RegExp(pattern, 's'); // 's' flag to allow . to match newlines
   const match = content.match(regex);
-  
+
   if (match) {
     console.log(`\n=== ${label} ===`);
     console.log(match[0]);
@@ -48,11 +48,13 @@ extractAndPrint('const functionUrl[\\s\\S]*?;', 'API Endpoint Configuration');
 // Extract any command execution
 extractAndPrint('execute\\([\\s\\S]*?{[\\s\\S]*?}\\)', 'Command Execution');
 
-console.log('\nDebug complete. Check the above sections to understand how API keys are being used.');
+console.log(
+  '\nDebug complete. Check the above sections to understand how API keys are being used.'
+);
 
 /**
  * Debug Anthropic Headers Script
- * 
+ *
  * This script examines how headers and API keys are being used in the Claude code generation file.
  * It extracts and prints the relevant sections to help diagnose authentication issues.
  */
@@ -94,7 +96,7 @@ const envVars = content.match(envVarPattern);
 if (envVars && envVars.length > 0) {
   console.log('Environment variables used:');
   const uniqueEnvVars = [...new Set(envVars)];
-  uniqueEnvVars.forEach(envVar => {
+  uniqueEnvVars.forEach((envVar) => {
     console.log(`- ${envVar}`);
   });
 } else {
@@ -108,7 +110,7 @@ const configMatches = content.match(configPattern);
 
 if (configMatches && configMatches.length > 0) {
   console.log('API configuration:');
-  configMatches.forEach(config => {
+  configMatches.forEach((config) => {
     console.log(config);
   });
 } else {
@@ -122,7 +124,7 @@ const dotenvMatches = content.match(dotenvPattern);
 
 if (dotenvMatches && dotenvMatches.length > 0) {
   console.log('Environment loading:');
-  dotenvMatches.forEach(match => {
+  dotenvMatches.forEach((match) => {
     console.log(match);
   });
 } else {
@@ -136,7 +138,7 @@ const headersMatches = content.match(headersPattern);
 
 if (headersMatches && headersMatches.length > 0) {
   console.log('Headers manipulation:');
-  headersMatches.forEach(match => {
+  headersMatches.forEach((match) => {
     console.log(match);
   });
 } else {
@@ -144,4 +146,3 @@ if (headersMatches && headersMatches.length > 0) {
 }
 
 console.log('\nDebugging complete');
-
