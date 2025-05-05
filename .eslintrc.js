@@ -3,12 +3,11 @@ module.exports = {
     node: true,
     es2022: true,
   },
-  extends: ['airbnb-base', 'plugin:prettier/recommended'],
+  extends: ['airbnb-base', 'prettier'],
   parserOptions: {
     ecmaVersion: 2022,
     sourceType: 'module',
   },
-  plugins: ['prettier'],
   rules: {
     // Allow console statements in the CLI application
     'no-console': 'off',
@@ -62,17 +61,6 @@ module.exports = {
       },
     ],
 
-    // Prettier integration
-    'prettier/prettier': [
-      'error',
-      {
-        singleQuote: true,
-        printWidth: 100,
-        tabWidth: 2,
-        semi: true,
-        arrowParens: 'always',
-        trailingComma: 'es5',
-      },
-    ],
+    // Removed Prettier integration rule
   },
 };
