@@ -72,9 +72,9 @@ echo -e "- DR_CLAUDE_API_KEY (${#DR_CLAUDE_API_KEY} chars)"
 echo -e "- CLAUDE_API_ENDPOINT: ${CLAUDE_API_ENDPOINT}"
 echo -e "- DR_CLAUDE_API: ${DR_CLAUDE_API}"
 echo -e "- PINECONE_API_KEY (${#PINECONE_API_KEY} chars)"
-echo -e "- LUCY_CLAUDE_API_KEY (${#LUCY_CLAUDE_API_KEY} chars)
+echo -e "- LUCY_CLAUDE_API_KEY (${#LUCY_CLAUDE_API_KEY} chars)"
 echo -e "- LANGCHAIN_01_KEY (${#LANGCHAIN_01_KEY} chars)"
-echo -e "- LANGCHAIN_02_KEY (${#LANGCHAIN_02_KEY} chars)
+echo -e "- LANGCHAIN_02_KEY (${#LANGCHAIN_02_KEY} chars)"
 echo -e "\n${YELLOW}Note: These variables will only persist in the current terminal session${NC}"
 echo -e "To make them permanent, add them to your ~/.zshrc or ~/.bash_profile"
 echo -e "${BLUE}===============================${NC}"
