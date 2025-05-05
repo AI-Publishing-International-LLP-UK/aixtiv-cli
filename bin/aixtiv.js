@@ -12,11 +12,7 @@ function formatDate(date) {
 }
 
 // Display banner
-console.log(
-  chalk.cyan(
-    figlet.textSync('Aixtiv CLI', { horizontalLayout: 'full' })
-  )
-);
+console.log(chalk.cyan(figlet.textSync('Aixtiv CLI', { horizontalLayout: 'full' })));
 console.log(chalk.blue(`v${packageJson.version} - SallyPort Security Management`));
 console.log();
 
@@ -62,9 +58,7 @@ const registerDomainCommands = require('../commands/domain');
 // const registerSerpewCommands = require('../commands/serpew');
 
 // Configure program
-program
-  .version(packageJson.version)
-  .description('Aixtiv CLI for SallyPort security management');
+program.version(packageJson.version).description('Aixtiv CLI for SallyPort security management');
 
 // Project commands
 program
@@ -126,13 +120,13 @@ program
     const agent = '001';
     const principal = 'pr@coaching2100.com';
     const resource = 'pr-2bd91160bf21ba21';
-    
+
     if (cleanup) {
       const revoke = require('../commands/agent/revoke');
       await revoke({
         email: principal,
         agent: agent,
-        resource: resource
+        resource: resource,
       });
     } else {
       const grant = require('../commands/agent/grant');
@@ -140,7 +134,7 @@ program
         email: principal,
         agent: agent,
         resource: resource,
-        type: 'full'
+        type: 'full',
       });
     }
   });
@@ -150,7 +144,10 @@ program
   .command('copilot:link')
   .description('Link a co-pilot to a principal')
   .requiredOption('-e, --email <email>', 'Principal email')
-  .requiredOption('-c, --copilot <copilot>', 'Co-pilot email or name (if just name, will use name@drname.live format)')
+  .requiredOption(
+    '-c, --copilot <copilot>',
+    'Co-pilot email or name (if just name, will use name@drname.live format)'
+  )
   .option('-l, --level <level>', 'Trust level (standard, enhanced, executive)', 'standard')
   .action(copilotLink);
 
@@ -211,7 +208,11 @@ program
   .requiredOption('-p, --project <name>', 'Project name')
   .requiredOption('-d, --description <description>', 'Project description')
   .option('--priority <priority>', 'Project priority (low, medium, high)', 'medium')
-  .option('--deadline <date>', 'Project deadline (YYYY-MM-DD)', formatDate(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)))
+  .option(
+    '--deadline <date>',
+    'Project deadline (YYYY-MM-DD)',
+    formatDate(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
+  )
   .option('--tags <tags>', 'Comma-separated list of project tags')
   .option('--assign-to <agent>', 'Directly assign to specific agent (e.g., dr-lucy, dr-match)')
   .action(claudeAgentDelegate);
@@ -221,7 +222,10 @@ program
   .command('claude:automation:github')
   .description('Use Dr. Claude Automation to manage GitHub repositories')
   .requiredOption('-r, --repository <repo>', 'Repository name or "all" for all repositories')
-  .requiredOption('-a, --action <action>', 'Action to perform (align, clean, secure, memoria-assist, sync)')
+  .requiredOption(
+    '-a, --action <action>',
+    'Action to perform (align, clean, secure, memoria-assist, sync)'
+  )
   .option('-b, --branch <branch>', 'Branch name', 'main')
   .option('-o, --organization <org>', 'GitHub organization', 'AI-Publishing-International-LLP-UK')
   .option('--security-check <boolean>', 'Perform security checks', 'true')
@@ -253,16 +257,20 @@ program
   .option('-p, --priority <priority>', 'Task priority (low, normal, high)', 'normal')
   .option('-e, --env <environment>', 'Environment (dev, prod)', 'prod')
   .action((options) => {
-    console.log(chalk.yellow('Warning: claude:delegate is deprecated. Please use claude:agent:delegate instead.'));
+    console.log(
+      chalk.yellow(
+        'Warning: claude:delegate is deprecated. Please use claude:agent:delegate instead.'
+      )
+    );
     console.log('');
-    
+
     // Convert to project-style delegation
     claudeAgentDelegate({
       project: `Task for ${options.agent}`,
       description: options.task,
       priority: options.priority,
       assignTo: options.agent,
-      env: options.env
+      env: options.env,
     });
   });
 

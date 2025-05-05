@@ -8,15 +8,18 @@ const chalk = require('chalk');
  */
 module.exports = async function agentGrant(options) {
   const { email, agent, resource, type } = parseOptions(options);
-  
+
   try {
     // Validate access type
     const validTypes = ['full', 'readonly', 'delegated'];
     if (!validTypes.includes(type)) {
-      console.error(chalk.red('Error:'), `Invalid access type '${type}'. Must be one of: ${validTypes.join(', ')}`);
+      console.error(
+        chalk.red('Error:'),
+        `Invalid access type '${type}'. Must be one of: ${validTypes.join(', ')}`
+      );
       process.exit(1);
     }
-    
+
     // Execute grant operation with spinner
     const result = await withSpinner(
       `Granting ${type} access for agent ${agent} to resource ${resource}`,
@@ -26,10 +29,10 @@ module.exports = async function agentGrant(options) {
       resource,
       type
     );
-    
+
     // Display result
     displayResult(result);
-    
+
     // Display additional details if successful
     if (result.success) {
       console.log(chalk.bold('Grant Details:'));
@@ -37,7 +40,7 @@ module.exports = async function agentGrant(options) {
       console.log(`Agent: ${chalk.cyan(agent)}`);
       console.log(`Resource: ${chalk.yellow(resource)}`);
       console.log(`Access Type: ${chalk.magenta(type)}`);
-      
+
       if (type === 'full') {
         console.log(`Special Access: ${chalk.green('Yes')}`);
         console.log(`Override Rules: ${chalk.green('Yes')}`);

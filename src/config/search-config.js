@@ -7,15 +7,15 @@ async function getSearchConfig() {
   try {
     // Get Google Search credentials only
     const [apiKeyVersion] = await client.accessSecretVersion({
-      name: `projects/${projectId}/secrets/google_custom_search_config/versions/latest`
+      name: `projects/${projectId}/secrets/google_custom_search_config/versions/latest`,
     });
     const [searchEngineIdVersion] = await client.accessSecretVersion({
-      name: `projects/${projectId}/secrets/google_search_engine_id/versions/latest`
+      name: `projects/${projectId}/secrets/google_search_engine_id/versions/latest`,
     });
 
     return {
       apiKey: apiKeyVersion.payload.data.toString('utf8'),
-      searchEngineId: searchEngineIdVersion.payload.data.toString('utf8')
+      searchEngineId: searchEngineIdVersion.payload.data.toString('utf8'),
     };
   } catch (error) {
     console.error('Error getting search config:', error);

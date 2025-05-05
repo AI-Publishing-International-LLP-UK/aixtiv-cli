@@ -19,16 +19,8 @@
         },
         "agents": {
           "enabled": true,
-          "workflows": [
-            "training-analysis",
-            "content-generation",
-            "code-review"
-          ],
-          "tools": [
-            "search", 
-            "github", 
-            "code-interpreter"
-          ]
+          "workflows": ["training-analysis", "content-generation", "code-review"],
+          "tools": ["search", "github", "code-interpreter"]
         }
       }
     }

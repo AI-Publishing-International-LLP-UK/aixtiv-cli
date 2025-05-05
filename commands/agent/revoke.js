@@ -9,7 +9,7 @@ const inquirer = require('inquirer');
  */
 module.exports = async function agentRevoke(options) {
   const { email, agent, resource } = parseOptions(options);
-  
+
   try {
     // Confirm revocation unless forced
     if (!options.force) {
@@ -18,16 +18,16 @@ module.exports = async function agentRevoke(options) {
           type: 'confirm',
           name: 'confirm',
           message: `Are you sure you want to revoke access for agent ${agent} to resource ${resource}?`,
-          default: false
-        }
+          default: false,
+        },
       ]);
-      
+
       if (!confirm) {
         console.log(chalk.yellow('Operation cancelled.'));
         return;
       }
     }
-    
+
     // Execute revoke operation with spinner
     const result = await withSpinner(
       `Revoking access for agent ${agent} to resource ${resource}`,
@@ -36,10 +36,10 @@ module.exports = async function agentRevoke(options) {
       agent,
       resource
     );
-    
+
     // Display result
     displayResult(result);
-    
+
     // Display additional details if successful
     if (result.success) {
       console.log(chalk.bold('Revocation Details:'));

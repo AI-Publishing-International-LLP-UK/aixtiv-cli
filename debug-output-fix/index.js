@@ -1,6 +1,6 @@
 /**
  * Aixtiv CLI Debug Output Enhancement - Main Index
- * 
+ *
  * This file provides a central reference point for all the resources
  * related to the debug output enhancement project.
  */
@@ -11,7 +11,12 @@ const chalk = require('chalk');
 
 // Display a welcome message and guide
 console.log(chalk.cyan('┌' + '─'.repeat(70) + '┐'));
-console.log(chalk.cyan('│') + chalk.bold.white(' AIXTIV CLI DEBUG OUTPUT ENHANCEMENT ') + ' '.repeat(35) + chalk.cyan('│'));
+console.log(
+  chalk.cyan('│') +
+    chalk.bold.white(' AIXTIV CLI DEBUG OUTPUT ENHANCEMENT ') +
+    ' '.repeat(35) +
+    chalk.cyan('│')
+);
 console.log(chalk.cyan('└' + '─'.repeat(70) + '┘'));
 console.log('');
 
@@ -23,33 +28,33 @@ const resources = [
   {
     name: 'install.sh',
     description: 'Installation script to set up the debug output enhancement',
-    usage: './debug-output-fix/install.sh'
+    usage: './debug-output-fix/install.sh',
   },
   {
     name: 'test-debug-output.sh',
     description: 'Test script to verify the debug output enhancement',
-    usage: './debug-output-fix/test-debug-output.sh'
+    usage: './debug-output-fix/test-debug-output.sh',
   },
   {
     name: 'run-with-debug.js',
     description: 'Run any Aixtiv CLI command with debug output',
-    usage: 'node debug-output-fix/run-with-debug.js <command> [arguments]'
+    usage: 'node debug-output-fix/run-with-debug.js <command> [arguments]',
   },
   {
     name: 'fix-cli-output.js',
     description: 'Script that modifies the CLI to enhance output display',
-    usage: 'node debug-output-fix/fix-cli-output.js'
+    usage: 'node debug-output-fix/fix-cli-output.js',
   },
   {
     name: 'examples/example-command.js',
     description: 'Example command showing how to structure debug output',
-    usage: 'Reference implementation for developers'
+    usage: 'Reference implementation for developers',
   },
   {
     name: 'README.md',
     description: 'Documentation with usage instructions and customization options',
-    usage: 'Read for detailed information'
-  }
+    usage: 'Read for detailed information',
+  },
 ];
 
 // Display resources in a formatted table

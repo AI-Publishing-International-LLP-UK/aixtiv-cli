@@ -1,6 +1,6 @@
 /**
  * Aixtiv CLI - Natural Language Processing Command
- * 
+ *
  * This module registers a new command in the Aixtiv CLI that allows users
  * to interact with the system using natural language instead of command codes.
  */
@@ -39,9 +39,15 @@ try {
   console.warn('Conversation context manager not available, using stateless mode');
   // Create minimal stub if module doesn't exist yet
   conversationContext = {
-    updateContext: (sessionId, input, result) => { return {}; },
-    getContext: (sessionId) => { return {}; },
-    handleClarification: (sessionId, clarification) => { return null; }
+    updateContext: (sessionId, input, result) => {
+      return {};
+    },
+    getContext: (sessionId) => {
+      return {};
+    },
+    handleClarification: (sessionId, clarification) => {
+      return null;
+    },
   };
 }
 
@@ -49,18 +55,14 @@ try {
  * Display a fancy NLP mode banner
  */
 function displayBanner() {
-  console.log(
-    chalk.cyan(
-      figlet.textSync('Aixtiv NLP', { font: 'Standard' })
-    )
-  );
-  
+  console.log(chalk.cyan(figlet.textSync('Aixtiv NLP', { font: 'Standard' })));
+
   console.log(
     boxen(chalk.yellow(' Natural Language Interface to Aixtiv CLI '), {
       padding: 1,
       borderColor: 'cyan',
       margin: 1,
-      borderStyle: 'round'
+      borderStyle: 'round',
     })
   );
 }
@@ -72,7 +74,7 @@ function formatResult(result) {
   if (!result) {
     return chalk.red('No result returned from command');
   }
-  
+
   // If the command execution failed
   if (!result.success) {
     return chalk.red(`Error: ${result.error || result.message || 'Unknown error'}`);
@@ -85,7 +87,7 @@ function formatResult(result) {
 
   // Parse the command output and format it nicely
   let output = '';
-  
+
   if (result.command) {
     output += chalk.green(`\n✓ Executed: ${chalk.bold(result.command)}\n\n`);
   }
@@ -94,7 +96,7 @@ function formatResult(result) {
     // Try to format the output nicely
     output += result.output;
   }
-  
+
   return output;
 }
 
@@ -103,55 +105,55 @@ function formatResult(result) {
  */
 async function startInteractiveMode() {
   displayBanner();
-  
+
   console.log(chalk.cyan('\nNatural Language Interface - Interactive Mode'));
   console.log(chalk.dim('Type "exit" or "quit" to leave interactive mode'));
   console.log(chalk.dim('Type "help" for assistance\n'));
-  
+
   const sessionId = uuidv4();
   let keepGoing = true;
-  
+
   while (keepGoing) {
     const { input } = await inquirer.prompt([
       {
         type: 'input',
         name: 'input',
         message: chalk.green('Aixtiv>'),
-        validate: value => value.trim() !== '' || 'Please enter a command'
-      }
+        validate: (value) => value.trim() !== '' || 'Please enter a command',
+      },
     ]);
-    
+
     // Check for exit commands
     if (['exit', 'quit'].includes(input.toLowerCase().trim())) {
       keepGoing = false;
       console.log(chalk.yellow('Exiting NLP mode. Goodbye!'));
       continue;
     }
-    
+
     // Check for help command
     if (input.toLowerCase().trim() === 'help') {
       displayHelp();
       continue;
     }
-    
+
     // Process the natural language input
     const spinner = ora('Processing...').start();
-    
+
     try {
       const context = conversationContext.getContext(sessionId);
-      
+
       // Check if we're waiting for clarification
       let result;
       if (context.clarificationState && context.clarificationState.waitingForClarification) {
         spinner.text = 'Processing clarification...';
         const clarifiedIntent = conversationContext.handleClarification(sessionId, input);
-        
+
         if (clarifiedIntent) {
           // Use the clarified intent
           spinner.text = 'Executing command based on clarification...';
-          result = nlpProcessor.processNaturalLanguage(input, { 
-            sessionId, 
-            clarifiedIntent 
+          result = nlpProcessor.processNaturalLanguage(input, {
+            sessionId,
+            clarifiedIntent,
           });
         } else {
           // Still unclear, try processing the input directly
@@ -162,7 +164,7 @@ async function startInteractiveMode() {
         // Normal processing
         result = nlpProcessor.processNaturalLanguage(input, { sessionId });
       }
-      
+
       // Update the spinner based on the result
       if (result.success) {
         spinner.succeed('Command processed successfully');
@@ -171,15 +173,14 @@ async function startInteractiveMode() {
       } else {
         spinner.fail('Command processing failed');
       }
-      
+
       // Display the formatted result
       console.log(formatResult(result));
-      
     } catch (error) {
       spinner.fail('Error processing command');
       console.error(chalk.red(`Error: ${error.message}`));
     }
-    
+
     console.log(''); // Add a blank line for readability
   }
 }
@@ -189,32 +190,46 @@ async function startInteractiveMode() {
  */
 function displayHelp() {
   console.log(chalk.cyan('\nNatural Language Interface - Help'));
-  console.log(chalk.dim('Instead of using command flags and options, you can use natural language\n'));
-  
+  console.log(
+    chalk.dim('Instead of using command flags and options, you can use natural language\n')
+  );
+
   const table = new Table({
     head: [chalk.cyan('Example Phrases'), chalk.cyan('Equivalent Command')],
-    colWidths: [50, 50]
+    colWidths: [50, 50],
   });
-  
+
   table.push(
-    ['Create a new project called "Website Redesign"', 'aixtiv claude:agent:delegate -p "Website Redesign"'],
-    ['Generate a login component in React', 'aixtiv claude:code:generate -t "Create a login component" -l javascript'],
+    [
+      'Create a new project called "Website Redesign"',
+      'aixtiv claude:agent:delegate -p "Website Redesign"',
+    ],
+    [
+      'Generate a login component in React',
+      'aixtiv claude:code:generate -t "Create a login component" -l javascript',
+    ],
     ['Check security for our main repository', 'aixtiv claude:automation:github -r main -a secure'],
     ['Link lucy as a copilot', 'aixtiv copilot:link -c lucy']
   );
-  
+
   console.log(table.toString());
   // Create a simple ASCII box
   console.log('');
   console.log(chalk.cyan('┌' + '─'.repeat(50) + '┐'));
-  console.log(chalk.cyan('│') + ' ' + chalk.yellow('Natural Language Interface to Aixtiv CLI') + ' '.repeat(14) + chalk.cyan('│'));
+  console.log(
+    chalk.cyan('│') +
+      ' ' +
+      chalk.yellow('Natural Language Interface to Aixtiv CLI') +
+      ' '.repeat(14) +
+      chalk.cyan('│')
+  );
   console.log(chalk.cyan('└' + '─'.repeat(50) + '┘'));
   console.log('');
 }
 
 /**
  * Process a single command in non-interactive mode
- * 
+ *
  * @param {string} inputString - Natural language input
  * @param {Object} options - Command options
  * @returns {number} Exit code (0 for success, 1 for failure)
@@ -222,17 +237,17 @@ function displayHelp() {
 function processSingleCommand(inputString, options) {
   const sessionId = options.session || uuidv4();
   const dryRun = options.dryRun || false;
-  
+
   // Process the natural language input
   try {
-    const result = nlpProcessor.processNaturalLanguage(inputString, { 
-      sessionId, 
-      dryRun 
+    const result = nlpProcessor.processNaturalLanguage(inputString, {
+      sessionId,
+      dryRun,
     });
-    
+
     // Display the result
     console.log(formatResult(result));
-    
+
     // Return success/failure for programmatic use
     return result.success ? 0 : 1;
   } catch (error) {
@@ -254,7 +269,7 @@ const nlpCommand = new Command('nlp')
       startInteractiveMode();
       return;
     }
-    
+
     // Otherwise, process the input as a single command
     const inputString = input.join(' ');
     return processSingleCommand(inputString, options);

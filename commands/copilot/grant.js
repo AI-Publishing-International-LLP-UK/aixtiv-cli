@@ -8,43 +8,46 @@ const { table } = require('table');
  */
 module.exports = async function copilotGrant(options) {
   const { email, copilot, resource, type = 'readonly' } = parseOptions(options);
-  
+
   // Validate required parameters
   if (!email) {
     displayResult('Error: Principal email is required (--email)', 'error');
     return;
   }
-  
+
   if (!copilot) {
     displayResult('Error: Co-pilot email or ID is required (--copilot)', 'error');
     return;
   }
-  
+
   if (!resource) {
     displayResult('Error: Resource ID is required (--resource)', 'error');
     return;
   }
-  
+
   // Validate access type
   const validTypes = ['readonly', 'delegated', 'full'];
   if (!validTypes.includes(type)) {
-    displayResult(`Error: Invalid access type. Valid options are: ${validTypes.join(', ')}`, 'error');
+    displayResult(
+      `Error: Invalid access type. Valid options are: ${validTypes.join(', ')}`,
+      'error'
+    );
     return;
   }
-  
+
   // Format co-pilot email if just name was provided
   let copilotEmail = copilot;
   if (!copilot.includes('@')) {
     copilotEmail = `${copilot}@dr${copilot}.live`;
   }
-  
+
   try {
     // Attempt to grant access to the co-pilot
     const result = await withSpinner(
       `Granting ${type} access for co-pilot ${copilotEmail} to resource ${resource}`,
       () => grantCopilotAccess(email, copilotEmail, resource, type)
     );
-    
+
     if (result && result.success) {
       // Format a nice table with the access details
       const tableData = [
@@ -55,16 +58,16 @@ module.exports = async function copilotGrant(options) {
         ['Access Type', type],
         ['Delegated', 'Yes'],
         ['Created At', new Date(result.createdAt).toLocaleString()],
-        ['Expires', result.expiresAt ? new Date(result.expiresAt).toLocaleString() : 'Never']
+        ['Expires', result.expiresAt ? new Date(result.expiresAt).toLocaleString() : 'Never'],
       ];
-      
+
       // Display success message with table
       console.log(chalk.green(`\n✓ Success: ${type} access granted to co-pilot\n`));
       console.log(table(tableData));
-      
+
       // Display information about what the co-pilot can do
       console.log(chalk.blue('The co-pilot can now:'));
-      
+
       if (type === 'readonly') {
         console.log('- View the resource and its properties');
         console.log('- Run analytical operations on the resource');

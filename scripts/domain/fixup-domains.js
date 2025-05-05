@@ -10,16 +10,11 @@ const fs = require('fs');
 const path = require('path');
 
 // Domains to completely remove
-const domainsToRemove = [
-  'byfabrizio.design',
-  'philliproark.com',
-  'kennedyryan.com',
-  '2100.group'
-];
+const domainsToRemove = ['byfabrizio.design', 'philliproark.com', 'kennedyryan.com', '2100.group'];
 
 // Special domains to keep and update
 const domainsToKeep = [
-  'byfabrizio.live' // This one stays
+  'byfabrizio.live', // This one stays
 ];
 
 // Config path for domain cache
@@ -36,14 +31,14 @@ if (!fs.existsSync(domainCachePath)) {
 try {
   const cacheData = fs.readFileSync(domainCachePath, 'utf8');
   const cache = JSON.parse(cacheData);
-  
+
   console.log(`Current cache has ${cache.domains.length} domains.`);
-  
+
   // Remove specific domains
   const initialCount = cache.domains.length;
-  cache.domains = cache.domains.filter(domain => !domainsToRemove.includes(domain.name));
+  cache.domains = cache.domains.filter((domain) => !domainsToRemove.includes(domain.name));
   const removedCount = initialCount - cache.domains.length;
-  
+
   // Update status for domains to keep
   let updatedCount = 0;
   for (const domain of cache.domains) {
@@ -54,30 +49,29 @@ try {
       updatedCount++;
     }
   }
-  
+
   // Update timestamp
   cache.lastUpdated = new Date().toISOString();
-  
+
   // Save updated cache
   fs.writeFileSync(domainCachePath, JSON.stringify(cache, null, 2));
-  
+
   console.log(`Domain cache cleanup complete.`);
   console.log(`- Removed domains: ${removedCount}`);
   console.log(`- Updated domains: ${updatedCount}`);
   console.log(`- Cache now has ${cache.domains.length} domains.`);
-  
+
   // List the domains that were removed
   console.log('\nRemoved domains:');
-  domainsToRemove.forEach(domain => {
+  domainsToRemove.forEach((domain) => {
     console.log(`- ${domain}`);
   });
-  
+
   // List the domains that were kept and updated
   console.log('\nKept domains:');
-  domainsToKeep.forEach(domain => {
+  domainsToKeep.forEach((domain) => {
     console.log(`- ${domain}`);
   });
-  
 } catch (error) {
   console.error('Error processing domain cache:', error);
   process.exit(1);

@@ -34,28 +34,28 @@ async function updateAgentStatus() {
     console.error('Firestore connection not available');
     return;
   }
-  
+
   // Array of agents
   const agents = [
-    "dr-burby-s2do-blockchain",
-    "dr-claude-orchestrator",
-    "dr-cypriot-rewards",
-    "dr-grant-cybersecurity",
-    "dr-grant-sallyport",
-    "dr-lucy-flight-memory",
-    "dr-maria-brand-director",
-    "dr-maria-support",
-    "dr-match-bid-suite",
-    "dr-memoria-anthology",
-    "dr-roark-wish-visionary",
-    "dr-sabina-dream-counselor",
-    "professor-lee-q4d-trainer",
-    "professor-mia-team-leadership"
+    'dr-burby-s2do-blockchain',
+    'dr-claude-orchestrator',
+    'dr-cypriot-rewards',
+    'dr-grant-cybersecurity',
+    'dr-grant-sallyport',
+    'dr-lucy-flight-memory',
+    'dr-maria-brand-director',
+    'dr-maria-support',
+    'dr-match-bid-suite',
+    'dr-memoria-anthology',
+    'dr-roark-wish-visionary',
+    'dr-sabina-dream-counselor',
+    'professor-lee-q4d-trainer',
+    'professor-mia-team-leadership',
   ];
-  
+
   // Current timestamp
   const timestamp = new Date().toISOString();
-  
+
   // Log a status update for each agent
   for (const agentId of agents) {
     try {
@@ -66,14 +66,14 @@ async function updateAgentStatus() {
         description: 'Agent is available and active',
         status: 'available',
         workload: 0,
-        active_tasks: 0
+        active_tasks: 0,
       });
       console.log(`Updated status for ${agentId}`);
     } catch (error) {
       console.error(`Error updating status for ${agentId}:`, error);
     }
   }
-  
+
   console.log('Completed agent status updates');
 }
 
@@ -88,6 +88,6 @@ updateAgentStatus()
     console.log('To check if the fix worked, run:');
     console.log('node bin/aixtiv.js claude:status');
   })
-  .catch(error => {
+  .catch((error) => {
     console.error('❌ Error fixing agent status:', error);
   });

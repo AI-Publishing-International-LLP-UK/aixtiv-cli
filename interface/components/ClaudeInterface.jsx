@@ -18,11 +18,9 @@ const ClaudeInterface = () => {
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold">Super Claude Interface</h2>
-            <Badge variant={status === 'ready' ? 'success' : 'warning'}>
-              {status}
-            </Badge>
+            <Badge variant={status === 'ready' ? 'success' : 'warning'}>{status}</Badge>
           </div>
-          
+
           <div className="bg-gray-50 rounded-lg p-4 min-h-96 mb-4">
             {messages.map((msg, i) => (
               <div key={i} className="mb-4">

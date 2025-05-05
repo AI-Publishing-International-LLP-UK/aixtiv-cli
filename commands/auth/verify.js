@@ -8,7 +8,7 @@ const chalk = require('chalk');
  */
 module.exports = async function authVerify(options) {
   const { email, agent } = parseOptions(options);
-  
+
   try {
     // Execute verification with spinner
     const result = await withSpinner(
@@ -16,34 +16,40 @@ module.exports = async function authVerify(options) {
       verifyAuthentication,
       { email, agent }
     );
-    
+
     // Display result
     displayResult(result);
-    
+
     // Display additional details based on verification type
     if (result.success) {
       if (email && agent) {
         // Both email and agent
         console.log(`Principal: ${chalk.cyan(email)}`);
         console.log(`Agent: ${chalk.cyan(agent)}`);
-        console.log(`Status: ${result.status === 'authorized' ? chalk.green('Authorized') : chalk.red('Unauthorized')}`);
-        
+        console.log(
+          `Status: ${result.status === 'authorized' ? chalk.green('Authorized') : chalk.red('Unauthorized')}`
+        );
+
         if (result.resourceCount > 0) {
-          console.log(`Resources: ${result.resources.map(r => chalk.yellow(r)).join(', ')}`);
+          console.log(`Resources: ${result.resources.map((r) => chalk.yellow(r)).join(', ')}`);
         } else {
           console.log('Resources: None');
         }
       } else if (email) {
         // Only email
         console.log(`Principal: ${chalk.cyan(email)}`);
-        console.log(`Status: ${result.isDelegated ? chalk.green('Delegated') : chalk.red('Not delegated')}`);
+        console.log(
+          `Status: ${result.isDelegated ? chalk.green('Delegated') : chalk.red('Not delegated')}`
+        );
       } else if (agent) {
         // Only agent
         console.log(`Agent: ${chalk.cyan(agent)}`);
-        console.log(`Status: ${result.isAuthorized ? chalk.green('Authorized') : chalk.red('Unauthorized')}`);
-        
+        console.log(
+          `Status: ${result.isAuthorized ? chalk.green('Authorized') : chalk.red('Unauthorized')}`
+        );
+
         if (result.resourceCount > 0) {
-          console.log(`Resources: ${result.resources.map(r => chalk.yellow(r)).join(', ')}`);
+          console.log(`Resources: ${result.resources.map((r) => chalk.yellow(r)).join(', ')}`);
         } else {
           console.log('Resources: None');
         }
@@ -52,9 +58,9 @@ module.exports = async function authVerify(options) {
         console.log(`SalleyPort Status: ${chalk.green('Configured')}`);
         console.log(`Delegates: ${chalk.cyan(result.delegateCount)}`);
         console.log(`Agents: ${chalk.cyan(result.agentCount)}`);
-        
+
         if (result.agents && result.agents.length > 0) {
-          console.log(`Agent IDs: ${result.agents.map(a => chalk.yellow(a)).join(', ')}`);
+          console.log(`Agent IDs: ${result.agents.map((a) => chalk.yellow(a)).join(', ')}`);
         }
       }
     }

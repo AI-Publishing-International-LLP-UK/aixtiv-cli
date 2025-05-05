@@ -8,8 +8,10 @@ const filePath = path.join(__dirname, 'commands', 'claude', 'code', 'generate.js
 let content = fs.readFileSync(filePath, 'utf8');
 
 // Replace with the correct Anthropic API endpoint
-const oldLine = "const functionUrl = process.env.CLAUDE_API_ENDPOINT || 'https://api.claude.ai/v1/code-generation';";
-const newLine = "const functionUrl = process.env.CLAUDE_API_ENDPOINT || 'https://api.anthropic.com/v1/messages';";
+const oldLine =
+  "const functionUrl = process.env.CLAUDE_API_ENDPOINT || 'https://api.claude.ai/v1/code-generation';";
+const newLine =
+  "const functionUrl = process.env.CLAUDE_API_ENDPOINT || 'https://api.anthropic.com/v1/messages';";
 
 // Replace the content
 content = content.replace(oldLine, newLine);

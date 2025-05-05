@@ -9,9 +9,9 @@ const { parseOptions, withSpinner, displayResult } = require('../../lib/utils');
  */
 module.exports = async function initializeProject(options) {
   const { name, force } = parseOptions(options, {
-    name: 'aixtiv-project'
+    name: 'aixtiv-project',
   });
-  
+
   // Define project structure
   const projectPath = path.resolve(process.cwd(), name);
   const directories = [
@@ -22,9 +22,9 @@ module.exports = async function initializeProject(options) {
     'src/utils',
     'config',
     'assets',
-    'docs'
+    'docs',
   ];
-  
+
   // Define files to create
   const files = [
     {
@@ -43,34 +43,38 @@ CLAUDE_API_ENDPOINT=https://api.claude.ai/v1
 
 # Logging Level: error, warn, info, verbose, debug
 LOG_LEVEL=info
-`
+`,
     },
     {
       path: 'config/default.json',
-      content: JSON.stringify({
-        "project": {
-          "name": name,
-          "version": "1.0.0"
-        },
-        "api": {
-          "salleyport": {
-            "timeout": 30000,
-            "retries": 3
+      content: JSON.stringify(
+        {
+          project: {
+            name: name,
+            version: '1.0.0',
           },
-          "claude": {
-            "timeout": 60000,
-            "maxTokens": 4096
-          }
+          api: {
+            salleyport: {
+              timeout: 30000,
+              retries: 3,
+            },
+            claude: {
+              timeout: 60000,
+              maxTokens: 4096,
+            },
+          },
+          logging: {
+            level: 'info',
+            format: 'simple',
+          },
+          security: {
+            authRequired: true,
+            allowedAgents: [],
+          },
         },
-        "logging": {
-          "level": "info",
-          "format": "simple"
-        },
-        "security": {
-          "authRequired": true,
-          "allowedAgents": []
-        }
-      }, null, 2)
+        null,
+        2
+      ),
     },
     {
       path: 'src/index.js',
@@ -110,34 +114,35 @@ program.parse(process.argv);
 if (process.argv.length === 2) {
   program.outputHelp();
 }
-`
+`,
     },
     {
       path: 'package.json',
-      content: JSON.stringify({
-        "name": name,
-        "version": "1.0.0",
-        "description": "Project created with aixtiv-cli",
-        "main": "src/index.js",
-        "bin": {
-          [name]: "src/index.js"
+      content: JSON.stringify(
+        {
+          name: name,
+          version: '1.0.0',
+          description: 'Project created with aixtiv-cli',
+          main: 'src/index.js',
+          bin: {
+            [name]: 'src/index.js',
+          },
+          scripts: {
+            start: 'node src/index.js',
+            test: 'echo "Error: no test specified" && exit 1',
+          },
+          keywords: ['aixtiv', 'project'],
+          dependencies: {
+            axios: '^1.3.4',
+            chalk: '^4.1.2',
+            commander: '^9.4.1',
+            dotenv: '^16.5.0',
+            figlet: '^1.5.2',
+          },
         },
-        "scripts": {
-          "start": "node src/index.js",
-          "test": "echo \"Error: no test specified\" && exit 1"
-        },
-        "keywords": [
-          "aixtiv",
-          "project"
-        ],
-        "dependencies": {
-          "axios": "^1.3.4",
-          "chalk": "^4.1.2",
-          "commander": "^9.4.1",
-          "dotenv": "^16.5.0",
-          "figlet": "^1.5.2"
-        }
-      }, null, 2)
+        null,
+        2
+      ),
     },
     {
       path: 'README.md',
@@ -165,10 +170,10 @@ Configuration files are stored in the \`config/\` directory.
 
 ## License
 UNLICENSED
-`
-    }
+`,
+    },
   ];
-  
+
   try {
     // Check if directory exists
     if (fs.existsSync(projectPath) && !force) {
@@ -176,29 +181,26 @@ UNLICENSED
       console.log(chalk.yellow(`Use --force to overwrite existing directory.`));
       process.exit(1);
     }
-    
+
     // Create project structure with spinner
-    await withSpinner(
-      `Initializing Aixtiv project structure in ${chalk.cyan(name)}`,
-      async () => {
-        // Create directories
-        for (const dir of directories) {
-          const dirPath = path.join(projectPath, dir);
-          if (!fs.existsSync(dirPath)) {
-            fs.mkdirSync(dirPath, { recursive: true });
-          }
+    await withSpinner(`Initializing Aixtiv project structure in ${chalk.cyan(name)}`, async () => {
+      // Create directories
+      for (const dir of directories) {
+        const dirPath = path.join(projectPath, dir);
+        if (!fs.existsSync(dirPath)) {
+          fs.mkdirSync(dirPath, { recursive: true });
         }
-        
-        // Create files
-        for (const file of files) {
-          const filePath = path.join(projectPath, file.path);
-          fs.writeFileSync(filePath, file.content);
-        }
-        
-        return true;
       }
-    );
-    
+
+      // Create files
+      for (const file of files) {
+        const filePath = path.join(projectPath, file.path);
+        fs.writeFileSync(filePath, file.content);
+      }
+
+      return true;
+    });
+
     // Display result
     displayResult({
       success: true,
@@ -206,26 +208,24 @@ UNLICENSED
       details: {
         name: name,
         directories: directories.length,
-        files: files.length
-      }
+        files: files.length,
+      },
     });
-    
+
     // Print next steps
     console.log(chalk.bold('\nNext Steps:'));
     console.log(`1. ${chalk.cyan(`cd ${name}`)}`);
     console.log(`2. ${chalk.cyan('cp .env.example .env')}`);
     console.log(`3. ${chalk.cyan('npm install')}`);
     console.log(`4. ${chalk.cyan('npm start')}`);
-    
   } catch (error) {
     // Display error
     displayResult({
       success: false,
       message: 'Failed to initialize project',
-      error: error.message
+      error: error.message,
     });
-    
+
     process.exit(1);
   }
 };
-

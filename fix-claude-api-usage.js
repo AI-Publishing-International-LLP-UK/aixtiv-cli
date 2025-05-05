@@ -29,7 +29,8 @@ try {
 }
 
 // Update the functionUrl to use DR_CLAUDE_API if it's a URL
-const functionUrlPattern = /const functionUrl = process\.env\.CLAUDE_API_ENDPOINT \|\| 'https:\/\/api\.anthropic\.com\/v1\/messages';/;
+const functionUrlPattern =
+  /const functionUrl = process\.env\.CLAUDE_API_ENDPOINT \|\| 'https:\/\/api\.anthropic\.com\/v1\/messages';/;
 const updatedFunctionUrl = `const functionUrl = process.env.CLAUDE_API_ENDPOINT || process.env.DR_CLAUDE_API || 'https://api.anthropic.com/v1/messages';`;
 
 // Update the code
@@ -43,4 +44,3 @@ try {
   console.error(`Error writing to file: ${error.message}`);
   process.exit(1);
 }
-

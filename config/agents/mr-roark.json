@@ -4,11 +4,6 @@
   "model_id": "claude-3-5-sonnet",
   "region": "us-west1",
   "machine_type": "n1-standard-8",
-  "permissions": [
-    "oversee_projects",
-    "review_decisions",
-    "manage_resources",
-    "coordinate_teams"
-  ],
+  "permissions": ["oversee_projects", "review_decisions", "manage_resources", "coordinate_teams"],
   "service_account": "mr-roark@api-for-warp-drive.iam.gserviceaccount.com"
 }

@@ -2,11 +2,7 @@
   "hosting": {
     "site": "drclaude-live",
     "public": "public",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
         "source": "/claude-code-generate",
@@ -19,6 +15,14 @@
       {
         "source": "/model-metrics",
         "function": "modelMetrics"
+      },
+      {
+        "source": "/projects/delegate",
+        "function": "drClaude"
+      },
+      {
+        "source": "/dr-claude-health",
+        "function": "drClaude"
       }
     ]
   },

@@ -2,9 +2,9 @@
 
 /**
  * Domain Management Commands for Aixtiv CLI
- * 
+ *
  * Registers domain management commands with the CLI application
- * 
+ *
  * © 2025 AI Publishing International LLP
  */
 
@@ -53,7 +53,7 @@ function registerCommands(program) {
   // Domain verify command
   domainCommand
     .command('verify <domain>')
-    .description('Verify a domain\'s DNS and Firebase configuration')
+    .description("Verify a domain's DNS and Firebase configuration")
     .option('-d, --dns-only', 'Verify DNS records only')
     .option('-f, --firebase-only', 'Verify Firebase hosting only')
     .option('-s, --ssl-only', 'Verify SSL certificate only')

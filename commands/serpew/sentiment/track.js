@@ -10,7 +10,7 @@ const path = require('path');
  * Stores raw sentiment data for later analysis
  */
 module.exports = async function trackSentiment(options) {
-  const { 
+  const {
     interaction_id,
     content,
     file,
@@ -19,27 +19,30 @@ module.exports = async function trackSentiment(options) {
     squadron,
     tags = '',
     source = 'manual',
-    session_id 
+    session_id,
   } = parseOptions(options);
-  
+
   // Validate required parameters
   if (!interaction_id) {
     displayResult('Error: Interaction ID is required (--interaction_id)', 'error');
     return;
   }
-  
+
   if (!sentiment) {
     displayResult('Error: Sentiment value is required (--sentiment)', 'error');
     return;
   }
-  
+
   // Validate sentiment format
   const validSentiments = ['positive', 'negative', 'neutral'];
   if (!validSentiments.includes(sentiment.toLowerCase())) {
-    displayResult(`Error: Invalid sentiment value. Must be one of: ${validSentiments.join(', ')}`, 'error');
+    displayResult(
+      `Error: Invalid sentiment value. Must be one of: ${validSentiments.join(', ')}`,
+      'error'
+    );
     return;
   }
-  
+
   try {
     // Get content from file if specified
     let contentToStore = content;
@@ -52,20 +55,23 @@ module.exports = async function trackSentiment(options) {
         return;
       }
     }
-    
+
     // Get the current agent ID for tracking
     const agentId = agent || getCurrentAgentId();
-    
+
     // Parse tags into array
-    const tagsList = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
-    
+    const tagsList = tags
+      .split(',')
+      .map((tag) => tag.trim())
+      .filter((tag) => tag);
+
     // Add to sentimentData
     const result = await withSpinner(
       `Tracking sentiment data for interaction ${interaction_id}`,
       async () => {
         // Create document in sentimentData collection
         const docRef = firestore.collection('sentimentData').doc(interaction_id);
-        
+
         // Prepare data object
         const data = {
           interaction_id,
@@ -77,46 +83,46 @@ module.exports = async function trackSentiment(options) {
           tags: tagsList,
           metadata: {
             source,
-            content_length: contentToStore ? contentToStore.length : 0
+            content_length: contentToStore ? contentToStore.length : 0,
           },
-          created_at: admin.firestore.FieldValue.serverTimestamp()
+          created_at: admin.firestore.FieldValue.serverTimestamp(),
         };
-        
+
         // Write document to Firestore
         await docRef.set(data);
-        
+
         // Log the action
         await logAgentAction('serpew_sentiment_track', {
           interaction_id,
           sentiment: sentiment.toLowerCase(),
           agent: agentId,
           squadron: squadron,
-          session_id: session_id
+          session_id: session_id,
         });
-        
+
         return {
           success: true,
           message: 'Sentiment data tracked successfully',
           interaction_id,
           sentiment: sentiment.toLowerCase(),
-          agent: agentId
+          agent: agentId,
         };
       }
     );
-    
+
     if (result && result.success) {
       console.log(chalk.green('\n✓ Success: Sentiment data tracked successfully\n'));
       console.log(`Interaction ID: ${chalk.cyan(result.interaction_id)}`);
       console.log(`Agent: ${chalk.cyan(result.agent)}`);
       console.log(`Sentiment: ${getSentimentColorText(result.sentiment)}`);
-      
+
       // Display content summary if provided
       if (contentToStore) {
         console.log(chalk.cyan('\nContent Summary:'));
         console.log(`Characters: ${contentToStore.length}`);
-        console.log(`Words: ${contentToStore.split(/\W+/).filter(w => w.length > 0).length}`);
+        console.log(`Words: ${contentToStore.split(/\W+/).filter((w) => w.length > 0).length}`);
       }
-      
+
       // Provide next steps
       console.log(chalk.cyan('\nNext Steps:'));
       console.log('To view sentiment trends for this agent:');

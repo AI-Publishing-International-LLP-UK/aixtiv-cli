@@ -101,34 +101,34 @@ async function updateAgentRecords() {
     console.error('Firestore connection not available');
     return;
   }
-  
+
   // Define all agents, making sure to include all variations
   const agents = [
-    "dr-burby-s2do-blockchain",
-    "dr-claude-orchestrator",
-    "dr-cypriot-rewards",
-    "dr-grant-cybersecurity",
-    "dr-grant-sallyport",
-    "dr-lucy-flight-memory",
-    "dr-maria-brand-director",
-    "dr-maria-support",
-    "dr-match-bid-suite", 
-    "dr-memoria-anthology",
-    "dr-roark-wish-visionary",
-    "dr-sabina-dream-counselor",
-    "professor-lee-q4d-trainer",
-    "professor-mia-team-leadership"
+    'dr-burby-s2do-blockchain',
+    'dr-claude-orchestrator',
+    'dr-cypriot-rewards',
+    'dr-grant-cybersecurity',
+    'dr-grant-sallyport',
+    'dr-lucy-flight-memory',
+    'dr-maria-brand-director',
+    'dr-maria-support',
+    'dr-match-bid-suite',
+    'dr-memoria-anthology',
+    'dr-roark-wish-visionary',
+    'dr-sabina-dream-counselor',
+    'professor-lee-q4d-trainer',
+    'professor-mia-team-leadership',
   ];
-  
+
   const timestamp = new Date().toISOString();
   const batch = firestore.batch();
-  
+
   // Add a new document for each agent with high intensity logging
   // We'll add multiple records for each agent with very recent timestamps
   for (const agentId of agents) {
     // Create a reference for a new document
     const docRef = firestore.collection('agentActions').doc();
-    
+
     // Set the data for this document
     batch.set(docRef, {
       agent_id: agentId,
@@ -137,13 +137,13 @@ async function updateAgentRecords() {
       description: 'Agent is online and ready for work',
       status: 'available',
       workload: 0,
-      active_tasks: 0
+      active_tasks: 0,
     });
-    
+
     // Add a second record with a very slightly later timestamp
     const docRef2 = firestore.collection('agentActions').doc();
     const timestamp2 = new Date(new Date(timestamp).getTime() + 1000).toISOString();
-    
+
     batch.set(docRef2, {
       agent_id: agentId,
       action_type: 'agent_heartbeat',
@@ -151,12 +151,12 @@ async function updateAgentRecords() {
       description: 'Agent heartbeat received',
       status: 'available',
       workload: 0,
-      active_tasks: 0
+      active_tasks: 0,
     });
-    
+
     console.log(`Prepared updates for ${agentId}`);
   }
-  
+
   // Commit the batch
   await batch.commit();
   console.log('✅ Successfully committed all agent updates to Firestore');
@@ -174,6 +174,6 @@ updateAgentRecords()
     console.log('To check if the fix worked, run:');
     console.log('node bin/aixtiv.js claude:status');
   })
-  .catch(error => {
+  .catch((error) => {
     console.error('❌ Error updating agent records:', error);
   });
