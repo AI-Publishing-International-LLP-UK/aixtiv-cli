@@ -17,7 +17,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "build": "echo \"Building CLI tool - skipping lint for now\"",
-    "firebase": "firebase"
+    "firebase": "firebase",
+    "validate-env": "node lib/utils/envValidator.js"
   },
   "keywords": [
     "aixtiv",
