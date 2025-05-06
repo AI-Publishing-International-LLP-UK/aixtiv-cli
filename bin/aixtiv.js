@@ -2,6 +2,22 @@
 
 const { Command } = require('commander');
 const program = new Command();
+
+// Initialize telemetry
+const telemetry = require('../lib/telemetry');
+
+// Initialize telemetry asynchronously
+(async () => {
+  try {
+    await telemetry.init();
+    // Set up graceful shutdown
+    process.on('exit', () => {
+      telemetry.shutdown();
+    });
+  } catch (error) {
+    console.error('Failed to initialize telemetry:', error);
+  }
+})();
 const path = require('path');
 
 // Import command modules

@@ -8,6 +8,8 @@ const { parseOptions, withSpinner, displayResult } = require('../../lib/utils');
  * @param {object} options - Command options
  */
 module.exports = async function initializeProject(options) {
+  // Record knowledge access for telemetry
+  telemetry.recordKnowledgeAccess('general');
   const { name, force } = parseOptions(options, {
     name: 'aixtiv-project',
   });
@@ -106,6 +108,7 @@ program
 //   .description('Example command description')
 //   .option('-o, --option <value>', 'Option description')
 //   .action(require('./commands/example'));
+const telemetry = require('../../lib/telemetry');
 
 // Parse command line arguments
 program.parse(process.argv);

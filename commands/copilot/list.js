@@ -2,11 +2,14 @@ const { listCopilots } = require('../../lib/firestore');
 const { displayResult, parseOptions, withSpinner } = require('../../lib/utils');
 const chalk = require('chalk');
 const { table } = require('table');
+const telemetry = require('../../lib/telemetry');
 
 /**
  * Lists all co-pilots linked to a principal or all co-pilot relationships in the system
  */
 module.exports = async function copilotList(options) {
+  // Record knowledge access for telemetry
+  telemetry.recordKnowledgeAccess('copilot');
   const { email, status = 'active' } = parseOptions(options);
 
   try {

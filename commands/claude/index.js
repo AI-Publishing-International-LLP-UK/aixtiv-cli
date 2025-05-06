@@ -12,6 +12,7 @@
 const agent = require('./agent');
 const project = require('./project');
 const code = require('./code');
+const telemetry = require('../../lib/telemetry');
 
 // Export commands
 module.exports = {
