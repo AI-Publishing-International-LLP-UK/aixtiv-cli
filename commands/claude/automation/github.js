@@ -40,7 +40,13 @@ const ACTION_DESCRIPTIONS = {
  * Use Dr. Claude Automation to manage GitHub repositories
  * @param {object} options - Command options
  */
+// Import debug display
+const { debugDisplay } = require('../../../lib/debug-display');
+
 module.exports = async function automateGithubTasks(options) {
+  // Capture internal reasoning
+  const internalThought = `Processing automateGithubTasks command with parameters: ${JSON.stringify(arguments[0])}`;
+
   const { repository, action, branch, securityCheck, organization } = parseOptions(options);
 
   try {
@@ -51,7 +57,14 @@ module.exports = async function automateGithubTasks(options) {
       console.log(chalk.yellow('Available repositories:'));
       AI_PUBLISHING_REPOS.forEach((repo) => console.log(chalk.cyan(`- ${repo}`)));
       console.log(chalk.yellow('\nUse --organization=custom to work with external repositories.'));
-      return;
+      // Display debug information
+  debugDisplay({
+    thought: internalThought,
+    result: { status: 'error', message: 'Repository not found' },
+    command: 'claude:return'
+  });
+  
+  return;
     }
 
     // Execute GitHub automation with spinner
@@ -68,7 +81,8 @@ module.exports = async function automateGithubTasks(options) {
         // Simulate API response
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        return {
+        // Create the result object
+        const operationResult = {
           status: 'completed',
           action: action,
           repository: repository,
@@ -78,6 +92,15 @@ module.exports = async function automateGithubTasks(options) {
           issues: securityCheck === 'true' ? Math.floor(Math.random() * 5) : 0,
           timestamp: new Date().toISOString(),
         };
+
+        // Display debug information
+        debugDisplay({
+          thought: internalThought,
+          result: operationResult,
+          command: 'claude:return'
+        });
+  
+        return operationResult;
       }
     );
 
@@ -137,6 +160,13 @@ module.exports = async function automateGithubTasks(options) {
     }
   } catch (error) {
     console.error(chalk.red('\nGitHub automation failed:'), error.message);
-    process.exit(1);
+    // Display debug information
+  debugDisplay({
+    thought: internalThought,
+    result: { status: 'error', message: error.message },
+    command: 'claude:process.exit'
+  });
+  
+  process.exit(1);
   }
 };

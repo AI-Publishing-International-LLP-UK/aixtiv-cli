@@ -25,7 +25,13 @@ const functionUrl =
  */
 // Debug display functionality is available through utils
 
+// Import debug display
+const { debugDisplay } = require('../../../lib/debug-display');
+
 module.exports = async function generateCode(options) {
+  // Capture internal reasoning
+  const internalThought = `Processing generateCode command with parameters: ${JSON.stringify(arguments[0])}`;
+
   const { task, language, outputFile, context } = parseOptions(options);
 
   // Log the code generation request with agent attribution

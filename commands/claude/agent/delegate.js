@@ -16,7 +16,13 @@ const PROJECT_DELEGATE_ENDPOINT = `${CLAUDE_API_ENDPOINT}/dr-claude/projects/del
  * Delegate a project to Dr. Claude for FMS orchestration
  * @param {object} options - Command options
  */
+// Import debug display
+const { debugDisplay } = require('../../../lib/debug-display');
+
 module.exports = async function delegateProjectToAgent(options) {
+  // Capture internal reasoning
+  const internalThought = `Processing delegateProjectToAgent command with parameters: ${JSON.stringify(arguments[0])}`;
+
   const { project, description, priority, deadline, tags, assignTo } = parseOptions(options);
 
   try {
@@ -101,7 +107,14 @@ module.exports = async function delegateProjectToAgent(options) {
             assignee: assignTo,
           });
 
-          return {
+          // Display debug information
+  debugDisplay({
+    thought: internalThought,
+    result: result,
+    command: 'claude:return'
+  });
+  
+  return {
             status: 'created',
             project_id: apiResponse.project_id,
             created_at: apiResponse.created_at || new Date().toISOString(),
@@ -150,7 +163,14 @@ module.exports = async function delegateProjectToAgent(options) {
               error: error.message,
             });
 
-            return {
+            // Display debug information
+  debugDisplay({
+    thought: internalThought,
+    result: result,
+    command: 'claude:return'
+  });
+  
+  return {
               status: 'created',
               project_id: projectId,
               created_at: new Date().toISOString(),
@@ -233,24 +253,66 @@ module.exports = async function delegateProjectToAgent(options) {
       console.error('\nCurrent endpoint: ' + PROJECT_DELEGATE_ENDPOINT);
     }
 
-    process.exit(1);
+    // Display debug information
+  debugDisplay({
+    thought: internalThought,
+    result: result,
+    command: 'claude:process.exit'
+  });
+  
+  process.exit(1);
   }
 };
 
 /**
  * Returns colored text based on priority
  * @param {string} priority - Priority level
- * @returns {string} Colored priority text
+ * @// Display debug information
+  debugDisplay({
+    thought: internalThought,
+    result: result,
+    command: 'claude:return'
+  });
+  
+  returns {string} Colored priority text
  */
 function getPriorityColor(priority) {
   switch (priority.toLowerCase()) {
     case 'high':
-      return chalk.red('High');
+      // Display debug information
+  debugDisplay({
+    thought: internalThought,
+    result: result,
+    command: 'claude:return'
+  });
+  
+  return chalk.red('High');
     case 'medium':
-      return chalk.yellow('Medium');
+      // Display debug information
+  debugDisplay({
+    thought: internalThought,
+    result: result,
+    command: 'claude:return'
+  });
+  
+  return chalk.yellow('Medium');
     case 'low':
-      return chalk.blue('Low');
+      // Display debug information
+  debugDisplay({
+    thought: internalThought,
+    result: result,
+    command: 'claude:return'
+  });
+  
+  return chalk.blue('Low');
     default:
-      return chalk.green(priority);
+      // Display debug information
+  debugDisplay({
+    thought: internalThought,
+    result: result,
+    command: 'claude:return'
+  });
+  
+  return chalk.green(priority);
   }
 }
