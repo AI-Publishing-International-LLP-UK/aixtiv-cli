@@ -1,0 +1,59 @@
+{
+  "name": "aixtiv-cli",
+  "version": "1.0.1",
+  "description": "CLI for managing SallyPort security and agent-resource access",
+  "main": "bin/aixtiv.js",
+  "bin": {
+    "aixtiv": "bin/aixtiv.js"
+  },
+  "scripts": {
+    "start": "node bin/aixtiv.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "agent:monitor": "bash monitoring/agent-monitor.sh",
+    "agent:report": "node scripts/generate-agent-report.js",
+    "agent:cleanup": "node scripts/cleanup-agent-logs.js",
+    "lint": "echo \"Linting skipped for now\"",
+    "lint:fix": "eslint --fix bin src lib commands server.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "build": "echo \"Building CLI tool - skipping lint for now\"",
+    "firebase": "firebase"
+  },
+  "keywords": [
+    "aixtiv",
+    "security",
+    "cli",
+    "sallyport",
+    "warp-drive"
+  ],
+  "author": "Phillip Corey Roark, And the Pilots of Vision Lake",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "axios": "^1.3.4",
+    "boxen": "^8.0.1",
+    "chalk": "^4.1.2",
+    "cli-table3": "^0.6.5",
+    "commander": "^9.4.1",
+    "console-table-printer": "^2.12.1",
+    "dotenv": "^16.5.0",
+    "express": "^4.18.2",
+    "figlet": "^1.5.2",
+    "firebase": "^11.6.1",
+    "firebase-admin": "^13.2.0",
+    "gradient-string": "^3.0.0",
+    "inquirer": "^8.2.5",
+    "ora": "^5.4.1",
+    "play-sound": "^1.1.6",
+    "table": "^6.8.1",
+    "uuid": "^9.0.1",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^10.1.2",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.2.6",
+    "prettier": "^3.5.3"
+  }
+}
