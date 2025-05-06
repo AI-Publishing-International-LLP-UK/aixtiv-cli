@@ -11,6 +11,7 @@ set -e
 DAYS_WARNING=30
 DAYS_CRITICAL=14
 LOG_FILE="/tmp/aixtiv-ssl-check.log"
+CONNECTION_TIMEOUT=10  # Timeout in seconds
 
 # Notification settings (can be overridden with environment variables)
 SLACK_WEBHOOK=${SLACK_WEBHOOK:-""}
@@ -35,17 +36,47 @@ check_certificate() {
   echo -e "\nChecking SSL certificate for ${YELLOW}$domain${NC}..."
   echo "Checking SSL certificate for $domain..." >> "$LOG_FILE"
   
-  # Get certificate information
-  cert_info=$(echo | openssl s_client -servername "$domain" -connect "$domain":443 2>/dev/null | openssl x509 -noout -enddate -issuer -subject 2>/dev/null)
+  # Get certificate information with timeout to prevent hanging
+  # Using openssl's built-in timeout option for better cross-platform compatibility
+  cert_info=$(echo | openssl s_client -servername "$domain" -connect "$domain":443 -connect_timeout $CONNECTION_TIMEOUT 2>/dev/null | openssl x509 -noout -enddate -issuer -subject 2>/dev/null)
+  local exit_code=$?
   
-  if [ $? -ne 0 ]; then
-    echo -e "${RED}ERROR: Could not retrieve SSL certificate for $domain${NC}"
-    echo "ERROR: Could not retrieve SSL certificate for $domain" >> "$LOG_FILE"
-    return 1
+  if [ $exit_code -ne 0 ]; then
+    if [ $exit_code -eq 124 ]; then
+      # Timeout error
+      echo -e "${RED}ERROR: Connection timeout when trying to reach $domain${NC}"
+      echo "ERROR: Connection timeout when trying to reach $domain" >> "$LOG_FILE"
+    elif [ $exit_code -eq 1 ]; then
+      # Check if this is a DNS error
+      if ! host "$domain" > /dev/null 2>&1; then
+        echo -e "${RED}ERROR: DNS resolution failed for $domain${NC}"
+        echo "ERROR: DNS resolution failed for $domain" >> "$LOG_FILE"
+      else
+        echo -e "${RED}ERROR: Could not retrieve SSL certificate for $domain (connection refused)${NC}"
+        echo "ERROR: Could not retrieve SSL certificate for $domain (connection refused)" >> "$LOG_FILE"
+      fi
+    else
+      # General error
+      echo -e "${RED}ERROR: Could not retrieve SSL certificate for $domain (error code: $exit_code)${NC}"
+      echo "ERROR: Could not retrieve SSL certificate for $domain (error code: $exit_code)" >> "$LOG_FILE"
+    fi
+    
+    # Report domain as having issues but continue with next domain
+    send_notification "$domain" "ERROR" "0" "Unknown" "Error retrieving certificate"
+    return 0
   fi
   
   # Extract expiration date
   end_date=$(echo "$cert_info" | grep 'notAfter=' | cut -d= -f2)
+  
+  # Check if end_date is empty
+  if [ -z "$end_date" ]; then
+    echo -e "${RED}ERROR: Invalid certificate format for $domain${NC}"
+    echo "ERROR: Invalid certificate format for $domain" >> "$LOG_FILE"
+    send_notification "$domain" "ERROR" "0" "Unknown" "Invalid certificate format"
+    return 0
+  fi
+  
   end_epoch=$(date -j -f "%b %d %H:%M:%S %Y %Z" "$end_date" +%s 2>/dev/null)
   
   if [ $? -ne 0 ]; then
@@ -54,9 +85,10 @@ check_certificate() {
   fi
   
   if [ $? -ne 0 ]; then
-    echo -e "${RED}ERROR: Could not parse certificate date for $domain${NC}"
-    echo "ERROR: Could not parse certificate date for $domain" >> "$LOG_FILE"
-    return 1
+    echo -e "${RED}ERROR: Could not parse certificate date for $domain: $end_date${NC}"
+    echo "ERROR: Could not parse certificate date for $domain: $end_date" >> "$LOG_FILE"
+    send_notification "$domain" "ERROR" "0" "$end_date" "Could not parse date"
+    return 0
   fi
   
   current_epoch=$(date +%s)
@@ -155,9 +187,33 @@ fi
 
 # Check certificates for all domains
 echo "Found $(echo "$DOMAINS" | wc -l | tr -d ' ') domains in cache"
+
+# Track statistics
+TOTAL_DOMAINS=0
+SUCCESSFUL_CHECKS=0
+ERROR_DOMAINS=0
+
 for domain in $DOMAINS; do
-  check_certificate "$domain"
+  TOTAL_DOMAINS=$((TOTAL_DOMAINS + 1))
+  if check_certificate "$domain"; then
+    SUCCESSFUL_CHECKS=$((SUCCESSFUL_CHECKS + 1))
+  else
+    ERROR_DOMAINS=$((ERROR_DOMAINS + 1))
+    # Continue despite errors
+    echo -e "${YELLOW}Continuing with next domain...${NC}"
+  fi
 done
 
 echo -e "\n${GREEN}SSL certificate check completed.${NC}"
+echo -e "Domains processed: ${TOTAL_DOMAINS}"
+echo -e "Successful checks: ${GREEN}${SUCCESSFUL_CHECKS}${NC}"
+if [ $ERROR_DOMAINS -gt 0 ]; then
+  echo -e "Domains with errors: ${RED}${ERROR_DOMAINS}${NC}"
+fi
 echo "Check log at $LOG_FILE for details."
+
+# Add summary to log
+echo "=== Summary ===" >> "$LOG_FILE"
+echo "Domains processed: $TOTAL_DOMAINS" >> "$LOG_FILE"
+echo "Successful checks: $SUCCESSFUL_CHECKS" >> "$LOG_FILE"
+echo "Domains with errors: $ERROR_DOMAINS" >> "$LOG_FILE"

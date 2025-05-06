@@ -38,7 +38,7 @@ if [ ! -f "$DOMAINS_FILE" ]; then
   echo -e "\nUsage: $0 [domains_file] [provision_type] [project_id] [dry_run]"
   echo -e "  domains_file: Path to file containing domains (one per line)"
   echo -e "  provision_type: 'firebase' or 'gcp' (default: firebase)"
-  echo -e "  project_id: Firebase or GCP project ID (default: aixtiv-symphony)"
+  echo -e "  project_id: Firebase or GCP project ID (default: api-for-warp-drive)"
   echo -e "  dry_run: 'true' or 'false' - if true, just print commands without executing (default: false)"
   exit 1
 fi
@@ -79,7 +79,21 @@ echo ""
 # Process domains
 process_firebase() {
   local domain=$1
-  local site_name=$(echo "$domain" | sed 's/\./-/g')
+  
+  # Check for non-ASCII characters in domain
+  if [[ "$domain" != "$(echo "$domain" | LC_ALL=C.UTF-8 tr -cd '[:print:]')" ]]; then
+    # Domain has non-ASCII characters, convert to ASCII
+    local original_domain="$domain"
+    # Remove accents and special characters, then replace dots with dashes
+    local site_name=$(echo "$domain" | iconv -f UTF-8 -t ASCII//TRANSLIT | sed 's/[^a-zA-Z0-9\.]//g' | sed 's/\./-/g')
+    echo -e "${YELLOW}WARNING: Domain $original_domain contains non-ASCII characters${NC}"
+    echo -e "${YELLOW}Converting to ASCII-compatible site ID: $site_name${NC}"
+    echo "WARNING: Domain $original_domain contains non-ASCII characters" >> "$LOG_FILE"
+    echo "Converting to ASCII-compatible site ID: $site_name" >> "$LOG_FILE"
+  else
+    # Normal ASCII domain, just replace dots with dashes
+    local site_name=$(echo "$domain" | sed 's/\./-/g')
+  fi
   
   echo -e "\n${BLUE}Processing domain: ${YELLOW}$domain${NC}"
   echo "Processing domain: $domain (Firebase)" >> "$LOG_FILE"
