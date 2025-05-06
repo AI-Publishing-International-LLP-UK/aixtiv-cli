@@ -1,6 +1,48 @@
 #!/usr/bin/env node
 
-const { program } = require('commander');
+const { Command } = require('commander');
+const program = new Command();
+const path = require('path');
+
+// Import command modules
+const claudeCommands = require('../commands/claude');
+
+// Initialize the program
+program
+  .version('1.0.1')
+  .description('Aixtiv CLI for SallyPort Security Management');
+
+// Register claude:project:list command
+program
+  .command('claude:project:list')
+  .description('List projects from the Firestore database')
+  .option('-s, --status <status>', 'Filter by status (active, completed, on-hold, cancelled, all)', 'active')
+  .option('-t, --tags <tags>', 'Filter by comma-separated tags')
+  .option('-p, --priority <priority>', 'Filter by priority (high, medium, low)')
+  .option('-l, --limit <limit>', 'Limit the number of projects returned', '20')
+  .action(claudeCommands.project.list);
+
+// Register claude:code:generate command
+program
+  .command('claude:code:generate')
+  .description('Generate code using Claude AI')
+  .option('-t, --task <task>', 'Task description')
+  .option('-l, --language <language>', 'Programming language')
+  .option('-o, --output-file <outputFile>', 'File to save generated code')
+  .option('-c, --context <context>', 'Additional context for generation')
+  .action(claudeCommands.code);
+
+// Add existing commands
+// TODO: Add other commands
+
+// Parse arguments or show help if no arguments
+if (process.argv.length <= 2) {
+  program.help();
+}
+
+program.parse(process.argv);
+
+
 const chalk = require('chalk');
 const figlet = require('figlet');
 const packageJson = require('../package.json');
