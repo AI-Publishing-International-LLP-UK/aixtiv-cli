@@ -9,6 +9,7 @@ env:
   FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
   GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
   SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+  DEFAULT_PROJECT: api-for-warp-drive
 
 jobs:
   ssl-check:
@@ -79,16 +80,34 @@ jobs:
             name=$(echo $domain | jq -r '.name')
             project=$(echo $domain | jq -r '.firebaseProject')
             
-            if [ "$project" != "null" ] && [ "$project" != "" ]; then
-              echo "Provisioning SSL certificate for $name in project $project"
-              
-              # Create Firebase hosting site if it doesn't exist
-              firebase hosting:sites:list --project $project | grep -q "$name" || \
-                firebase hosting:sites:create $name --project $project
+            # Set default project if project is empty
+            if [ "$project" = "null" ] || [ "$project" = "" ]; then
+              project="$DEFAULT_PROJECT"
+              echo "Using default project: $project for domain $name"
+            fi
+
+            echo "Provisioning SSL certificate for $name in project $project"
+            
+            # Handle special character domains
+            if [[ "$name" != "$(echo "$name" | LC_ALL=C.UTF-8 tr -cd '[:print:]')" ]]; then
+              # Domain has non-ASCII characters, convert to ASCII
+              original_name="$name"
+              # Remove accents and special characters, then replace dots with dashes
+              site_name=$(echo "$name" | iconv -f UTF-8 -t ASCII//TRANSLIT | sed 's/[^a-zA-Z0-9\.]//g' | sed 's/\./-/g')
+              echo "WARNING: Domain $original_name contains non-ASCII characters"
+              echo "Converting to ASCII-compatible site ID: $site_name"
+            else
+              # Normal ASCII domain, just replace dots with dashes
+              site_name=$(echo "$name" | sed 's/\./-/g')
+            fi
+            
+            # Create Firebase hosting site if it doesn't exist
+            firebase hosting:sites:list --project $project | grep -q "$site_name" || \
+              firebase hosting:sites:create $site_name --project $project
               
               # Add domain to Firebase hosting
-              firebase hosting:channel:deploy production --site $name --project $project
-              firebase hosting:domain:add $name --site $name --project $project || echo "Domain already added or verification needed"
+              firebase hosting:channel:deploy production --site $site_name --project $project
+              firebase hosting:domain:add $name --site $site_name --project $project || echo "Domain already added or verification needed"
             fi
           done
 
@@ -151,11 +170,50 @@ jobs:
     needs: [firebase-ssl-provisioning, gcp-ssl-provisioning]
     if: always()
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run certificate summary script
+        id: cert_summary
+        run: |
+          # Generate a summary of certificate statuses
+          echo "Generating SSL certificate summary..."
+          
+          # Count certificates by status
+          node -e "const fs = require('fs'); \
+                  const path = require('path'); \
+                  const cachePath = path.join(process.env.HOME, '.aixtiv-cli', 'domain-cache.json'); \
+                  if (fs.existsSync(cachePath)) { \
+                    const cache = JSON.parse(fs.readFileSync(cachePath, 'utf8')); \
+                    const domains = cache.domains || []; \
+                    const total = domains.length; \
+                    const expiring = domains.filter(d => d.sslStatus === 'expiring').length; \
+                    const expired = domains.filter(d => d.sslStatus === 'expired').length; \
+                    const valid = domains.filter(d => d.sslStatus === 'valid').length; \
+                    const missing = domains.filter(d => d.sslStatus === 'missing').length; \
+                    const summary = { total, valid, expiring, expired, missing }; \
+                    console.log('CERT_SUMMARY=' + JSON.stringify(summary)); \
+                  } else { \
+                    console.log('CERT_SUMMARY={}'); \
+                  }" > summary.txt
+          
+          cat summary.txt >> $GITHUB_ENV
+      
       - name: Notify Slack
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
           fields: repo,message,commit,author,action,workflow
-          text: 'SSL Certificate Automation completed'
+          text: |
+            SSL Certificate Automation completed
+            
+            Certificate Summary:
+            - Total Domains: ${{ fromJSON(env.CERT_SUMMARY).total || 0 }}
+            - Valid Certificates: ${{ fromJSON(env.CERT_SUMMARY).valid || 0 }}
+            - Expiring Soon: ${{ fromJSON(env.CERT_SUMMARY).expiring || 0 }}
+            - Expired: ${{ fromJSON(env.CERT_SUMMARY).expired || 0 }}
+            - Missing: ${{ fromJSON(env.CERT_SUMMARY).missing || 0 }}
+            
+            Default Project: ${{ env.DEFAULT_PROJECT }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
