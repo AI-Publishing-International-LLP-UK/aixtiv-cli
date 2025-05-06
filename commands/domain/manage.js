@@ -160,24 +160,24 @@ function displayDomains(domains) {
 
   const table = new Table({
     head: [
+      chalk.cyan('Hosting Project ID'),
       chalk.cyan('Domain'),
       chalk.cyan('Type'),
       chalk.cyan('Status'),
       chalk.cyan('Expiry Date'),
-      chalk.cyan('Firebase Project'),
     ],
-    colWidths: [30, 15, 15, 15, 25],
+    colWidths: [25, 30, 15, 15, 15],
   });
 
   domains.forEach((domain) => {
     const status = getStatusColor(domain.status);
 
     table.push([
+      domain.firebaseProject || 'N/A',
       domain.name,
       domain.type,
       status,
       domain.expiryDate || 'N/A',
-      domain.firebaseProject || 'N/A',
     ]);
   });
 

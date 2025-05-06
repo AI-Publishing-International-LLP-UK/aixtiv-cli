@@ -68,7 +68,7 @@ const COMMAND_PATTERNS = [
     ],
   },
   {
-    command: 'domain:list',
+    command: 'domain list',
     keywords: ['list', 'show', 'domains', 'domain'],
     flags: {},
     examples: ['list all domains', 'show domains', 'display available domains'],
