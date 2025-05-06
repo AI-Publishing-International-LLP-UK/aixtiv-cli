@@ -1,0 +1,273 @@
+steps:
+  # Initialize with Authentication and Project Setup
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'initialize'
+    args:
+      - 'config'
+      - 'set'
+      - 'project'
+      - 'api-for-warp-drive'
+
+  # Setup Agent Tracking for Build Pipeline
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'agent-tracking-setup'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        chmod +x scripts/setup-agent-tracking.sh
+        ./scripts/setup-agent-tracking.sh
+        export AGENT_ID="CLOUD_BUILD_CI_CTTT"
+        source bin/agent-tracking.sh
+        log_agent_action "pipeline_start" "Starting CI/CTTT pipeline execution"
+
+  # Install Dependencies
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'install'
+    args: ['install']
+
+  # Linting
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'lint'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "lint_start" "Starting code linting"
+        npm run lint
+        log_agent_action "lint_complete" "Completed code linting"
+
+  # Unit Tests
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'unit-tests'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "unit_test_start" "Starting unit tests"
+        npm test
+        log_agent_action "unit_test_complete" "Completed unit tests"
+
+  # Integration Tests
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'integration-tests'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "integration_test_start" "Starting integration tests"
+        # Start local services for testing
+        npm run firebase emulators:start --project=api-for-warp-drive & 
+        # Wait for emulators to be ready
+        sleep 10
+        # Run integration tests
+        npx jest --testPathPattern=integration
+        log_agent_action "integration_test_complete" "Completed integration tests"
+
+  # Build Application
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'build'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "build_start" "Starting application build"
+        npm run build
+        log_agent_action "build_complete" "Completed application build"
+
+  # Docker Image Build
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'docker-build'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "docker_build_start" "Starting Docker image build"
+        # Set a default COMMIT_SHA if it's not defined
+        COMMIT_SHA="${COMMIT_SHA:-$(date +%Y%m%d-%H%M%S)}"
+        docker build -t gcr.io/api-for-warp-drive/aixtiv-cli:$COMMIT_SHA .
+        log_agent_action "docker_build_complete" "Completed Docker image build"
+
+  # Push Docker Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'docker-push'
+    entrypoint: 'bash'
+    args: 
+      - '-c'
+      - |
+        # Set a default COMMIT_SHA if it's not defined
+        COMMIT_SHA="${COMMIT_SHA:-$(date +%Y%m%d-%H%M%S)}"
+        docker push gcr.io/api-for-warp-drive/aixtiv-cli:$COMMIT_SHA
+
+  # Security Scanning
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'security-scan'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "security_scan_start" "Starting security scanning"
+        # Use Container Analysis API to scan the Docker image
+        gcloud container images describe gcr.io/api-for-warp-drive/aixtiv-cli:$$COMMIT_SHA \
+          --format='value(discovery.analysisStatus)'
+        
+        # Run npm audit for package vulnerabilities
+        npm audit --audit-level=high
+        log_agent_action "security_scan_complete" "Completed security scanning"
+
+  # Deploy to Staging (GKE)
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'deploy-staging'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Connect to GKE cluster
+        gcloud container clusters get-credentials private-cluster-auto --zone us-west1-b --project api-for-warp-drive
+        
+        source bin/agent-tracking.sh
+        log_agent_action "staging_deploy_start" "Starting deployment to staging"
+        
+        # Update deployment YAML with new image
+        sed -i "s|gcr.io/api-for-warp-drive/aixtiv-cli:.*|gcr.io/api-for-warp-drive/aixtiv-cli:$$COMMIT_SHA|g" infrastructure/staging/deployment.yaml
+        
+        # Apply updated deployment
+        kubectl apply -f infrastructure/staging/deployment.yaml
+        kubectl apply -f infrastructure/staging/service.yaml
+        log_agent_action "staging_deploy_complete" "Completed deployment to staging"
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=us-west1-b'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=private-cluster-auto'
+
+  # Test Staging Deployment
+  - name: 'gcr.io/cloud-builders/curl'
+    id: 'test-staging'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "staging_test_start" "Starting staging environment tests"
+        
+        # Wait for deployment to complete
+        sleep 30
+        
+        # Test API endpoints
+        STAGING_IP=$$(kubectl get svc aixtiv-cli-staging -n anthology-ai-staging -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+        HEALTH_CHECK=$$(curl -s -o /dev/null -w "%{http_code}" http://$$STAGING_IP/health)
+        
+        if [ "$$HEALTH_CHECK" -eq 200 ]; then
+          echo "Staging health check passed: $$HEALTH_CHECK"
+          log_agent_action "staging_test_complete" "Staging environment tests successful"
+        else
+          echo "Staging health check failed: $$HEALTH_CHECK"
+          log_agent_action "staging_test_failed" "Staging environment tests failed"
+          exit 1
+        fi
+
+  # Execute Continuous Training (if changes detected in ML models)
+  - name: 'gcr.io/cloud-builders/python'
+    id: 'continuous-training'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "training_analysis_start" "Analyzing for training requirements"
+        
+        # Check if this build needs model retraining
+        NEEDS_TRAINING=$$(python -c "
+        import os, glob
+        model_files = glob.glob('src/models/**/*.py', recursive=True)
+        last_commit = os.environ.get('COMMIT_SHA')
+        print('true' if model_files else 'false')
+        ")
+        
+        if [ "$$NEEDS_TRAINING" == "true" ]; then
+          log_agent_action "training_start" "Starting model training"
+          python -m automation.runner --train-models
+          log_agent_action "training_complete" "Completed model training"
+        else
+          log_agent_action "training_skipped" "Model training not required"
+        fi
+
+  # Create GitHub Release (for successful builds)
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'github-release'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "release_creation_start" "Starting GitHub release creation"
+        
+        # Install GitHub CLI
+        apt-get update && apt-get install -y gh
+        
+        # Create a new release tag
+        VERSION=$$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[:space:]')
+        RELEASE_TAG="v$$VERSION-$$(date +%Y%m%d-%H%M%S)"
+        
+        # Create release
+        gh auth login --with-token < /secrets/github-token
+        gh release create $$RELEASE_TAG \
+          --title "Release $$RELEASE_TAG" \
+          --notes "Automated release created by CI/CD pipeline"
+        
+        log_agent_action "release_creation_complete" "Completed GitHub release creation"
+
+  # Update Monitoring Dashboard
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'update-monitoring'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "monitoring_update_start" "Updating monitoring configuration"
+        
+        # Update monitoring configuration
+        gcloud monitoring dashboards create \
+          --config-from-file=monitoring/dashboard.json
+          
+        log_agent_action "monitoring_update_complete" "Monitoring configuration updated"
+
+  # Notify Pipeline Completion
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'notify-completion'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "pipeline_complete" "CI/CTTT pipeline completed successfully"
+        
+        # Create deployment record in Firestore
+        gcloud firestore documents create projects/api-for-warp-drive/databases/(default)/documents/deployments/$$(date +%Y%m%d%H%M%S) \
+          --fields="status=SUCCESS,timestamp=$$(date +%s),agent=DR_CLAUDE_AUTOMATION,version=$$COMMIT_SHA,environment=staging"
+        
+        echo "🚀 CI/CTTT Pipeline completed successfully!"
+        echo "✅ Staging deployment: COMPLETE"
+        echo "✅ Artifacts available at: gcr.io/api-for-warp-drive/aixtiv-cli:$$COMMIT_SHA"
+        echo "✅ Agent tracking logs: Available in BigQuery"
+
+timeout: "3600s"  # 60 minutes
+options:
+  machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
+  env:
+    - 'AGENT_ID=DR_CLAUDE_AUTOMATION'
+
+artifacts:
+  objects:
+    location: 'gs://api-for-warp-drive-artifacts/builds/$BUILD_ID/'
+    paths: ['test-results/**/*', 'coverage/**/*', 'dist/**/*']
+
+serviceAccount: 'projects/api-for-warp-drive/serviceAccounts/drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com'
+
