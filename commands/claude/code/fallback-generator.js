@@ -3,47 +3,26 @@
  * This module provides basic code generation for common tasks when the API is down
  */
 
+// Import the debug display function
+const { debugDisplay } = require('../../../lib/debug-display');
+
 const templates = {
   factorial: {
     javascript: `/**
  * Calculate the factorial of a number
  * @param {number} n - The number to calculate factorial for
- * @// Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  returns {number} The factorial result
- */
-function factorial(n) {
+ * @returns {number} The factorial result
   // Handle edge cases
   if (n < 0) throw new Error("Factorial is not defined for negative numbers");
   if (!Number.isInteger(n)) throw new Error("Factorial requires an integer");
   
   // Base case
-  if (n === 0 || n === 1) // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  return 1;
-  
+  if (n === 0 || n === 1) return 1;
   // Recursive calculation
   let result = 1;
   for (let i = 2; i <= n; i++) {
     result *= i;
   }
-  
-  // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
   
   return result;
 }
@@ -71,29 +50,15 @@ console.log(factorial(5)); // Output: 120
         raise ValueError("Factorial requires an integer")
     
     # Base case
+    # Base case
     if n == 0 or n == 1:
-        // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  return 1
-    
+        return 1
     # Iterative calculation
     result = 1
     for i in range(2, n + 1):
         result *= i
     
-    // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  return result
+    return result
 
 # Example usage
 print(factorial(5))  # Output: 120`,
@@ -102,50 +67,20 @@ print(factorial(5))  # Output: 120`,
     javascript: `/**
  * Generate Fibonacci sequence up to n terms
  * @param {number} n - Number of terms to generate
- * @// Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  returns {number[]} Array of Fibonacci numbers
- */
+ * @returns {number[]} Array of Fibonacci numbers
 function fibonacci(n) {
   // Validate input
   if (n < 1) throw new Error("Number of terms must be positive");
   if (!Number.isInteger(n)) throw new Error("Number of terms must be an integer");
   
   // Handle special cases
-  if (n === 1) // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  return [0];
-  if (n === 2) // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  return [0, 1];
-  
+  if (n === 1) return [0];
+  if (n === 2) return [0, 1];
   // Generate sequence
   const sequence = [0, 1];
   for (let i = 2; i < n; i++) {
     sequence.push(sequence[i-1] + sequence[i-2]);
   }
-  
-  // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
   
   return sequence;
 }
@@ -173,37 +108,15 @@ console.log(fibonacci(10)); // Output: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]`,
     
     # Handle special cases
     if n == 1:
-        // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  return [0]
+        return [0]
     if n == 2:
-        // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  return [0, 1]
-    
+        return [0, 1]
     # Generate sequence
     sequence = [0, 1]
     for i in range(2, n):
         sequence.append(sequence[i-1] + sequence[i-2])
     
-    // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  return sequence
+    return sequence
 
 # Example usage
 print(fibonacci(10))  # Output: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]`,
@@ -212,31 +125,14 @@ print(fibonacci(10))  # Output: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]`,
     javascript: `/**
  * Sort an array of numbers
  * @param {number[]} arr - Array to sort
- * @// Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  returns {number[]} Sorted array
- */
-function sortArray(arr) {
+ * @returns {number[]} Sorted array
   if (!Array.isArray(arr)) throw new Error("Input must be an array");
   
   // Create a copy to avoid modifying the original
   const result = [...arr];
   
   // Use built-in sort with a comparator for numbers
-  // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
   return result.sort((a, b) => a - b);
-}
 
 // Example usage
 const unsorted = [5, 3, 8, 1, 2, 4];
@@ -264,14 +160,7 @@ console.log(sortArray(unsorted)); // Output: [1, 2, 3, 4, 5, 8]
     # Use built-in sort
     result.sort()
     
-    // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  return result
+    return result
 
 # Example usage
 unsorted = [5, 3, 8, 1, 2, 4]
@@ -283,14 +172,7 @@ print(sort_array(unsorted))  # Output: [1, 2, 3, 4, 5, 8]`,
  * Generate code based on task description and language
  * @param {string} task - Task description
  * @param {string} language - Programming language (default: javascript)
- * @// Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  returns {object} Generated code and explanation
+ * @returns {object} Generated code and explanation
  */
 function generateCode(task, language = 'javascript') {
   // Normalize language name
@@ -316,13 +198,8 @@ function generateCode(task, language = 'javascript') {
     languageTemplates['javascript'] ||
     createGenericFallback(task, normalizedLanguage);
 
-  // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return',
-  });
-
+  // Return result object
+  
   return {
     code: codeTemplate,
     explanation: `This is a local fallback implementation for "${task}" in ${normalizedLanguage}. The Claude API could not be reached, so a basic template was used.`,
@@ -334,14 +211,7 @@ function generateCode(task, language = 'javascript') {
  * Create a generic function template when no specific template matches
  * @param {string} task - Task description
  * @param {string} language - Programming language
- * @// Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  returns {string} Generic function template
+ * @returns {string} Generic function template
  */
 function createGenericFallback(task, language) {
   const normalizedTask = task
@@ -350,14 +220,9 @@ function createGenericFallback(task, language) {
     .toLowerCase();
 
   if (language === 'python') {
-    // Display debug information
-    debugDisplay({
-      thought: internalThought,
-      result: result,
-      command: 'claude:return',
-    });
-
-    return `def ${normalizedTask}_function():
+    // Return Python template
+  
+  return `def ${normalizedTask}_function():
     """
     Implementation for: ${task}
     
@@ -372,36 +237,15 @@ function createGenericFallback(task, language) {
   }
 
   // Default to JavaScript
-  // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return',
-  });
-
+  
   return `/**
  * ${task}
- * @// Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  returns {any} Result of the function
+ * @returns {any} Result of the function
  */
 function ${normalizedTask}Function() {
   // TODO: Implement the function based on the task description
-  
-  // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
+  // TODO: Implement the function based on the task description
   return "Not yet implemented";
-}
 
 // Example usage
 // const result = ${normalizedTask}Function();
