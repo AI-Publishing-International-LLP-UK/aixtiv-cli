@@ -27,8 +27,11 @@ const functionUrl =
 
 // Import debug display
 const { debugDisplay } = require('../../../lib/debug-display');
+const telemetry = require('../../../lib/telemetry');
 
 module.exports = async function generateCode(options) {
+  // Record knowledge access for telemetry
+  telemetry.recordKnowledgeAccess('ai-model');
   // Capture internal reasoning
   const internalThought = `Processing generateCode command with parameters: ${JSON.stringify(arguments[0])}`;
 
