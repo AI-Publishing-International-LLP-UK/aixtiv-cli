@@ -7,6 +7,7 @@
 
 // Import the delegate functionality
 const delegate = require('./delegate');
+const telemetry = require('../../../lib/telemetry');
 
 // Export the delegate module as the default export
 module.exports = delegate;
