@@ -18,8 +18,11 @@ const PROJECT_DELEGATE_ENDPOINT = `${CLAUDE_API_ENDPOINT}/dr-claude/projects/del
  */
 // Import debug display
 const { debugDisplay } = require('../../../lib/debug-display');
+const telemetry = require('../../../lib/telemetry');
 
 module.exports = async function delegateProjectToAgent(options) {
+  // Record knowledge access for telemetry
+  telemetry.recordKnowledgeAccess('ai-model');
   // Capture internal reasoning
   const internalThought = `Processing delegateProjectToAgent command with parameters: ${JSON.stringify(arguments[0])}`;
 
