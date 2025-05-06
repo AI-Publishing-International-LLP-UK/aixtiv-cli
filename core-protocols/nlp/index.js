@@ -1,162 +1,103 @@
 /**
- * Aixtiv CLI - Natural Language Processing Module
+ * Aixtiv CLI - Natural Language Processing Core
  *
- * Main entry point for the natural language processing functionality.
- * This module interfaces with the rest of the Aixtiv CLI system.
+ * This module provides functionality to interpret natural language commands
+ * and convert them into Aixtiv CLI commands.
  */
 
-const winston = require('winston');
 const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
 const { classifyIntent } = require('./intent-classifier');
+const winston = require('winston');
+const path = require('path');
+const fs = require('fs');
 
-// Make sure logs directory exists
-const logsDir = path.join(__dirname, '../../logs');
-if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir, { recursive: true });
-}
-
-// Setup logging
+// Set up logger
 const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
-  format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+  level: 'info',
+  format: winston.format.json(),
+  defaultMeta: { service: 'nlp-processor' },
   transports: [
-    new winston.transports.Console(),
     new winston.transports.File({
-      filename: path.join(logsDir, 'nlp.log'),
+      filename: path.join(__dirname, '../../logs/nlp.log'),
     }),
   ],
 });
 
-// Try to import conversation context manager (may not exist in early versions)
-let conversationContext;
-try {
-  conversationContext = require('../../wing/jet-port/dispatching/conversation-context');
-  logger.info('Conversation context manager loaded successfully');
-} catch (error) {
-  logger.warn('Conversation context manager not available, running in stateless mode');
-  // Create stub if module doesn't exist yet
-  conversationContext = {
-    updateContext: (sessionId, input, result) => {
-      return {};
-    },
-    getContext: (sessionId) => {
-      return {};
-    },
-  };
+// Add console logging in non-production environments
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  );
 }
 
 /**
- * Process natural language input and execute corresponding command
+ * Process natural language input and convert it to Aixtiv CLI commands
  *
- * @param {string} input - Natural language command from user
- * @param {Object} options - Additional options including:
- *   - dryRun: If true, shows the command but doesn't execute it
- *   - sessionId: Optional session identifier for maintaining context
- *   - verbose: If true, provides more detailed output
- * @returns {Object} Result of the command execution
+ * @param {string} input - Natural language input
+ * @param {Object} options - Processing options
+ * @returns {Object} Result object with processed command
  */
 function processNaturalLanguage(input, options = {}) {
-  const sessionId = options.sessionId || 'default-session';
+  const sessionId = options.sessionId || 'default';
+  const dryRun = options.dryRun || false;
+
   logger.info(`Processing natural language input: "${input}" (session: ${sessionId})`);
 
   try {
-    // Get previous conversation context if available
-    const context = conversationContext.getContext(sessionId);
+    // Classify the intent of the natural language input
+    let intent;
 
-    // Classify the intent
-    let intent = classifyIntent(input);
-
-    // Enhance with context if confidence is low
-    if (intent.confidence < 0.6 && context.lastIntent) {
-      logger.debug('Using conversation context to enhance understanding');
-      intent = enhanceIntentWithContext(intent, context);
+    if (options.clarifiedIntent) {
+      intent = options.clarifiedIntent;
+    } else {
+      intent = classifyIntent(input);
     }
 
-    // Update the conversation context with this new interaction
-    conversationContext.updateContext(sessionId, input, intent);
+    // Check if we have a valid intent with high enough confidence
+    if (!intent.command || intent.confidence < 0.4) {
+      if (intent.possibleIntents && intent.possibleIntents.length > 0) {
+        // We have some possible matches but not enough confidence
+        logger.warn('Detected ambiguous intent, clarification needed');
+        return {
+          success: false,
+          needsMoreInfo: true,
+          possibleIntents: intent.possibleIntents,
+          input: input,
+          message: 'Could you provide more details about what you want to do?',
+        };
+      }
 
-    // Handle the case where we couldn't determine the intent
-    if (!intent.command) {
-      return handleLowConfidence(intent, options);
+      // We don't have a match
+      logger.warn('Could not determine intent with sufficient confidence');
+      return {
+        success: false,
+        message: 'I did not understand that command. Try being more specific.',
+        input: input,
+      };
     }
 
-    // Convert the intent to a command string
+    // Build the command string with flags
     const commandString = buildCommandString(intent);
 
-    // Execute or display the command based on options
-    return executeCommand(commandString, intent, options);
+    // Execute the command (or just return the string in dry run mode)
+    return executeCommand(commandString, intent, { dryRun });
   } catch (error) {
     logger.error(`Error processing natural language input: ${error.message}`, { error });
     return {
       success: false,
-      error: error.message,
-      command: null,
-      output: null,
+      message: `Error: ${error.message}`,
+      input: input,
     };
   }
 }
 
 /**
- * Enhance an intent with previous conversation context
- */
-function enhanceIntentWithContext(intent, context) {
-  // If we have a previous intent, use it to fill in missing details
-  if (context.lastIntent && context.lastIntent.command) {
-    logger.debug(
-      `Enhancing intent with context from previous interaction: ${context.lastIntent.command}`
-    );
-
-    // If current intent has no command but previous did, and confidence is very low,
-    // this might be a continuation of the previous command
-    if (!intent.command && intent.confidence < 0.3) {
-      intent.command = context.lastIntent.command;
-      intent.confidence += 0.2;
-    }
-
-    // Fill in missing flags from previous intent if they're not in the current one
-    if (intent.command === context.lastIntent.command) {
-      for (const [key, value] of Object.entries(context.lastIntent.flags)) {
-        if (!intent.flags[key]) {
-          intent.flags[key] = value;
-        }
-      }
-    }
-  }
-
-  return intent;
-}
-
-/**
- * Handle the case where confidence in the intent is too low
- */
-function handleLowConfidence(intent, options) {
-  logger.warn('Could not determine intent with sufficient confidence');
-
-  let message = "I'm not sure what you want to do. ";
-
-  if (intent.possibleIntents && intent.possibleIntents.length > 0) {
-    message += `Did you want to perform one of these actions? ${intent.possibleIntents.join(', ')}`;
-  } else {
-    message += 'Please try rephrasing your request with more specific details.';
-  }
-
-  return {
-    success: false,
-    needsMoreInfo: true,
-    possibleIntents: intent.possibleIntents || [],
-    message: message,
-    command: null,
-    output: message,
-  };
-}
-
-/**
- * Build a command string from the classified intent
+ * Build an Aixtiv CLI command string from an intent object
  *
- * @param {Object} intent - The classified intent object
- * @returns {string} The command string to execute
+ * @param {Object} intent - Intent object with command and flags
+ * @returns {string} Command string
  */
 function buildCommandString(intent) {
   let command = `aixtiv ${intent.command}`;
@@ -176,12 +117,12 @@ function buildCommandString(intent) {
 }
 
 /**
- * Execute the command
+ * Execute an Aixtiv CLI command
  *
- * @param {string} commandString - The command to execute
- * @param {Object} intent - The original intent object
+ * @param {string} commandString - Command to execute
+ * @param {Object} intent - Original intent object
  * @param {Object} options - Execution options
- * @returns {Object} Result of execution
+ * @returns {Object} Command execution result
  */
 function executeCommand(commandString, intent, options = {}) {
   // In dry run mode, just return the command without executing
@@ -199,11 +140,25 @@ function executeCommand(commandString, intent, options = {}) {
   // Otherwise execute the command
   try {
     logger.info(`Executing command: ${commandString}`);
-    const output = execSync(commandString, { encoding: 'utf8' });
+    logger.info(`Current working directory: ${process.cwd()}`);
+    
+    // Try updating the command to use node directly
+    // Instead of: aixtiv domain list
+    // Use: node /Users/as/asoos/aixtiv-cli/bin/aixtiv.js domain list
+    const absolutePath = path.resolve(__dirname, '../../bin/aixtiv.js');
+    
+    // Extract the base command and any arguments
+    const baseCommand = commandString.replace(/^aixtiv /, '');
+    const updatedCommandString = `node ${absolutePath} ${baseCommand}`;
+    
+    logger.info(`Updated command string: ${updatedCommandString}`);
+    
+    // Try the updated command string
+    const output = execSync(updatedCommandString, { encoding: 'utf8' });
 
     return {
       success: true,
-      command: commandString,
+      command: updatedCommandString,
       intent: intent,
       output: output,
     };
@@ -221,5 +176,4 @@ function executeCommand(commandString, intent, options = {}) {
 
 module.exports = {
   processNaturalLanguage,
-  buildCommandString,
 };
