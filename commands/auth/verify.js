@@ -1,12 +1,15 @@
 const { verifyAuthentication } = require('../../lib/firestore');
 const { displayResult, parseOptions, withSpinner } = require('../../lib/utils');
 const chalk = require('chalk');
+const telemetry = require('../../lib/telemetry');
 
 /**
  * Verify authentication with SalleyPort
  * @param {object} options - Command options
  */
 module.exports = async function authVerify(options) {
+  // Record knowledge access for telemetry
+  telemetry.recordKnowledgeAccess('general');
   const { email, agent } = parseOptions(options);
 
   try {
