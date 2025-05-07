@@ -18,7 +18,12 @@
     "format:check": "prettier --check .",
     "build": "echo \"Building CLI tool - skipping lint for now\"",
     "firebase": "firebase",
-    "validate-env": "node lib/utils/envValidator.js"
+    "validate-env": "node lib/utils/envValidator.js",
+    "telemetry:test": "node scripts/telemetry/test-telemetry.js",
+    "telemetry:enable": "node scripts/telemetry/toggle-telemetry.js enable",
+    "telemetry:disable": "node scripts/telemetry/toggle-telemetry.js disable",
+    "telemetry:status": "node scripts/telemetry/toggle-telemetry.js",
+    "telemetry:integrate": "node scripts/telemetry/add-knowledge-tracking.js"
   },
   "keywords": [
     "aixtiv",
