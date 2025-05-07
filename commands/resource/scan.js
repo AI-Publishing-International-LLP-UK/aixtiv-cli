@@ -7,12 +7,15 @@ const {
   formatAuthorizationsTable,
 } = require('../../lib/utils');
 const chalk = require('chalk');
+const telemetry = require('../../lib/telemetry');
 
 /**
  * Scan resources for access patterns
  * @param {object} options - Command options
  */
 module.exports = async function resourceScan(options) {
+  // Record knowledge access for telemetry
+  telemetry.recordKnowledgeAccess('resource');
   const { resource, agent, email } = parseOptions(options);
 
   try {

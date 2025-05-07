@@ -2,6 +2,7 @@ const { linkCopilot, getCopilotStatus } = require('../../lib/firestore');
 const { displayResult, parseOptions, withSpinner } = require('../../lib/utils');
 const chalk = require('chalk');
 const { table } = require('table');
+const telemetry = require('../../lib/telemetry');
 
 /**
  * Links a co-pilot to a principal, establishing a trusted relationship between them
@@ -13,6 +14,8 @@ const { table } = require('table');
  * - lee@professorlee.live
  */
 module.exports = async function copilotLink(options) {
+  // Record knowledge access for telemetry
+  telemetry.recordKnowledgeAccess('copilot');
   const { email, copilot, level = 'standard' } = parseOptions(options);
 
   // Validate required parameters
