@@ -2,12 +2,15 @@ const { revokeAgentAccess } = require('../../lib/firestore');
 const { displayResult, parseOptions, withSpinner } = require('../../lib/utils');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
+const telemetry = require('../../lib/telemetry');
 
 /**
  * Revoke agent access to a resource
  * @param {object} options - Command options
  */
 module.exports = async function agentRevoke(options) {
+  // Record knowledge access for telemetry
+  telemetry.recordKnowledgeAccess('agent');
   const { email, agent, resource } = parseOptions(options);
 
   try {

@@ -2,12 +2,15 @@ const { verifyCopilot } = require('../../lib/firestore');
 const { displayResult, parseOptions, withSpinner } = require('../../lib/utils');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
+const telemetry = require('../../lib/telemetry');
 
 /**
  * Verifies a co-pilot's identity and cultural empathy
  * for higher-level access to resources
  */
 module.exports = async function copilotVerify(options) {
+  // Record knowledge access for telemetry
+  telemetry.recordKnowledgeAccess('copilot');
   const { email, principal, code } = parseOptions(options);
 
   // Validate required parameters
