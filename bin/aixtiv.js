@@ -18,10 +18,21 @@ const telemetry = require('../lib/telemetry');
     console.error('Failed to initialize telemetry:', error);
   }
 })();
+
 const path = require('path');
+const chalk = require('chalk');
+const figlet = require('figlet');
+const packageJson = require('../package.json');
+require('dotenv').config();
+
+// Helper for date formatting
+function formatDate(date) {
+  return date.toISOString().split('T')[0];
+}
 
 // Import command modules
 const claudeCommands = require('../commands/claude');
+const registerDomainCommands = require('../commands/domain');
 
 // Initialize the program
 program
@@ -47,27 +58,6 @@ program
   .option('-o, --output-file <outputFile>', 'File to save generated code')
   .option('-c, --context <context>', 'Additional context for generation')
   .action(claudeCommands.code);
-
-// Add existing commands
-// TODO: Add other commands
-
-// Parse arguments or show help if no arguments
-if (process.argv.length <= 2) {
-  program.help();
-}
-
-program.parse(process.argv);
-
-
-const chalk = require('chalk');
-const figlet = require('figlet');
-const packageJson = require('../package.json');
-require('dotenv').config();
-
-// Helper for date formatting
-function formatDate(date) {
-  return date.toISOString().split('T')[0];
-}
 
 // Display banner
 console.log(chalk.cyan(figlet.textSync('Aixtiv CLI', { horizontalLayout: 'full' })));
@@ -109,14 +99,8 @@ try {
   nlpCommand = null;
 }
 
-// Domain Management Commands
-const registerDomainCommands = require('../commands/domain');
-
 // SERPEW Commands (temporarily commented out)
 // const registerSerpewCommands = require('../commands/serpew');
-
-// Configure program
-program.version(packageJson.version).description('Aixtiv CLI for SallyPort security management');
 
 // Project commands
 program
@@ -350,3 +334,4 @@ registerDomainCommands(program);
 
 // Parse command line arguments
 program.parse(process.argv);
+
