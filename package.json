@@ -1,6 +1,6 @@
 {
   "name": "aixtiv-cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "CLI for managing SallyPort security and agent-resource access",
   "main": "bin/aixtiv.js",
   "bin": {
@@ -13,10 +13,10 @@
     "agent:report": "node scripts/generate-agent-report.js",
     "agent:cleanup": "node scripts/cleanup-agent-logs.js",
     "lint": "echo \"Linting skipped for now\"",
-            "lint:fix": "eslint --fix bin src lib commands server.js",
-            "format": "prettier --write .",
-            "format:check": "prettier --check .",
-            "build": "npm run format:check && mkdir -p dist/aixtiv-cli-${npm_package_version} && cp -R bin lib commands src config scripts server.js package.json LICENSE README.md dist/aixtiv-cli-${npm_package_version}/ && chmod +x dist/aixtiv-cli-${npm_package_version}/bin/aixtiv.js && cd dist && tar -czf aixtiv-cli-${npm_package_version}.tar.gz aixtiv-cli-${npm_package_version}/ && zip -r aixtiv-cli-${npm_package_version}.zip aixtiv-cli-${npm_package_version}/",
+    "lint:fix": "eslint --fix bin src lib commands server.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "build": "npm run format:check && mkdir -p dist/aixtiv-cli-${npm_package_version} && cp -R bin lib commands src config scripts server.js package.json LICENSE README.md dist/aixtiv-cli-${npm_package_version}/ && chmod +x dist/aixtiv-cli-${npm_package_version}/bin/aixtiv.js && cd dist && tar -czf aixtiv-cli-${npm_package_version}.tar.gz aixtiv-cli-${npm_package_version}/ && zip -r aixtiv-cli-${npm_package_version}.zip aixtiv-cli-${npm_package_version}/",
     "firebase": "firebase",
     "validate-env": "node lib/utils/envValidator.js",
     "telemetry:test": "node scripts/telemetry/test-telemetry.js",
