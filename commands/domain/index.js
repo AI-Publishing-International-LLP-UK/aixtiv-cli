@@ -654,7 +654,20 @@ function registerDomainCommands(program) {
     .command('domain:clean-cache <godaddy-file>')
     .description('Clean domain cache by verifying against GoDaddy domains')
     .action(commands.cleanCache);
-  
+
+  // Domain autoscale verification command
+  program
+    .command('domain:autoscale-verify')
+    .description('Verify and connect domains to Firebase during autoscaling')
+    .option('-f, --force', 'Force verification of all domains, including already verified ones')
+    .option('-d, --dry-run', 'Simulate verification without making changes')
+    .option('-v, --verbose', 'Enable verbose logging')
+    .action((options) => {
+      const autoscaleCommand = require('./autoscale');
+      autoscaleCommand(program);
+      program.parseAsync(process.argv);
+    });
+
   return program;
 }
 
