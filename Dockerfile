@@ -1,28 +1,30 @@
-FROM python:3.9-slim
+FROM node:18-alpine
 
 # Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    DEPLOYMENT_ENV=production
+ENV NODE_ENV=production
 
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Copy package files first for better caching
+COPY package*.json ./
 
-# Install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install dependencies
+RUN npm ci --only=production
 
 # Copy application code
 COPY . .
 
-# Set up environment for Cloud Build
+# Make the CLI executable
+RUN chmod +x ./bin/aixtiv.js
+
+# Set up environment for Cloud Build/Run
 ENV PORT=8080
 EXPOSE ${PORT}
 
-# Run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "main:app"]
+# Start command - either run the CLI directly or start a server if needed
+# For a CLI tool in container context, you might want a server wrapping the CLI or
+# use the container for specific CLI commands
+CMD ["node", "server.js"]
+
+# Alternative: To use as pure CLI tool (e.g. for CI/CD pipelines)
+# ENTRYPOINT ["node", "bin/aixtiv.js"]
