@@ -20,6 +20,7 @@ This CLI tool is part of the API for Warp Drive ecosystem.
 - 🎛️ Modular architecture
 - 🔒 Automated SSL certificate provisioning and management
 - 🌐 Domain management with Firebase and GCP integration
+- 🤖 Claude Orchestration Auto Scaling for intelligent resource management
 
 ## Usage
 
@@ -145,6 +146,26 @@ aixtiv copilot:grant --email pr@coaching2100.com --copilot lucy --resource pr-2b
 aixtiv copilot:unlink --email pr@coaching2100.com --copilot lucy
 ```
 
+### 🧠 Claude Orchestration
+
+Manage the Claude Orchestration Auto Scaling system:
+
+```bash
+# Check Claude Orchestration status
+aixtiv claude:status
+
+# View auto-scaling metrics
+aixtiv claude:metrics
+
+# Configure auto-scaling parameters
+aixtiv claude:config --max-replicas=10 --cpu-threshold=60
+
+# View orchestration logs
+aixtiv claude:logs --component=auto-scaler
+```
+
+For detailed information, see the [Claude Orchestration documentation](docs/CLAUDE_ORCHESTRATION.md).
+
 ### ⚡ Special Commands
 
 Handle PR access specifically:
@@ -233,6 +254,11 @@ aixtiv-cli/
 │   │   └── ssl.js
 │   ├── resource/
 │   │   └── scan.js
+│   ├── claude/              # Claude Orchestration
+│   │   ├── status.js
+│   │   ├── metrics.js
+│   │   ├── config.js
+│   │   └── logs.js
 │   └── copilot/             # Co-pilot commands
 │       ├── link.js
 │       ├── unlink.js
@@ -244,6 +270,12 @@ aixtiv-cli/
 │   └── utils.js             # Shared utils
 ├── scripts/
 │   └── domain-ssl-check.sh  # SSL certificate checker
+├── services/
+│   ├── secrets/             # Secret management
+│   │   ├── secret-manager.js
+│   │   └── provider-factory.js
+│   ├── oauth2/              # OAuth2 integration
+│   └── linkedin/            # LinkedIn integration
 ├── workflows/
 │   └── ssl-automation.yaml  # GitHub Actions workflow
 ├── config/
