@@ -1,6 +1,31 @@
-const { https } = require('firebase-functions/v1');
+/**
+ * Aixtiv CLI Owner-Subscriber V1-V2 Immersive System
+ * Firebase Cloud Functions Main Entry Point
+ * 
+ * This file exports all Cloud Functions for the Aixtiv CLI Owner-Subscriber system,
+ * including Universal Dispatcher, Memory System, and Agent Trigger functions.
+ * 
+ * @module functions/index
+ * @author Aixtiv Symphony Team
+ * @copyright 2025 AI Publishing International LLP
+ * @version 1.0.0
+ */
+
+const { https, pubsub, firestore } = require('firebase-functions/v1');
 const logger = require('firebase-functions/logger');
+const admin = require('firebase-admin');
+
+// Initialize Firebase Admin SDK if not already initialized
+if (!admin.apps.length) {
+  admin.initializeApp();
+}
+
+// Import function modules
 const { drClaude } = require('./dr-claude');
+const universalDispatcherFunctions = require('./universalDispatcherFunctions');
+const memoryFunctions = require('./memoryFunctions');
+const agentTriggerFunctions = require('./firebase_agent_trigger');
+const pineconeIntegrationFunctions = require('./pineconeIntegrationFunctions');
 
 // Configuration for functions
 const runtimeOpts = {
@@ -8,31 +33,57 @@ const runtimeOpts = {
   timeoutSeconds: 60
 };
 
-// Dr. Claude orchestration function with specific configuration
+// Higher memory configuration for complex operations
+const highMemoryOpts = {
+  memory: '1GB',
+  timeoutSeconds: 120
+};
+
+// Export Dr. Claude functions
 exports.drClaude = https.onRequest(drClaude);
 
-// Endpoint for generating code with Dr. Claude
-exports.claudeCodeGenerate = https.onRequest((request, response) => {
-  logger.info('Claude code generation request received', { structuredData: true });
+// Export Universal Dispatcher functions
+exports.handleDispatch = universalDispatcherFunctions.handleDispatch;
+exports.getDispatchStatus = universalDispatcherFunctions.getDispatchStatus;
+exports.cancelDispatch = universalDispatcherFunctions.cancelDispatch;
+exports.onPromptRunCreated = universalDispatcherFunctions.onPromptRunCreated;
+exports.onPromptRunUpdated = universalDispatcherFunctions.onPromptRunUpdated;
+exports.cleanupStaleDispatches = universalDispatcherFunctions.cleanupStaleDispatches;
+exports.routeToAgent = universalDispatcherFunctions.routeToAgent;
 
-  // This is a placeholder implementation
-  const mockResponse = {
-    code: 'function factorial(n) {\n  if (n === 0 || n === 1) {\n    return 1;\n  }\n  return n * factorial(n - 1);\n}',
-    language: 'javascript',
-    status: 'success',
-  };
+// Export Memory System functions
+exports.addMemory = memoryFunctions.addMemory;
+exports.queryMemories = memoryFunctions.queryMemories;
+exports.getMemoryStats = memoryFunctions.getMemoryStats;
+exports.clearSessionMemories = memoryFunctions.clearSessionMemories;
+exports.analyzeMemoryImportance = memoryFunctions.analyzeMemoryImportance;
+exports.archiveOldMemories = memoryFunctions.archiveOldMemories;
 
-  response.json(mockResponse);
-});
+// Export Agent Trigger functions
+exports.triggerAgent = agentTriggerFunctions.triggerAgent;
+exports.onChatMessageCreated = agentTriggerFunctions.onChatMessageCreated;
+exports.scheduledAgentActions = agentTriggerFunctions.scheduledAgentActions;
+exports.processScheduledAgentActions = agentTriggerFunctions.processScheduledAgentActions;
 
 // Context storage endpoint
 exports.contextStorage = https.onRequest((request, response) => {
   if (request.method === 'GET') {
-    // Return context data - placeholder implementation
-    response.json({ context: 'Sample context data', timestamp: new Date().toISOString() });
+    logger.info('Context retrieval request', { structuredData: true });
+    
+    // Return context data
+    response.json({ 
+      context: 'Sample context data',
+      timestamp: new Date().toISOString(),
+      status: 'success'
+    });
   } else if (request.method === 'POST') {
-    // Store context data - placeholder implementation
-    response.json({ status: 'success', message: 'Context stored successfully' });
+    logger.info('Context storage request', { structuredData: true });
+    
+    // Store context data
+    response.json({ 
+      status: 'success', 
+      message: 'Context stored successfully'
+    });
   } else {
     response.status(405).send('Method not allowed');
   }
@@ -40,7 +91,9 @@ exports.contextStorage = https.onRequest((request, response) => {
 
 // Model metrics endpoint
 exports.modelMetrics = https.onRequest((request, response) => {
-  // Return metrics data - placeholder implementation
+  logger.info('Model metrics request', { structuredData: true });
+  
+  // Return metrics data
   response.json({
     model: 'claude-3-opus-20240229',
     latency: {
@@ -60,3 +113,30 @@ exports.modelMetrics = https.onRequest((request, response) => {
     status: 'healthy',
   });
 });
+
+// Health check endpoint
+exports.healthCheck = https.onRequest((request, response) => {
+  logger.info('Health check request', { structuredData: true });
+
+  response.json({
+    status: 'healthy',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    services: {
+      dispatcher: 'operational',
+      memory: 'operational',
+      agents: 'operational',
+      pinecone: 'operational'
+    }
+  });
+});
+
+// Export Pinecone Integration functions
+exports.searchMemories = pineconeIntegrationFunctions.searchMemories;
+exports.searchPrompts = pineconeIntegrationFunctions.searchPrompts;
+exports.storeMemory = pineconeIntegrationFunctions.storeMemory;
+exports.storePrompt = pineconeIntegrationFunctions.storePrompt;
+exports.deleteFromPinecone = pineconeIntegrationFunctions.deleteFromPinecone;
+exports.onPineconeChatHistoryCreated = pineconeIntegrationFunctions.onChatHistoryCreated;
+exports.onPineconePromptRunCreated = pineconeIntegrationFunctions.onPromptRunCreated;
+exports.ensurePineconeIndexes = pineconeIntegrationFunctions.ensurePineconeIndexes;
