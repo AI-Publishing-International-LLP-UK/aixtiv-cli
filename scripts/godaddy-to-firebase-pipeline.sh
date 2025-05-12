@@ -35,9 +35,14 @@ verify_firebase_cli() {
     echo "⚙️ Installing Firebase CLI..."
     npm install -g firebase-tools
   fi
-  
-  # Ensure Firebase CLI is authenticated
-  firebase login:ci --no-localhost
+
+  # Check if already logged in
+  if firebase projects:list &>/dev/null; then
+    echo "✅ Firebase CLI already authenticated"
+  else
+    echo "⚠️ Firebase CLI not authenticated, please run 'firebase login' before running this script"
+    exit 1
+  fi
 }
 
 # Function to verify GoDaddy API connection
