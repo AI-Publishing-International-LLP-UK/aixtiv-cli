@@ -9,6 +9,7 @@ security infrastructure with full support for grant, revoke, verify, and scan op
 ## ⚡ About
 
 This CLI tool is part of the API for Warp Drive ecosystem.
+
 - Owner: Phillip Corey Roark (pr@coaching2100.com)
 - Organization: coaching2100.com
 
@@ -21,6 +22,35 @@ This CLI tool is part of the API for Warp Drive ecosystem.
 - 🔒 Automated SSL certificate provisioning and management
 - 🌐 Domain management with Firebase and GCP integration
 - 🤖 Claude Orchestration Auto Scaling for intelligent resource management
+- 🎼 Symphony Interface - Zero-drift, always-on, bonded-agent-powered interface
+
+## Symphony Interface
+
+The Symphony Interface provides a zero-drift, always-on, bonded-agent-powered interface that makes users feel heard, helped, and impressed — even on their first visit. It features:
+
+- 🔄 Error recovery systems
+- 💰 Optimized purchase flow
+- 👏 Praise capture mechanisms
+- 🤖 Agent fallback systems
+
+To launch the Symphony Interface locally:
+
+```bash
+# Install dependencies
+./install-symphony-deps.sh
+
+# Start the Symphony interface
+./start-symphony-fixed.sh
+```
+
+Then visit http://localhost:3030 in your browser.
+
+For production deployment:
+```bash
+./symphony-production-deploy.sh production
+```
+
+For detailed information, see the [Symphony Implementation Guide](SYMPHONY_IMPLEMENTATION_GUIDE.md)
 
 ## Usage
 
@@ -34,16 +64,19 @@ aixtiv resource:scan --agent agent007
 ## Setup
 
 Install dependencies:
+
 ```bash
 npm install
 ```
 
 Set environment variable:
+
 ```bash
 export GOOGLE_APPLICATION_CREDENTIALS=./config/service-account-key.json
 ```
 
 Run CLI:
+
 ```bash
 node bin/aixtiv.js
 ```
@@ -53,6 +86,7 @@ node bin/aixtiv.js
 The CLI needs to connect to Firebase. Set up your credentials in one of these ways:
 
 1. 🔑 **Service Account Key**:
+
    - Provide a service account key file via the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
    - Or place a `service-account-key.json` file in the `config` directory.
 
@@ -162,7 +196,18 @@ aixtiv claude:config --max-replicas=10 --cpu-threshold=60
 
 # View orchestration logs
 aixtiv claude:logs --component=auto-scaler
+
+# Execute live workflows with real API integrations
+aixtiv claude:live --workflow linkedin --userId user123 --accessToken token123
+aixtiv claude:live --workflow github --userId user123 --accessToken token123 --repository owner/repo-name
+aixtiv claude:live --workflow claude --userId user123 --prompt "Generate a blog post about AI" --format markdown
 ```
+
+The `claude:live` command uses real production API integrations to:
+
+- Index LinkedIn profiles and posts into Pinecone vector database
+- Analyze GitHub repositories with detailed code parsing
+- Generate optimized content using Claude AI
 
 For detailed information, see the [Claude Orchestration documentation](docs/CLAUDE_ORCHESTRATION.md).
 
@@ -194,6 +239,7 @@ aixtiv init --name existing-project --force
 ```
 
 The initialization process creates:
+
 - Basic project structure (src, config, assets, docs)
 - Configuration files (.env.example, config/default.json)
 - Package.json with required dependencies
@@ -223,7 +269,7 @@ aixtiv domain ssl-check drclaude.live
 # Check all domains
 aixtiv domain ssl-check --all
 
-# Provision a new SSL certificate 
+# Provision a new SSL certificate
 aixtiv domain ssl-provision drclaude.live --type firebase
 
 # Renew an SSL certificate
@@ -258,7 +304,10 @@ aixtiv-cli/
 │   │   ├── status.js
 │   │   ├── metrics.js
 │   │   ├── config.js
-│   │   └── logs.js
+│   │   ├── logs.js
+│   │   ├── live.js         # Live workflow orchestration
+│   │   └── agent/          # Agent delegation
+│   │       └── delegate.js
 │   └── copilot/             # Co-pilot commands
 │       ├── link.js
 │       ├── unlink.js
@@ -275,7 +324,9 @@ aixtiv-cli/
 │   │   ├── secret-manager.js
 │   │   └── provider-factory.js
 │   ├── oauth2/              # OAuth2 integration
-│   └── linkedin/            # LinkedIn integration
+│   ├── linkedin/            # LinkedIn integration
+│   └── live/                # Live workflow orchestration
+│       └── index.js         # Production integration service
 ├── workflows/
 │   └── ssl-automation.yaml  # GitHub Actions workflow
 ├── config/
