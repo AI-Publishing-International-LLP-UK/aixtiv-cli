@@ -35,15 +35,17 @@ const claudeCommands = require('../commands/claude');
 const registerDomainCommands = require('../commands/domain');
 
 // Initialize the program
-program
-  .version('1.0.1')
-  .description('Aixtiv CLI for SallyPort Security Management');
+program.version('1.0.1').description('Aixtiv CLI for SallyPort Security Management');
 
 // Register claude:project:list command
 program
   .command('claude:project:list')
   .description('List projects from the Firestore database')
-  .option('-s, --status <status>', 'Filter by status (active, completed, on-hold, cancelled, all)', 'active')
+  .option(
+    '-s, --status <status>',
+    'Filter by status (active, completed, on-hold, cancelled, all)',
+    'active'
+  )
   .option('-t, --tags <tags>', 'Filter by comma-separated tags')
   .option('-p, --priority <priority>', 'Filter by priority (high, medium, low)')
   .option('-l, --limit <limit>', 'Limit the number of projects returned', '20')
@@ -78,6 +80,10 @@ const copilotList = require('../commands/copilot/list');
 const copilotVerify = require('../commands/copilot/verify');
 const copilotGrant = require('../commands/copilot/grant');
 const copilotExpiration = require('../commands/copilot/expiration');
+const copilotVoice = require('../commands/copilot/voice');
+const copilotSpeaker = require('../commands/copilot/speaker');
+const copilotPreview = require('../commands/copilot/preview');
+const copilotEmotion = require('../commands/copilot/emotion');
 
 // Visionary commands
 const summonVisionary = require('../commands/summon/visionary');
@@ -87,6 +93,9 @@ const claudeAgentDelegate = require('../commands/claude/agent/delegate');
 const claudeAutomationGithub = require('../commands/claude/automation/github');
 const claudeCodeGenerate = require('../commands/claude/code/generate');
 const claudeStatus = require('../commands/claude/status');
+const claudeVideo = require('../commands/claude/video');
+const claudeLive = require('../commands/claude/live');
+const claudeUXCheck = require('../commands/claude/ux-check');
 
 // Natural Language Processing command
 let nlpCommand;
@@ -235,6 +244,70 @@ program
   .option('-l, --latest', 'Target the most recently created co-pilot relationship')
   .action(copilotExpiration);
 
+// Add copilot:voice command for speech functionality
+program
+  .command('copilot:voice')
+  .description('Speech capabilities using Google STT/TTS with personalization and sentiment analysis')
+  .option('-a, --action <action>', 'Action to perform (transcribe, speak, personalize, test)')
+  .option('-u, --userId <userId>', 'User ID for the operation')
+  .option('-c, --copilotId <copilotId>', 'Copilot ID to use')
+  .option('-f, --file <path>', 'Path to audio file for transcription')
+  .option('-t, --text <text>', 'Text to convert to speech')
+  .option('-o, --output <path>', 'Output file path')
+  .option('--sentiment <boolean>', 'Include sentiment analysis', 'true')
+  .option('--personalization <boolean>', 'Use personalized voice', 'true')
+  .option('--pitch <value>', 'Voice pitch (-10.0 to 10.0)')
+  .option('--rate <value>', 'Speaking rate (0.25 to 4.0)')
+  .option('--gender <gender>', 'Voice gender (MALE, FEMALE, NEUTRAL)')
+  .option('--language <code>', 'Language code', 'en-US')
+  .action(copilotVoice);
+
+// Add copilot:speaker command for voice biometrics
+program
+  .command('copilot:speaker')
+  .description('Speaker recognition for voice biometrics, enrollment, and verification')
+  .option('-a, --action <action>', 'Action to perform (create-profile, enroll, verify, identify, list-profiles, profile-details, delete-profile)')
+  .option('-e, --email <email>', 'Principal email for the profile or operation')
+  .option('-p, --profileId <profileId>', 'Speaker profile ID')
+  .option('-f, --file <path>', 'Path to audio file for enrollment, verification, or identification')
+  .option('--phrase <text>', 'Phrase spoken in the audio')
+  .option('--name <name>', 'Display name for the profile')
+  .option('--description <text>', 'Description for the profile')
+  .option('--locale <code>', 'Language code', 'en-US')
+  .option('--profiles <ids>', 'Comma-separated list of profile IDs for identification')
+  .option('--nonInteractive', 'Skip interactive prompts')
+  .action(copilotSpeaker);
+
+// Add copilot:preview command for response preview panel
+program
+  .command('copilot:preview')
+  .description('Copilot response preview panel with "this is what the agent sees" transparency')
+  .option('-a, --action <action>', 'Action to perform (create, get, approve, request-changes, edit, settings, history, submit-feedback)')
+  .option('--userId <userId>', 'User ID for the preview session')
+  .option('--copilotId <copilotId>', 'Copilot ID')
+  .option('--message <message>', 'User message')
+  .option('--response <response>', 'Copilot response')
+  .option('--previewId <previewId>', 'Preview ID')
+  .option('--feedback <feedback>', 'Feedback for changes')
+  .option('--editedText <editedText>', 'Edited response text')
+  .option('--note <note>', 'Note for approval')
+  .option('--changeOptions <options>', 'Comma-separated list of change options')
+  .option('--feedbackType <type>', 'Feedback type (helpful, not-helpful, tone-issue, needs-improvement)')
+  .option('--comment <comment>', 'Comment for feedback')
+  .option('--showEmotionIndicators <boolean>', 'Show emotion indicators')
+  .option('--showToneSuggestions <boolean>', 'Show tone suggestions')
+  .option('--showAIThinking <boolean>', 'Show AI thinking process')
+  .option('--transparencyLevel <level>', 'Transparency level (low, medium, high)')
+  .option('--limit <number>', 'Limit for history items')
+  .option('--skipCache <boolean>', 'Skip cache for history')
+  .action(copilotPreview);
+
+// Add copilot:emotion command for agent emotion tuning
+program
+  .command('copilot:emotion')
+  .description('Agent emotion tuner – softens or sharpens tone based on user preference')
+  .action(copilotEmotion);
+
 // Visionary commands
 program
   .command('summon:visionary')
@@ -290,6 +363,92 @@ program
   .option('-a, --agent <agent>', 'Specific agent to check (omit for all agents)')
   .action(claudeStatus);
 
+// Claude Video command
+program
+  .command('claude:video')
+  .description('Manage video generation for agents with green screen and AI background generation')
+  .option(
+    '-a, --action <action>',
+    'Action to perform (create-session, generate-agent, generate-background, combine, status, download, list-backgrounds)'
+  )
+  .option('--agentId <agentId>', 'ID of the agent')
+  .option('--agentType <agentType>', 'Type of agent (rix, crx, copilot)')
+  .option('--session <sessionId>', 'Session ID from a previous create-session call')
+  .option('--script <script>', 'Video script for the agent')
+  .option('--duration <duration>', 'Duration in seconds')
+  .option('--background <backgroundId>', 'Background ID to use')
+  .option('--prompt <prompt>', 'Text prompt for background generation')
+  .option('--job <jobId>', 'Job ID for status checks')
+  .option('--jobType <jobType>', 'Job type (agent, background, composition)')
+  .option('--agentJob <jobId>', 'Agent video job ID for combining videos')
+  .option('--backgroundJob <jobId>', 'Background video job ID for combining videos')
+  .action(claudeVideo);
+
+// Claude Live command
+program
+  .command('claude:live')
+  .description('Execute live workflows with real API integrations')
+  .option('-w, --workflow <workflow>', 'Workflow to execute (linkedin, github, claude)')
+  .option('-u, --userId <userId>', 'User ID for the workflow')
+  .option('-a, --accessToken <token>', 'Access token for API authentication')
+  .option('-p, --prompt <prompt>', 'Prompt for Claude generation')
+  .option('-f, --format <format>', 'Output format (text, markdown, json, html)')
+  .option('-c, --context <context>', 'Additional context for generation')
+  .option('-r, --repository <repo>', 'Repository name for GitHub workflow')
+  .action(claudeLive);
+
+// Claude UX Check command - Phase II "Visual Check" overlay tool
+program
+  .command('claude:ux-check')
+  .description('Dr. Match visual UX check overlay tool for screen preview before go-live')
+  .option('-a, --action <action>', 'Action to perform (create-session, check-screenshot, check-live, review-status, get-issues, compare)')
+  .option('--userId <userId>', 'User ID for the session')
+  .option('--session <sessionId>', 'UX preview session ID')
+  .option('--deviceType <type>', 'Device type (desktop, tablet, mobile)')
+  .option('--screenType <type>', 'Screen type (dashboard, product, checkout, etc.)')
+  .option('--screenshot <path>', 'Path to screenshot file')
+  .option('--url <url>', 'URL to check')
+  .option('--review <reviewId>', 'Review ID to check status')
+  .option('--before <reviewId>', 'Before review ID for comparison')
+  .option('--after <reviewId>', 'After review ID for comparison')
+  .option('--showGrid <boolean>', 'Show grid overlay', 'true')
+  .option('--showAccessibility <boolean>', 'Show accessibility markers', 'true')
+  .option('--showTapTargets <boolean>', 'Show tap target areas', 'true')
+  .action(claudeUXCheck);
+
+// Claude Secret Management command - Phase III: Agent Autonomy + Platform Automation
+program
+  .command('claude:secrets')
+  .description('Manage secrets and API keys with automatic rotation')
+  .requiredOption('-a, --action <action>', 'Action to perform (list, create, get, delete, rotate-sa-key, rotate-api-key, setup-rotation, generate, audit)')
+  .option('-i, --secretId <secretId>', 'Secret ID')
+  .option('-p, --projectId <projectId>', 'GCP Project ID')
+  .option('-v, --version <version>', 'Secret version')
+  .option('-s, --serviceAccountEmail <email>', 'Service account email for key rotation')
+  .option('-k, --apiKeyName <name>', 'API key name for rotation')
+  .option('--keyType <type>', 'Key type (json, p12)', 'json')
+  .option('--deleteOldKey <boolean>', 'Delete old key after rotation', 'true')
+  .option('--maxKeyAge <days>', 'Maximum key age in days', '90')
+  .option('--dryRun', 'Perform a dry run without making changes')
+  .option('--interactive', 'Use interactive prompts for sensitive information')
+  .option('--filter <filter>', 'Filter for listing secrets')
+  .option('--detailed', 'Show detailed information when listing secrets')
+  .option('--value <value>', 'Secret value when creating secrets')
+  .option('--fromFile <path>', 'Path to file containing secret value')
+  .option('--export <path>', 'Export secret to file')
+  .option('--redact', 'Redact secret value when displaying')
+  .option('--confirm', 'Skip confirmation prompts')
+  .option('--schedule <json>', 'Rotation schedule as JSON string')
+  .option('--scheduleFile <path>', 'Path to rotation schedule JSON file')
+  .option('--outputFile <path>', 'Output file path for rotation schedule')
+  .option('--length <number>', 'Length of generated secure string', '32')
+  .option('--charset <charset>', 'Character set for generated secure string')
+  .option('--prefix <prefix>', 'Prefix for generated secure string')
+  .option('--logFile <path>', 'Path to audit log file')
+  .option('--limit <number>', 'Limit for audit log entries', '20')
+  .option('--onlyErrors', 'Show only error entries in audit log')
+  .action(claudeCommands.secrets);
+
 // Legacy command for backward compatibility
 program
   .command('claude:delegate')
@@ -329,9 +488,12 @@ if (nlpCommand) {
 // Register domain management commands
 registerDomainCommands(program);
 
+// Register Dream Commander commands
+const dreamCommanderCommand = require('../commands/dreamCommander');
+program.addCommand(dreamCommanderCommand);
+
 // Register SERPEW commands (temporarily commented out)
 // registerSerpewCommands(program);
 
 // Parse command line arguments
 program.parse(process.argv);
-
