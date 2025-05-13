@@ -1,0 +1,128 @@
+{
+  "dreamCommander": {
+    "version": "1.0.0",
+    "environment": "development",
+    "scaling": {
+      "initialCapacity": 1000,
+      "maxCapacity": 10000000,
+      "targetLatency": 100
+    },
+    "channels": {
+      "api": {
+        "enabled": true,
+        "port": 3040,
+        "maxRequestSize": "10mb",
+        "rateLimits": {
+          "standard": {
+            "windowMs": 60000,
+            "max": 100
+          },
+          "premium": {
+            "windowMs": 60000,
+            "max": 1000
+          }
+        }
+      },
+      "email": {
+        "enabled": false,
+        "inbound": {
+          "polling": 60,
+          "maxAttachmentSize": "25mb"
+        },
+        "outbound": {
+          "maxRetries": 3,
+          "retryDelay": 1000
+        }
+      },
+      "linkedin": {
+        "enabled": false,
+        "apiVersion": "v2",
+        "webhookEnabled": true
+      },
+      "sms": {
+        "enabled": false,
+        "provider": "twilio"
+      },
+      "threads": {
+        "enabled": false,
+        "apiVersion": "v1"
+      }
+    },
+    "classification": {
+      "systems": {
+        "serpew": {
+          "enabled": true,
+          "version": "2.0"
+        },
+        "nineBox": {
+          "enabled": true,
+          "version": "3.1"
+        },
+        "holland": {
+          "enabled": true,
+          "version": "2.0"
+        },
+        "q4dlenz": {
+          "enabled": true,
+          "version": "4.0"
+        },
+        "culturalEmpathy": {
+          "enabled": true,
+          "version": "1.5"
+        }
+      },
+      "thresholds": {
+        "confidenceMinimum": 0.75,
+        "urgencyDefault": "medium"
+      }
+    },
+    "routing": {
+      "agents": {
+        "drMatch": {
+          "enabled": true,
+          "capabilities": ["personality", "preferences", "culture"]
+        },
+        "qbLucy": {
+          "enabled": true,
+          "capabilities": ["operations", "logistics", "reporting"]
+        }
+      },
+      "loadBalancing": {
+        "algorithm": "weighted-round-robin",
+        "weights": {
+          "drMatch": 5,
+          "qbLucy": 3
+        }
+      }
+    },
+    "storage": {
+      "vectorDatabase": {
+        "provider": "pinecone",
+        "indexes": {
+          "sectors": "dream-commander-sectors",
+          "intents": "dream-commander-intents",
+          "profiles": "dream-commander-profiles"
+        }
+      },
+      "documentDatabase": {
+        "provider": "firestore",
+        "collections": {
+          "messages": "dream_commander_messages",
+          "tasks": "dream_commander_tasks",
+          "workflows": "dream_commander_workflows",
+          "users": "dream_commander_users",
+          "requirements": "dream_commander_requirements",
+          "followUpQuestions": "dream_commander_followup_questions",
+          "formalized": "dream_commander_formalized_requirements"
+        }
+      }
+    },
+    "metrics": {
+      "enabled": true,
+      "reporting": {
+        "interval": 60,
+        "destination": "prometheus"
+      }
+    }
+  }
+}
