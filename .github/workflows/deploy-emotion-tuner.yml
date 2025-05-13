@@ -1,0 +1,70 @@
+name: Deploy Emotion Tuning System
+
+on:
+  push:
+    branches:
+      - deploy-symphony-interface
+    paths:
+      - 'src/services/emotion-tuning/**'
+      - 'commands/copilot/emotion.js'
+      - 'bin/aixtiv.js'
+      - 'test/emotion-tuning-test.js'
+      - 'src/services/speech/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build distribution
+        run: |
+          mkdir -p dist/aixtiv-cli-${{ github.run_number }}
+          cp -R bin lib commands src config scripts server.js package.json LICENSE README.md dist/aixtiv-cli-${{ github.run_number }}/
+          chmod +x dist/aixtiv-cli-${{ github.run_number }}/bin/aixtiv.js
+          cd dist
+          tar -czf aixtiv-cli-${{ github.run_number }}.tar.gz aixtiv-cli-${{ github.run_number }}/
+          zip -r aixtiv-cli-${{ github.run_number }}.zip aixtiv-cli-${{ github.run_number }}/
+          
+      - name: Setup deployment directory
+        run: |
+          mkdir -p public/aixtiv-cli-latest
+          cp dist/aixtiv-cli-${{ github.run_number }}.tar.gz public/aixtiv-cli-latest/
+          cp dist/aixtiv-cli-${{ github.run_number }}.zip public/aixtiv-cli-latest/
+          
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          
+      - name: Deploy to Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          channelId: live
+          projectId: api-for-warp-drive
+          
+      - name: Run post-deployment tests
+        run: |
+          npm test test/emotion-tuning-test.js
+          
+      - name: Notify completion
+        run: |
+          echo "### Emotion Tuning System Deployed ✅" >> $GITHUB_STEP_SUMMARY
+          echo "- Build: aixtiv-cli-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Deployed to: Firebase Hosting" >> $GITHUB_STEP_SUMMARY
+          echo "- Features:" >> $GITHUB_STEP_SUMMARY
+          echo "  - Agent emotion tuning service" >> $GITHUB_STEP_SUMMARY
+          echo "  - CLI command interface" >> $GITHUB_STEP_SUMMARY
+          echo "  - Tone adjustment capabilities" >> $GITHUB_STEP_SUMMARY
+          echo "  - User preference management" >> $GITHUB_STEP_SUMMARY
