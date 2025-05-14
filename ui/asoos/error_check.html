@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JavaScript Error Check</title>
+</head>
+<body>
+  <h1>JavaScript Error Detection</h1>
+  <div id="results"></div>
+
+  <script>
+    // Create a function to check external resources
+    async function checkResource(url) {
+      try {
+        const response = await fetch(url, { mode: 'no-cors', cache: 'no-cache' });
+        return { url, status: 'Success' };
+      } catch (error) {
+        return { url, status: 'Error', message: error.message };
+      }
+    }
+
+    // List of resources to check (from the asoos.2100.cool page)
+    const resources = [
+      'https://cdn.tailwindcss.com',
+      'https://unpkg.com/react@18/umd/react.development.js',
+      'https://unpkg.com/react-dom@18/umd/react-dom.development.js',
+      'https://unpkg.com/lucide-react@latest',
+      'https://unpkg.com/@babel/standalone/babel.min.js',
+      'https://unpkg.com/framer-motion@10.12.4/dist/framer-motion.js',
+      'https://cdn.jsdelivr.net/npm/chart.js',
+      'https://unpkg.com/three@0.157.0/build/three.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js'
+    ];
+
+    // Check all resources
+    const results = document.getElementById('results');
+    results.innerHTML = '<p>Checking external resources...</p>';
+
+    Promise.all(resources.map(checkResource))
+      .then(results => {
+        document.getElementById('results').innerHTML = 
+          '<h2>Resource Check Results:</h2>' + 
+          '<ul>' + 
+          results.map(r => `<li>${r.url}: ${r.status} ${r.message || ''}</li>`).join('') +
+          '</ul>';
+      });
+
+    // Add a global error handler
+    window.onerror = function(message, source, lineno, colno, error) {
+      const errorInfo = document.createElement('div');
+      errorInfo.style.color = 'red';
+      errorInfo.style.margin = '20px 0';
+      errorInfo.style.padding = '10px';
+      errorInfo.style.border = '1px solid red';
+      errorInfo.innerHTML = `
+        <h3>JavaScript Error Detected:</h3>
+        <p><strong>Message:</strong> ${message}</p>
+        <p><strong>Source:</strong> ${source}</p>
+        <p><strong>Line:</strong> ${lineno}, <strong>Column:</strong> ${colno}</p>
+        <p><strong>Error:</strong> ${error ? error.stack : 'No stack trace available'}</p>
+      `;
+      document.body.appendChild(errorInfo);
+      return true;
+    };
+  </script>
+</body>
+</html>

@@ -1,9 +1,9 @@
 /**
  * Dream Commander - Entry Point
- * 
+ *
  * Main entry point for the Dream Commander system, providing
  * centralized access to all components and subsystems.
- * 
+ *
  * (c) 2025 Copyright AI Publishing International LLP All Rights Reserved.
  */
 
@@ -16,7 +16,7 @@ module.exports = {
    * API object for direct interaction with Dream Commander
    */
   api: apiAdapter,
-  
+
   /**
    * Initialize all Dream Commander components
    * @param {Object} options - Initialization options
@@ -24,25 +24,25 @@ module.exports = {
    */
   async initialize(options = {}) {
     console.log('Initializing Dream Commander system...');
-    
+
     try {
       // Initialize API adapter
       await apiAdapter.initialize();
-      
+
       return {
         success: true,
-        message: 'Dream Commander system initialized successfully'
+        message: 'Dream Commander system initialized successfully',
       };
     } catch (error) {
       console.error('Failed to initialize Dream Commander system:', error.message);
-      
+
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   },
-  
+
   /**
    * Submit a message to Dream Commander
    * @param {Object} message - Message content
@@ -52,7 +52,7 @@ module.exports = {
   async submitMessage(message, options = {}) {
     return apiAdapter.submitMessage(message, options);
   },
-  
+
   /**
    * Get a message by ID
    * @param {string} messageId - Message ID
@@ -61,7 +61,7 @@ module.exports = {
   async getMessage(messageId) {
     return apiAdapter.getMessage(messageId);
   },
-  
+
   /**
    * Get recent messages
    * @param {Object} options - Query options
@@ -70,7 +70,7 @@ module.exports = {
   async getRecentMessages(options = {}) {
     return apiAdapter.getRecentMessages(options);
   },
-  
+
   /**
    * Get message statistics
    * @param {Object} options - Query options
@@ -79,7 +79,7 @@ module.exports = {
   async getMessageStats(options = {}) {
     return apiAdapter.getMessageStats(options);
   },
-  
+
   /**
    * Get system configuration
    * @returns {Promise<Object>} - Configuration
@@ -87,7 +87,7 @@ module.exports = {
   async getConfiguration() {
     return apiAdapter.getConfiguration();
   },
-  
+
   /**
    * Update system configuration
    * @param {Object} config - New configuration
@@ -95,5 +95,5 @@ module.exports = {
    */
   async updateConfiguration(config) {
     return apiAdapter.updateConfiguration(config);
-  }
+  },
 };

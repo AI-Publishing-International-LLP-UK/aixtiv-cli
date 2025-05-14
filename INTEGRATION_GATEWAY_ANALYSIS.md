@@ -48,20 +48,12 @@ For proper multi-site hosting in Firebase, the `firebase.json` file should be st
     {
       "target": "default",
       "public": "public",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ]
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
     },
     {
       "target": "site-name",
       "public": "public",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ]
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
     }
   ]
 }
@@ -77,18 +69,22 @@ For proper multi-site hosting in Firebase, the `firebase.json` file should be st
 ## Recommendations
 
 1. **Firebase Hosting Configuration**:
+
    - Update firebase.json to support multi-site hosting
    - Create a firebase.json generator script for large numbers of sites
 
 2. **Service Account Permissions**:
+
    - Ensure service accounts have the "Firebase Hosting Admin" role
    - Use proper authentication for CI/CD pipelines
 
 3. **Special Character Domains**:
+
    - Create ASCII-compatible site IDs for domains with special characters
    - Document mapping between original domains and site IDs
 
 4. **Batch Processing**:
+
    - Continue using batch scripts for domain management
    - Add error recovery to handle partial failures in batch operations
 

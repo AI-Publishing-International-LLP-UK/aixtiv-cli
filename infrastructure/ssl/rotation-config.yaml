@@ -1,10 +1,10 @@
 certificateRotation:
-  schedule: "45d"
-  overlap: "7d"
+  schedule: '45d'
+  overlap: '7d'
   validation: true
   rollback: true
   monitoring: true
   alerts:
     enabled: true
-    channels: ["slack", "email"]
-    events: ["start", "complete", "fail"]
+    channels: ['slack', 'email']
+    events: ['start', 'complete', 'fail']

@@ -247,7 +247,9 @@ program
 // Add copilot:voice command for speech functionality
 program
   .command('copilot:voice')
-  .description('Speech capabilities using Google STT/TTS with personalization and sentiment analysis')
+  .description(
+    'Speech capabilities using Google STT/TTS with personalization and sentiment analysis'
+  )
   .option('-a, --action <action>', 'Action to perform (transcribe, speak, personalize, test)')
   .option('-u, --userId <userId>', 'User ID for the operation')
   .option('-c, --copilotId <copilotId>', 'Copilot ID to use')
@@ -266,7 +268,10 @@ program
 program
   .command('copilot:speaker')
   .description('Speaker recognition for voice biometrics, enrollment, and verification')
-  .option('-a, --action <action>', 'Action to perform (create-profile, enroll, verify, identify, list-profiles, profile-details, delete-profile)')
+  .option(
+    '-a, --action <action>',
+    'Action to perform (create-profile, enroll, verify, identify, list-profiles, profile-details, delete-profile)'
+  )
   .option('-e, --email <email>', 'Principal email for the profile or operation')
   .option('-p, --profileId <profileId>', 'Speaker profile ID')
   .option('-f, --file <path>', 'Path to audio file for enrollment, verification, or identification')
@@ -282,7 +287,10 @@ program
 program
   .command('copilot:preview')
   .description('Copilot response preview panel with "this is what the agent sees" transparency')
-  .option('-a, --action <action>', 'Action to perform (create, get, approve, request-changes, edit, settings, history, submit-feedback)')
+  .option(
+    '-a, --action <action>',
+    'Action to perform (create, get, approve, request-changes, edit, settings, history, submit-feedback)'
+  )
   .option('--userId <userId>', 'User ID for the preview session')
   .option('--copilotId <copilotId>', 'Copilot ID')
   .option('--message <message>', 'User message')
@@ -292,7 +300,10 @@ program
   .option('--editedText <editedText>', 'Edited response text')
   .option('--note <note>', 'Note for approval')
   .option('--changeOptions <options>', 'Comma-separated list of change options')
-  .option('--feedbackType <type>', 'Feedback type (helpful, not-helpful, tone-issue, needs-improvement)')
+  .option(
+    '--feedbackType <type>',
+    'Feedback type (helpful, not-helpful, tone-issue, needs-improvement)'
+  )
   .option('--comment <comment>', 'Comment for feedback')
   .option('--showEmotionIndicators <boolean>', 'Show emotion indicators')
   .option('--showToneSuggestions <boolean>', 'Show tone suggestions')
@@ -306,7 +317,9 @@ program
 program
   .command('copilot:emotion')
   .description('Agent emotion tuner – softens or sharpens tone based on user preference')
-  .action(copilotEmotion);
+  .action(function() {
+    copilotEmotion.parse(process.argv);
+  });
 
 // Visionary commands
 program
@@ -401,7 +414,10 @@ program
 program
   .command('claude:ux-check')
   .description('Dr. Match visual UX check overlay tool for screen preview before go-live')
-  .option('-a, --action <action>', 'Action to perform (create-session, check-screenshot, check-live, review-status, get-issues, compare)')
+  .option(
+    '-a, --action <action>',
+    'Action to perform (create-session, check-screenshot, check-live, review-status, get-issues, compare)'
+  )
   .option('--userId <userId>', 'User ID for the session')
   .option('--session <sessionId>', 'UX preview session ID')
   .option('--deviceType <type>', 'Device type (desktop, tablet, mobile)')
@@ -420,7 +436,10 @@ program
 program
   .command('claude:secrets')
   .description('Manage secrets and API keys with automatic rotation')
-  .requiredOption('-a, --action <action>', 'Action to perform (list, create, get, delete, rotate-sa-key, rotate-api-key, setup-rotation, generate, audit)')
+  .requiredOption(
+    '-a, --action <action>',
+    'Action to perform (list, create, get, delete, rotate-sa-key, rotate-api-key, setup-rotation, generate, audit)'
+  )
   .option('-i, --secretId <secretId>', 'Secret ID')
   .option('-p, --projectId <projectId>', 'GCP Project ID')
   .option('-v, --version <version>', 'Secret version')

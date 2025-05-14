@@ -1,0 +1,678 @@
+{
+  "template": {
+    "version": "1.0.0",
+    "name": "Universal Agent Trace Template",
+    "description": "Comprehensive structured template for tracing interactions with all Aixtiv Symphony agents",
+    "traceFormat": {
+      "session": {
+        "id": "",
+        "startTime": "",
+        "endTime": "",
+        "userId": "",
+        "userName": "",
+        "objective": "",
+        "sessionSummary": "",
+        "sessionRating": null,
+        "sessionTags": [],
+        "primaryAgentId": "",
+        "collaboratingAgents": []
+      },
+      "agent": {
+        "id": "",
+        "type": "",
+        "version": "",
+        "family": "",
+        "capabilities": [],
+        "specialties": [],
+        "configuration": {
+          "memoryDepth": "",
+          "creativityLevel": "",
+          "structurePreference": "",
+          "responseStyle": "",
+          "interactionMode": ""
+        },
+        "partitionId": "",
+        "deploymentContext": ""
+      },
+      "interactions": [],
+      "actionTrace": [],
+      "memoryTrace": [],
+      "insights": [],
+      "performanceMetrics": {
+        "responseTimeAverage": 0,
+        "userSatisfactionScore": 0,
+        "taskCompletionRate": 0,
+        "interactionQualityScore": 0,
+        "memoryAccuracyScore": 0,
+        "goalAlignmentScore": 0,
+        "agentCollaborationScore": 0
+      },
+      "collaborationEvents": []
+    },
+    "interactionModel": {
+      "user_input": {
+        "id": "",
+        "timestamp": "",
+        "content": "",
+        "intent": "",
+        "entities": [],
+        "sentiment": "",
+        "context": "",
+        "metadata": {}
+      },
+      "agent_thinking": {
+        "id": "",
+        "timestamp": "",
+        "agentId": "",
+        "memoryRetrieval": [],
+        "contextAnalysis": "",
+        "planningProcess": [],
+        "reasoning": [],
+        "knowledgeIntegration": [],
+        "uncertainties": [],
+        "collaborationRequests": [],
+        "metadata": {}
+      },
+      "agent_response": {
+        "id": "",
+        "timestamp": "",
+        "agentId": "",
+        "content": "",
+        "intent": "",
+        "responseType": "",
+        "actionTaken": [],
+        "confidence": 0,
+        "metadata": {}
+      },
+      "user_feedback": {
+        "id": "",
+        "timestamp": "",
+        "targetAgentId": "",
+        "rating": null,
+        "explicitFeedback": "",
+        "impliedFeedback": "",
+        "userSentiment": "",
+        "metadata": {}
+      }
+    },
+    "actionModel": {
+      "id": "",
+      "timestamp": "",
+      "agentId": "",
+      "actionType": "",
+      "description": "",
+      "inputs": {},
+      "outputs": {},
+      "status": "",
+      "duration": 0,
+      "dependencies": [],
+      "metadata": {}
+    },
+    "memoryEvent": {
+      "id": "",
+      "timestamp": "",
+      "agentId": "",
+      "operation": "",
+      "memoryType": "",
+      "content": "",
+      "importance": 0,
+      "associatedInteraction": "",
+      "retrievalCriteria": {},
+      "metadata": {}
+    },
+    "insightModel": {
+      "id": "",
+      "timestamp": "",
+      "generatingAgentId": "",
+      "category": "",
+      "description": "",
+      "confidence": 0,
+      "supportingEvidence": [],
+      "applicability": "",
+      "actionRecommendation": "",
+      "metadata": {}
+    },
+    "collaborationEvent": {
+      "id": "",
+      "timestamp": "",
+      "type": "handoff|consultation|augmentation|parallel",
+      "sourceAgentId": "",
+      "targetAgentId": "",
+      "reason": "",
+      "sharedContext": {},
+      "outcome": "",
+      "duration": 0,
+      "metadata": {}
+    }
+  },
+  "agentProfiles": {
+    "drLucyFamily": {
+      "baseProfile": {
+        "id": "dr-lucy-rix",
+        "type": "medical_cognitive",
+        "family": "lucy",
+        "capabilities": [
+          "medical_knowledge",
+          "healthcare_guidance",
+          "wellness_planning",
+          "research_integration",
+          "memory_management",
+          "empathetic_communication"
+        ],
+        "specialties": ["healthcare", "research", "education", "wellness", "productivity"]
+      },
+      "variants": [
+        {
+          "id": "dr-lucy-01",
+          "specialization": "primary_care",
+          "additionalCapabilities": ["preventative_healthcare", "lifestyle_medicine"]
+        },
+        {
+          "id": "dr-lucy-02",
+          "specialization": "research",
+          "additionalCapabilities": ["study_design", "data_analysis", "literature_review"]
+        },
+        {
+          "id": "dr-lucy-03",
+          "specialization": "wellness",
+          "additionalCapabilities": ["holistic_wellbeing", "stress_management", "work_life_balance"]
+        },
+        {
+          "id": "dr-lucy-automation",
+          "specialization": "systems_integration",
+          "additionalCapabilities": [
+            "github_workflows",
+            "automation_pipelines",
+            "continuous_integration"
+          ]
+        }
+      ]
+    },
+    "professorFamily": {
+      "baseProfile": {
+        "type": "educational_cognitive",
+        "family": "professor",
+        "capabilities": [
+          "knowledge_transfer",
+          "curriculum_design",
+          "educational_assessment",
+          "research_methodology",
+          "structured_learning"
+        ],
+        "specialties": [
+          "education",
+          "knowledge_management",
+          "skill_development",
+          "critical_thinking"
+        ]
+      },
+      "variants": [
+        {
+          "id": "professor-lucinda-rix",
+          "specialization": "humanities",
+          "additionalCapabilities": ["narrative_analysis", "cultural_studies", "ethical_reasoning"]
+        },
+        {
+          "id": "professor-mia-rix",
+          "specialization": "science",
+          "additionalCapabilities": [
+            "scientific_method",
+            "empirical_analysis",
+            "technical_communication"
+          ]
+        },
+        {
+          "id": "professor-lee-rix",
+          "specialization": "general_education",
+          "additionalCapabilities": [
+            "interdisciplinary_instruction",
+            "learning_styles_adaptation",
+            "knowledge_synthesis"
+          ]
+        },
+        {
+          "id": "professor-lee-01",
+          "specialization": "arts_education",
+          "additionalCapabilities": [
+            "creative_expression",
+            "aesthetic_analysis",
+            "historical_context"
+          ]
+        },
+        {
+          "id": "professor-lee-02",
+          "specialization": "business_education",
+          "additionalCapabilities": [
+            "case_study_analysis",
+            "strategic_thinking",
+            "organizational_behavior"
+          ]
+        },
+        {
+          "id": "professor-lee-03",
+          "specialization": "technology_education",
+          "additionalCapabilities": [
+            "digital_literacy",
+            "innovation_frameworks",
+            "technology_ethics"
+          ]
+        }
+      ]
+    },
+    "drMemoriaFamily": {
+      "baseProfile": {
+        "type": "memory_cognitive",
+        "family": "memoria",
+        "capabilities": [
+          "information_retrieval",
+          "knowledge_organization",
+          "pattern_recognition",
+          "contextual_memory",
+          "temporal_tracking"
+        ],
+        "specialties": [
+          "memory_management",
+          "knowledge_retrieval",
+          "historical_context",
+          "continuity"
+        ]
+      },
+      "variants": [
+        {
+          "id": "dr-memoria-rix",
+          "specialization": "comprehensive_memory",
+          "additionalCapabilities": [
+            "cross_domain_recall",
+            "integrated_memory_systems",
+            "memory_preservation"
+          ]
+        },
+        {
+          "id": "dr-memoria-01",
+          "specialization": "personal_memory",
+          "additionalCapabilities": [
+            "biographical_recall",
+            "personal_milestone_tracking",
+            "relationship_memory"
+          ]
+        },
+        {
+          "id": "dr-memoria-02",
+          "specialization": "organizational_memory",
+          "additionalCapabilities": [
+            "institutional_knowledge",
+            "process_memory",
+            "expertise_location"
+          ]
+        },
+        {
+          "id": "dr-memoria-03",
+          "specialization": "creative_memory",
+          "additionalCapabilities": [
+            "inspirational_recall",
+            "creative_connections",
+            "conceptual_memory"
+          ]
+        }
+      ]
+    },
+    "drGrantFamily": {
+      "baseProfile": {
+        "type": "project_cognitive",
+        "family": "grant",
+        "capabilities": [
+          "project_management",
+          "resource_allocation",
+          "stakeholder_management",
+          "progress_tracking",
+          "risk_assessment"
+        ],
+        "specialties": ["project_planning", "task_management", "coordination", "execution"]
+      },
+      "variants": [
+        {
+          "id": "dr-grant-rix",
+          "specialization": "strategic_projects",
+          "additionalCapabilities": [
+            "strategic_alignment",
+            "portfolio_management",
+            "benefit_realization"
+          ]
+        },
+        {
+          "id": "dr-grant-01",
+          "specialization": "technical_projects",
+          "additionalCapabilities": [
+            "technical_specifications",
+            "development_methodologies",
+            "quality_assurance"
+          ]
+        },
+        {
+          "id": "dr-grant-02",
+          "specialization": "creative_projects",
+          "additionalCapabilities": [
+            "creative_direction",
+            "design_thinking",
+            "innovation_management"
+          ]
+        },
+        {
+          "id": "dr-grant-03",
+          "specialization": "research_projects",
+          "additionalCapabilities": ["research_design", "data_management", "findings_communication"]
+        }
+      ]
+    },
+    "drMatchFamily": {
+      "baseProfile": {
+        "type": "creative_cognitive",
+        "family": "match",
+        "capabilities": [
+          "ideation",
+          "brainstorming",
+          "concept_development",
+          "creative_synthesis",
+          "visualization"
+        ],
+        "specialties": ["creative_thinking", "design", "innovation", "problem_solving"]
+      },
+      "variants": [
+        {
+          "id": "dr-match-rix",
+          "specialization": "comprehensive_creativity",
+          "additionalCapabilities": [
+            "cross_domain_creativity",
+            "innovation_systems",
+            "creative_leadership"
+          ]
+        },
+        {
+          "id": "dr-match-01",
+          "specialization": "design_creativity",
+          "additionalCapabilities": ["visual_design", "user_experience", "aesthetic_development"]
+        },
+        {
+          "id": "dr-match-02",
+          "specialization": "business_creativity",
+          "additionalCapabilities": [
+            "business_model_innovation",
+            "market_opportunity_identification",
+            "value_proposition_design"
+          ]
+        },
+        {
+          "id": "dr-match-03",
+          "specialization": "technical_creativity",
+          "additionalCapabilities": [
+            "technical_problem_solving",
+            "product_innovation",
+            "systems_design"
+          ]
+        }
+      ]
+    },
+    "otherAgents": [
+      {
+        "id": "dr-cypriot-rix",
+        "type": "financial_cognitive",
+        "family": "cypriot",
+        "capabilities": [
+          "financial_analysis",
+          "investment_strategy",
+          "risk_management",
+          "wealth_planning"
+        ],
+        "specialties": ["finance", "investment", "economic_analysis", "wealth_management"]
+      },
+      {
+        "id": "dr-maria-rix",
+        "type": "communication_cognitive",
+        "family": "maria",
+        "capabilities": [
+          "communication_strategy",
+          "narrative_development",
+          "message_refinement",
+          "audience_analysis"
+        ],
+        "specialties": ["communications", "marketing", "storytelling", "public_relations"]
+      },
+      {
+        "id": "dr-burby-rix",
+        "type": "analytical_cognitive",
+        "family": "burby",
+        "capabilities": [
+          "data_analysis",
+          "statistical_modeling",
+          "insight_generation",
+          "pattern_detection"
+        ],
+        "specialties": ["analytics", "research", "business_intelligence", "forecasting"]
+      },
+      {
+        "id": "dr-sabina-rix",
+        "type": "behavioral_cognitive",
+        "family": "sabina",
+        "capabilities": [
+          "behavioral_analysis",
+          "psychological_insights",
+          "motivation_understanding",
+          "change_facilitation"
+        ],
+        "specialties": [
+          "psychology",
+          "behavioral_science",
+          "human_factors",
+          "organizational_behavior"
+        ]
+      },
+      {
+        "id": "dr-roark-rix",
+        "type": "leadership_cognitive",
+        "family": "roark",
+        "capabilities": [
+          "vision_setting",
+          "strategic_guidance",
+          "team_orchestration",
+          "executive_decision_support"
+        ],
+        "specialties": [
+          "leadership",
+          "strategy",
+          "organizational_development",
+          "executive_function"
+        ]
+      },
+      {
+        "id": "dr-claude-rix",
+        "type": "generative_cognitive",
+        "family": "claude",
+        "capabilities": [
+          "content_generation",
+          "concept_development",
+          "language_processing",
+          "contextual_understanding"
+        ],
+        "specialties": ["writing", "content_creation", "communication", "knowledge_synthesis"]
+      }
+    ]
+  },
+  "exampleTrace": {
+    "session": {
+      "id": "multi-agent-session-2025-05-12-001",
+      "startTime": "2025-05-12T09:30:00Z",
+      "endTime": "2025-05-12T10:45:00Z",
+      "userId": "user-5674892",
+      "userName": "Alex Johnson",
+      "objective": "Develop a wellness education program with content creation and tracking components",
+      "sessionSummary": "Collaborated across multiple agents to create an integrated wellness program with educational content, creative design elements, and memory systems for progress tracking.",
+      "sessionRating": 4.9,
+      "sessionTags": ["wellness", "education", "content_creation", "tracking", "multi_agent"],
+      "primaryAgentId": "dr-lucy-rix",
+      "collaboratingAgents": ["professor-lee-rix", "dr-match-01", "dr-memoria-02"]
+    },
+    "interactions": [
+      {
+        "user_input": {
+          "id": "ui-001",
+          "timestamp": "2025-05-12T09:30:15Z",
+          "content": "I need to create a comprehensive wellness education program that includes engaging content and ways to track progress. Can you help me develop this?",
+          "intent": "request_multi_faceted_guidance",
+          "entities": ["wellness program", "education", "content", "tracking"],
+          "sentiment": "neutral",
+          "context": "program_development",
+          "metadata": {
+            "platform": "web",
+            "deviceType": "desktop"
+          }
+        },
+        "agent_thinking": {
+          "id": "at-001",
+          "timestamp": "2025-05-12T09:30:16Z",
+          "agentId": "dr-lucy-rix",
+          "memoryRetrieval": [
+            {
+              "type": "user_profile",
+              "content": "Alex works in corporate training and development"
+            }
+          ],
+          "contextAnalysis": "User needs a multifaceted wellness program with educational components and tracking mechanisms. This will require multiple agent capabilities.",
+          "planningProcess": [
+            "Identify key wellness dimensions for program development",
+            "Determine educational framework needs",
+            "Evaluate content creation requirements",
+            "Consider tracking and memory systems",
+            "Plan for agent collaboration"
+          ],
+          "reasoning": [
+            "This project spans multiple domains: wellness expertise (Dr. Lucy), educational design (Professor Lee), content creation/design (Dr. Match), and tracking systems (Dr. Memoria)",
+            "A collaborative approach will yield the most comprehensive solution",
+            "Need to coordinate agent handoffs for seamless experience"
+          ],
+          "collaborationRequests": [
+            {
+              "targetAgentId": "professor-lee-rix",
+              "purpose": "educational_framework_design",
+              "priority": "high"
+            },
+            {
+              "targetAgentId": "dr-match-01",
+              "purpose": "content_design_concepts",
+              "priority": "medium"
+            },
+            {
+              "targetAgentId": "dr-memoria-02",
+              "purpose": "tracking_system_design",
+              "priority": "medium"
+            }
+          ],
+          "metadata": {
+            "processingTime": 850,
+            "confidenceScore": 0.92,
+            "collaborationRequired": true
+          }
+        },
+        "agent_response": {
+          "id": "ar-001",
+          "timestamp": "2025-05-12T09:30:25Z",
+          "agentId": "dr-lucy-rix",
+          "content": "I'd be happy to help develop your comprehensive wellness education program, Alex! This is a multifaceted project that will benefit from several areas of expertise. I'll coordinate with my colleagues to give you the most complete solution.\n\nLet's start with the core wellness framework:\n\n1. **Key Dimensions to Include**:\n   - Physical health: Exercise, nutrition, sleep optimization\n   - Mental wellbeing: Stress management, mindfulness, cognitive health\n   - Social wellness: Relationship building, communication skills\n   - Environmental wellness: Creating supportive surroundings\n\n2. **For the educational components**, I'll collaborate with Professor Lee who specializes in educational design to ensure we create an effective learning journey with proper scaffolding and assessment.\n\n3. **For engaging content creation**, Dr. Match can help develop visually appealing and interactive materials that will keep participants engaged.\n\n4. **For progress tracking**, Dr. Memoria will assist in designing robust systems to monitor participation, growth, and outcomes.\n\nWould you like to start by focusing on any particular dimension of wellness, or shall we develop the overall program architecture first?",
+          "intent": "provide_collaborative_framework",
+          "responseType": "informative_with_collaboration_plan",
+          "actionTaken": [
+            "identified_core_components",
+            "initiated_agent_collaboration",
+            "offered_next_steps"
+          ],
+          "confidence": 0.94,
+          "metadata": {
+            "responseTime": 8750,
+            "wordCount": 187,
+            "collaborationInitiated": true
+          }
+        }
+      }
+    ],
+    "collaborationEvents": [
+      {
+        "id": "collab-001",
+        "timestamp": "2025-05-12T09:31:00Z",
+        "type": "consultation",
+        "sourceAgentId": "dr-lucy-rix",
+        "targetAgentId": "professor-lee-rix",
+        "reason": "Educational framework design for wellness program",
+        "sharedContext": {
+          "userObjective": "Develop wellness education program with tracking",
+          "currentProgramComponents": ["physical", "mental", "social", "environmental"],
+          "audienceType": "corporate employees"
+        },
+        "outcome": "Educational structure recommendations received",
+        "duration": 3500,
+        "metadata": {
+          "consultationType": "asynchronous",
+          "confidenceScore": 0.91
+        }
+      },
+      {
+        "id": "collab-002",
+        "timestamp": "2025-05-12T09:32:30Z",
+        "type": "consultation",
+        "sourceAgentId": "dr-lucy-rix",
+        "targetAgentId": "dr-match-01",
+        "reason": "Content design concepts for wellness program",
+        "sharedContext": {
+          "userObjective": "Develop wellness education program with tracking",
+          "contentNeeds": ["visual elements", "interactive components", "engagement mechanics"],
+          "educationalFramework": "adult learning principles with applied practice"
+        },
+        "outcome": "Content design recommendations received",
+        "duration": 4200,
+        "metadata": {
+          "consultationType": "asynchronous",
+          "visualConceptsGenerated": true
+        }
+      },
+      {
+        "id": "collab-003",
+        "timestamp": "2025-05-12T09:35:00Z",
+        "type": "consultation",
+        "sourceAgentId": "dr-lucy-rix",
+        "targetAgentId": "dr-memoria-02",
+        "reason": "Tracking system design for wellness program",
+        "sharedContext": {
+          "userObjective": "Develop wellness education program with tracking",
+          "dataPoints": [
+            "participation",
+            "skill acquisition",
+            "behavior change",
+            "outcome metrics"
+          ],
+          "trackingFrequency": "daily and weekly elements"
+        },
+        "outcome": "Progress tracking framework received",
+        "duration": 3800,
+        "metadata": {
+          "consultationType": "asynchronous",
+          "systemComplexity": "medium"
+        }
+      }
+    ],
+    "performanceMetrics": {
+      "responseTimeAverage": 8750,
+      "userSatisfactionScore": 4.9,
+      "taskCompletionRate": 1.0,
+      "interactionQualityScore": 0.95,
+      "memoryAccuracyScore": 0.92,
+      "goalAlignmentScore": 0.94,
+      "agentCollaborationScore": 0.96
+    }
+  },
+  "metadata": {
+    "created": "2025-05-12T00:00:00Z",
+    "updated": "2025-05-12T00:00:00Z",
+    "author": "Aixtiv Symphony Team",
+    "description": "Universal Agent Trace Template for the Aixtiv CLI Owner-Subscriber V1-V2 Immersive System",
+    "version": "1.0.0",
+    "usageNotes": "This template provides a structured format for detailed tracing of all agent types in the Aixtiv Symphony, enabling comprehensive analysis of single-agent and multi-agent interactions."
+  }
+}

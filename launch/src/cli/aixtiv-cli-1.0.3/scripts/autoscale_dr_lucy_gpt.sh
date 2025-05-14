@@ -1,0 +1,1 @@
+/Users/as/asoos/aixtiv-cli/scripts/autoscale-dr-lucy-firebase-domains.sh

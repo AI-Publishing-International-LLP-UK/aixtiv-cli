@@ -1,0 +1,22 @@
+{
+  "name": "asoos-ui",
+  "version": "1.0.0",
+  "description": "ASOOS UI with Integration Gateway and CTTT",
+  "main": "gateway-server.js",
+  "scripts": {
+    "start": "node gateway-server.js",
+    "start:prod": "./start.sh",
+    "status": "node -e \"console.log('ASOOS UI status: ' + require('fs').existsSync('process.pid') ? 'Running' : 'Stopped')\"",
+    "stop": "node -e \"if(require('fs').existsSync('process.pid')) { console.log('Stopping ASOOS UI...'); process.kill(parseInt(require('fs').readFileSync('process.pid', 'utf-8')), 'SIGTERM'); } else { console.log('ASOOS UI is not running'); }\""
+  },
+  "dependencies": {
+    "compression": "^1.8.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "helmet": "^7.2.0",
+    "winston": "^3.17.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

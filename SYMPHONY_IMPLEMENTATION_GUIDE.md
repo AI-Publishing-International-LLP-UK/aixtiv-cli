@@ -31,6 +31,7 @@ Symphony is deployed using the CI/CD CTTT (Continuous Integration/Continuous Dep
 ### Automated Deployment
 
 1. **Push changes to the repository**
+
    - The CI/CD CTTT pipeline is triggered automatically
    - All tests are executed to validate changes
    - If successful, deployment proceeds
@@ -44,11 +45,13 @@ Symphony is deployed using the CI/CD CTTT (Continuous Integration/Continuous Dep
 The zero-drift capabilities are implemented through:
 
 1. **Continuous Monitoring**
+
    - Telemetry tracking captures system behavior
    - Anomaly detection identifies potential drift issues
    - Automated recovery processes correct identified drift
 
 2. **Auto-Calibration**
+
    - Regular baseline comparisons ensure consistent performance
    - Machine learning models detect and adjust for drift patterns
    - Regular model retraining maintains alignment with user expectations
@@ -78,14 +81,8 @@ Agents are configured in the `/config/agent-cards/` directory with the following
       "priority": 5
     }
   ],
-  "fallback_agents": [
-    "agent_id_1",
-    "agent_id_2"
-  ],
-  "capabilities": [
-    "capability_1",
-    "capability_2"
-  ]
+  "fallback_agents": ["agent_id_1", "agent_id_2"],
+  "capabilities": ["capability_1", "capability_2"]
 }
 ```
 
@@ -141,12 +138,14 @@ The system captures positive feedback through:
 ### Health Dashboard
 
 Access the health dashboard at:
+
 - Staging: https://console.cloud.google.com/monitoring/dashboards/builder/symphony-staging
 - Production: https://console.cloud.google.com/monitoring/dashboards/builder/symphony-production
 
 ### Alert Configuration
 
 Alerts are configured for:
+
 - System downtime
 - Performance degradation
 - Error rate increases
@@ -162,16 +161,17 @@ Alerts are configured for:
 
 ### Common Issues
 
-| Issue | Solution |
-|-------|----------|
+| Issue                | Solution                                                              |
+| -------------------- | --------------------------------------------------------------------- |
 | Agent not responding | Check agent status with `./scripts/verify-agent-status.sh [agent_id]` |
-| Slow response times | Run performance check with `./scripts/check-performance.sh` |
-| Deployment failures | Check cloud build logs and verify service account permissions |
-| DNS issues | Verify DNS configuration with `./scripts/check-dns.sh [domain]` |
+| Slow response times  | Run performance check with `./scripts/check-performance.sh`           |
+| Deployment failures  | Check cloud build logs and verify service account permissions         |
+| DNS issues           | Verify DNS configuration with `./scripts/check-dns.sh [domain]`       |
 
 ### Support Contacts
 
 For urgent issues, contact:
+
 - Technical Lead: technical-lead@example.com
 - DevOps: devops@example.com
 - Security Team: security@example.com

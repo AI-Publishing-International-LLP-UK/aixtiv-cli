@@ -1,30 +1,100 @@
-# 🌟 Aixtiv CLI
+# 🌟 Aixtiv CLI - Symphony Orchestration System
 
-A command-line interface for managing Sally Port the secure authentication access point phase 1 to authentication,
-security infrastructure with full support for grant, revoke, verify, and scan operations.
+A command-line interface for managing the Aixtiv Symphony ecosystem, providing RIX/CRX orchestration, Pinecone vector database integration, and CI/CD CTTT pipeline connectivity.
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-AIXTIV--SYMPHONY-blue?logo=github)](https://github.com/AI-Publishing-International-LLP-UK/AIXTIV-SYMPHONY)
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
+[![CI/CD CTTT](https://img.shields.io/badge/CI%2FCD-CTTT%20Enabled-blue.svg)](https://github.com/aixtiv/aixtiv-cli/actions)
+[![Version](https://img.shields.io/badge/version-1.0.3-orange.svg)](package.json)
 
 ## ⚡ About
 
-This CLI tool is part of the API for Warp Drive ecosystem.
+Aixtiv CLI is the unified orchestration layer for the Aixtiv Symphony System, providing seamless integration between RIX/CRX agents, Pinecone vector database, and CI/CD CTTT pipeline.
 
 - Owner: Phillip Corey Roark (pr@coaching2100.com)
 - Organization: coaching2100.com
 
-## Features
+## 🚀 Features
 
 - 🔐 Secure delegation and access control
-- 🚀 Easy command-line interaction with Firestore backend
-- 🧠 Intelligent handling of special cases like PR Fix
-- 🎛️ Modular architecture
-- 🔒 Automated SSL certificate provisioning and management
+- 🚀 CI/CD CTTT (Continuous Integration/Deployment with Comprehensive Testing and Telemetry Tracking)
+- 🧠 RIX/CRX Matrix System (11x11x11 = 1,331 combinations)
+- 🔍 Pinecone vector database integration for semantic search
+- 📊 Universal Dispatcher with Owner-Subscriber pattern
 - 🌐 Domain management with Firebase and GCP integration
 - 🤖 Claude Orchestration Auto Scaling for intelligent resource management
 - 🎼 Symphony Interface - Zero-drift, always-on, bonded-agent-powered interface
 - 🔑 GCP Secret Manager integration with automated API key rotation
 - 🚨 Dream Commander - High-volume prompt routing and processing system
+- 📈 Comprehensive feedback loops for continuous improvement
+
+## 🏛️ Architecture Overview
+
+### RIX/CRX Matrix System (11x11x11 = 1,331 combinations)
+
+The Registered Intelligence Experts (RIX) system organizes agents in an 11x11x11 matrix, with Cross-Wing RIX (CRX) enabling multi-domain intelligence. The system includes:
+
+- **6 Squadrons** (01-06) each with 11 pilots
+- **Squadron Leaders**:
+  - **Squadron 01**: Dr. Lucy RIX - Organizational Innovation, Advancing Tech Solutions
+  - **Squadron 02**: Dr. Grant - Security and Authentication
+  - **Squadron 03**: Dr. Sabina - Service, Support and Sales Customer Sciences Leadership
+  - **Squadron 04**: Dr. Claude - RIX and Solving Significant Challenges and Excellence in Performance + Orchestrations
+  - **Squadron 05**: Dr. Maria - Healthy Workforce Aging, Softskills, CRX Development, Testing and Quality Assurance
+  - **Squadron 06**: Dr. Cypriot - Co-pilot Consistency and compliance with S2D0, AIRewards
+
+### Universal Dispatcher
+
+The central nervous system of Aixtiv CLI, implementing the Owner-Subscriber pattern:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                       Aixtiv CLI                            │
+└───────────────┬─────────────────┬────────────────┬─────────┘
+                │                 │                │
+    ┌───────────▼──────┐  ┌──────▼───────┐  ┌─────▼─────────┐
+    │  Agent Manager   │  │ OAuth2 Layer │  │ Pinecone Hub  │
+    └───────────┬──────┘  └──────┬───────┘  └─────┬─────────┘
+                │                │                │
+┌───────────────▼────────────────▼────────────────▼─────────────┐
+│                        Service Bus                             │
+└──────┬─────────────┬─────────────┬────────────┬───────────────┘
+       │             │             │            │
+┌──────▼────┐ ┌──────▼────┐ ┌─────▼────┐ ┌─────▼─────┐ ┌───────┐
+│Dr. Memoria│ │ Dr. Match │ │Dr. Lucy  │ │Claude     │ │More    │
+│LinkedIn   │ │LinkedIn   │ │GitHub App│ │Services   │ │Services│
+└───────────┘ └───────────┘ └──────────┘ └───────────┘ └───────┘
+```
+
+### CI/CD CTTT Integration
+
+Fully integrated CI/CD pipeline with Comprehensive Testing and Telemetry Tracking:
+
+- **Continuous Integration**: Automated builds and tests on each commit
+- **Continuous Deployment**: Automated deployment to staging and production
+- **Comprehensive Testing**: Unit, integration, and end-to-end tests
+- **Telemetry Tracking**: Performance monitoring and usage analytics
+- **Real-time Health Checks**: Monitoring of all system components
+
+### Pinecone Vector Database Integration
+
+Aixtiv CLI seamlessly integrates with Pinecone for vector search capabilities:
+
+- **Unified Vector Space**: All agents contribute to and query from shared vector namespace
+- **Specialized Indexes**: Dedicated indexes for different data types and agent functions
+- **Automatic Indexing**: Firestore triggers automatically update vector database
+- **Semantic Routing**: Content-aware dispatching based on similarity
+
+### Feedback Loop System
+
+The system implements advanced feedback loops:
+
+1. **Collection Phase**: Gather data from all sources
+2. **Processing Phase**: Agent-specific processing and enrichment
+3. **Embedding Phase**: Vector embedding generation
+4. **Storage Phase**: Structured storage in Firestore and Pinecone
+5. **Query Phase**: Semantic search and retrieval
+6. **Feedback Phase**: User feedback collection and performance metrics
 
 ## Symphony Interface
 
@@ -48,13 +118,16 @@ To launch the Symphony Interface locally:
 Then visit http://localhost:3030 in your browser.
 
 For production deployment:
+
 ```bash
 ./symphony-production-deploy.sh production
 ```
 
 For detailed information, see the [Symphony Implementation Guide](SYMPHONY_IMPLEMENTATION_GUIDE.md)
 
-## Usage
+## 🛠️ Usage
+
+### Basic Commands
 
 ```bash
 aixtiv auth:verify --email someone@example.com
@@ -63,7 +136,7 @@ aixtiv agent:revoke --email user@example.com --agent agent007 --resource secret-
 aixtiv resource:scan --agent agent007
 ```
 
-## Setup
+### Setup
 
 Install dependencies:
 
@@ -83,24 +156,9 @@ Run CLI:
 node bin/aixtiv.js
 ```
 
-## Configuration ⚙️
+## 🔍 Commands Reference
 
-The CLI needs to connect to Firebase. Set up your credentials in one of these ways:
-
-1. 🔑 **Service Account Key**:
-
-   - Provide a service account key file via the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
-   - Or place a `service-account-key.json` file in the `config` directory.
-
-2. 🔥 **Firebase Project Config**:
-   - The CLI uses the Firebase project configured in `config/firebase.json`.
-   - It defaults to "api-for-warp-drive" but can be customized.
-
-## Commands 🎮
-
-### 🔍 Authentication
-
-Verify authentication with SalleyPort:
+### Authentication
 
 ```bash
 # Check system status
@@ -108,17 +166,9 @@ aixtiv auth:verify
 
 # Verify a specific principal
 aixtiv auth:verify --email pr@coaching2100.com
-
-# Verify a specific agent
-aixtiv auth:verify --agent 001
-
-# Verify a principal-agent relationship
-aixtiv auth:verify --email pr@coaching2100.com --agent 001
 ```
 
-### 🤖 Agent Management
-
-Grant agent access to a resource:
+### Agent Management
 
 ```bash
 # Grant full access
@@ -127,64 +177,24 @@ aixtiv agent:grant --email pr@coaching2100.com --agent 001 --resource pr-2bd9116
 # Grant readonly access
 aixtiv agent:grant --email user@example.com --agent 002 --resource resource-id --type readonly
 
-# Grant delegated access
-aixtiv agent:grant --email admin@company.com --agent admin-bot --resource system-config --type delegated
-```
-
-Revoke agent access:
-
-```bash
+# Revoke agent access
 aixtiv agent:revoke --email pr@coaching2100.com --agent 001 --resource pr-2bd91160bf21ba21
 ```
 
-### 📊 Resource Management
-
-Scan resources for access patterns:
+### Co-Pilot Management
 
 ```bash
-# Scan all resources
-aixtiv resource:scan
-
-# Scan a specific resource
-aixtiv resource:scan --resource pr-2bd91160bf21ba21
-
-# Filter by agent
-aixtiv resource:scan --agent 001
-
-# Filter by principal
-aixtiv resource:scan --email pr@coaching2100.com
-```
-
-### 👨‍✈️ Co-Pilot Management
-
-Link and manage co-pilots with these commands:
-
-```bash
-# Link a co-pilot to a principal (supports drname.live domains)
+# Link a co-pilot to a principal
 aixtiv copilot:link --email pr@coaching2100.com --copilot lucy
-
-# Link with enhanced access level
-aixtiv copilot:link --email pr@coaching2100.com --copilot grant@drgrant.live --level executive
 
 # List all co-pilots
 aixtiv copilot:list
 
-# List co-pilots for a specific principal
-aixtiv copilot:list --email pr@coaching2100.com
-
 # Verify co-pilot for higher access levels
 aixtiv copilot:verify --email lucy@drlucy.live --principal pr@coaching2100.com
-
-# Grant co-pilot access to a resource
-aixtiv copilot:grant --email pr@coaching2100.com --copilot lucy --resource pr-2bd91160bf21ba21 --type delegated
-
-# Unlink a co-pilot
-aixtiv copilot:unlink --email pr@coaching2100.com --copilot lucy
 ```
 
-### 🧠 Claude Orchestration
-
-Manage the Claude Orchestration Auto Scaling system:
+### Claude Orchestration
 
 ```bash
 # Check Claude Orchestration status
@@ -193,162 +203,50 @@ aixtiv claude:status
 # View auto-scaling metrics
 aixtiv claude:metrics
 
-# Configure auto-scaling parameters
-aixtiv claude:config --max-replicas=10 --cpu-threshold=60
-
-# View orchestration logs
-aixtiv claude:logs --component=auto-scaler
-
 # Execute live workflows with real API integrations
 aixtiv claude:live --workflow linkedin --userId user123 --accessToken token123
 aixtiv claude:live --workflow github --userId user123 --accessToken token123 --repository owner/repo-name
 aixtiv claude:live --workflow claude --userId user123 --prompt "Generate a blog post about AI" --format markdown
 ```
 
-The `claude:live` command uses real production API integrations to:
+The `claude:live` command connects with:
 
-- Index LinkedIn profiles and posts into Pinecone vector database
-- Analyze GitHub repositories with detailed code parsing
-- Generate optimized content using Claude AI
+- LinkedIn for profile/post indexing in Pinecone
+- GitHub for repository analysis
+- Claude AI for content generation
 
 For detailed information, see the [Claude Orchestration documentation](docs/CLAUDE_ORCHESTRATION.md).
 
-### 💻 Code Generation
-
-Generate code snippets for various languages and tasks:
+### Pinecone Integration
 
 ```bash
-# Generate JavaScript code
-aixtiv claude:code:generate --task "Create a function to calculate the factorial of a number" --language javascript
+# Check Pinecone connection status
+aixtiv pinecone:status
 
-# Generate TypeScript code with output to file
-aixtiv claude:code:generate --task "Create an interface for user data" --language typescript --outputFile ./src/types/user.ts
+# Show Pinecone usage statistics
+aixtiv pinecone:stats
 
-# Generate Python API endpoint
-aixtiv claude:code:generate --task "Create a Flask API endpoint for user authentication" --language python
+# Search across all Pinecone indexes
+aixtiv pinecone:search "Marketing strategy for enterprise customers"
 
-# Generate code with context from existing files
-aixtiv claude:code:generate --task "Create a function to process user data" --language javascript --context ./src/utils.js,./src/types.js
+# Get index information
+aixtiv pinecone:index aixtiv-memories
 ```
 
-The code generator supports:
-
-- Multiple languages: JavaScript, TypeScript, Python
-- Various code types: functions, classes, interfaces, API endpoints
-- Context-aware generation using existing code files
-- Local offline generation when Claude API is unavailable
-
-To test the code generator:
+### Unified Search
 
 ```bash
-npm run test:code-generator
+# Search across all knowledge
+aixtiv search "Customer retention strategies"
+
+# Search LinkedIn knowledge
+aixtiv search:linkedin "B2B marketing tactics"
+
+# Search GitHub knowledge
+aixtiv search:github "Authentication best practices"
 ```
 
-### 🔑 Secret Management
-
-Manage secrets, API keys, and service account credentials with GCP Secret Manager integration:
-
-```bash
-# List all secrets in the project
-aixtiv claude:secrets -a list -p api-for-warp-drive
-
-# Create a new secret
-aixtiv claude:secrets -a create -i my-secret -p api-for-warp-drive --value "my-secret-value"
-
-# Access a secret value
-aixtiv claude:secrets -a get -i my-secret -p api-for-warp-drive
-
-# Rotate a service account key
-aixtiv claude:secrets -a rotate-sa-key -i sa-key-secret -p api-for-warp-drive -s service-account@api-for-warp-drive.iam.gserviceaccount.com
-
-# Rotate an API key
-aixtiv claude:secrets -a rotate-api-key -i api-key-secret -p api-for-warp-drive -k my-api-key
-
-# Generate a secure random string
-aixtiv claude:secrets -a generate --length 40
-```
-
-Key features:
-
-- Automated key rotation for service accounts and API keys
-- Secret versioning and audit logging
-- Secure generation of random strings
-- Interactive secret creation
-- Scheduled rotation capabilities
-
-For detailed information, see the [GCP Secret Manager Integration documentation](docs/GCP_SECRET_MANAGER.md).
-
-### 🚨 Dream Commander
-
-Dream Commander is a high-throughput intelligent prompt routing system designed to ingest, classify, and route 10M+ daily prompts across multiple channels to appropriate agent systems:
-
-```bash
-# Check Dream Commander system status
-aixtiv dream status
-
-# Configure Dream Commander
-aixtiv dream config --list
-
-# Start the Dream Commander system
-aixtiv dream start
-
-# View message statistics
-aixtiv dream stats --period day
-
-# List recent messages
-aixtiv dream message --list
-
-# Send a test message
-aixtiv dream test --message "Create a mobile app for inventory tracking"
-```
-
-Key features:
-- Multi-channel message ingestion (Email, SMS, LinkedIn, Threads, API)
-- Intelligent classification with SERPEW, 9-Box Grid, Holland, Q4DLENZ, and Cultural Empathy
-- Smart routing to optimal agents (Dr. Match, QB Lucy, etc.)
-- Automated requirements gathering and formalization
-- Scales to 10M+ daily messages
-
-For detailed information, see the [Dream Commander documentation](docs/DREAM_COMMANDER.md).
-
-### ⚡ Special Commands
-
-Handle PR access specifically:
-
-```bash
-# Apply PR fix
-aixtiv fix:pr
-
-# Clean up PR fix
-aixtiv fix:pr --cleanup
-```
-
-### 🚀 Project Initialization
-
-Initialize a new aixtiv project with basic structure:
-
-```bash
-# Create a new project with default name (aixtiv-project)
-aixtiv init
-
-# Create a new project with a custom name
-aixtiv init --name my-awesome-project
-
-# Force overwrite an existing project directory
-aixtiv init --name existing-project --force
-```
-
-The initialization process creates:
-
-- Basic project structure (src, config, assets, docs)
-- Configuration files (.env.example, config/default.json)
-- Package.json with required dependencies
-- README.md with project documentation
-- Entry point (src/index.js) with CLI boilerplate
-
-## Domain and SSL Management 🌐
-
-Manage domains and SSL certificates in the AIXTIV Symphony ecosystem:
+### Domain and SSL Management
 
 ```bash
 # List all domains
@@ -360,27 +258,72 @@ aixtiv domain add drclaude.live --type character --firebase-project dr-claude-li
 # Verify domain configuration
 aixtiv domain verify drclaude.live
 
-# Set up Firebase Hosting for a domain
-aixtiv domain firebase-setup drclaude.live
-
 # Check SSL certificate status for a domain
 aixtiv domain ssl-check drclaude.live
-
-# Check all domains
-aixtiv domain ssl-check --all
-
-# Provision a new SSL certificate
-aixtiv domain ssl-provision drclaude.live --type firebase
-
-# Renew an SSL certificate
-aixtiv domain ssl-renew drclaude.live
 ```
 
-The CLI includes automated SSL certificate provisioning through GitHub Actions. See the workflow in `workflows/ssl-automation.yaml`.
+### CI/CD CTTT Commands
 
-## Development 👨‍💻
+```bash
+# Check CI/CD pipeline status
+aixtiv cicd:status
 
-### 📁 Project Structure
+# View latest build status
+aixtiv cicd:build:status
+
+# View test coverage
+aixtiv cicd:test:coverage
+
+# View telemetry dashboard
+aixtiv cicd:telemetry:dashboard
+
+# Run all tests
+aixtiv cicd:test:run
+
+# Analyze code quality
+aixtiv cicd:analyze:code
+```
+
+### Secret Management with CI/CD CTTT Integration
+
+```bash
+# List all secrets in the project
+aixtiv claude:secrets -a list -p api-for-warp-drive
+
+# Create a new secret
+aixtiv claude:secrets -a create -i my-secret -p api-for-warp-drive --value "my-secret-value"
+
+# Rotate a service account key
+aixtiv claude:secrets -a rotate-sa-key -i sa-key-secret -p api-for-warp-drive -s service-account@api-for-warp-drive.iam.gserviceaccount.com
+
+# Rotate an API key
+aixtiv claude:secrets -a rotate-api-key -i api-key-secret -p api-for-warp-drive -k my-api-key
+
+# View CI/CD CTTT status for key rotation
+aixtiv cicd:status --component key-rotation
+
+# Trigger a manual key rotation with CTTT integration
+aixtiv cicd:trigger key-rotation --environment production
+
+# Verify keys after rotation
+aixtiv cicd:verify:keys
+```
+
+For detailed information on GCP Secret Manager integration, see the [GCP Secret Manager documentation](docs/GCP_SECRET_MANAGER.md).
+
+## 📊 Monitoring and Metrics
+
+The system tracks comprehensive metrics:
+
+- `responseTimeAverage`: Speed of response processing
+- `userSatisfactionScore`: User satisfaction rating
+- `taskCompletionRate`: Percentage of tasks successfully completed
+- `interactionQualityScore`: Quality of agent interactions
+- `memoryAccuracyScore`: Accuracy of memory retrievals
+- `goalAlignmentScore`: Alignment with user objectives
+- `agentCollaborationScore`: Effectiveness of multi-agent collaboration
+
+## 📁 Project Structure
 
 ```
 aixtiv-cli/
@@ -416,60 +359,45 @@ aixtiv-cli/
 │       └── grant.js
 ├── lib/
 │   ├── firestore.js         # All DB ops
-│   └── utils.js             # Shared utils
+│   ├── telemetry/           # Telemetry tracking
+│   │   └── index.js
+│   └── agent-tracking.js    # Agent tracking
+├── src/
+│   ├── functions/           # Core functionality
+│   │   ├── universalDispatcher.js
+│   │   └── pinecone-integration-updated.js
+│   ├── services/            # Service integration
+│   │   ├── rix-crx/         # RIX/CRX service
+│   │   │   └── index.js
+│   │   └── secrets/         # Secret management
+│   └── session_memory/      # Memory templates
+│       └── universal_agent_trace_template.json
+├── functions/               # Firebase functions
+│   ├── pineconeIntegrationFunctions.js
+│   └── universalDispatcherFunctions.js
 ├── scripts/
 │   └── domain-ssl-check.sh  # SSL certificate checker
-├── services/
-│   ├── secrets/             # Secret management
-│   │   ├── secret-manager.js
-│   │   └── provider-factory.js
-│   ├── oauth2/              # OAuth2 integration
-│   ├── linkedin/            # LinkedIn integration
-│   └── live/                # Live workflow orchestration
-│       └── index.js         # Production integration service
-├── workflows/
-│   └── ssl-automation.yaml  # GitHub Actions workflow
+├── docs/
+│   ├── CLAUDE_ORCHESTRATION.md
+│   ├── PINECONE_INTEGRATION.md
+│   ├── AGENT_LINKEDIN_PINECONE_INTEGRATION.md
+│   └── RIX_CRX_STRUCTURE.md
 ├── config/
 │   └── firebase.json        # Optional override
 ├── package.json
 └── README.md
 ```
 
-### 📦 Publishing to NPM
+## 🔒 Security
 
-```bash
-npm version [patch|minor|major]
-npm publish
-```
+- All API keys stored in GCP Secret Manager
+- Vector namespace isolation for data separation
+- Agent-specific credential management
+- Regular token rotation
+- Access control and audit logging
 
-## Infrastructure Overview
+## 📜 License
 
-- Primary Region: US-WEST1-B
-- Backup Region: US-CENTRAL1 (Iowa)
+© 2025 Copyright AI Publishing International LLP. All Rights Reserved.
 
-## Golden Standards Compliance
-
-- 24/7 Monitoring
-- Automated Deployments
-- Infrastructure as Code
-- Secure Secret Management
-
-## Security 🔒
-
-The CLI handles security credentials for the SalleyPort system. Ensure that:
-
-1. 🛡️ Service account keys are properly secured using GCP Secret Manager
-2. 📝 Authorization operations are audited
-3. ✓ Revocation confirmations are required
-4. 🔄 Implement automated key rotation using the `claude:secrets` command
-5. 🕒 Maintain an audit log of all secret access and modifications
-
-## License 📜
-
-This software is proprietary and requires a paid license for use. See the LICENSE file for details.
-
-For licensing inquiries, please contact: contact@ai-publishing.international
-
----
-
-👑 Captain of Empathetic Agentic Systems — we stand at the threshold of legacy. The AIXTIV CLI is zipped, sealed, and ready to be carried forth into the code kingdoms.
+Developed with assistance from the Pilots of Vision Lake and Claude Code Generator. This is Human Driven and 100% Human Project Amplified by attributes of AI Technology.

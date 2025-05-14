@@ -1,0 +1,7 @@
+# List of domains to return to GoDaddy
+# One domain per line
+# byfabrizio.live - KEEP THIS ONE (commented out)
+byfabrizio.design
+philliproark.com
+kennedyryan.com
+2100.group

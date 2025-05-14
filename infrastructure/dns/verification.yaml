@@ -1,16 +1,16 @@
 dns:
   check:
-    - domain: "staging.2100.cool"
+    - domain: 'staging.2100.cool'
       records:
-        - type: "A"
-          value: "34.54.155.123"
-        - type: "CNAME"
-          value: "2100.cool"
-    - domain: "2100.cool"
+        - type: 'A'
+          value: '34.54.155.123'
+        - type: 'CNAME'
+          value: '2100.cool'
+    - domain: '2100.cool'
       records:
-        - type: "A"
-          value: "34.54.155.123"
-  
+        - type: 'A'
+          value: '34.54.155.123'
+
   verification:
     propagation: true
     ssl: true

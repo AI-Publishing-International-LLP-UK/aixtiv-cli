@@ -16,12 +16,14 @@ To enhance our organization's security posture, we will be implementing two impo
 ### For All Members:
 
 #### 1. Enable Two-Factor Authentication by [DEADLINE]:
+
 - Log in to GitHub
 - Go to Settings > Password and authentication
 - Set up 2FA using an authenticator app (recommended), SMS, or security key
 - Store your recovery codes in a secure location
 
 #### 2. Prepare for SAML SSO:
+
 - You will receive an email invitation to connect your GitHub account to our identity provider
 - Follow the instructions in the email to complete the connection
 - After [ENFORCEMENT DATE], you will be required to authenticate through our identity provider

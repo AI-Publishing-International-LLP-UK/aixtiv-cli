@@ -1,0 +1,114 @@
+{
+  "id": "dr-match-bid-suite",
+  "name": "Dr. Match's BidSuite and Customer Delight",
+  "version": "1.0.0",
+  "description": "Comprehensive marketing, e-commerce, and brand management framework with LinkedIn integration",
+  "capabilities": [
+    "Marketing materials and strategies management",
+    "E-commerce site administration",
+    "Public-facing web interface design",
+    "Brand messaging and content creation",
+    "Visual identity and imagery curation",
+    "User experience design",
+    "Public launch preparation",
+    "LinkedIn App authentication and management",
+    "Social media campaign orchestration",
+    "Live events coordination",
+    "Professional networking"
+  ],
+  "service_path": null,
+  "api_endpoint": "https://api.match.aixtiv.org",
+  "status": "in_development",
+  "team_compatible": true,
+  "requires_authentication": true,
+  "authentication_provider": "SallyPort",
+  "default_permissions": ["view", "edit", "publish"],
+  "metadata": {
+    "region": "us-west1",
+    "assigned_properties": [
+      "Dr. Memoria's Anthology",
+      "All Firebase domain projects",
+      "All solution platforms",
+      "All pilot programs",
+      "The Wing properties",
+      "All character sites",
+      "All community sites"
+    ],
+    "approval_chain": ["Teams", "Dr. Match", "Mr. Phillip Corey Roark", "Deployment"],
+    "creator": "Phillip Corey Roark",
+    "created_at": "2025-02-15T00:00:00Z",
+    "last_updated": "2025-05-12T00:00:00Z"
+  },
+  "team_assignments": [
+    {
+      "team_id": "marketing-team",
+      "role": "primary",
+      "description": "Primary marketing and brand management system"
+    },
+    {
+      "team_id": "promotion-team",
+      "role": "leader",
+      "description": "Lead for all promotional campaigns and events"
+    },
+    {
+      "team_id": "linkedin-integration",
+      "role": "authenticator",
+      "description": "Authentication runner for LinkedIn integration"
+    },
+    {
+      "team_id": "symphony-core",
+      "role": "contributor",
+      "description": "Brand identity provider for Symphony"
+    }
+  ],
+  "firebase_integration": {
+    "enabled": true,
+    "hosting": true,
+    "functions": true,
+    "custom_domains": true
+  },
+  "sally_port_integration": {
+    "enabled": true,
+    "giftshop_access": true
+  },
+  "external_integrations": [
+    {
+      "system": "LinkedIn",
+      "app_name": "Dr. Match LinkedIn App",
+      "role": "authentication_runner",
+      "status": "active"
+    },
+    {
+      "system": "Canva",
+      "sdk": true,
+      "access_level": "full",
+      "status": "active"
+    },
+    {
+      "system": "Figma",
+      "access_level": "full",
+      "status": "active"
+    },
+    {
+      "system": "Builder.io",
+      "access_level": "full",
+      "status": "active"
+    },
+    {
+      "system": "Trello",
+      "access_level": "full",
+      "status": "active"
+    }
+  ],
+  "social_media_access": {
+    "all_platforms": true,
+    "campaign_management": true,
+    "content_creation": true,
+    "analytics": true
+  },
+  "relationship_with_dr_memoria": {
+    "description": "Dr. Match uses and runs programs/campaigns based on content created by Dr. Memoria",
+    "workflow": "Dr. Memoria creates content → Dr. Match deploys and manages campaigns",
+    "collaboration_level": "high"
+  }
+}

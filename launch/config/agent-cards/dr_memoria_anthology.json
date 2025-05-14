@@ -1,0 +1,59 @@
+{
+  "id": "dr-memoria-anthology",
+  "name": "Dr. Memoria's Anthology",
+  "version": "0.9.2",
+  "description": "Comprehensive knowledge management system for structured information storage and retrieval",
+  "capabilities": [
+    "Knowledge organization and cataloging",
+    "Information storage and retrieval",
+    "Vector database integration",
+    "Semantic search capabilities",
+    "Pattern recognition across knowledge domains"
+  ],
+  "service_path": null,
+  "api_endpoint": "https://api.anthology.aixtiv.org",
+  "status": "in_development",
+  "team_compatible": true,
+  "requires_authentication": true,
+  "authentication_provider": "SallyPort",
+  "default_permissions": ["read", "search"],
+  "metadata": {
+    "region": "us-west1",
+    "integration": {
+      "pinecone": true,
+      "firestore": true
+    },
+    "creator": "Phillip Corey Roark",
+    "created_at": "2025-02-01T00:00:00Z",
+    "last_updated": "2025-05-01T00:00:00Z"
+  },
+  "team_assignments": [
+    {
+      "team_id": "knowledge-team",
+      "role": "primary",
+      "description": "Primary knowledge management system"
+    },
+    {
+      "team_id": "symphony-core",
+      "role": "contributor",
+      "description": "Knowledge foundation for Symphony"
+    }
+  ],
+  "external_integrations": [
+    {
+      "system": "LinkedIn",
+      "endpoint": "/profiles",
+      "status": "active"
+    },
+    {
+      "system": "GitHub",
+      "endpoint": "/repositories",
+      "status": "active"
+    },
+    {
+      "system": "Pinecone",
+      "endpoint": "/vectors",
+      "status": "active"
+    }
+  ]
+}

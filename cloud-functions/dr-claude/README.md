@@ -60,4 +60,3 @@ After deployment, the Aixtiv CLI command should work:
 ```bash
 node bin/aixtiv.js claude:agent:delegate -p "SallyPort Security Update" -d "Deploy the updated SallyPort security management system" --priority high --assign-to "dr-claude-orchestrator"
 ```
-

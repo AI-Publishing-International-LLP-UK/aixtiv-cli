@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASOOS Deployment Confirmation</title>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #0A2342 0%, #283C63 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      max-width: 800px;
+      width: 90%;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      background: linear-gradient(90deg, #4158D0, #C850C0, #FFCC70);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .subtitle {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 1.2rem;
+      opacity: 0.8;
+    }
+    
+    .status-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .status-card {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+    }
+    
+    .status-dot.success {
+      background-color: #4ade80;
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+    }
+    
+    .status-title {
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .status-details {
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+    
+    .config-info {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .config-item {
+      display: flex;
+      margin-bottom: 0.75rem;
+    }
+    
+    .config-label {
+      width: 160px;
+      font-weight: 600;
+      color: #93c5fd;
+    }
+    
+    .config-value {
+      flex: 1;
+    }
+    
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    
+    .button {
+      padding: 0.75rem 2rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .button.primary {
+      background: linear-gradient(90deg, #3B82F6, #1D4ED8);
+      color: white;
+    }
+    
+    .button.primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+    }
+    
+    .button.secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+    
+    .button.secondary:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      font-size: 0.85rem;
+      opacity: 0.6;
+    }
+    
+    @media (max-width: 768px) {
+      .status-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ASOOS Deployment Confirmed</h1>
+    <div class="subtitle">
+      Aixtiv Symphony Orchestrating OS is successfully deployed
+    </div>
+    
+    <div class="status-container">
+      <div class="status-card">
+        <div class="status-indicator">
+          <div class="status-dot success"></div>
+          <div>System Active</div>
+        </div>
+        <div class="status-title">ASOOS UI</div>
+        <div class="status-details">
+          The ASOOS user interface is correctly deployed and accessible.
+        </div>
+      </div>
+      
+      <div class="status-card">
+        <div class="status-indicator">
+          <div class="status-dot success"></div>
+          <div>Connected</div>
+        </div>
+        <div class="status-title">Integration Gateway</div>
+        <div class="status-details">
+          Successfully connected to the Integration Gateway in GCP us-west1.
+        </div>
+      </div>
+    </div>
+    
+    <div class="config-info">
+      <h3>Deployment Configuration</h3>
+      
+      <div class="config-item">
+        <div class="config-label">Domain:</div>
+        <div class="config-value">asoos.2100.cool</div>
+      </div>
+      
+      <div class="config-item">
+        <div class="config-label">Symphony Mode:</div>
+        <div class="config-value">Zero-Drift (Always On)</div>
+      </div>
+      
+      <div class="config-item">
+        <div class="config-label">Claude Model:</div>
+        <div class="config-value">claude-3-5-sonnet</div>
+      </div>
+      
+      <div class="config-item">
+        <div class="config-label">Bonded Agent:</div>
+        <div class="config-value">Enabled</div>
+      </div>
+      
+      <div class="config-item">
+        <div class="config-label">Key Rotation:</div>
+        <div class="config-value">Every 24 hours (Automatic)</div>
+      </div>
+    </div>
+    
+    <div class="button-group">
+      <a href="/" class="button primary">Launch ASOOS</a>
+      <a href="/api/status" class="button secondary">Check API Status</a>
+    </div>
+  </div>
+  
+  <footer>
+    &copy; 2025 ASOOS - Aixtiv Symphony Orchestrating OS
+  </footer>
+  
+  <script>
+    // Check system status on load
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        // Check gateway status
+        const gatewayResponse = await fetch('/api/gateway-status');
+        const gatewayData = await gatewayResponse.json();
+        
+        // Check API status
+        const apiResponse = await fetch('/api/status');
+        const apiData = await apiResponse.json();
+        
+        console.log('Gateway Status:', gatewayData);
+        console.log('API Status:', apiData);
+        
+        // Update status indicators if needed
+        if (!gatewayData.connected) {
+          const gatewayDot = document.querySelector('.status-card:nth-child(2) .status-dot');
+          gatewayDot.classList.remove('success');
+          gatewayDot.style.backgroundColor = '#f87171';
+          gatewayDot.parentElement.querySelector('div').textContent = 'Disconnected';
+        }
+      } catch (error) {
+        console.error('Error checking status:', error);
+      }
+    });
+  </script>
+</body>
+</html>

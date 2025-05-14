@@ -10,19 +10,19 @@ spec:
     - Egress
   ingress:
     - from:
-      - podSelector: {}
-      - namespaceSelector:
-          matchLabels:
-            organization: coaching2100
+        - podSelector: {}
+        - namespaceSelector:
+            matchLabels:
+              organization: coaching2100
       ports:
         - protocol: TCP
         - protocol: UDP
   egress:
     - to:
-      - podSelector: {}
-      - namespaceSelector:
-          matchLabels:
-            organization: coaching2100
+        - podSelector: {}
+        - namespaceSelector:
+            matchLabels:
+              organization: coaching2100
     - ports:
         - port: 53
           protocol: UDP

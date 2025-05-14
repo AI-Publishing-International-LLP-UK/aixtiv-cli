@@ -1,0 +1,28 @@
+{
+  "name": "my-cli",
+  "version": "1.0.0",
+  "description": "A simple CLI application",
+  "main": "bin/my-cli.js",
+  "bin": {
+    "my-cli": "bin/my-cli.js"
+  },
+  "scripts": {
+    "start": "node bin/my-cli.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^9.4.1",
+    "figlet": "^1.5.2",
+    "ora": "^5.4.1",
+    "table": "^6.8.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "keywords": [
+    "cli"
+  ],
+  "author": "",
+  "license": "MIT"
+}

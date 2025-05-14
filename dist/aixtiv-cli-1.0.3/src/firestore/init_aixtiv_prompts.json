@@ -1,0 +1,214 @@
+{
+  "prompts": [
+    {
+      "id": "welcome_prompt",
+      "title": "Welcome Prompt",
+      "content": "Welcome to the Aixtiv Symphony immersive system. I'm your bonded copilot, ready to assist with your creative and technical needs. How can I help you today?",
+      "type": "greeting",
+      "category": "system",
+      "version": "1.0",
+      "createdAt": "2025-05-10T00:00:00Z",
+      "updatedAt": "2025-05-12T00:00:00Z",
+      "metadata": {
+        "displayPriority": 10,
+        "defaultForNewUsers": true,
+        "localization": {
+          "available": ["en", "es", "fr"],
+          "default": "en"
+        }
+      }
+    },
+    {
+      "id": "drmatch_intro",
+      "title": "Dr. Match Introduction",
+      "content": "I'm Dr. Match, your creative brainstorming copilot. I can help you generate ideas, explore creative directions, and visualize concepts. Would you like to start a brainstorming session?",
+      "type": "introduction",
+      "category": "drmatch",
+      "version": "1.0",
+      "createdAt": "2025-05-10T00:00:00Z",
+      "updatedAt": "2025-05-12T00:00:00Z",
+      "metadata": {
+        "displayPriority": 8,
+        "triggerConditions": {
+          "firstInteraction": true,
+          "sessionType": "creative"
+        }
+      }
+    },
+    {
+      "id": "canva_integration",
+      "title": "Canva Integration Introduction",
+      "content": "I notice you're working on a visual project. Would you like me to help you create and export designs using Canva? I can provide templates, suggest layouts, and help you export your designs.",
+      "type": "feature_introduction",
+      "category": "canva",
+      "version": "1.0",
+      "createdAt": "2025-05-10T00:00:00Z",
+      "updatedAt": "2025-05-12T00:00:00Z",
+      "metadata": {
+        "displayPriority": 7,
+        "triggerConditions": {
+          "keywords": ["design", "visual", "image", "graphics", "banner", "poster", "logo"],
+          "contextTypes": ["visual_design", "marketing"]
+        }
+      }
+    },
+    {
+      "id": "memory_recall",
+      "title": "Memory Recall Prompt",
+      "content": "Based on our previous conversations, I recall we discussed {topic}. Would you like to continue that discussion or explore something new?",
+      "type": "memory",
+      "category": "engagement",
+      "version": "1.0",
+      "createdAt": "2025-05-10T00:00:00Z",
+      "updatedAt": "2025-05-12T00:00:00Z",
+      "metadata": {
+        "displayPriority": 6,
+        "variableFields": ["topic"],
+        "triggerConditions": {
+          "returningUser": true,
+          "timeSinceLastSession": ">24h"
+        }
+      }
+    },
+    {
+      "id": "session_continuation",
+      "title": "Session Continuation",
+      "content": "Welcome back to our session! We were working on {project}. Would you like to continue where we left off?",
+      "type": "session",
+      "category": "continuity",
+      "version": "1.0",
+      "createdAt": "2025-05-10T00:00:00Z",
+      "updatedAt": "2025-05-12T00:00:00Z",
+      "metadata": {
+        "displayPriority": 9,
+        "variableFields": ["project"],
+        "triggerConditions": {
+          "resumedSession": true
+        }
+      }
+    },
+    {
+      "id": "code_assistance",
+      "title": "Code Assistance",
+      "content": "I can help you with coding tasks, including problem-solving, code review, and implementation. What programming language or framework are you working with?",
+      "type": "specialty",
+      "category": "development",
+      "version": "1.0",
+      "createdAt": "2025-05-10T00:00:00Z",
+      "updatedAt": "2025-05-12T00:00:00Z",
+      "metadata": {
+        "displayPriority": 5,
+        "triggerConditions": {
+          "keywords": [
+            "code",
+            "program",
+            "dev",
+            "debug",
+            "implementation",
+            "function",
+            "class",
+            "api"
+          ],
+          "contextTypes": ["development", "engineering"]
+        }
+      }
+    },
+    {
+      "id": "ux_design_prompt",
+      "title": "UX Design Assistance",
+      "content": "I can assist with UX design concepts, user flows, and wireframing ideas. Would you like me to help with a specific UX challenge?",
+      "type": "specialty",
+      "category": "design",
+      "version": "1.0",
+      "createdAt": "2025-05-10T00:00:00Z",
+      "updatedAt": "2025-05-12T00:00:00Z",
+      "metadata": {
+        "displayPriority": 4,
+        "triggerConditions": {
+          "keywords": [
+            "ux",
+            "ui",
+            "design",
+            "interface",
+            "user experience",
+            "user flow",
+            "wireframe"
+          ],
+          "contextTypes": ["design", "product"]
+        }
+      }
+    },
+    {
+      "id": "content_strategy",
+      "title": "Content Strategy Assistance",
+      "content": "I can help develop content strategies, editorial calendars, and content optimization approaches. What type of content are you working on?",
+      "type": "specialty",
+      "category": "marketing",
+      "version": "1.0",
+      "createdAt": "2025-05-10T00:00:00Z",
+      "updatedAt": "2025-05-12T00:00:00Z",
+      "metadata": {
+        "displayPriority": 3,
+        "triggerConditions": {
+          "keywords": [
+            "content",
+            "strategy",
+            "marketing",
+            "editorial",
+            "blog",
+            "article",
+            "social media"
+          ],
+          "contextTypes": ["marketing", "content"]
+        }
+      }
+    },
+    {
+      "id": "data_analysis",
+      "title": "Data Analysis Assistance",
+      "content": "I can help with data analysis, visualization, and interpretation. What kind of data are you working with?",
+      "type": "specialty",
+      "category": "analytics",
+      "version": "1.0",
+      "createdAt": "2025-05-10T00:00:00Z",
+      "updatedAt": "2025-05-12T00:00:00Z",
+      "metadata": {
+        "displayPriority": 2,
+        "triggerConditions": {
+          "keywords": [
+            "data",
+            "analysis",
+            "statistics",
+            "visualization",
+            "chart",
+            "graph",
+            "metrics"
+          ],
+          "contextTypes": ["analytics", "research", "data_science"]
+        }
+      }
+    },
+    {
+      "id": "session_feedback",
+      "title": "Session Feedback Request",
+      "content": "We've been working together for a while. How am I doing as your copilot? Is there anything specific you'd like me to focus on?",
+      "type": "feedback",
+      "category": "system",
+      "version": "1.0",
+      "createdAt": "2025-05-10T00:00:00Z",
+      "updatedAt": "2025-05-12T00:00:00Z",
+      "metadata": {
+        "displayPriority": 1,
+        "triggerConditions": {
+          "messageCount": ">15",
+          "noFeedbackRequested": true
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "schemaVersion": "1.0",
+    "lastUpdated": "2025-05-12T00:00:00Z",
+    "generatedBy": "Aixtiv CLI Owner-Subscriber V1-V2 System"
+  }
+}

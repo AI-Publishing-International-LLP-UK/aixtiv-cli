@@ -13,11 +13,13 @@ We've implemented an improved agent maintenance system for the Aixtiv CLI. This 
 ## Quick Reference
 
 ### Checking Agent Status
+
 ```bash
 ./bin/aixtiv.js claude:status
 ```
 
 ### Manually Activating Agents
+
 ```bash
 # All agents
 ./bin/aixtiv.js agent:activate

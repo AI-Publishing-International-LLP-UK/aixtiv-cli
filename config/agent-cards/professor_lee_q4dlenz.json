@@ -1,0 +1,47 @@
+{
+  "id": "professor-lee-q4d-trainer",
+  "name": "Professor Lee's Q4DLenz",
+  "version": "1.0.1",
+  "description": "4-dimensional learning analysis system processing educational content through quantum algorithms",
+  "capabilities": [
+    "Training module creation and management",
+    "Advanced learning pattern analysis",
+    "Blockchain-based certification validation",
+    "Comprehensive learning analytics",
+    "Adaptive learning curve generation"
+  ],
+  "service_path": "/src/services/q4dlenz/index.js",
+  "api_endpoint": "https://q4d.compass-field.io/api",
+  "status": "ready",
+  "team_compatible": true,
+  "requires_authentication": true,
+  "authentication_provider": "SallyPort",
+  "default_permissions": ["create", "analyze", "certify"],
+  "metadata": {
+    "region": "us-west1",
+    "zone": "us-west1-b",
+    "dimensionality": "4d",
+    "learning_curve": "adaptive",
+    "feedback_loop": true,
+    "creator": "Phillip Corey Roark",
+    "created_at": "2025-02-20T00:00:00Z",
+    "last_updated": "2025-05-05T00:00:00Z"
+  },
+  "team_assignments": [
+    {
+      "team_id": "education-team",
+      "role": "primary",
+      "description": "Primary learning system for all educational content analysis"
+    },
+    {
+      "team_id": "symphony-core",
+      "role": "contributor",
+      "description": "Learning component provider for Symphony"
+    }
+  ],
+  "blockchain_integration": {
+    "enabled": true,
+    "provider": "Certification Ledger",
+    "validation_endpoint": "/training/certifications/{id}/validate"
+  }
+}

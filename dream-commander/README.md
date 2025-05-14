@@ -57,18 +57,21 @@ const dreamCommander = require('./dream-commander/src');
 await dreamCommander.initialize();
 
 // Submit a message
-const result = await dreamCommander.submitMessage({
-  content: "This is a test message"
-}, {
-  channel: 'api',
-  user: 'test-user'
-});
+const result = await dreamCommander.submitMessage(
+  {
+    content: 'This is a test message',
+  },
+  {
+    channel: 'api',
+    user: 'test-user',
+  }
+);
 
 console.log(`Message submitted: ${result.messageId}`);
 
 // Get message statistics
 const stats = await dreamCommander.getMessageStats({
-  period: 'day'
+  period: 'day',
 });
 
 console.log(`Total messages: ${stats.total}`);
@@ -111,16 +114,19 @@ Dream Commander is designed for massive scale:
 ## Getting Started
 
 1. Install the aixtiv-cli:
+
    ```bash
    npm install -g aixtiv-cli
    ```
 
 2. Start Dream Commander:
+
    ```bash
    aixtiv dream start
    ```
 
 3. Send a test message:
+
    ```bash
    aixtiv dream test --message "Need to develop a mobile app for inventory tracking with barcode scanning, cloud sync, and real-time alerts" --channel api
    ```

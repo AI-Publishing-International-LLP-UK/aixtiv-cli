@@ -37,15 +37,15 @@ steps:
         gcloud secrets versions access latest --secret="new-admin-anthropic" > /workspace/anthropic_key.txt
         gcloud secrets versions access latest --secret="pineconeconnect" > /workspace/pinecone_key.txt
         gcloud secrets versions access latest --secret="langchain03_api_for_warp_drive" > /workspace/langchain_key.txt
-        
+
         # Export as environment variables for later steps
         echo "export ANTHROPIC_API_KEY=$(cat /workspace/anthropic_key.txt)" >> /workspace/env_vars.sh
         echo "export PINECONE_API_KEY=$(cat /workspace/pinecone_key.txt)" >> /workspace/pinecone_key.txt
         echo "export LANGCHAIN_API_KEY=$(cat /workspace/langchain_key.txt)" >> /workspace/env_vars.sh
-        
+
         # Set permissions
         chmod 600 /workspace/anthropic_key.txt /workspace/pinecone_key.txt /workspace/langchain_key.txt /workspace/env_vars.sh
-        
+
         source bin/agent-tracking.sh
         log_agent_action "credentials_fetch" "Retrieved API credentials from Secret Manager"
 
@@ -54,7 +54,7 @@ steps:
     id: 'install'
     args: ['install']
 
-  # Setup Claude Orchestration 
+  # Setup Claude Orchestration
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'setup-claude-orchestration'
     entrypoint: 'bash'
@@ -63,37 +63,37 @@ steps:
       - |
         source bin/agent-tracking.sh
         source /workspace/env_vars.sh
-        
+
         log_agent_action "claude_orchestration_setup" "Setting up Claude orchestration with auto-scaling"
-        
+
         # Initialize the Pinecone vector database connection for Claude
         python -c "
         import os
         import sys
         from src.services.secrets.secret_manager import SecretManager
         from src.services.secrets.provider_factory import ProviderFactory
-        
+
         # Initialize services
         secret_manager = SecretManager()
         provider_factory = ProviderFactory()
-        
+
         # Set API keys from environment 
         os.environ['PINECONE_API_KEY'] = open('/workspace/pinecone_key.txt').read().strip()
         os.environ['ANTHROPIC_API_KEY'] = open('/workspace/anthropic_key.txt').read().strip()
-        
+
         # Initialize the connections
         pinecone = provider_factory.createPineconeClient()
         anthropic = provider_factory.createAnthropicClient()
-        
+
         # Setup the indices needed for the pipeline
         from src.functions.pinecone_integration_updated import createIndexIfNotExists
         createIndexIfNotExists('cttt-pipeline-artifacts')
         createIndexIfNotExists('claude-context-definitions')
         createIndexIfNotExists('claude-workflow-templates')
-        
+
         print('Claude orchestration setup complete')
         "
-        
+
         log_agent_action "claude_orchestration_ready" "Claude orchestration with auto-scaling ready"
 
   # Run Pipeline with Claude Orchestration
@@ -105,12 +105,12 @@ steps:
       - |
         source bin/agent-tracking.sh
         source /workspace/env_vars.sh
-        
+
         log_agent_action "cttt_pipeline_start" "Starting CTTT pipeline with Claude orchestration"
-        
+
         # Install Python dependencies
         pip install firebase-admin google-cloud-firestore google-cloud-secret-manager anthropic pinecone-client pydantic
-        
+
         # Add agent orchestration parameters to pipeline config
         cat > orchestration_config.json << EOL
         {
@@ -140,10 +140,10 @@ steps:
           }
         }
         EOL
-        
+
         # Execute the CTTT pipeline with orchestration
         python automation/cttt-pipeline.py --project-id="api-for-warp-drive" --agent-id="DR_CLAUDE_ORCHESTRATION" --config=orchestration_config.json
-        
+
         # Store orchestration results in Pinecone for future reference
         python -c "
         import os
@@ -151,12 +151,12 @@ steps:
         import time
         from datetime import datetime
         from src.functions.pinecone_integration_updated import storeInPinecone
-        
+
         # Load the pipeline results
         latest_results_file = max(list(path for path in os.listdir('reports/cttt') if path.startswith('pipeline-results-')), key=os.path.getctime)
         with open(f'reports/cttt/{latest_results_file}', 'r') as f:
             results = json.load(f)
-        
+
         # Store in Pinecone
         item = {
             'id': f'pipeline-{datetime.now().strftime(\"%Y%m%d-%H%M%S\")}',
@@ -168,11 +168,11 @@ steps:
                 'agent': 'DR_CLAUDE_ORCHESTRATION'
             }
         }
-        
+
         storeInPinecone('cttt-pipeline-artifacts', [item])
         print(f'Pipeline results stored in Pinecone: {item[\"id\"]}')
         "
-        
+
         log_agent_action "cttt_pipeline_complete" "Completed CTTT pipeline with Claude orchestration"
 
   # Linting
@@ -238,10 +238,10 @@ steps:
         source bin/agent-tracking.sh
         source /workspace/env_vars.sh
         log_agent_action "docker_build_start" "Starting Docker image build with agent integration"
-        
+
         # Set a default COMMIT_SHA if it's not defined
         COMMIT_SHA="${COMMIT_SHA:-$(date +%Y%m%d-%H%M%S)}"
-        
+
         # Create Docker build arguments file with agent configurations
         cat > docker-build-args.env << EOF
         BUILD_ID=${BUILD_ID}
@@ -251,7 +251,7 @@ steps:
         ENABLE_PINECONE=true
         ENABLE_LINKEDIN=true
         EOF
-        
+
         # Build Docker image with agent integrations enabled
         docker build --build-arg-file=docker-build-args.env -t gcr.io/api-for-warp-drive/aixtiv-cli:$COMMIT_SHA .
         log_agent_action "docker_build_complete" "Completed Docker image build with agent integration"
@@ -260,7 +260,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     id: 'docker-push'
     entrypoint: 'bash'
-    args: 
+    args:
       - '-c'
       - |
         # Set a default COMMIT_SHA if it's not defined
@@ -279,7 +279,7 @@ steps:
         # Use Container Analysis API to scan the Docker image
         gcloud container images describe gcr.io/api-for-warp-drive/aixtiv-cli:$$COMMIT_SHA \
           --format='value(discovery.analysisStatus)'
-        
+
         # Run npm audit for package vulnerabilities
         npm audit --audit-level=high
         log_agent_action "security_scan_complete" "Completed security scanning"
@@ -293,13 +293,13 @@ steps:
       - |
         # Connect to GKE cluster
         gcloud container clusters get-credentials private-cluster-auto --zone us-west1-b --project api-for-warp-drive
-        
+
         source bin/agent-tracking.sh
         log_agent_action "staging_deploy_start" "Starting deployment to staging with auto-scaling"
-        
+
         # Update deployment YAML with new image and auto-scaling
         sed -i "s|gcr.io/api-for-warp-drive/aixtiv-cli:.*|gcr.io/api-for-warp-drive/aixtiv-cli:$$COMMIT_SHA|g" infrastructure/staging/deployment.yaml
-        
+
         # Add Claude orchestration environment variables
         cat > claude-orchestration-patch.yaml << EOF
         spec:
@@ -317,10 +317,10 @@ steps:
                 - name: PINECONE_ENABLED
                   value: "true"
         EOF
-        
+
         # Apply the patch to enable Claude orchestration
         kubectl patch -f infrastructure/staging/deployment.yaml --patch "$(cat claude-orchestration-patch.yaml)"
-        
+
         # Create horizontal pod autoscaler for dynamic scaling
         cat > hpa.yaml << EOF
         apiVersion: autoscaling/v2
@@ -349,7 +349,7 @@ steps:
                 type: Utilization
                 averageUtilization: 60
         EOF
-        
+
         # Apply updated deployment, service, and autoscaling
         kubectl apply -f infrastructure/staging/deployment.yaml
         kubectl apply -f infrastructure/staging/service.yaml
@@ -368,14 +368,14 @@ steps:
       - |
         source bin/agent-tracking.sh
         log_agent_action "staging_test_start" "Starting staging environment tests"
-        
+
         # Wait for deployment to complete
         sleep 30
-        
+
         # Test API endpoints
         STAGING_IP=$$(kubectl get svc aixtiv-cli-staging -n anthology-ai-staging -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
         HEALTH_CHECK=$$(curl -s -o /dev/null -w "%{http_code}" http://$$STAGING_IP/health)
-        
+
         if [ "$$HEALTH_CHECK" -eq 200 ]; then
           echo "Staging health check passed: $$HEALTH_CHECK"
           log_agent_action "staging_test_complete" "Staging environment tests successful"
@@ -395,7 +395,7 @@ steps:
         source bin/agent-tracking.sh
         source /workspace/env_vars.sh
         log_agent_action "training_analysis_start" "Analyzing for training requirements with Claude supervision"
-        
+
         # Check if this build needs model retraining
         NEEDS_TRAINING=$$(python -c "
         import os, glob
@@ -403,7 +403,7 @@ steps:
         last_commit = os.environ.get('COMMIT_SHA')
         print('true' if model_files else 'false')
         ")
-        
+
         if [ "$$NEEDS_TRAINING" == "true" ]; then
           log_agent_action "training_start" "Starting model training with Claude supervision"
           
@@ -463,28 +463,28 @@ steps:
         source bin/agent-tracking.sh
         source /workspace/env_vars.sh
         log_agent_action "release_creation_start" "Starting GitHub release creation with agent context"
-        
+
         # Install GitHub CLI
         apt-get update && apt-get install -y gh
-        
+
         # Create a new release tag
         VERSION=$$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[:space:]')
         RELEASE_TAG="v$$VERSION-$$(date +%Y%m%d-%H%M%S)"
-        
+
         # Generate release notes with Claude insight
         python -c "
         import anthropic
         import json
         import os
         import subprocess
-        
+
         # Get Claude's API key
         client = anthropic.Anthropic(api_key=os.environ.get('ANTHROPIC_API_KEY'))
-        
+
         # Get git log since last tag
         git_log = subprocess.run(['git', 'log', '--pretty=format:%s', '-n', '20'], 
                                 capture_output=True, text=True).stdout
-        
+
         # Ask Claude to generate insights
         message = client.messages.create(
             model='claude-3-opus-20240229',
@@ -505,20 +505,20 @@ steps:
                 '''}
             ]
         )
-        
+
         # Save Claude's release notes
         with open('/workspace/release_notes.md', 'w') as f:
             f.write(message.content[0].text)
-        
+
         print('Release notes generated by Claude')
         "
-        
+
         # Create release with Claude-generated notes
         gh auth login --with-token < /secrets/github-token
         gh release create $$RELEASE_TAG \
           --title "Release $$RELEASE_TAG" \
           --notes-file /workspace/release_notes.md
-        
+
         log_agent_action "release_creation_complete" "Completed GitHub release creation with agent context"
 
   # Update Monitoring Dashboard with Agent Metrics
@@ -530,7 +530,7 @@ steps:
       - |
         source bin/agent-tracking.sh
         log_agent_action "monitoring_update_start" "Updating monitoring configuration with agent metrics"
-        
+
         # Create agent monitoring dashboard
         cat > agent_monitoring_dashboard.json << EOF
         {
@@ -610,7 +610,7 @@ steps:
           }
         }
         EOF
-        
+
         # Update monitoring configuration
         gcloud monitoring dashboards create \
           --config-from-file=agent_monitoring_dashboard.json
@@ -627,7 +627,7 @@ steps:
         source bin/agent-tracking.sh
         source /workspace/env_vars.sh
         log_agent_action "pipeline_complete" "CI/CTTT pipeline with Claude orchestration completed"
-        
+
         # Generate Claude summary of the pipeline run
         python -c "
         import anthropic
@@ -635,15 +635,15 @@ steps:
         import os
         import glob
         from datetime import datetime
-        
+
         # Find the latest pipeline results
         latest_results_file = max(glob.glob('reports/cttt/pipeline-results-*.json'), key=os.path.getctime)
         with open(latest_results_file, 'r') as f:
             results = json.load(f)
-        
+
         # Get Claude's API key
         client = anthropic.Anthropic(api_key=os.environ.get('ANTHROPIC_API_KEY'))
-        
+
         # Ask Claude to generate a summary
         message = client.messages.create(
             model='claude-3-opus-20240229',
@@ -665,18 +665,18 @@ steps:
                 '''}
             ]
         )
-        
+
         # Save Claude's summary
         with open('/workspace/pipeline_summary.md', 'w') as f:
             f.write(message.content[0].text)
-        
+
         print('Pipeline summary generated by Claude')
         "
-        
+
         # Create deployment record in Firestore
         gcloud firestore documents create projects/api-for-warp-drive/databases/(default)/documents/deployments/$$(date +%Y%m%d%H%M%S) \
           --fields="status=SUCCESS,timestamp=$$(date +%s),agent=DR_CLAUDE_ORCHESTRATION,version=$$COMMIT_SHA,environment=staging,orchestrated=true"
-        
+
         echo "🚀 CI/CTTT Pipeline with Claude orchestration completed successfully!"
         echo "✅ Staging deployment: COMPLETE with auto-scaling enabled"
         echo "✅ Artifacts available at: gcr.io/api-for-warp-drive/aixtiv-cli:$$COMMIT_SHA"
@@ -685,7 +685,7 @@ steps:
         echo "📋 Claude Pipeline Summary:"
         cat /workspace/pipeline_summary.md
 
-timeout: "3600s"  # 60 minutes
+timeout: '3600s' # 60 minutes
 options:
   machineType: 'E2_HIGHCPU_8'
   logging: CLOUD_LOGGING_ONLY
@@ -695,6 +695,13 @@ options:
 artifacts:
   objects:
     location: 'gs://api-for-warp-drive-artifacts/builds/$BUILD_ID/'
-    paths: ['test-results/**/*', 'coverage/**/*', 'dist/**/*', '/workspace/pipeline_summary.md', '/workspace/release_notes.md']
+    paths:
+      [
+        'test-results/**/*',
+        'coverage/**/*',
+        'dist/**/*',
+        '/workspace/pipeline_summary.md',
+        '/workspace/release_notes.md',
+      ]
 
 serviceAccount: 'projects/api-for-warp-drive/serviceAccounts/drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com'
