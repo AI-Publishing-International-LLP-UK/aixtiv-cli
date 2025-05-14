@@ -51,3 +51,7 @@ script_with_*.sh
 this.windowMs
 =
 aixtiv-cli/
+
+# Ignore large files
+pre-cleanup-backup.tar.gz
+
