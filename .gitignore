@@ -55,3 +55,10 @@ aixtiv-cli/
 # Ignore large files
 pre-cleanup-backup.tar.gz
 
+# Exclude large files that exceed GitHub limits
+pre-cleanup-backup.tar.gz
+# Additional large files
+src/cli/Warp.dmg
+src/cli/actions-runner-osx-arm64-2.323.0.tar.gz
+src/cli/actions-runner-osx-arm64-2.323.0/externals/node20/bin/node
+ui/asoos/actions-runner/externals/node20/bin/node
