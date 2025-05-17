@@ -17,6 +17,12 @@ COPY . .
 # Make the CLI executable
 RUN chmod +x ./bin/aixtiv.js
 
+# Set proper ownership for the application files
+RUN chown -R node:node /app
+
+# Switch to non-root user
+USER node
+
 # Set up environment for Cloud Build/Run
 ENV PORT=8080
 EXPOSE ${PORT}

@@ -1,0 +1,1 @@
+Package Removal Plan: Remove figlet (7.1MB) from the build as it's already available elsewhere
