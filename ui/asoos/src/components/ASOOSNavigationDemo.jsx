@@ -12,6 +12,10 @@ const ASOOSNavigationDemo = () => {
   const [messageInput, setMessageInput] = useState('');
   const [messages, setMessages] = useState([]);
   
+  // Debugging logs
+  console.log('Component initialized with viewMode:', viewMode);
+  console.log('Initial messages state:', messages);
+  
   // Get contexts
   const { user, login, logout, isAuthenticated } = useContext(AuthContext);
   const { agent, agentPersonality, setAgentPersonality } = useContext(AgentContext);
@@ -30,6 +34,7 @@ const ASOOSNavigationDemo = () => {
   // Effect to check authentication
   useEffect(() => {
     if (isAuthenticated && viewMode === 'login') {
+      console.log('Authentication check - isAuthenticated:', isAuthenticated, 'Current viewMode:', viewMode);
       navigateTo('main');
     }
   }, [isAuthenticated]);
@@ -75,7 +80,9 @@ const ASOOSNavigationDemo = () => {
   };
   
   // Homepage View (Main Dashboard)
-  const HomeView = () => (
+  const HomeView = () => {
+    console.log('Rendering HomeView');
+    return (
     <div className="flex-1 flex">
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col bg-white p-6">
@@ -226,9 +233,12 @@ const ASOOSNavigationDemo = () => {
       </div>
     </div>
   );
+  }
   
   // Login View
-  const LoginView = () => (
+  const LoginView = () => {
+    console.log('Rendering LoginView');
+    return (
     <div className="flex-1 flex items-center justify-center bg-gray-50">
       <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full relative overflow-hidden">
         {/* Hexagon Background Pattern */}
@@ -276,9 +286,12 @@ const ASOOSNavigationDemo = () => {
       </div>
     </div>
   );
+  }
   
   // Webinar/Academy View
-  const WebinarView = () => (
+  const WebinarView = () => {
+    console.log('Rendering WebinarView');
+    return (
     <div className="flex-1 flex flex-col bg-white">
       {/* Webinar Header */}
       <div className="bg-gradient-to-r from-blue-800 to-blue-600 text-white p-4 flex justify-between items-center">
@@ -351,9 +364,12 @@ const ASOOSNavigationDemo = () => {
       </div>
     </div>
   );
+  }
   
   // Settings View
-  const SettingsView = () => (
+  const SettingsView = () => {
+    console.log('Rendering SettingsView');
+    return (
     <div className="flex-1 bg-gray-50 p-6 overflow-auto">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-6">
@@ -489,7 +505,9 @@ const ASOOSNavigationDemo = () => {
   );
   
   // Statistics/ROI Dashboard
-  const StatsView = () => (
+  const StatsView = () => {
+    console.log('Rendering StatsView');
+    return (
     <div className="flex-1 bg-gray-50 p-6 overflow-auto">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
@@ -626,9 +644,19 @@ const ASOOSNavigationDemo = () => {
       </div>
     </div>
   );
+  }
+  
+  // Debug which view will be rendered
+  console.log('About to render with viewMode:', viewMode);
+  console.log('isAuthenticated status:', isAuthenticated);
+  console.log('AuthContext user:', user);
   
   return (
     <div className="flex h-screen bg-gray-50">
+      {/* Diagnostic element - should always be visible if component renders */}
+      <div style={{ position: 'fixed', top: 0, right: 0, backgroundColor: 'red', color: 'white', padding: '10px', zIndex: 9999 }}>
+        Debug: viewMode={viewMode}
+      </div>
       {/* Left Sidebar */}
       <div className="w-14 bg-black flex flex-col items-center pt-24 pb-6 space-y-6">
         {/* Sidebar Icons with Tooltips */}
