@@ -370,7 +370,7 @@ exports.clearSessionMemories = functions.https.onCall(async (data, context) => {
 /**
  * Firestore trigger to handle memory importance analysis
  */
-exports.analyzeMemoryImportance = functions.firestore
+exports.analyzeMemoryImportance = functions.firestore.v2
   .document('chat_history/{memoryId}')
   .onCreate(async (snapshot, context) => {
     try {
