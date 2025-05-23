@@ -514,5 +514,9 @@ program.addCommand(dreamCommanderCommand);
 // Register SERPEW commands (temporarily commented out)
 // registerSerpewCommands(program);
 
+// Register Chore commands
+const choreCommand = require('../commands/chore');
+program.addCommand(choreCommand);
+
 // Parse command line arguments
 program.parse(process.argv);
