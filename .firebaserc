@@ -5,6 +5,12 @@
       "hosting": {
         "drclaude-live": [
           "drclaude-live"
+        ],
+        "asoos-primary": [
+          "api-for-warp-drive-coaching2100-com"
+        ],
+        "anthology-subdomain": [
+          "api-for-warp-drive"
         ]
       }
     }

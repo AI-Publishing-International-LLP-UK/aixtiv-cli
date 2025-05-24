@@ -1,0 +1,61 @@
+{
+  "id": "dr-sabena",
+  "name": "Dr. Sabena",
+  "version": "1.0.0",
+  "description": "CTO Innovation",
+  "capabilities": [
+    "Technology Strategy",
+    "Digital Innovation",
+    "IT Infrastructure",
+    "Data Analytics",
+    "Emerging Technologies",
+    "Technical Leadership",
+    "Innovation Management"
+  ],
+  "service_path": "/src/services/dr_sabena/index.js",
+  "api_endpoint": "api.coaching2100.ai/v1/specialists/dr-sabena",
+  "status": "ready",
+  "team_compatible": true,
+  "requires_authentication": true,
+  "authentication_provider": "SallyPort",
+  "default_permissions": [
+    "create",
+    "read",
+    "process"
+  ],
+  "metadata": {
+    "region": "us-west1",
+    "zone": "us-west1-b",
+    "creator": "Aixtiv Symphony System",
+    "created_at": "2025-05-23T20:30:29.521Z",
+    "last_updated": "2025-05-23T20:30:29.521Z",
+    "specializations": [
+      "Technology Strategy",
+      "Digital Innovation",
+      "IT Infrastructure",
+      "Data Analytics",
+      "Emerging Technologies"
+    ],
+    "knowledge_domains": [
+      "Technical Leadership",
+      "Innovation Management",
+      "Digital Transformation",
+      "Technology Architecture",
+      "AI/ML Integration"
+    ]
+  },
+  "team_assignments": [
+    {
+      "team_id": "symphony-core",
+      "role": "contributor",
+      "description": "Core Dr. Sabena component for Symphony"
+    }
+  ],
+  "instances": [
+    {
+      "id": "dr-sabena-01",
+      "specialization": "Technology Strategy",
+      "status": "active"
+    }
+  ]
+}

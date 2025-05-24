@@ -1,22 +1,30 @@
 {
   "id": "dr-grant-sallyport",
-  "name": "Dr. Grant's SallyPort Authentication",
+  "name": "Dr. Grant SallyPort",
   "version": "1.0.3",
-  "description": "Secure multi-factor authentication framework with zero-trust architecture and continuous authorization",
+  "description": "Security Access and Authentication Specialist",
   "capabilities": [
+    "Authentication Systems",
+    "Access Control",
+    "Identity Verification",
+    "Security Protocols",
+    "Authorization Management",
+    "Identity and Access Management",
+    "Security Architecture",
     "Secure holding area between entry point and system access",
     "Multi-factor authentication and verification",
-    "Regional pilot connection",
-    "Token generation and management",
-    "QR code generation for high-stakes actions",
-    "Firebase custom token generation"
+    "Regional pilot connection"
   ],
   "service_path": "/src/services/sallyport/index.js",
-  "api_endpoint": "https://auth.aixtiv.org/api",
+  "api_endpoint": "api.coaching2100.ai/v1/specialists/dr-grant-sallyport",
   "status": "ready",
   "team_compatible": true,
   "requires_authentication": false,
-  "default_permissions": ["verify", "authenticate", "generate"],
+  "default_permissions": [
+    "verify",
+    "authenticate",
+    "generate"
+  ],
   "metadata": {
     "region": "us-west1",
     "security_level": "zero-trust",
@@ -29,7 +37,21 @@
     },
     "creator": "Phillip Corey Roark",
     "created_at": "2025-01-10T00:00:00Z",
-    "last_updated": "2025-05-12T00:00:00Z"
+    "last_updated": "2025-05-23T20:30:29.524Z",
+    "specializations": [
+      "Authentication Systems",
+      "Access Control",
+      "Identity Verification",
+      "Security Protocols",
+      "Authorization Management"
+    ],
+    "knowledge_domains": [
+      "Identity and Access Management",
+      "Security Architecture",
+      "Authentication Protocols",
+      "Zero Trust Models",
+      "Credential Management"
+    ]
   },
   "team_assignments": [
     {
@@ -46,6 +68,10 @@
   "firebase_integration": {
     "enabled": true,
     "token_endpoint": "/auth/firebase/token",
-    "custom_claims": ["ceUuid", "serpew", "verified"]
+    "custom_claims": [
+      "ceUuid",
+      "serpew",
+      "verified"
+    ]
   }
 }

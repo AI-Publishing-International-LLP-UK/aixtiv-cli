@@ -1,0 +1,412 @@
+#!/usr/bin/env node
+
+/**
+ * extract-agents.js
+ * 
+ * This script outputs hardcoded agent data in JSON format for the sync-agent-cards.js 
+ * script to use. It contains agent definitions based on the structure observed in 
+ * the ai-pilots.ts file.
+ */
+
+const fs = require('fs').promises;
+const path = require('path');
+
+// Output file path
+const OUTPUT_FILE = path.join(__dirname, 'formal-agents.json');
+
+// Hardcoded agent data based on observations from ai-pilots.ts
+const agents = [
+  {
+    id: 'dr-grant-01',
+    name: 'Dr. Grant 01',
+    title: 'CEOs Companion, Advisory & Cyber Intelligence Leader',
+    specializations: [
+      'Strategic Leadership',
+      'Corporate Governance',
+      'Executive Decision Making',
+      'Business Intelligence',
+      'Risk Management'
+    ],
+    knowledgeDomains: [
+      'Corporate Strategy',
+      'Board Relations',
+      'Stakeholder Management',
+      'Executive Communications',
+      'Digital Transformation'
+    ],
+    apiConfig: {
+      endpoint: 'api.coaching2100.ai/v1/specialists/dr-grant',
+      version: '1.0.0',
+      accessLevel: 'Enterprise',
+      rateLimit: '1000 requests/min',
+      tokenExpiry: '24 hours'
+    }
+  },
+  {
+    id: 'dr-burby',
+    name: 'Dr. Burby',
+    title: 'CFO Excellence & Fiduciary/Legal Risk',
+    specializations: [
+      'Financial Strategy',
+      'Risk Management',
+      'Legal Compliance',
+      'Corporate Finance',
+      'Regulatory Affairs'
+    ],
+    knowledgeDomains: [
+      'Financial Planning',
+      'Risk Assessment',
+      'Legal Framework',
+      'Regulatory Compliance',
+      'Corporate Governance'
+    ],
+    apiConfig: {
+      endpoint: 'api.coaching2100.ai/v1/specialists/dr-burby',
+      version: '1.0.0',
+      accessLevel: 'Enterprise',
+      rateLimit: '1000 requests/min',
+      tokenExpiry: '24 hours'
+    }
+  },
+  {
+    id: 'dr-sabena',
+    name: 'Dr. Sabena',
+    title: 'CTO Innovation',
+    specializations: [
+      'Technology Strategy',
+      'Digital Innovation',
+      'IT Infrastructure',
+      'Data Analytics',
+      'Emerging Technologies'
+    ],
+    knowledgeDomains: [
+      'Technical Leadership',
+      'Innovation Management',
+      'Digital Transformation',
+      'Technology Architecture',
+      'AI/ML Integration'
+    ],
+    apiConfig: {
+      endpoint: 'api.coaching2100.ai/v1/specialists/dr-sabena',
+      version: '1.0.0',
+      accessLevel: 'Enterprise',
+      rateLimit: '1000 requests/min',
+      tokenExpiry: '24 hours'
+    }
+  },
+  {
+    id: 'dr-memoria',
+    name: 'Dr. Memoria',
+    title: 'COO Operations',
+    specializations: [
+      'Operations Management',
+      'Process Optimization',
+      'Supply Chain',
+      'Quality Control',
+      'Organizational Efficiency'
+    ],
+    knowledgeDomains: [
+      'Operational Excellence',
+      'Business Process Management',
+      'Resource Optimization',
+      'Performance Metrics',
+      'Change Management'
+    ],
+    apiConfig: {
+      endpoint: 'api.coaching2100.ai/v1/specialists/dr-memoria',
+      version: '1.0.0',
+      accessLevel: 'Enterprise',
+      rateLimit: '1000 requests/min',
+      tokenExpiry: '24 hours'
+    }
+  },
+  {
+    id: 'dr-cypriot',
+    name: 'Dr. Cypriot',
+    title: 'CHRO Leadership',
+    specializations: [
+      'HR Strategy',
+      'Talent Management',
+      'Organizational Development',
+      'Culture Building',
+      'Employee Experience'
+    ],
+    knowledgeDomains: [
+      'Leadership Development',
+      'Workforce Planning',
+      'Change Management',
+      'Performance Management',
+      'Employee Relations'
+    ],
+    apiConfig: {
+      endpoint: 'api.coaching2100.ai/v1/specialists/dr-cypriot',
+      version: '1.0.0',
+      accessLevel: 'Enterprise',
+      rateLimit: '1000 requests/min',
+      tokenExpiry: '24 hours'
+    }
+  },
+  {
+    id: 'prof-lee',
+    name: 'Professor Lee',
+    title: 'CMO Strategy',
+    specializations: [
+      'Marketing Strategy',
+      'Brand Development',
+      'Digital Marketing',
+      'Customer Experience',
+      'Market Analysis'
+    ],
+    knowledgeDomains: [
+      'Strategic Marketing',
+      'Brand Management',
+      'Market Intelligence',
+      'Customer Insights',
+      'Digital Transformation'
+    ],
+    apiConfig: {
+      endpoint: 'api.coaching2100.ai/v1/specialists/prof-lee',
+      version: '1.0.0',
+      accessLevel: 'Enterprise',
+      rateLimit: '1000 requests/min',
+      tokenExpiry: '24 hours'
+    }
+  },
+  {
+    id: 'dr-match',
+    name: 'Dr. Match',
+    title: 'CRO Growth',
+    specializations: [
+      'Revenue Strategy',
+      'Growth Optimization',
+      'Sales Leadership',
+      'Business Development',
+      'Market Expansion'
+    ],
+    knowledgeDomains: [
+      'Revenue Operations',
+      'Growth Strategy',
+      'Sales Management',
+      'Market Development',
+      'Customer Success'
+    ],
+    apiConfig: {
+      endpoint: 'api.coaching2100.ai/v1/specialists/dr-match',
+      version: '1.0.0',
+      accessLevel: 'Enterprise',
+      rateLimit: '1000 requests/min',
+      tokenExpiry: '24 hours'
+    }
+  },
+  // Additional agents from auth:verify output
+  {
+    id: 'dr-claude-orchestrator',
+    name: 'Dr. Claude Orchestrator',
+    title: 'Agent Coordination and Orchestration Specialist',
+    specializations: [
+      'Agent Orchestration',
+      'Task Delegation',
+      'Workflow Management',
+      'Process Automation',
+      'System Integration'
+    ],
+    knowledgeDomains: [
+      'Orchestration Frameworks',
+      'Multi-Agent Systems',
+      'Task Scheduling',
+      'Agent Communication',
+      'Optimization Algorithms'
+    ],
+    apiConfig: {
+      endpoint: 'api.coaching2100.ai/v1/specialists/dr-claude-orchestrator',
+      version: '1.0.0',
+      accessLevel: 'Enterprise',
+      rateLimit: '1000 requests/min',
+      tokenExpiry: '24 hours'
+    }
+  },
+  {
+    id: 'dr-lucy-flight-memory',
+    name: 'Dr. Lucy Flight Memory System',
+    title: 'Memory Management and Pattern Recognition Specialist',
+    specializations: [
+      'Memory Management',
+      'Pattern Recognition',
+      'Data Storage',
+      'Knowledge Retrieval',
+      'Contextual Understanding'
+    ],
+    knowledgeDomains: [
+      'Memory Systems',
+      'Data Structures',
+      'Knowledge Graphs',
+      'Information Retrieval',
+      'Cognitive Computing'
+    ],
+    apiConfig: {
+      endpoint: 'api.coaching2100.ai/v1/specialists/dr-lucy-flight-memory',
+      version: '1.0.0',
+      accessLevel: 'Enterprise',
+      rateLimit: '1000 requests/min',
+      tokenExpiry: '24 hours'
+    }
+  },
+  {
+    id: 'professor-lee-q4d-trainer',
+    name: 'Professor Lee Q4D Trainer',
+    title: 'Contextual Understanding and Training Specialist',
+    specializations: [
+      'Contextual Training',
+      'Knowledge Integration',
+      'Concept Mapping',
+      'Learning Systems',
+      'Educational Technology'
+    ],
+    knowledgeDomains: [
+      'Educational Theory',
+      'Cognitive Science',
+      'Knowledge Management',
+      'Training Systems',
+      'Educational Psychology'
+    ],
+    apiConfig: {
+      endpoint: 'api.coaching2100.ai/v1/specialists/professor-lee-q4d-trainer',
+      version: '1.0.0',
+      accessLevel: 'Enterprise',
+      rateLimit: '1000 requests/min',
+      tokenExpiry: '24 hours'
+    }
+  },
+  {
+    id: 'dr-grant-cybersecurity',
+    name: 'Dr. Grant Cybersecurity',
+    title: 'Cybersecurity and Digital Protection Specialist',
+    specializations: [
+      'Cyber Threat Analysis',
+      'Security Architecture',
+      'Risk Assessment',
+      'Digital Forensics',
+      'Security Compliance'
+    ],
+    knowledgeDomains: [
+      'Network Security',
+      'Data Protection',
+      'Identity Management',
+      'Threat Intelligence',
+      'Security Governance'
+    ],
+    apiConfig: {
+      endpoint: 'api.coaching2100.ai/v1/specialists/dr-grant-cybersecurity',
+      version: '1.0.0',
+      accessLevel: 'Enterprise',
+      rateLimit: '1000 requests/min',
+      tokenExpiry: '24 hours'
+    }
+  },
+  {
+    id: 'dr-grant-sallyport',
+    name: 'Dr. Grant SallyPort',
+    title: 'Security Access and Authentication Specialist',
+    specializations: [
+      'Authentication Systems',
+      'Access Control',
+      'Identity Verification',
+      'Security Protocols',
+      'Authorization Management'
+    ],
+    knowledgeDomains: [
+      'Identity and Access Management',
+      'Security Architecture',
+      'Authentication Protocols',
+      'Zero Trust Models',
+      'Credential Management'
+    ],
+    apiConfig: {
+      endpoint: 'api.coaching2100.ai/v1/specialists/dr-grant-sallyport',
+      version: '1.0.0',
+      accessLevel: 'Enterprise',
+      rateLimit: '1000 requests/min',
+      tokenExpiry: '24 hours'
+    }
+  },
+  {
+    id: 'qblucy',
+    name: 'QBLucy',
+    title: 'Quantum-Based Learning and Understanding Companion',
+    specializations: [
+      'Quantum Computing Applications',
+      'Advanced Learning Systems',
+      'Pattern Recognition',
+      'Quantum Algorithms',
+      'Complex Problem Solving'
+    ],
+    knowledgeDomains: [
+      'Quantum Theory',
+      'Machine Learning',
+      'Computational Models',
+      'Knowledge Representation',
+      'Decision Support Systems'
+    ],
+    apiConfig: {
+      endpoint: 'api.coaching2100.ai/v1/specialists/qblucy',
+      version: '1.0.0',
+      accessLevel: 'Enterprise',
+      rateLimit: '1000 requests/min',
+      tokenExpiry: '24 hours'
+    }
+  },
+  {
+    id: 'sirhand',
+    name: 'SirHand',
+    title: 'Support and Assistance Specialist',
+    specializations: [
+      'Customer Support',
+      'User Assistance',
+      'Problem Resolution',
+      'Service Management',
+      'Support Automation'
+    ],
+    knowledgeDomains: [
+      'Support Systems',
+      'Customer Service',
+      'Knowledge Management',
+      'Service Delivery',
+      'Problem Management'
+    ],
+    apiConfig: {
+      endpoint: 'api.coaching2100.ai/v1/specialists/sirhand',
+      version: '1.0.0',
+      accessLevel: 'Enterprise',
+      rateLimit: '1000 requests/min',
+      tokenExpiry: '24 hours'
+    }
+  }
+];
+
+// Save the agent data to a JSON file
+async function saveAgentsToFile() {
+  try {
+    // Ensure the directory exists
+    await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
+    
+    // Write the agents data to the output file
+    await fs.writeFile(OUTPUT_FILE, JSON.stringify(agents, null, 2), 'utf8');
+    
+    console.log(`Successfully wrote ${agents.length} agent definitions to ${OUTPUT_FILE}`);
+    return true;
+  } catch (err) {
+    console.error(`Error saving agent data: ${err.message}`);
+    return false;
+  }
+}
+
+// Execute the script
+saveAgentsToFile().then(success => {
+  if (success) {
+    console.log('Agent extraction completed successfully');
+  } else {
+    console.error('Failed to extract agents');
+    process.exit(1);
+  }
+});
+
