@@ -41,6 +41,18 @@ const GATEWAY_CONFIG = {
     mode: "zero-drift",
     alwaysOn: true,
     bondedAgent: true
+  },
+  
+  // Stripe integration configuration
+  stripeIntegration: {
+    enabled: true,
+    keyRotationEnabled: true,
+    environment: process.env.NODE_ENV || "development",
+    endpoint: process.env.STRIPE_API_ENDPOINT || "https://api.stripe.com/v1",
+    telemetryOptOut: process.env.STRIPE_CLI_TELEMETRY_OPTOUT === '1',
+    region: "us-west1",
+    // Key validation pattern for Stripe API keys
+    keyPattern: /^sk_(test|live)_[0-9a-zA-Z]{24,}$/
   }
 };
 
@@ -62,12 +74,36 @@ async function initGatewayConnection() {
 
 /**
  * Requests a temporary API key from the gateway
+ * @param {string} service - The service to request a key for (default, stripe, etc.)
  * @returns {Promise<Object>} API key information
  */
-async function requestApiKey() {
-  console.log("Requesting API key from integration gateway...");
+async function requestApiKey(service = "default") {
+  console.log(`Requesting ${service} API key from integration gateway...`);
   
-  // In a real implementation, this would request a key from the gateway
+  // Handle Stripe API key specifically
+  if (service === "stripe") {
+    // In a real implementation, this would securely fetch the Stripe API key
+    // from the gateway's key management system
+    
+    // Verify the Stripe integration is enabled
+    if (!GATEWAY_CONFIG.stripeIntegration.enabled) {
+      throw new Error("Stripe integration is not enabled");
+    }
+    
+    const environment = GATEWAY_CONFIG.stripeIntegration.environment;
+    const isProduction = environment === "production";
+    
+    return {
+      status: "success",
+      keyType: isProduction ? "live" : "test",
+      expiresIn: 3600, // 1 hour in seconds
+      timestamp: new Date().toISOString(),
+      service: "stripe",
+      telemetryOptOut: GATEWAY_CONFIG.stripeIntegration.telemetryOptOut
+    };
+  }
+  
+  // Default API key handling (existing functionality)
   return {
     status: "success",
     expiresIn: 3600, // 1 hour in seconds
@@ -77,18 +113,89 @@ async function requestApiKey() {
 
 /**
  * Validates the current gateway connection
+ * @param {string} service - The service to validate (default, stripe, etc.)
  * @returns {Promise<boolean>} Whether the connection is valid
  */
-async function validateGatewayConnection() {
-  console.log("Validating integration gateway connection...");
+async function validateGatewayConnection(service = "default") {
+  console.log(`Validating integration gateway connection for ${service}...`);
   
-  // In a real implementation, this would validate the connection
+  // Validate Stripe connection specifically
+  if (service === "stripe" && GATEWAY_CONFIG.stripeIntegration.enabled) {
+    try {
+      // In a real implementation, this would validate the Stripe connection
+      // by checking the API key format and potentially making a test request
+      
+      // Validate that we're using the correct key type for the environment
+      const environment = GATEWAY_CONFIG.stripeIntegration.environment;
+      const isProduction = environment === "production";
+      
+      // Example validation: ensure we're using a live key in production
+      // and test key in non-production environments
+      const stripeKey = process.env.STRIPE_API_KEY || "";
+      const isLiveKey = stripeKey.startsWith("sk_live_");
+      
+      if (isProduction && !isLiveKey) {
+        console.warn("Warning: Using a test key in production environment");
+      } else if (!isProduction && isLiveKey) {
+        console.warn("Warning: Using a live key in non-production environment");
+      }
+      
+      // Validate the key format using the pattern
+      const isValidFormat = GATEWAY_CONFIG.stripeIntegration.keyPattern.test(stripeKey);
+      if (!isValidFormat) {
+        console.error("Invalid Stripe API key format");
+        return false;
+      }
+      
+      console.log("✅ Stripe connection validated successfully");
+      return true;
+    } catch (error) {
+      console.error("Failed to validate Stripe connection:", error.message);
+      return false;
+    }
+  }
+  
+  // Default connection validation (existing functionality)
   return true;
+}
+
+/**
+ * Validates a Stripe API key format
+ * @param {string} apiKey - The Stripe API key to validate
+ * @returns {boolean} Whether the key format is valid
+ */
+function validateStripeApiKey(apiKey) {
+  if (!apiKey || typeof apiKey !== 'string') {
+    return false;
+  }
+  
+  return GATEWAY_CONFIG.stripeIntegration.keyPattern.test(apiKey);
+}
+
+/**
+ * Gets the appropriate Stripe environment based on the API key
+ * @param {string} apiKey - The Stripe API key
+ * @returns {string} The environment ('test' or 'live')
+ */
+function getStripeEnvironment(apiKey) {
+  if (!apiKey || typeof apiKey !== 'string') {
+    return 'unknown';
+  }
+  
+  if (apiKey.startsWith('sk_test_')) {
+    return 'test';
+  } else if (apiKey.startsWith('sk_live_')) {
+    return 'live';
+  }
+  
+  return 'unknown';
 }
 
 module.exports = {
   GATEWAY_CONFIG,
   initGatewayConnection,
   requestApiKey,
-  validateGatewayConnection
+  validateGatewayConnection,
+  validateStripeApiKey,
+  getStripeEnvironment
 };

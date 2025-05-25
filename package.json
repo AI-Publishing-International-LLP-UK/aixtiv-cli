@@ -6,15 +6,56 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "mocha 'test/**/*.js' --recursive",
     "eject": "react-scripts eject",
     "deploy": "npm run build && firebase deploy --only hosting:asoos-primary"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.4.3",
+    "@firebase/auth": "^1.10.6",
+    "@firebase/firestore": "^4.7.16",
+    "@firebase/functions": "^0.12.8",
+    "@firebase/storage": "^0.13.12",
+    "@google-cloud/language": "^7.0.2",
+    "@google-cloud/secret-manager": "^6.0.1",
+    "@google-cloud/speech": "^7.1.0",
+    "@google-cloud/text-to-speech": "^6.1.0",
+    "@svgr/plugin-svgo": "^8.1.0",
+    "@svgr/webpack": "^8.1.0",
+    "axios": "^1.9.0",
+    "boxen": "^5.1.2",
+    "chalk": "^4.1.2",
+    "cli-table3": "^0.6.3",
+    "commander": "^8.3.0",
+    "console-table-printer": "^2.11.1",
+    "css-select": "^5.1.0",
+    "dotenv": "^16.5.0",
+    "figlet": "^1.5.2",
+    "firebase": "^11.8.1",
+    "gradient-string": "^2.0.2",
+    "inquirer": "^8.2.5",
+    "nth-check": "^2.1.1",
+    "ora": "^5.4.1",
+    "play-sound": "^1.1.5",
+    "postcss": "^8.5.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "firebase": "^10.5.0"
+    "react-scripts": "^5.0.1",
+    "resolve-url-loader": "^5.0.0",
+    "svgo": "^3.3.2",
+    "table": "^6.8.1",
+    "winston": "^3.8.2"
+  },
+  "devDependencies": {
+    "mocha": "^10.2.0",
+    "chai": "^4.3.7",
+    "sinon": "^15.2.0"
+  },
+  "mocha": {
+    "timeout": 10000,
+    "exit": true,
+    "color": true,
+    "require": "test/setup.js"
   },
   "browserslist": {
     "production": [
@@ -27,5 +68,23 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "overrides": {
+    "nth-check": "^2.1.1",
+    "postcss": "^8.4.31",
+    "svgo": "^3.3.2",
+    "css-select": "^5.1.0",
+    "@svgr/webpack": {
+      "@svgr/plugin-svgo": {
+        "svgo": "^3.3.2"
+      }
+    },
+    "react-scripts": {
+      "@svgr/webpack": {
+        "@svgr/plugin-svgo": {
+          "svgo": "^3.3.2"
+        }
+      }
+    }
   }
 }

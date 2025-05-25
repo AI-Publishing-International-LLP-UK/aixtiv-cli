@@ -14,6 +14,7 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios');
+const { regional } = require('./config/region');
 
 // Initialize Firebase Admin SDK if not already initialized
 if (!admin.apps.length) {
@@ -252,29 +253,34 @@ exports.deleteFromPinecone = functions.https.onCall(async (data, context) => {
 /**
  * Firestore trigger to store chat history in Pinecone
  */
-exports.onChatHistoryCreated = functions.firestore
-  .document('chat_history/{memoryId}')
-  .onCreate(async (snapshot, context) => {
+exports.onChatHistoryCreated = regional.firestore
+  .onDocumentCreated('chat_history/{memoryId}', async (event) => {
     try {
-      const memory = snapshot.data();
+      // In v6.x, we need to check if data exists first
+      if (!event.data) {
+        console.log('No data associated with the event');
+        return null;
+      }
+
+      const memory = event.data.data();
 
       // Skip if memory doesn't have content
       if (!memory.content) {
-        console.log(`Memory ${context.params.memoryId} has no content, skipping Pinecone storage`);
+        console.log(`Memory ${event.params.memoryId} has no content, skipping Pinecone storage`);
         return null;
       }
 
       // Store the memory in Pinecone
       const success = await storeMemoryInPinecone({
         ...memory,
-        id: context.params.memoryId,
+        id: event.params.memoryId,
       });
 
       if (success) {
-        console.log(`Memory ${context.params.memoryId} stored in Pinecone`);
+        console.log(`Memory ${event.params.memoryId} stored in Pinecone`);
 
         // Update the document with Pinecone status
-        return snapshot.ref.update({
+        return event.data.ref.update({
           pineconeStored: true,
           pineconeTimestamp: admin.firestore.FieldValue.serverTimestamp(),
         });
@@ -291,23 +297,27 @@ exports.onChatHistoryCreated = functions.firestore
 /**
  * Firestore trigger to store prompt runs in Pinecone
  */
-exports.onPromptRunCreated = functions.firestore
-  .document('prompt_runs/{promptId}')
-  .onCreate(async (snapshot, context) => {
+exports.onPromptRunCreated = regional.firestore
+  .onDocumentCreated('prompt_runs/{promptId}', async (event) => {
     try {
-      const promptRun = snapshot.data();
+      if (!event.data) {
+        console.log('No data associated with the event');
+        return null;
+      }
+
+      const promptRun = event.data.data();
 
       // Skip if prompt doesn't have content
       if (!promptRun.prompt || !promptRun.prompt.content) {
         console.log(
-          `Prompt run ${context.params.promptId} has no content, skipping Pinecone storage`
+          `Prompt run ${event.params.promptId} has no content, skipping Pinecone storage`
         );
         return null;
       }
 
       // Store the prompt in Pinecone
       const success = await storePromptInPinecone({
-        id: context.params.promptId,
+        id: event.params.promptId,
         content: promptRun.prompt.content,
         userId: promptRun.userId,
         agentId: promptRun.agentId,
@@ -321,15 +331,15 @@ exports.onPromptRunCreated = functions.firestore
       });
 
       if (success) {
-        console.log(`Prompt run ${context.params.promptId} stored in Pinecone`);
+        console.log(`Prompt run ${event.params.promptId} stored in Pinecone`);
 
         // Update the document with Pinecone status
-        return snapshot.ref.update({
+        return event.data.ref.update({
           pineconeStored: true,
           pineconeTimestamp: admin.firestore.FieldValue.serverTimestamp(),
         });
       } else {
-        console.error(`Failed to store prompt run ${context.params.promptId} in Pinecone`);
+        console.error(`Failed to store prompt run ${event.params.promptId} in Pinecone`);
         return null;
       }
     } catch (error) {
@@ -341,9 +351,8 @@ exports.onPromptRunCreated = functions.firestore
 /**
  * Scheduled function to ensure Pinecone indexes exist
  */
-exports.ensurePineconeIndexes = functions.pubsub
-  .schedule('every 24 hours')
-  .onRun(async (context) => {
+exports.ensurePineconeIndexes = regional.scheduler
+  .onSchedule('every 24 hours', async (context) => {
     try {
       console.log('Ensuring Pinecone indexes exist');
 

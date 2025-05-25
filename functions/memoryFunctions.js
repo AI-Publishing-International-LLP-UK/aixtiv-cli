@@ -11,9 +11,10 @@
  * @version 1.0.0
  */
 
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v2');
 const admin = require('firebase-admin');
 const { v4: uuidv4 } = require('uuid');
+const { regional } = require('./config/region');
 
 // Initialize Firebase Admin SDK if not already initialized
 if (!admin.apps.length) {
@@ -370,12 +371,17 @@ exports.clearSessionMemories = functions.https.onCall(async (data, context) => {
 /**
  * Firestore trigger to handle memory importance analysis
  */
-exports.analyzeMemoryImportance = functions.firestore.v2
-  .document('chat_history/{memoryId}')
-  .onCreate(async (snapshot, context) => {
+exports.analyzeMemoryImportance = regional.firestore
+  .onDocumentCreated('chat_history/{memoryId}', async (event) => {
     try {
-      const memoryData = snapshot.data();
+      // In v6.x, we need to check if data exists first
+      if (!event.data) {
+        console.log('No data associated with the event');
+        return null;
+      }
 
+      const memoryData = event.data.data();
+      
       // Skip if importance is already set to a non-default value
       if (memoryData.importance !== 5) {
         return null;
@@ -435,7 +441,7 @@ exports.analyzeMemoryImportance = functions.firestore.v2
       importanceScore = Math.min(10, importanceScore);
 
       // Update the memory with the analyzed importance
-      return snapshot.ref.update({
+      return event.data.ref.update({
         importance: importanceScore,
         importanceAnalyzed: true,
       });
@@ -448,98 +454,99 @@ exports.analyzeMemoryImportance = functions.firestore.v2
 /**
  * Scheduled function to archive old memories
  */
-exports.archiveOldMemories = functions.pubsub.schedule('every 24 hours').onRun(async (context) => {
-  try {
-    console.log('Running memory archiving job');
+exports.archiveOldMemories = regional.scheduler
+  .onSchedule('every 24 hours', async (context) => {
+    try {
+      console.log('Running memory archiving job');
 
-    // Get user preferences for memory retention
-    const userPrefs = await db
-      .collection('user_profiles')
-      .where('preferences.memoryRetention', '!=', 'permanent')
-      .get();
-
-    let totalArchived = 0;
-
-    // Process each user's memories according to their preferences
-    for (const userDoc of userPrefs.docs) {
-      const userData = userDoc.data();
-      const userId = userDoc.id;
-      const retentionPolicy = userData.preferences?.memoryRetention || 'medium';
-
-      // Determine cutoff date based on retention policy
-      const now = new Date();
-      let cutoffDate;
-
-      switch (retentionPolicy) {
-        case 'short':
-          // 30 days retention
-          cutoffDate = new Date(now.setDate(now.getDate() - 30));
-          break;
-        case 'medium':
-          // 90 days retention
-          cutoffDate = new Date(now.setDate(now.getDate() - 90));
-          break;
-        case 'long':
-          // 365 days retention
-          cutoffDate = new Date(now.setDate(now.getDate() - 365));
-          break;
-        default:
-          // Skip users with 'permanent' retention
-          continue;
-      }
-
-      // Get memories to archive
-      const memoriesToArchive = await db
-        .collection('chat_history')
-        .where('userId', '==', userId)
-        .where('timestamp', '<', cutoffDate)
-        .where('importance', '<', 8) // Don't archive important memories
-        .limit(500) // Process in batches
+      // Get user preferences for memory retention
+      const userPrefs = await db
+        .collection('user_profiles')
+        .where('preferences.memoryRetention', '!=', 'permanent')
         .get();
 
-      if (memoriesToArchive.empty) {
-        continue;
+      let totalArchived = 0;
+
+      // Process each user's memories according to their preferences
+      for (const userDoc of userPrefs.docs) {
+        const userData = userDoc.data();
+        const userId = userDoc.id;
+        const retentionPolicy = userData.preferences?.memoryRetention || 'medium';
+
+        // Determine cutoff date based on retention policy
+        const now = new Date();
+        let cutoffDate;
+
+        switch (retentionPolicy) {
+          case 'short':
+            // 30 days retention
+            cutoffDate = new Date(now.setDate(now.getDate() - 30));
+            break;
+          case 'medium':
+            // 90 days retention
+            cutoffDate = new Date(now.setDate(now.getDate() - 90));
+            break;
+          case 'long':
+            // 365 days retention
+            cutoffDate = new Date(now.setDate(now.getDate() - 365));
+            break;
+          default:
+            // Skip users with 'permanent' retention
+            continue;
+        }
+
+        // Get memories to archive
+        const memoriesToArchive = await db
+          .collection('chat_history')
+          .where('userId', '==', userId)
+          .where('timestamp', '<', cutoffDate)
+          .where('importance', '<', 8) // Don't archive important memories
+          .limit(500) // Process in batches
+          .get();
+
+        if (memoriesToArchive.empty) {
+          continue;
+        }
+
+        console.log(`Archiving ${memoriesToArchive.size} memories for user ${userId}`);
+
+        // Create batch operations
+        const batch = db.batch();
+
+        memoriesToArchive.forEach((doc) => {
+          const memoryData = doc.data();
+
+          // Add to archive collection
+          const archiveRef = db.collection('archived_memories').doc(doc.id);
+          batch.set(archiveRef, {
+            ...memoryData,
+            archivedAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+
+          // Delete from active collection
+          batch.delete(doc.ref);
+
+          totalArchived++;
+        });
+
+        await batch.commit();
+
+        // Update user's memory metrics
+        await db
+          .collection('memory_metrics')
+          .doc(userId)
+          .update({
+            total_memories: admin.firestore.FieldValue.increment(-memoriesToArchive.size),
+            archived_memories: admin.firestore.FieldValue.increment(memoriesToArchive.size),
+            last_archive: admin.firestore.FieldValue.serverTimestamp(),
+          });
       }
 
-      console.log(`Archiving ${memoriesToArchive.size} memories for user ${userId}`);
+      console.log(`Archived ${totalArchived} memories total`);
 
-      // Create batch operations
-      const batch = db.batch();
-
-      memoriesToArchive.forEach((doc) => {
-        const memoryData = doc.data();
-
-        // Add to archive collection
-        const archiveRef = db.collection('archived_memories').doc(doc.id);
-        batch.set(archiveRef, {
-          ...memoryData,
-          archivedAt: admin.firestore.FieldValue.serverTimestamp(),
-        });
-
-        // Delete from active collection
-        batch.delete(doc.ref);
-
-        totalArchived++;
-      });
-
-      await batch.commit();
-
-      // Update user's memory metrics
-      await db
-        .collection('memory_metrics')
-        .doc(userId)
-        .update({
-          total_memories: admin.firestore.FieldValue.increment(-memoriesToArchive.size),
-          archived_memories: admin.firestore.FieldValue.increment(memoriesToArchive.size),
-          last_archive: admin.firestore.FieldValue.serverTimestamp(),
-        });
+      return { archived: totalArchived };
+    } catch (error) {
+      console.error('Error archiving old memories:', error);
+      return { error: error.message };
     }
-
-    console.log(`Archived ${totalArchived} memories total`);
-
-    return { archived: totalArchived };
-  } catch (error) {
-    console.error('Error archiving old memories:', error);
-    return { error: error.message };
-  }
-});
+  });

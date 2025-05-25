@@ -121,11 +121,10 @@ exports.triggerAgent = functions.https.onCall(async (data, context) => {
  * Firestore trigger for automated agent responses based on chat messages
  */
 exports.onChatMessageCreated = functions.firestore
-  .document('chats/{chatId}/messages/{messageId}')
-  .onCreate(async (snapshot, context) => {
+  .onDocumentCreated('chats/{chatId}/messages/{messageId}', async (event) => {
     try {
-      const message = snapshot.data();
-      const { chatId, messageId } = context.params;
+      const message = event.data.data();
+      const { chatId, messageId } = event.params;
 
       // Only process user messages
       if (message.sender_type !== 'user') {
@@ -282,9 +281,8 @@ exports.onChatMessageCreated = functions.firestore
 /**
  * Scheduled function to trigger periodic agent actions
  */
-exports.scheduledAgentActions = functions.pubsub
-  .schedule('every 30 minutes')
-  .onRun(async (context) => {
+exports.scheduledAgentActions = functions.scheduler
+  .onSchedule('every 30 minutes', async (event) => {
     try {
       console.log('Running scheduled agent actions');
 
@@ -397,18 +395,17 @@ exports.scheduledAgentActions = functions.pubsub
  * Firestore trigger to process scheduled agent actions
  */
 exports.processScheduledAgentActions = functions.firestore
-  .document('scheduled_agent_actions/{actionId}')
-  .onCreate(async (snapshot, context) => {
+  .onDocumentCreated('scheduled_agent_actions/{actionId}', async (event) => {
     try {
-      const actionData = snapshot.data();
-
+      const actionData = event.data.data();
+      
       // Skip if already processed
       if (actionData.status !== 'pending') {
         return null;
       }
-
+      
       console.log(
-        `Processing scheduled action ${context.params.actionId} for agent ${actionData.agentId}`
+        `Processing scheduled action ${event.params.actionId} for agent ${actionData.agentId}`
       );
 
       // Get agent configuration
@@ -416,7 +413,7 @@ exports.processScheduledAgentActions = functions.firestore
       if (!agentConfig) {
         console.error(`Agent ${actionData.agentId} not found or not configured`);
 
-        return snapshot.ref.update({
+        return event.data.ref.update({
           status: 'failed',
           error: `Agent ${actionData.agentId} not found or not configured`,
           processedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -429,7 +426,7 @@ exports.processScheduledAgentActions = functions.firestore
       if (!userDoc.exists) {
         console.log(`User ${actionData.userId} not found, skipping scheduled action`);
 
-        return snapshot.ref.update({
+        return event.data.ref.update({
           status: 'cancelled',
           reason: 'user_not_found',
           processedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -442,7 +439,7 @@ exports.processScheduledAgentActions = functions.firestore
       if (userData.preferences && userData.preferences.agentAutomation === false) {
         console.log(`Automated actions disabled for user ${actionData.userId}, skipping`);
 
-        return snapshot.ref.update({
+        return event.data.ref.update({
           status: 'cancelled',
           reason: 'automation_disabled',
           processedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -495,14 +492,14 @@ exports.processScheduledAgentActions = functions.firestore
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
           expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
           metadata: {
-            actionId: context.params.actionId,
+            actionId: event.params.actionId,
             agentFamily: agentConfig.family,
             bondLevel: actionData.bondLevel,
           },
         });
 
       // Update action status
-      return snapshot.ref.update({
+      return event.data.ref.update({
         status: 'completed',
         notificationId,
         processedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -510,7 +507,7 @@ exports.processScheduledAgentActions = functions.firestore
     } catch (error) {
       console.error('Error processing scheduled agent action:', error);
 
-      return snapshot.ref.update({
+      return event.data.ref.update({
         status: 'failed',
         error: error.message || 'An unknown error occurred',
         processedAt: admin.firestore.FieldValue.serverTimestamp(),

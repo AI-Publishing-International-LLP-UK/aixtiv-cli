@@ -1,5 +1,7 @@
 {
-  "projects": {},
+  "projects": {
+    "default": "api-for-warp-drive"
+  },
   "targets": {
     "api-for-warp-drive": {
       "hosting": {
