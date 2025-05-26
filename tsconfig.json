@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es2016",
+    "target": "es2019",
     "module": "commonjs",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
+    "strict": false,
     "skipLibCheck": true,
     "outDir": "dist"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "lib/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
