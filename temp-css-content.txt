@@ -1,0 +1,11 @@
+.connect-btn.disconnect {
+    background: transparent;
+    color: #ff4757;
+    border: 1px solid #ff4757;
+}
+
+css.integration-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
