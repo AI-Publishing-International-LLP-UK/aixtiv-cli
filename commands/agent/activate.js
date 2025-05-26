@@ -5,6 +5,9 @@ const { parseOptions, withSpinner, displayResult } = require('../../lib/utils');
 const { firestore } = require('../../lib/firestore');
 const { logAgentAction } = require('../../lib/agent-tracking');
 
+// Import functions from the improved activate-agents.js script
+const activateAgentsModule = require('../../activate-agents');
+
 /**
  * Load agent cards from configuration
  * @returns {Promise<Array>} - List of agent configurations
@@ -59,22 +62,8 @@ async function loadAgentCards() {
  * @returns {Array<string>} - List of default agent IDs
  */
 function getDefaultAgents() {
-  return [
-    'dr-burby-s2do-blockchain',
-    'dr-claude-orchestrator',
-    'dr-cypriot-rewards',
-    'dr-grant-cybersecurity',
-    'dr-grant-sallyport',
-    'dr-lucy-flight-memory',
-    'dr-maria-brand-director',
-    'dr-maria-support',
-    'dr-match-bid-suite',
-    'dr-memoria-anthology',
-    'dr-roark-wish-visionary',
-    'dr-sabina-dream-counselor',
-    'professor-lee-q4d-trainer',
-    'professor-mia-team-leadership',
-  ];
+  // Use the default agents list from the module
+  return activateAgentsModule.DEFAULT_AGENTS;
 }
 
 /**
@@ -111,7 +100,7 @@ module.exports = async function activateAgents(options) {
 
     if (agent) {
       // Activate specific agent
-      const agentCard = agentCards.find((card) => card.id === agent);
+      const agentCard = agentCards.find((card) => card.id === agent || card.id.includes(agent));
       if (agentCard) {
         // Include agent instances if defined
         agentsToActivate = getAgentInstances(agentCard);
@@ -130,70 +119,95 @@ module.exports = async function activateAgents(options) {
       }
     }
 
-    // Update agent status
-    const result = await withSpinner(
+    // Process each agent using the improved activation logic
+    const results = {
+      success: true,
+      activated: 0,
+      skipped: 0,
+      failed: 0,
+      agents: [],
+      timestamp: new Date().toISOString()
+    };
+
+    // Use withSpinner for better UI feedback
+    await withSpinner(
       `Activating ${agent ? 'agent: ' + chalk.cyan(agent) : team ? 'team: ' + chalk.cyan(team) : 'all agents'}`,
       async () => {
-        const timestamp = new Date().toISOString();
-        const batch = firestore.batch();
-
-        // Create records for each agent
         for (const agentId of agentsToActivate) {
-          const docRef = firestore.collection('agentActions').doc();
-          batch.set(docRef, {
-            agent_id: agentId,
-            action_type: 'agent_activation',
-            timestamp: timestamp,
-            description: 'Manual activation via command',
-            status: 'available',
-            workload: 0,
-            active_tasks: 0,
+          // Use the improved activation function from the module
+          const result = await activateAgentsModule.activateAgent(firestore, agentId);
+          
+          // Track results
+          if (result.success) {
+            if (result.status === 'activated') {
+              results.activated++;
+            } else if (result.status === 'already_online') {
+              results.skipped++;
+            }
+          } else {
+            results.failed++;
+          }
+          
+          // Add to results for reporting
+          results.agents.push({
+            id: agentId,
+            status: result.status || 'failed',
+            error: result.error
           });
-
-          // Add a heartbeat as well
-          const heartbeatRef = firestore.collection('agentActions').doc();
-          const heartbeatTime = new Date(new Date(timestamp).getTime() + 1000).toISOString();
-          batch.set(heartbeatRef, {
-            agent_id: agentId,
-            action_type: 'agent_heartbeat',
-            timestamp: heartbeatTime,
-            description: 'Heartbeat signal after activation',
-            status: 'available',
-            workload: 0,
-            active_tasks: 0,
-          });
-
-          // Log agent activation in tracking system
+          
+          // Log agent activation in tracking system (separate from Firestore updates)
           await logAgentAction('agent_activation', {
             agent_id: agentId,
-            activation_time: timestamp,
+            activation_time: results.timestamp,
             activated_by: 'CLI command',
             status: 'available',
           });
         }
-
-        // Commit the batch
-        await batch.commit();
-
-        return {
-          status: 'activated',
-          agentCount: agentsToActivate.length,
-          agents: agentsToActivate,
-          timestamp: timestamp,
-        };
+        
+        // Update overall success status
+        if (results.failed > 0 && results.activated === 0) {
+          results.success = false;
+        }
+        
+        return results;
       }
     );
 
-    // Display result
+    // Display result in CLI-friendly format
     displayResult({
-      success: result.status === 'activated',
-      message: `${result.agentCount} agent(s) successfully activated`,
-      details: result,
+      success: results.success,
+      message: `Activated ${results.activated} agent(s), skipped ${results.skipped}, failed ${results.failed}`,
+      details: results,
     });
 
-    console.log(chalk.bold('\nActivated Agents:'));
-    for (const agentId of result.agents) {
-      console.log(`- ${chalk.green(agentId)}`);
+    // Show activated agents
+    if (results.activated > 0) {
+      console.log(chalk.bold('\nActivated Agents:'));
+      results.agents.forEach(agent => {
+        if (agent.status === 'activated') {
+          console.log(`- ${chalk.green(agent.id)}`);
+        }
+      });
+    }
+
+    // Show skipped agents
+    if (results.skipped > 0) {
+      console.log(chalk.bold('\nAlready Online:'));
+      results.agents.forEach(agent => {
+        if (agent.status === 'already_online') {
+          console.log(`- ${chalk.yellow(agent.id)}`);
+        }
+      });
+    }
+
+    // Show failed agents
+    if (results.failed > 0) {
+      console.log(chalk.bold('\nFailed Activations:'));
+      results.agents.forEach(agent => {
+        if (agent.status === 'failed' || !agent.status) {
+          console.log(`- ${chalk.red(agent.id)}: ${agent.error || 'Unknown error'}`);
+        }
+      });
     }
 
     console.log(chalk.bold('\nNext Steps:'));
