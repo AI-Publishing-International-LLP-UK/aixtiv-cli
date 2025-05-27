@@ -23,7 +23,7 @@ const config = {
     enabled: true,
     regulatoryFrameworks: ['GDPR', 'HIPAA', 'SOC2', 'ISO27001'],
     strictMode: process.env.COMPLIANCE_STRICT_MODE === 'true',
-    region: process.env.CLOUD_REGION || 'us-west1',
+    region: process.env.CLOUD_REGION || 'us-west1', // Default to us-west1 region
   },
   // Firebase configuration
   firebase: {
@@ -250,7 +250,7 @@ const complianceChecker = {
         compliant: complianceResult.compliant,
         frameworks: Object.keys(complianceResult.results || {}),
         details: complianceResult.results,
-        region: config.compliance.region
+        region: config.compliance.region || 'us-west1' // Ensure region is never undefined
       };
       
       // Store in Firestore
@@ -306,7 +306,7 @@ const auditTrail = {
         timestamp: new Date().toISOString(),
         ipAddress: context.ipAddress || 'unknown',
         systemId: context.systemId || 'system',
-        region: config.compliance.region
+        region: config.compliance.region || 'us-west1' // Ensure region is never undefined
       };
       
       // Store in Firestore
@@ -394,7 +394,7 @@ const certificationSystem = {
         metadata,
         status: 'active',
         issuer: 'S2DO Governance System',
-        region: config.compliance.region
+        region: config.compliance.region || 'us-west1' // Ensure region is never undefined
       };
       
       // Store in Firestore
@@ -522,7 +522,7 @@ async function createWorkflow(name, type, options = {}) {
       priority: options.priority || 'normal',
       deadline: options.deadline || null,
       compliance: {},
-      region: config.compliance.region
+      region: config.compliance.region || 'us-west1' // Ensure region is never undefined
     };
     
     // Check compliance if enabled
@@ -642,6 +642,12 @@ async function approveWorkflowStep(workflowId, stepId, approver, options = {}) {
     
     const workflow = workflowDoc.data();
     
+    // Ensure workflow.steps exists to prevent TypeError
+    if (!workflow.steps) {
+      console.log('S2DO: Warning - workflow.steps is undefined, initializing as empty array');
+      workflow.steps = [];
+    }
+    
     // Find the step to approve
     const stepIndex = workflow.steps.findIndex(step => step.id === stepId);
     if (stepIndex === -1) {
@@ -659,7 +665,7 @@ async function approveWorkflowStep(workflowId, stepId, approver, options = {}) {
       comments: options.comments || '',
       evidence: options.evidence || [],
       metadata: options.metadata || {},
-      region: config.compliance.region
+      region: config.compliance.region || 'us-west1' // Ensure region is never undefined
     };
     
     // Store approval in Firestore
@@ -806,7 +812,20 @@ function hashObject(obj) {
  * @returns {Object} Updated configuration
  */
 function configure(newConfig) {
-  Object.assign(config, newConfig);
+  // Make a deep copy for nested objects to avoid reference issues
+  if (newConfig.compliance) {
+    config.compliance = { ...config.compliance, ...newConfig.compliance };
+    // Ensure region always has a value
+    config.compliance.region = config.compliance.region || 'us-west1';
+  }
+  
+  // For other top-level properties
+  Object.keys(newConfig).forEach(key => {
+    if (key !== 'compliance') {
+      config[key] = newConfig[key];
+    }
+  });
+  
   return { ...config };
 }
 

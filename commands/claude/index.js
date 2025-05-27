@@ -8,6 +8,7 @@
  * - Live workflow orchestration commands
  * - Automation commands
  * - Secret management and key rotation
+ * - Governance integration with blockchain verification
  */
 
 // Import command modules
@@ -18,6 +19,7 @@ const telemetry = require('../../lib/telemetry');
 const status = require('./status');
 const live = require('./live');
 const secrets = require('./secrets');
+const governance = require('./governance');
 
 // Export commands
 module.exports = {
@@ -27,4 +29,5 @@ module.exports = {
   status,
   live,
   secrets,
+  governance
 };

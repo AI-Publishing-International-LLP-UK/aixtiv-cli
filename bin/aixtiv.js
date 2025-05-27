@@ -51,6 +51,7 @@ program
   .option('-l, --limit <limit>', 'Limit the number of projects returned', '20')
   .action(claudeCommands.project.list);
 
+const ciCommand = require('../commands/ci');
 // Register claude:code:generate command
 program
   .command('claude:code:generate')
@@ -518,6 +519,44 @@ program.addCommand(dreamCommanderCommand);
 const choreCommand = require('../commands/chore');
 program.addCommand(choreCommand);
 
+
+// Register CI commands
+program.addCommand(ciCommand);
+
+// Claude S2DO Governance command
+program
+  .command('claude:governance:s2do')
+  .description('Create S2DO governance workflow with blockchain verification')
+  .requiredOption('-w, --workflow <name>', 'Workflow name')
+  .option('-d, --description <description>', 'Workflow description')
+  .option('-t, --type <type>', 'Workflow type (approval, notification, escalation)', 'approval')
+  .option('-s, --steps <steps>', 'Comma-separated list of step names')
+  .option('-p, --priority <priority>', 'Workflow priority (high, medium, low)', 'medium')
+  .option('--project <projectId>', 'Associated project ID')
+  .option('--agent <agentId>', 'Agent ID to assign steps to')
+  .option('--verify', 'Verify blockchain integrity after creation')
+  .action(claudeCommands.governance.s2do);
+
+// Claude S2DO Governance Approval command
+program
+  .command('claude:governance:approve')
+  .description('Approve a step in an S2DO governance workflow with blockchain verification')
+  .requiredOption('-w, --workflow <workflowId>', 'Workflow ID')
+  .requiredOption('-s, --step <stepId>', 'Step ID to approve')
+  .option('--comments <comments>', 'Approval comments')
+  .option('--evidence <evidence>', 'Comma-separated list of evidence URLs or references')
+  .option('--approver <approverId>', 'ID of the approver (defaults to dr-claude)')
+  .option('--verify', 'Verify blockchain integrity after approval')
+  .action(claudeCommands.governance.approve);
+
+// Claude S2DO Governance Verification command
+program
+  .command('claude:governance:verify')
+  .description('Verify blockchain integrity of an S2DO governance workflow')
+  .requiredOption('-w, --workflow <workflowId>', 'Workflow ID')
+  .option('--detailed', 'Include detailed workflow information')
+  .action(claudeCommands.governance.verify);
+
 // Parse command line arguments
 program.parse(process.argv);
 
@@ -529,4 +568,3 @@ program
   .command('qrix:status')
   .description('Check Q-Rix core activation telemetry')
   .action(qrixCommands.status);
-
