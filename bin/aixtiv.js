@@ -520,6 +520,7 @@ const choreCommand = require('../commands/chore');
 program.addCommand(choreCommand);
 
 
+
 // Register CI commands
 program.addCommand(ciCommand);
 
@@ -556,7 +557,6 @@ program
   .requiredOption('-w, --workflow <workflowId>', 'Workflow ID')
   .option('--detailed', 'Include detailed workflow information')
   .action(claudeCommands.governance.verify);
-
 // Parse command line arguments
 program.parse(process.argv);
 
