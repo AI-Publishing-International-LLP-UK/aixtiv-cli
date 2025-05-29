@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.4.3",
+    "@canva/cli": "^0.0.1-beta.30",
     "@firebase/auth": "^1.10.6",
     "@firebase/firestore": "^4.7.16",
     "@firebase/functions": "^0.12.8",
@@ -20,6 +21,7 @@
     "@google-cloud/language": "^7.0.2",
     "@google-cloud/secret-manager": "^6.0.1",
     "@google-cloud/speech": "^7.1.0",
+    "@google-cloud/storage": "^7.16.0",
     "@google-cloud/text-to-speech": "^6.1.0",
     "@pinecone-database/pinecone": "^6.0.1",
     "@svgr/plugin-svgo": "^8.1.0",
