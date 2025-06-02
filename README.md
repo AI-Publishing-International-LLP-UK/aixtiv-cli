@@ -1,3 +1,110 @@
+# Aixtiv CLI
+
+The Aixtiv Command Line Interface for Symphony Orchestrating Operating System (ASOOS) management.
+
+## Features
+
+- SallyPort Security Management
+- Agent Orchestration and Management
+- Domain Management
+- Dr. Claude Integration
+- Dream Commander Integration
+- S2DO Blockchain Governance
+
+## Installation
+
+```bash
+npm install -g aixtiv-cli
+```
+
+## New Unified Agent System
+
+The Aixtiv CLI now features a unified agent system that consolidates agent and co-pilot management into a single, coherent framework with a standardized squadron-based designation system.
+
+### Quick Start with Unified Agents
+
+```bash
+# Register a new agent
+aixtiv agent:register --name "Dr. Lucy" --squadron S02 --number 1 --type RIX
+
+# List all agents
+aixtiv agent:list
+
+# Grant resource access
+aixtiv resource:grant --principal "user@example.com" --agent S02-01 --resource "project-123"
+```
+
+See the [Unified Agent System Documentation](./docs/unified-agent-system.md) for more details.
+
+## Legacy Commands
+
+### Authentication
+
+```bash
+aixtiv auth:verify --email user@example.com
+```
+
+### Agent Management (Legacy)
+
+```bash
+# Grant agent access
+aixtiv agent:grant -e user@example.com -a 001 -r resource-123 -t full
+
+# Revoke agent access
+aixtiv agent:revoke -e user@example.com -a 001 -r resource-123
+
+# Activate agents
+aixtiv agent:activate
+```
+
+### Co-pilot Management (Legacy)
+
+```bash
+# Link a co-pilot
+aixtiv copilot:link -e user@example.com -c lucy
+
+# List co-pilots
+aixtiv copilot:list -e user@example.com
+
+# Grant co-pilot access
+aixtiv copilot:grant -e user@example.com -c lucy -r resource-123 -t readonly
+```
+
+### Domain Management
+
+```bash
+# Manage domains
+aixtiv domain:manage --action list
+
+# Configure SSL
+aixtiv domain:ssl --action verify --domain example.com
+```
+
+### Dr. Claude
+
+```bash
+# Delegate a project
+aixtiv claude:agent:delegate -p "Project Name" -d "Project description"
+
+# Generate code
+aixtiv claude:code:generate -t "Create a React component"
+
+# Check agent status
+aixtiv claude:status
+```
+
+## Configuration
+
+The CLI uses the following environment variables:
+
+- `GOOGLE_APPLICATION_CREDENTIALS`: Path to service account key
+- `FIREBASE_PROJECT_ID`: Firebase project ID
+- `AIXTIV_API_KEY`: API key for Aixtiv services
+
+## License
+
+Copyright © 2025 Aixtiv Inc. All rights reserved.
+
 # 🌟 Aixtiv CLI - Symphony Orchestration System
 
 A command-line interface for managing the Aixtiv Symphony ecosystem, providing RIX/CRX orchestration, Pinecone vector database integration, and CI/CD CTTT pipeline connectivity.

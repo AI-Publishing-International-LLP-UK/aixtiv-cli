@@ -71,7 +71,7 @@ app.get('/', (req, res) => {
 });
 
 // Projects delegate endpoint
-app.post('/projects/delegate', async (req, res, next) => {
+app.post('/projects/delegate', async (req, res) => {
   try {
     // Extract request data
     const {
@@ -146,11 +146,5 @@ app.post('/projects/delegate', async (req, res, next) => {
 // Apply error handler middleware
 app.use(errorHandler);
 
-// For Cloud Functions Gen 2, we need to start the server
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`Dr. Claude server listening on port ${PORT}`);
-});
-
-// Export cloud function for compatibility with both Gen 1 and Gen 2
+// Export cloud function
 exports.drClaude = app;

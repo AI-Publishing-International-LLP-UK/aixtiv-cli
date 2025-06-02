@@ -6,13 +6,9 @@
     "app-2100-cool": {
       "hosting": {
         "doctors-live": [
-          "doctors-live"
-        ],
+          "doctors-live"        ],
         "experts-ai": [
           "experts-ai"
-        ],
-        "drclaude-live": [
-          "drclaude-live"
         ]
       }
     }

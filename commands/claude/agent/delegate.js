@@ -113,7 +113,7 @@ module.exports = async function delegateProjectToAgent(options) {
           // Display debug information
           debugDisplay({
             thought: internalThought,
-            result: result,
+            result: { status: 'api_success', project_id: apiResponse.project_id },
             command: 'claude:return',
           });
 
@@ -169,7 +169,7 @@ module.exports = async function delegateProjectToAgent(options) {
             // Display debug information
             debugDisplay({
               thought: internalThought,
-              result: result,
+              result: { status: 'fallback_success', project_id: projectId },
               command: 'claude:return',
             });
 
@@ -259,7 +259,7 @@ module.exports = async function delegateProjectToAgent(options) {
     // Display debug information
     debugDisplay({
       thought: internalThought,
-      result: result,
+      result: null, // Set to null when there's an error
       command: 'claude:process.exit',
     });
 
@@ -269,53 +269,18 @@ module.exports = async function delegateProjectToAgent(options) {
 
 /**
  * Returns colored text based on priority
- * @param {string} priority - Priority level
- * @// Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  returns {string} Colored priority text
+* @param {string} priority - Priority level
+* @returns {string} Colored priority text
  */
 function getPriorityColor(priority) {
   switch (priority.toLowerCase()) {
     case 'high':
-      // Display debug information
-      debugDisplay({
-        thought: internalThought,
-        result: result,
-        command: 'claude:return',
-      });
-
       return chalk.red('High');
     case 'medium':
-      // Display debug information
-      debugDisplay({
-        thought: internalThought,
-        result: result,
-        command: 'claude:return',
-      });
-
       return chalk.yellow('Medium');
     case 'low':
-      // Display debug information
-      debugDisplay({
-        thought: internalThought,
-        result: result,
-        command: 'claude:return',
-      });
-
       return chalk.blue('Low');
     default:
-      // Display debug information
-      debugDisplay({
-        thought: internalThought,
-        result: result,
-        command: 'claude:return',
-      });
-
       return chalk.green(priority);
   }
 }

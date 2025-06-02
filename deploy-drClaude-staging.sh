@@ -44,19 +44,6 @@ check_gcloud() {
   fi
 }
 
-# Update package.json to use Node.js 22
-update_nodejs_version() {
-  echo -e "${YELLOW}[STEP 0] Updating Node.js version to 20 in package.json${NC}"
-  
-  # Create a backup of the original package.json
-  cp "${SOURCE_DIR}/package.json" "${SOURCE_DIR}/package.json.backup"
-  
-  # Update the Node.js version in package.json using sed
-  sed -i '' '"s/"node": "18"/"node": "22"/' "${SOURCE_DIR}/package.json"
-  handle_error $? "Failed to update Node.js version in package.json"
-  
-  echo -e "${GREEN}[SUCCESS] Updated Node.js version to 20 in package.json${NC}"
-}
 
 # Main deployment function
 deploy_function() {
@@ -72,7 +59,6 @@ deploy_function() {
   echo -e "${GREEN}=================================================================${NC}"
 
   # Update Node.js version in package.json
-  update_nodejs_version
 
   # Check if we are in the correct project
   echo -e "${YELLOW}[STEP 1] Setting Google Cloud Project to $PROJECT_ID${NC}"
