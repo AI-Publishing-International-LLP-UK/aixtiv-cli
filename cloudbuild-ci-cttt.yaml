@@ -160,7 +160,7 @@ steps:
       - |
         source bin/agent-tracking.sh
         log_agent_action "docker_build_start" "Starting Docker image build"
-        docker build -t gcr.io/api-for-warp-drive/aixtiv-cli:latest .
+        docker build -t gcr.io/api-for-warp-drive/aixtiv-cli:$COMMIT_SHA -t gcr.io/api-for-warp-drive/aixtiv-cli:latest .
         log_agent_action "docker_build_complete" "Completed Docker image build"
 
   # Push Docker Image

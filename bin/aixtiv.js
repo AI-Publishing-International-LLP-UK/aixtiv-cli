@@ -519,7 +519,14 @@ program.addCommand(dreamCommanderCommand);
 const choreCommand = require('../commands/chore');
 program.addCommand(choreCommand);
 
+// Q-Rix commands
+const qrixCommands = require('../commands/qrix');
 
+// Register Q-Rix commands
+program
+  .command('qrix:status')
+  .description('Check Q-Rix core activation telemetry')
+  .action(qrixCommands.status);
 
 // Register CI commands
 program.addCommand(ciCommand);
@@ -559,12 +566,3 @@ program
   .action(claudeCommands.governance.verify);
 // Parse command line arguments
 program.parse(process.argv);
-
-// Q-Rix commands
-const qrixCommands = require('../commands/qrix');
-
-// Register Q-Rix commands
-program
-  .command('qrix:status')
-  .description('Check Q-Rix core activation telemetry')
-  .action(qrixCommands.status);

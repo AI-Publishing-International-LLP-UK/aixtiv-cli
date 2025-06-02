@@ -87,6 +87,16 @@ deploy_function() {
     echo -e "${BLUE}[INFO] Function does not exist yet. Proceeding with deployment.${NC}"
   fi
 
+  # Set up necessary IAM permissions
+  echo -e "${YELLOW}[STEP 2.5] Setting up IAM permissions...${NC}"
+  # Allow public access to the function
+  gcloud functions add-iam-policy-binding "$FUNCTION_NAME" \
+    --region="$REGION" \
+    --member="allUsers" \
+    --role="roles/cloudfunctions.invoker" \
+    --gen2 \
+    --quiet || true
+
   # Deploy the function using Gen 2 with Node.js 22
   echo -e "${YELLOW}[STEP 3] Deploying function (Gen 2, Node.js 22)...${NC}"
   echo -e "${BLUE}[INFO] Using file dr-claude.js with entry point ${ENTRY_POINT}${NC}"
@@ -98,15 +108,23 @@ deploy_function() {
     --entry-point="$ENTRY_POINT" \
     --source="$SOURCE_DIR" \
     --trigger-http \
-    --no-allow-unauthenticated \
+    --allow-unauthenticated \
     --min-instances="$MIN_INSTANCES" \
     --max-instances="$MAX_INSTANCES" \
     --gen2
   
   handle_error $? "Failed to deploy function"
 
+  # Now add the IAM policy binding after deployment
+  echo -e "${YELLOW}[STEP 4] Setting public access...${NC}"
+  gcloud functions add-iam-policy-binding "$FUNCTION_NAME" \
+    --region="$REGION" \
+    --member="allUsers" \
+    --role="roles/cloudfunctions.invoker" \
+    --gen2 || true
+
   # Check deployment status
-  echo -e "${YELLOW}[STEP 4] Verifying deployment...${NC}"
+  echo -e "${YELLOW}[STEP 5] Verifying deployment...${NC}"
   gcloud functions describe "$FUNCTION_NAME" --region="$REGION" --gen2 --format="json" | grep "state\\|serviceConfig\\|url"
   handle_error $? "Failed to retrieve function status"
 
@@ -115,8 +133,7 @@ deploy_function() {
   # Get the function URL
   FUNCTION_URL=$(gcloud functions describe "$FUNCTION_NAME" --region="$REGION" --gen2 --format="value(serviceConfig.uri)")
   echo -e "${BLUE}[INFO] Function URL: ${YELLOW}$FUNCTION_URL${NC}"
-  echo -e "${BLUE}[INFO] Note: This function requires authentication to access.${NC}"
-  echo -e "${BLUE}[INFO] To grant public access, you will need to use the Google Cloud Console to update IAM settings.${NC}"
+  echo -e "${BLUE}[INFO] Test with: curl -X POST $FUNCTION_URL${NC}"
 }
 
 # Entry point

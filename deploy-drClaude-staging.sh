@@ -44,7 +44,6 @@ check_gcloud() {
   fi
 }
 
-
 # Main deployment function
 deploy_function() {
   echo -e "${GREEN}========== Dr. Claude Function Deployment (Gen 2, Node.js 22) ==========${NC}"
@@ -57,8 +56,6 @@ deploy_function() {
   echo -e "${BLUE}Min Instances:${NC} $MIN_INSTANCES"
   echo -e "${BLUE}Max Instances:${NC} $MAX_INSTANCES"
   echo -e "${GREEN}=================================================================${NC}"
-
-  # Update Node.js version in package.json
 
   # Check if we are in the correct project
   echo -e "${YELLOW}[STEP 1] Setting Google Cloud Project to $PROJECT_ID${NC}"
@@ -101,7 +98,7 @@ deploy_function() {
     --entry-point="$ENTRY_POINT" \
     --source="$SOURCE_DIR" \
     --trigger-http \
-    --allow-unauthenticated \
+    --no-allow-unauthenticated \
     --min-instances="$MIN_INSTANCES" \
     --max-instances="$MAX_INSTANCES" \
     --gen2
@@ -110,7 +107,7 @@ deploy_function() {
 
   # Check deployment status
   echo -e "${YELLOW}[STEP 4] Verifying deployment...${NC}"
-  gcloud functions describe "$FUNCTION_NAME" --region="$REGION" --gen2 --format="json" | grep "state\|serviceConfig\|url"
+  gcloud functions describe "$FUNCTION_NAME" --region="$REGION" --gen2 --format="json" | grep "state\\|serviceConfig\\|url"
   handle_error $? "Failed to retrieve function status"
 
   echo -e "${GREEN}[SUCCESS] Function $FUNCTION_NAME successfully deployed to $REGION${NC}"
@@ -118,12 +115,8 @@ deploy_function() {
   # Get the function URL
   FUNCTION_URL=$(gcloud functions describe "$FUNCTION_NAME" --region="$REGION" --gen2 --format="value(serviceConfig.uri)")
   echo -e "${BLUE}[INFO] Function URL: ${YELLOW}$FUNCTION_URL${NC}"
-  echo -e "${BLUE}[INFO] Test with: curl -X POST $FUNCTION_URL${NC}"
-
-  # Restore the original package.json
-  echo -e "${YELLOW}[STEP 5] Restoring original package.json${NC}"
-  mv "${SOURCE_DIR}/package.json.backup" "${SOURCE_DIR}/package.json"
-  handle_error $? "Failed to restore original package.json"
+  echo -e "${BLUE}[INFO] Note: This function requires authentication to access.${NC}"
+  echo -e "${BLUE}[INFO] To grant public access, you will need to use the Google Cloud Console to update IAM settings.${NC}"
 }
 
 # Entry point
