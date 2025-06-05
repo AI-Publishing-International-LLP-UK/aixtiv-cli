@@ -17,9 +17,10 @@ on:
         type: boolean
 
 env:
-  PROJECT_ID: dr-claude-live
+  PROJECT_ID: api-for-warp-drive
   REGION: us-west1
   NODE_VERSION: '18'
+  SECURE_SSH_CONFIG: 'true'
 
 jobs:
   deploy:
