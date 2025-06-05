@@ -1,5 +1,76 @@
 # Aixtiv CLI
 
+Command Line Interface for SallyPort Security Management and MCP servers.
+
+## Security Notice - CVE-2024-45337
+
+This CLI includes security fixes for the critical SSH authentication bypass vulnerability (CVE-2024-45337) affecting ModelContextProtocol servers.
+
+### Security Tools
+
+- `./macos-ssh-security.sh` - Apply security fixes for local MacOS environment and generate instructions for remote instances
+- `./mcp-security-detector.sh` - Check systems for the vulnerability and detect exploitation attempts
+- `cat gcp-fix-instructions.txt` - Instructions for securing GCP instances
+
+## Installation
+
+```
+cd /Users/as/asoos/aixtiv-cli
+chmod +x bin/aixtiv.js
+```
+
+Add to your shell for easy access:
+```
+alias aixtiv='cd /Users/as/asoos/aixtiv-cli && node bin/aixtiv.js'
+```
+
+## Commands
+
+Use the following command to see all available options:
+
+```
+aixtiv --help
+```
+
+### MCP Server Security Management
+
+```
+aixtiv mcp:security --check    # Check for security vulnerabilities
+aixtiv mcp:security --patch    # Apply security patches
+aixtiv mcp:security --monitor  # Set up security monitoring
+```
+
+## Integration Gateway
+
+The Integration Gateway serves as a central control system for domain management, hosting configuration, and security in the Aixtiv Symphony ecosystem.
+
+### Multi-Site Hosting Management
+
+- Centralized Configuration: Manages multiple domains through a single firebase.json configuration
+- Dynamic Site Generation: Automatically creates site configurations for new domains
+- Special Character Support: Handles international domains with non-ASCII characters using punycode
+- Consistent Security Headers: Applies standardized security policies across all sites
+
+### Domain Management System
+
+- Site ID Mapping: Maintains a robust mapping between domain names and Firebase site IDs
+- DNS Configuration: Integrates with GoDaddy API for automated DNS record management
+- Batch Processing: Processes large numbers of domains efficiently while respecting rate limits
+- Error Recovery: Implements sophisticated error handling with automatic retries for failed operations
+
+### Security Framework
+
+- Content Security Policy: Implements robust CSP headers to prevent XSS attacks
+- SSL Management: Automates certificate provisioning and renewal
+- Certificate Monitoring: Provides alerts for expiring SSL certificates
+- Security Headers: Configures X-Frame-Options, X-Content-Type-Options, and other security headers
+
+## Support
+
+For help with the Aixtiv CLI, contact the Symphony support team.
+
+# Aixtiv CLI
+
 The Aixtiv Command Line Interface for Symphony Orchestrating Operating System (ASOOS) management.
 
 ## Features

@@ -512,6 +512,14 @@ registerDomainCommands(program);
 const dreamCommanderCommand = require('../commands/dreamCommander');
 program.addCommand(dreamCommanderCommand);
 
+// Register MCP Security commands
+const mcpSecurityCommand = require('../commands/mcp-security');
+const mcpSshSecurityCommand = require('../commands/claude/fix/mcpsshsecurity');
+const mcpIpv6SecurityCommand = require('../commands/claude/fix/mcpipv6security');
+program.addCommand(mcpSecurityCommand);
+program.addCommand(mcpSshSecurityCommand);
+program.addCommand(mcpIpv6SecurityCommand);
+
 // Register SERPEW commands (temporarily commented out)
 // registerSerpewCommands(program);
 
