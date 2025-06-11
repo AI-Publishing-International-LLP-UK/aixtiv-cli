@@ -1,0 +1,57 @@
+To fix the SSH vulnerability on the GCP instance, please run the following steps through the Cloud Console:
+
+1. Go to https://console.cloud.google.com/compute/instances?project=api-for-warp-drive
+2. Click on "modelcontextprotocol-b"
+3. Click on "SSH" button to open a terminal
+4. Run the following commands:
+
+   sudo apt-get update
+   sudo apt-get install -y openssh-server
+   
+   # Create security directory
+   sudo mkdir -p /etc/ssh/security
+   
+   # Create security policy file
+   cat > security-policy.conf << 'EOFINNER'
+   # SSH Security Policy to mitigate CVE-2024-45337
+   
+   # Only allow specific authentication methods
+   PubkeyAuthentication yes
+   PasswordAuthentication no
+   
+   # Disable authentication agent forwarding
+   AllowAgentForwarding no
+   
+   # Enable verbose logging for authentication attempts
+   LogLevel VERBOSE
+   
+   # Restrict public key authentication to specific keys
+   AuthorizedKeysFile %h/.ssh/authorized_keys
+   
+   # Disable X11 forwarding
+   X11Forwarding no
+   
+   # Enable strict mode checking
+   StrictModes yes
+   
+   # Disable challenge-response authentication
+   ChallengeResponseAuthentication no
+   
+   # Disable Kerberos authentication
+   KerberosAuthentication no
+   
+   # Disable GSSAPI authentication
+   GSSAPIAuthentication no
+   EOFINNER
+   
+   sudo mv security-policy.conf /etc/ssh/security/
+   
+   # Update SSH configuration
+   sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+   echo -e "\n# Include security policy to mitigate CVE-2024-45337\nInclude /etc/ssh/security/security-policy.conf" | sudo tee -a /etc/ssh/sshd_config
+   
+   # Verify configuration
+   sudo sshd -t
+   
+   # If no errors, restart SSH
+   sudo systemctl restart ssh
