@@ -1,0 +1,76 @@
+# Development artifacts
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.npm/
+.eslintcache
+
+# Version control and CI
+.git/
+.github/
+.gitignore
+.gitlab-ci.yml
+
+# Environment files
+.env
+.env.*
+*.env
+*.env.*
+
+# Build files
+dist/
+build/
+*.tgz
+*.tar.gz
+*.zip
+
+# Tests and debugging
+test/
+tests/
+coverage/
+.vscode/
+*.spec.js
+*.test.js
+debug-output-fix/
+
+# Documentation
+*.md
+docs/
+!README.md
+
+# Large directories not needed at runtime
+archive/
+pre-cleanup-backup.tar.gz
+cloud-build/
+ASOOS/
+automation/
+aixtiv-project/
+aixtiv-project-new/
+cicd/
+debug-*/
+deployment/
+deploy/*
+!deploy/essential-scripts/
+
+# OS artifacts
+.DS_Store
+
+# Docker-specific
+docker-compose*
+.dockerignore
+
+# Keep critical paths
+!interface/**
+!integrations/**
+!integration/integration-gateway/services/gateway/**
+
+# Functions that aren't needed in the final image
+functions/unused/
+
+# Temporary and backup files
+temp_*/
+**/backup/
+**/backups/
+

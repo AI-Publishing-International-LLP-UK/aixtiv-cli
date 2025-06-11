@@ -1,0 +1,18 @@
+description: Scheduled Domain Autoscale Pipeline (Daily)
+name: domain-autoscale-scheduled
+filename: cloudbuild-domain-autoscale.yaml
+id: domain-autoscale-scheduled
+github:
+  owner: Coaching2100
+  name: api-for-warp-drive
+schedule: 0 2 * * * # Run daily at 2:00 AM UTC
+serviceAccount: projects/api-for-warp-drive/serviceAccounts/drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+tags:
+  - domain
+  - autoscale
+  - scheduled
+  - godaddy
+  - firebase
+substitutions:
+  _PHASE: full
+  _DRY_RUN: 'false'

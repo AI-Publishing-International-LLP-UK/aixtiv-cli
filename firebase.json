@@ -3,7 +3,11 @@
     {
       "target": "drclaude-live",
       "public": "public",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "/claude-code-generate",
@@ -26,10 +30,47 @@
           "function": "drClaude"
         }
       ]
+    },
+    {
+      "target": "asoos-primary",
+      "public": "build",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "headers": [
+        {
+          "source": "**/*.@(js|css)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "max-age=31536000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "anthology-subdomain",
+      "public": "public",
+      "appAssociation": "AUTO",
+      "cleanUrls": true,
+      "trailingSlash": false
     }
   ],
   "functions": {
     "source": "functions",
-    "runtime": "nodejs22"
+    "runtime": "nodejs22",
+    "region": ["us-west1"],
+    "ignore": [
+      "node_modules",
+      ".git",
+      "firebase-debug.log",
+      "firebase-debug.*.log"
+    ]
+  },
+  "database": {
+    "rules": "database.rules.json"
   }
 }

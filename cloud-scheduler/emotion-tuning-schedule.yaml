@@ -1,0 +1,13 @@
+name: emotion-tuning-daily-verification
+description: 'Daily verification of Emotion Tuning System'
+schedule: '0 2 * * *' # Run at 2:00 AM every day
+timeZone: 'America/Los_Angeles'
+target:
+  httpTarget:
+    uri: 'https://cloudbuild.googleapis.com/v1/projects/api-for-warp-drive/triggers/emotion-tuning-scheduled-verification:run'
+    httpMethod: POST
+    headers:
+      Content-Type: application/json
+    body: 'e30=' # Base64 encoded empty JSON object: {}
+    oauthToken:
+      serviceAccountEmail: 'cloudbuild-service@api-for-warp-drive.iam.gserviceaccount.com'

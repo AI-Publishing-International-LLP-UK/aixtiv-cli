@@ -1,0 +1,90 @@
+# Speaker Recognition Training Configuration
+# CTTT (Continuous Testing, Training, and Tuning) Pipeline
+
+trainingInput:
+  scaleTier: CUSTOM
+  masterType: n1-highmem-8
+  workerType: n1-highmem-8
+  workerCount: 4
+  region: us-west1
+
+  # Parameters for the training job
+  hyperparameters:
+    goal: MAXIMIZE
+    hyperparameterMetricTag: accuracy
+    maxTrials: 30
+    maxParallelTrials: 5
+    enableTrialEarlyStopping: true
+    params:
+      - parameterName: learningRate
+        type: DOUBLE
+        minValue: 0.0001
+        maxValue: 0.1
+        scaleType: UNIT_LOG_SCALE
+      - parameterName: hiddenLayerSize
+        type: INTEGER
+        minValue: 128
+        maxValue: 1024
+        scaleType: UNIT_LINEAR_SCALE
+      - parameterName: dropoutRate
+        type: DOUBLE
+        minValue: 0.1
+        maxValue: 0.5
+        scaleType: UNIT_LINEAR_SCALE
+      - parameterName: batchSize
+        type: DISCRETE
+        discreteValues: [32, 64, 128, 256]
+      - parameterName: numEpochs
+        type: INTEGER
+        minValue: 10
+        maxValue: 100
+        scaleType: UNIT_LINEAR_SCALE
+
+  # Dataset configuration
+  packageUris:
+    - gs://api-for-warp-drive-training/speaker-recognition/trainer-0.1.tar.gz
+  pythonModule: trainer.task
+  args:
+    - --data-dir=gs://api-for-warp-drive-data/voice-samples
+    - --output-dir=gs://api-for-warp-drive-models/speaker-recognition
+    - --eval-sample-ratio=0.2
+    - --test-sample-ratio=0.1
+    - --apply-augmentation=true
+    - --voice-model-type=spectral
+
+# Monitoring and evaluation
+monitoring:
+  metrics:
+    - name: accuracy
+      threshold: 0.85
+      comparison: GREATER_THAN
+    - name: false_acceptance_rate
+      threshold: 0.01
+      comparison: LESS_THAN
+    - name: false_rejection_rate
+      threshold: 0.05
+      comparison: LESS_THAN
+
+# Auto-deployment configuration
+deployment:
+  autoDeployModel: true
+  regions:
+    - us-west1
+    - us-west1-b
+  deploymentName: speaker-recognition-model
+  versionName: v1
+  trafficSplitPercent: 10 # Initial gradual rollout
+  stagingBucket: gs://api-for-warp-drive-staging
+
+# Notification
+notifications:
+  onCompletion: true
+  onFailure: true
+  channels:
+    - email:support@coaching2100.com
+    - slack:aixtiv-monitoring
+
+tuning:
+  autoTuneThreshold: 0.82 # Accuracy threshold for auto-tuning
+  tuningSchedule: weekly
+  datasetGrowthMonitoring: true

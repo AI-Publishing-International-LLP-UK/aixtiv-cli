@@ -22,8 +22,8 @@ spec:
         unhealthyThreshold: 2
         healthyThreshold: 2
   customRequestHeaders:
-    - "X-Content-Type-Options: nosniff"
-    - "X-Frame-Options: DENY"
+    - 'X-Content-Type-Options: nosniff'
+    - 'X-Frame-Options: DENY'
   backend:
     - balancingMode: UTILIZATION
       group: ${NEG_GROUP}
@@ -41,11 +41,11 @@ metadata:
   name: backend-monitoring
   namespace: anthology-ai
 spec:
-  displayName: "Backend Service Monitoring"
+  displayName: 'Backend Service Monitoring'
   conditions:
-    - displayName: "Backend Error Rate"
+    - displayName: 'Backend Error Rate'
       conditionThreshold:
-        filter: metric.type="loadbalancing.googleapis.com/https/backend_request_count" 
+        filter: metric.type="loadbalancing.googleapis.com/https/backend_request_count"
         comparison: COMPARISON_GT
         threshold: 0.01
         duration: 300s

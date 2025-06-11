@@ -71,7 +71,7 @@ app.get('/', (req, res) => {
 });
 
 // Projects delegate endpoint
-app.post('/projects/delegate', async (req, res) => {
+app.post('/projects/delegate', async (req, res, next) => {
   try {
     // Extract request data
     const {
@@ -146,5 +146,16 @@ app.post('/projects/delegate', async (req, res) => {
 // Apply error handler middleware
 app.use(errorHandler);
 
-// Export cloud function
+// For Cloud Functions Gen 2, we need to start the server only in runtime environments
+const PORT = process.env.PORT || 8080;
+
+// Only start the server if we're running in a Cloud Functions runtime environment
+// This prevents port conflicts during deployment or local development
+if (process.env.K_SERVICE || process.env.FUNCTION_TARGET || process.env.FUNCTION_NAME) {
+  app.listen(PORT, () => {
+    console.log(`Dr. Claude server listening on port ${PORT}`);
+  });
+}
+
+// Export cloud function for compatibility with both Gen 1 and Gen 2
 exports.drClaude = app;

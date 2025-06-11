@@ -111,13 +111,13 @@ module.exports = async function delegateProjectToAgent(options) {
           });
 
           // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  return {
+          debugDisplay({
+            thought: internalThought,
+            result: { status: 'api_success', project_id: apiResponse.project_id },
+            command: 'claude:return',
+          });
+
+          return {
             status: 'created',
             project_id: apiResponse.project_id,
             created_at: apiResponse.created_at || new Date().toISOString(),
@@ -167,13 +167,13 @@ module.exports = async function delegateProjectToAgent(options) {
             });
 
             // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  return {
+            debugDisplay({
+              thought: internalThought,
+              result: { status: 'fallback_success', project_id: projectId },
+              command: 'claude:return',
+            });
+
+            return {
               status: 'created',
               project_id: projectId,
               created_at: new Date().toISOString(),
@@ -257,65 +257,30 @@ module.exports = async function delegateProjectToAgent(options) {
     }
 
     // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:process.exit'
-  });
-  
-  process.exit(1);
+    debugDisplay({
+      thought: internalThought,
+      result: null, // Set to null when there's an error
+      command: 'claude:process.exit',
+    });
+
+    process.exit(1);
   }
 };
 
 /**
  * Returns colored text based on priority
- * @param {string} priority - Priority level
- * @// Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  returns {string} Colored priority text
+* @param {string} priority - Priority level
+* @returns {string} Colored priority text
  */
 function getPriorityColor(priority) {
   switch (priority.toLowerCase()) {
     case 'high':
-      // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  return chalk.red('High');
+      return chalk.red('High');
     case 'medium':
-      // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  return chalk.yellow('Medium');
+      return chalk.yellow('Medium');
     case 'low':
-      // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  return chalk.blue('Low');
+      return chalk.blue('Low');
     default:
-      // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
-  
-  return chalk.green(priority);
+      return chalk.green(priority);
   }
 }

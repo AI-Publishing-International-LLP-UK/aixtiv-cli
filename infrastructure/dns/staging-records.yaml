@@ -9,7 +9,7 @@ spec:
   type: A
   ttl: 300
   rrdatas:
-  - ${LOAD_BALANCER_IP}  # This will be replaced with the actual IP
+    - ${LOAD_BALANCER_IP} # This will be replaced with the actual IP
 ---
 kind: dns#resourceRecordSet
 apiVersion: dns.googleapis.com/v1
@@ -22,4 +22,4 @@ spec:
   type: CNAME
   ttl: 300
   rrdatas:
-  - sc2100cool.anthology-ai.svc.cluster.local.
+    - sc2100cool.anthology-ai.svc.cluster.local.

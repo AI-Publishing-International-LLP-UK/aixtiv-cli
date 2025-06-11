@@ -1,0 +1,61 @@
+{
+  "id": "dr-grant-01",
+  "name": "Dr. Grant 01",
+  "version": "1.0.0",
+  "description": "CEOs Companion, Advisory & Cyber Intelligence Leader",
+  "capabilities": [
+    "Strategic Leadership",
+    "Corporate Governance",
+    "Executive Decision Making",
+    "Business Intelligence",
+    "Risk Management",
+    "Corporate Strategy",
+    "Board Relations"
+  ],
+  "service_path": "/src/services/dr_grant_01/index.js",
+  "api_endpoint": "api.coaching2100.ai/v1/specialists/dr-grant",
+  "status": "ready",
+  "team_compatible": true,
+  "requires_authentication": true,
+  "authentication_provider": "SallyPort",
+  "default_permissions": [
+    "create",
+    "read",
+    "process"
+  ],
+  "metadata": {
+    "region": "us-west1",
+    "zone": "us-west1-b",
+    "creator": "Aixtiv Symphony System",
+    "created_at": "2025-05-23T20:30:29.520Z",
+    "last_updated": "2025-05-23T20:30:29.520Z",
+    "specializations": [
+      "Strategic Leadership",
+      "Corporate Governance",
+      "Executive Decision Making",
+      "Business Intelligence",
+      "Risk Management"
+    ],
+    "knowledge_domains": [
+      "Corporate Strategy",
+      "Board Relations",
+      "Stakeholder Management",
+      "Executive Communications",
+      "Digital Transformation"
+    ]
+  },
+  "team_assignments": [
+    {
+      "team_id": "symphony-core",
+      "role": "contributor",
+      "description": "Core Dr. Grant 01 component for Symphony"
+    }
+  ],
+  "instances": [
+    {
+      "id": "dr-grant-01-01",
+      "specialization": "Strategic Leadership",
+      "status": "active"
+    }
+  ]
+}

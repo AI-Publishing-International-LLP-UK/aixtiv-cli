@@ -41,16 +41,15 @@ steps:
       - |
         echo "Waiting for deployment to stabilize..."
         sleep 15
-        
+
         # Check deployment status
         kubectl rollout status deployment/aixtiv-cli-staging -n anthology-ai-staging --timeout=60s
-        
+
         echo "✅ Deployment verification complete"
 
-timeout: '300s'  # 5 minutes
+timeout: '300s' # 5 minutes
 options:
   logging: CLOUD_LOGGING_ONLY
   machineType: 'E2_MEDIUM'
 
 serviceAccount: 'projects/api-for-warp-drive/serviceAccounts/drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com'
-

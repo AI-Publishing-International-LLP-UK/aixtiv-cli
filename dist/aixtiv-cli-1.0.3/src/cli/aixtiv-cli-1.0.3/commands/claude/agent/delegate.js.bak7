@@ -1,0 +1,157 @@
+const chalk = require('chalk');
+const fetch = require('node-fetch');
+const { parseOptions, withSpinner, displayResult } = require('../../../lib/utils');
+const { firestore } = require('../../../lib/firestore');
+const { logAgentAction } = require('../../../lib/agent-tracking');
+
+// Claude API endpoint
+const CLAUDE_API_ENDPOINT = process.env.CLAUDE_API_ENDPOINT || process.env.DR_CLAUDE_API || 'https://api-dr-claude-us-west1.nw.gcp.com/v3';
+const PROJECT_DELEGATE_ENDPOINT = `${CLAUDE_API_ENDPOINT}/projects/delegate`;
+
+/**
+ * Delegate a project to Dr. Claude for FMS orchestration
+ * @param {object} options - Command options
+ */
+module.exports = async function delegateProjectToAgent(options) {
+  const { project, description, priority, deadline, tags, assignTo } = parseOptions(options);
+  
+  try {
+    // Execute project creation with spinner
+    const result = await withSpinner(
+      `Creating project "${chalk.cyan(project || 'Unnamed')}" and delegating to Dr. Claude`,
+      async () => {
+        // Validate project name and description
+        if (!project) {
+          throw new Error('Project name is required');
+        }
+        if (!description) {
+          throw new Error('Project description is required');
+        }
+
+        // Create project payload
+        const projectData = {
+          name: project,
+          description: description,
+          priority: priority || 'medium',
+          deadline: deadline || null,
+          tags: tags ? tags.split(',').map(t => t.trim()) : [],
+          assigned_to: assignTo || null,
+          orchestrator: 'dr-claude',
+          created_at: new Date().toISOString()
+        };
+
+        // Log the delegation request
+        await logAgentAction('project_delegation_request', {
+          project_name: project,
+          description: description,
+          priority: priority,
+          assignee: assignTo
+        });
+
+        // Make actual API call to Dr. Claude endpoint
+        const response = await fetch(PROJECT_DELEGATE_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': process.env.CLAUDE_API_KEY || '',
+            'x-agent-id': 'dr-claude-orchestrator'
+          },
+          body: JSON.stringify(projectData)
+        });
+
+        // Handle API errors
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`API error (${response.status}): ${errorText}`);
+        }
+
+        // Parse API response
+        const apiResponse = await response.json();
+
+        // Store project in Firestore
+        if (firestore) {
+          const projectRef = firestore.collection('projects').doc(apiResponse.project_id);
+          await projectRef.set({
+            ...projectData,
+            project_id: apiResponse.project_id,
+            status: 'active',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+        }
+
+        // Log successful delegation
+        await logAgentAction('project_delegation_completed', {
+          project_id: apiResponse.project_id,
+          project_name: project,
+          assignee: assignTo
+        });
+
+        return {
+          status: 'created',
+          project_id: apiResponse.project_id,
+          created_at: apiResponse.created_at || new Date().toISOString(),
+          orchestrator: 'dr-claude',
+          assigned_to: assignTo || null,
+          priority: priority || 'medium',
+          deadline: deadline || null,
+          tags: tags ? tags.split(',').map(t => t.trim()) : []
+        };
+      }
+    );
+    
+    // Display result
+    displayResult({
+      success: result.status === 'created',
+      message: `Project ${result.status === 'created' ? 'successfully created' : 'creation failed'}`,
+      details: result
+    });
+    
+    if (result.status === 'created') {
+      console.log(chalk.bold('\nProject Details:'));
+      console.log(`Project ID: ${chalk.cyan(result.project_id)}`);
+      console.log(`Name: ${chalk.yellow(project || 'Unnamed Project')}`);
+      console.log(`Priority: ${getPriorityColor(priority || 'medium')}`);
+      console.log(`Deadline: ${chalk.blue(deadline || 'Not specified')}`);
+      console.log(`Orchestrator: ${chalk.green('Dr. Claude (Sir Hand)')}`);
+      
+      if (assignTo) {
+        console.log(`Assigned To: ${chalk.magenta(assignTo)}`);
+        console.log(`Status: ${chalk.green('Assigned & Delegated')}`);
+      } else {
+        console.log(`Status: ${chalk.green('Pending Resource Assignment')}`);
+      }
+      
+      console.log(chalk.bold('\nNext Steps:'));
+      if (assignTo) {
+        console.log(`Dr. Claude will coordinate with ${assignTo} to execute the project.`);
+      } else {
+        console.log(`Dr. Claude will analyze requirements and assign to the appropriate agent.`);
+        console.log(`Possible assignees include Dr. Lucy, Dr. Match, and other VLS solution providers.`);
+      }
+      console.log(`Use ${chalk.yellow('aixtiv project:status -p ' + result.project_id)} to check progress.`);
+      console.log(`Use ${chalk.yellow('aixtiv project:update -p ' + result.project_id + ' -s notes -v "additional context"')} to provide more information.`);
+    }
+  } catch (error) {
+    console.error(chalk.red('\nProject delegation failed:'), error.message);
+    process.exit(1);
+  }
+};
+
+/**
+ * Returns colored text based on priority
+ * @param {string} priority - Priority level
+ * @returns {string} Colored priority text
+ */
+function getPriorityColor(priority) {
+  switch (priority.toLowerCase()) {
+    case 'high':
+      return chalk.red('High');
+    case 'medium':
+      return chalk.yellow('Medium');
+    case 'low':
+      return chalk.blue('Low');
+    default:
+      return chalk.green(priority);
+  }
+}

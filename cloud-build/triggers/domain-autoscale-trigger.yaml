@@ -1,0 +1,24 @@
+description: Aixtiv Domain Autoscale Pipeline
+name: domain-autoscale-pipeline
+filename: cloudbuild-domain-autoscale.yaml
+id: domain-autoscale-pipeline
+github:
+  owner: Coaching2100
+  name: api-for-warp-drive
+  push:
+    branch: ^main$
+includedFiles:
+  - lib/api/domain-client.js
+  - lib/api/providers/godaddy.js
+  - commands/domain/**
+  - automation/domain-autoscale-integration.py
+  - workflows/domain-autoscale-pipeline.yaml
+serviceAccount: projects/api-for-warp-drive/serviceAccounts/drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+tags:
+  - domain
+  - autoscale
+  - godaddy
+  - firebase
+substitutions:
+  _PHASE: full
+  _DRY_RUN: 'false'

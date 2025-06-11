@@ -1,0 +1,61 @@
+{
+  "id": "sirhand",
+  "name": "SirHand",
+  "version": "1.0.0",
+  "description": "Support and Assistance Specialist",
+  "capabilities": [
+    "Customer Support",
+    "User Assistance",
+    "Problem Resolution",
+    "Service Management",
+    "Support Automation",
+    "Support Systems",
+    "Customer Service"
+  ],
+  "service_path": "/src/services/sirhand/index.js",
+  "api_endpoint": "api.coaching2100.ai/v1/specialists/sirhand",
+  "status": "ready",
+  "team_compatible": true,
+  "requires_authentication": true,
+  "authentication_provider": "SallyPort",
+  "default_permissions": [
+    "create",
+    "read",
+    "process"
+  ],
+  "metadata": {
+    "region": "us-west1",
+    "zone": "us-west1-b",
+    "creator": "Aixtiv Symphony System",
+    "created_at": "2025-05-23T20:30:29.524Z",
+    "last_updated": "2025-05-23T20:30:29.524Z",
+    "specializations": [
+      "Customer Support",
+      "User Assistance",
+      "Problem Resolution",
+      "Service Management",
+      "Support Automation"
+    ],
+    "knowledge_domains": [
+      "Support Systems",
+      "Customer Service",
+      "Knowledge Management",
+      "Service Delivery",
+      "Problem Management"
+    ]
+  },
+  "team_assignments": [
+    {
+      "team_id": "symphony-core",
+      "role": "contributor",
+      "description": "Core SirHand component for Symphony"
+    }
+  ],
+  "instances": [
+    {
+      "id": "sirhand-01",
+      "specialization": "Customer Support",
+      "status": "active"
+    }
+  ]
+}

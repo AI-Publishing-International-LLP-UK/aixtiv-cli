@@ -16,13 +16,13 @@ subnets:
       pods: 10.11.0.0/16
       services: 10.12.0.0/16
     private_ip_google_access: true
-    
+
   vertex_ai:
     name: vertex-subnet
     region: us-west1
     range: 10.20.0.0/20
     private_ip_google_access: true
-    
+
   serverless:
     name: serverless-subnet
     region: us-west1
@@ -35,18 +35,18 @@ firewall:
       network: anthology-ai-vpc
       direction: INGRESS
       priority: 1000
-      source_ranges: ["10.0.0.0/8"]
+      source_ranges: ['10.0.0.0/8']
       allow:
         - protocol: all
-    
+
     - name: allow-health-checks
       network: anthology-ai-vpc
       direction: INGRESS
       priority: 1000
-      source_ranges: ["35.191.0.0/16", "130.211.0.0/22"]
+      source_ranges: ['35.191.0.0/16', '130.211.0.0/22']
       allow:
         - protocol: tcp
-          ports: ["80", "443", "8080"]
+          ports: ['80', '443', '8080']
 
 nat:
   name: anthology-ai-nat
@@ -60,6 +60,6 @@ peering:
   vertex_ai:
     name: vertex-ai-peering
     network: anthology-ai-vpc
-    peer_network: "projects/vertex-ai-project/global/networks/vertex-network"
+    peer_network: 'projects/vertex-ai-project/global/networks/vertex-network'
     export_custom_routes: true
     import_custom_routes: true

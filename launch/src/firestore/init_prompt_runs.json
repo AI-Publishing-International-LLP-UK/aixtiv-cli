@@ -1,0 +1,218 @@
+{
+  "runs": [
+    {
+      "id": "sample_run_001",
+      "status": "completed",
+      "timestamp": "2025-05-12T08:30:00Z",
+      "prompt": {
+        "type": "agent_request",
+        "content": "Generate a marketing tagline for a new AI productivity tool",
+        "agentId": "drmatch-001",
+        "metadata": {
+          "category": "marketing",
+          "priority": "normal"
+        }
+      },
+      "options": {
+        "timeout": 30000,
+        "retainHistory": true,
+        "sessionId": "demo-session-001",
+        "userId": "demo-user-001"
+      },
+      "result": {
+        "tagline": "Productivity Amplified, Possibilities Unleashed",
+        "alternatives": [
+          "Work Smarter, Dream Bigger",
+          "Your Intelligent Ally in Everyday Excellence",
+          "Transform Thinking into Doing"
+        ],
+        "reasoning": "Focused on the transformative aspects of AI productivity tools while emphasizing the expanded possibilities they create."
+      },
+      "executionTime": 1250,
+      "subscriberId": "sample-subscriber-001",
+      "createdAt": "2025-05-12T08:30:00Z",
+      "completedAt": "2025-05-12T08:30:01.25Z"
+    },
+    {
+      "id": "sample_run_002",
+      "status": "completed",
+      "timestamp": "2025-05-12T09:15:00Z",
+      "prompt": {
+        "type": "chain_execution",
+        "content": {
+          "chainType": "data_analysis",
+          "steps": [
+            "data_preprocessing",
+            "statistical_analysis",
+            "visualization",
+            "insights_generation"
+          ],
+          "inputData": {
+            "dataSourceId": "sample-data-001",
+            "dataType": "sales_metrics"
+          }
+        },
+        "metadata": {
+          "category": "analytics",
+          "priority": "high"
+        }
+      },
+      "options": {
+        "timeout": 60000,
+        "retainHistory": true,
+        "sessionId": "demo-session-002",
+        "userId": "demo-user-002"
+      },
+      "result": {
+        "summary": "Analysis identified a 27% increase in conversion rate during promotional periods with custom messaging.",
+        "insights": [
+          "Weekend promotions outperform weekday promotions by 18%",
+          "Email campaigns have 2.3x higher ROI than social media campaigns",
+          "Customer retention increased by 15% with personalized follow-ups"
+        ],
+        "visualizationUrls": [
+          "samples/charts/conversion_trend.png",
+          "samples/charts/channel_comparison.png"
+        ]
+      },
+      "executionTime": 3750,
+      "subscriberId": "sample-subscriber-002",
+      "createdAt": "2025-05-12T09:15:00Z",
+      "completedAt": "2025-05-12T09:15:03.75Z"
+    },
+    {
+      "id": "sample_run_003",
+      "status": "completed",
+      "timestamp": "2025-05-12T10:00:00Z",
+      "prompt": {
+        "type": "dr_match_brainstorm",
+        "content": {
+          "topic": "New product features for AI-powered note-taking app",
+          "constraints": [
+            "Must be implementable within 3 months",
+            "Should leverage existing machine learning capabilities",
+            "Must enhance user productivity"
+          ],
+          "currentFeatures": ["Automatic transcription", "Basic categorization", "Simple search"]
+        },
+        "metadata": {
+          "category": "product_development",
+          "priority": "normal"
+        }
+      },
+      "options": {
+        "timeout": 45000,
+        "retainHistory": true,
+        "sessionId": "demo-session-003",
+        "userId": "demo-user-003"
+      },
+      "result": {
+        "ideas": [
+          {
+            "title": "Smart Connections",
+            "description": "Automatically identify relationships between notes and suggest connections",
+            "implementation": "Medium",
+            "impact": "High"
+          },
+          {
+            "title": "Context-Aware Reminders",
+            "description": "Generate tasks and reminders based on note content and deadlines mentioned",
+            "implementation": "Medium",
+            "impact": "High"
+          },
+          {
+            "title": "Semantic Search Enhancement",
+            "description": "Upgrade search to understand concepts, not just keywords",
+            "implementation": "Low",
+            "impact": "Medium"
+          },
+          {
+            "title": "Collaborative Intelligence",
+            "description": "Smart suggestions based on team members' related notes (with privacy controls)",
+            "implementation": "High",
+            "impact": "High"
+          },
+          {
+            "title": "Insight Summarization",
+            "description": "Generate executive summaries of lengthy notes or multiple related notes",
+            "implementation": "Low",
+            "impact": "Medium"
+          }
+        ],
+        "recommendedPriority": [
+          "Semantic Search Enhancement",
+          "Insight Summarization",
+          "Smart Connections",
+          "Context-Aware Reminders",
+          "Collaborative Intelligence"
+        ]
+      },
+      "executionTime": 2800,
+      "subscriberId": "sample-subscriber-003",
+      "createdAt": "2025-05-12T10:00:00Z",
+      "completedAt": "2025-05-12T10:00:02.8Z"
+    },
+    {
+      "id": "sample_run_004",
+      "status": "completed",
+      "timestamp": "2025-05-12T11:30:00Z",
+      "prompt": {
+        "type": "canva_render",
+        "content": {
+          "designType": "social_media_post",
+          "platform": "instagram",
+          "theme": "modern_tech",
+          "textContent": {
+            "headline": "Revolutionize Your Workflow",
+            "body": "Introducing AI-powered productivity tools that adapt to your unique needs",
+            "callToAction": "Learn More"
+          },
+          "colorScheme": "blue_gradient",
+          "imageOptions": {
+            "style": "minimalist",
+            "subjects": ["technology", "productivity", "workspace"]
+          }
+        },
+        "metadata": {
+          "category": "design",
+          "priority": "normal"
+        }
+      },
+      "options": {
+        "timeout": 40000,
+        "retainHistory": true,
+        "sessionId": "demo-session-004",
+        "userId": "demo-user-004"
+      },
+      "result": {
+        "designUrl": "samples/designs/tech_workflow_post.png",
+        "canvaEditUrl": "samples/designs/tech_workflow_post.canva",
+        "variations": [
+          "samples/designs/tech_workflow_post_v1.png",
+          "samples/designs/tech_workflow_post_v2.png",
+          "samples/designs/tech_workflow_post_v3.png"
+        ],
+        "elements": {
+          "background": "blue_gradient_01",
+          "images": ["workspace_minimal_03", "tech_elements_07"],
+          "typography": {
+            "headline": "montserrat_bold_28",
+            "body": "roboto_light_16",
+            "callToAction": "montserrat_semibold_18"
+          }
+        }
+      },
+      "executionTime": 3200,
+      "subscriberId": "sample-subscriber-004",
+      "createdAt": "2025-05-12T11:30:00Z",
+      "completedAt": "2025-05-12T11:30:03.2Z"
+    }
+  ],
+  "metadata": {
+    "schemaVersion": "1.0",
+    "lastUpdated": "2025-05-12T00:00:00Z",
+    "generatedBy": "Aixtiv CLI Owner-Subscriber V1-V2 System",
+    "sampleData": true,
+    "purpose": "Demonstration and testing"
+  }
+}

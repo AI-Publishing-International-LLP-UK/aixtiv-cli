@@ -1,0 +1,33 @@
+{
+  "projects": {
+    "default": "app-2100-cool"
+  },
+  "targets": {
+    "app-2100-cool": {
+      "hosting": {
+        "doctors-live": [
+          "doctors-live"
+        ],
+        "experts-ai": [
+          "experts-ai"
+        ],
+        "drclaude-live": [
+          "drclaude-live"
+        ]
+      }
+    }
+  },
+  "doctorSites": {
+    "doctors-live": [
+      "drclaude-live", "drmatch-live", "drlucy-live", "drsabina-live", "drgrant-live", 
+      "drburby-live", "professorlee-live", "drmaria-live", "drcypriot-live", 
+      "drmemoria-live", "drroark-live"
+    ],
+    "experts-ai": [
+      "drclaude-ai", "drmatch-ai", "drlucy-ai", "drsabina-ai", "drgrant-ai", 
+      "drburby-ai", "professorlee-ai", "drmaria-ai", "drcypriot-ai", 
+      "drmemoria-ai", "drroark-ai"
+    ]
+  },
+  "etags": {}
+}

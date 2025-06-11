@@ -1,0 +1,8 @@
+./bin/aixtiv.js.fixed
+./infrastructure/deploy.py.fixed
+./src/cli/next-gen-aixtiv.js.fixed
+./src/cli/aixtiv-cli-1.0.3/bin/aixtiv.js.fixed
+./src/services/video-system/interface/Browser.js.fixed
+./src/services/video-system/interface/index.js.fixed
+./src/services/video-system/interface/Page.js.fixed
+./src/services/video-system/interface/NetworkRequest.js.fixed

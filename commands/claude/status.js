@@ -7,6 +7,9 @@ const ora = require('ora');
 const { parseOptions, withSpinner, displayResult } = require('../../lib/utils');
 const Table = require('cli-table3');
 
+
+
+
 // Get all VLS solutions from directory
 const getSolutionAgents = () => {
   // Define our agents directly to ensure consistent display
@@ -24,24 +27,24 @@ const getSolutionAgents = () => {
       name: 'dr cypriot rewards',
     },
     {
-      id: 'dr-grant-cybersecurity',
-      name: 'dr grant cybersecurity',
+      id: 'dr-grant-security',
+      name: 'dr grant security',
     },
     {
-      id: 'dr-grant-sallyport',
-      name: 'dr grant sallyport',
+      id: 'dr-grant-gateway',
+      name: 'dr grant gateway',
     },
     {
       id: 'dr-lucy-flight-memory',
       name: 'dr lucy flight memory',
     },
     {
-      id: 'dr-maria-brand-director',
-      name: 'dr maria brand director',
+      id: 'dr-maria-brand',
+      name: 'dr maria brand',
     },
     {
-      id: 'dr-maria-support',
-      name: 'dr maria support',
+      id: 'dr-maria-service',
+      name: 'dr maria service',
     },
     {
       id: 'dr-match-bid-suite',
@@ -64,9 +67,21 @@ const getSolutionAgents = () => {
       name: 'professor lee q4d trainer',
     },
     {
-      id: 'professor-mia-team-leadership',
-      name: 'professor mia team leadership',
+      id: 'queen-mint-mark-maker',
+      name: 'queen mint mark maker',
     },
+    {
+      id: 'sir-tower-blockchain',
+      name: 'sir tower blockchain',
+    },
+    {
+      id: 'professor-levi-social',
+      name: 'professor levi social',
+    },
+    {
+      id: 'professor-lucinda-social',
+      name: 'professor lucinda social',
+    }
   ];
 };
 

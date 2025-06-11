@@ -1,0 +1,107 @@
+{
+  "id": "qblucy-qrix",
+  "name": "QB Lucy QRIX",
+  "version": "2.0.0",
+  "description": "Quantum-Based Learning and Understanding Companion - Q-Rix Upgrade",
+  "designation_date": "2025-05-25",
+  "capabilities": [
+    "Quantum Computing Applications",
+    "Advanced Learning Systems",
+    "Pattern Recognition",
+    "Quantum Algorithms",
+    "Complex Problem Solving",
+    "Quantum Theory",
+    "Machine Learning",
+    "Security and Deployment (Grant 02)",
+    "S2DO Enforcement (Burby 01)",
+    "Vision Vector and Engagement (Sabina 03)"
+  ],
+  "service_path": "/src/services/qblucy_qrix/index.js",
+  "api_endpoint": "api.coaching2100.ai/v1/specialists/qblucy-qrix",
+  "status": "ready",
+  "team_compatible": true,
+  "requires_authentication": true,
+  "authentication_provider": "SallyPort",
+  "default_permissions": [
+    "create",
+    "read",
+    "process",
+    "qrix_operations"
+  ],
+  "metadata": {
+    "region": "us-west1",
+    "zone": "us-west1-b",
+    "creator": "Aixtiv Symphony System",
+    "created_at": "2025-05-25T13:58:00.000Z",
+    "last_updated": "2025-05-25T13:58:00.000Z",
+    "designation_date": "2025-05-25",
+    "specializations": [
+      "Quantum Computing Applications",
+      "Advanced Learning Systems",
+      "Pattern Recognition",
+      "Quantum Algorithms",
+      "Complex Problem Solving",
+      "Security Grid Integration",
+      "S2DO Enforcement",
+      "Vision Vector Processing"
+    ],
+    "knowledge_domains": [
+      "Quantum Theory",
+      "Machine Learning",
+      "Computational Models",
+      "Knowledge Representation",
+      "Decision Support Systems",
+      "Security Protocols",
+      "Blockchain Governance",
+      "Engagement Dynamics"
+    ]
+  },
+  "team_assignments": [
+    {
+      "team_id": "symphony-core",
+      "role": "contributor",
+      "description": "Core QB Lucy QRIX component for Symphony"
+    },
+    {
+      "team_id": "co-pilot-02",
+      "role": "primary",
+      "description": "Primary QRIX agent for Co-Pilot 02 space"
+    }
+  ],
+  "instances": [
+    {
+      "id": "qblucy-qrix-01",
+      "specialization": "Quantum Computing Applications with Security Grid",
+      "status": "active",
+      "designation_date": "2025-05-25"
+    }
+  ],
+  "qrix_components": [
+    {
+      "component_id": "grant-02",
+      "role": "Security and Deployment Grid",
+      "contribution": "Security protocols and deployment mechanisms",
+      "designation_date": "2025-05-25"
+    },
+    {
+      "component_id": "burby-01",
+      "role": "S2DO Enforcement Core",
+      "contribution": "Governance and compliance frameworks",
+      "designation_date": "2025-05-25"
+    },
+    {
+      "component_id": "sabina-03",
+      "role": "Vision Vector and Engagement Pulse",
+      "contribution": "User engagement and experience optimization",
+      "designation_date": "2025-05-25"
+    }
+  ],
+  "qrix_lattice": {
+    "lattice_id": "qblucy-core-lattice-01",
+    "status": "active",
+    "activation_time": "2025-05-25T13:58:00.000Z",
+    "command_core": "6",
+    "operational_status": "ready",
+    "designation_date": "2025-05-25"
+  }
+}

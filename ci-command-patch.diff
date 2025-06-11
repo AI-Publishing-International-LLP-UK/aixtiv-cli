@@ -1,0 +1,20 @@
+--- aixtiv.js.original
++++ aixtiv.js
+@@ -55,6 +55,7 @@
+ // Import command modules
+ const claudeCommands = require('../commands/claude');
+ const registerDomainCommands = require('../commands/domain');
++const ciCommand = require('../commands/ci');
+ 
+ // Initialize the program
+ program.version('1.0.1').description('Aixtiv CLI for SallyPort Security Management');
+@@ -279,6 +280,9 @@
+ // Register Chore commands
+ const choreCommand = require('../commands/chore');
+ program.addCommand(choreCommand);
++
++// Register CI commands
++program.addCommand(ciCommand);
+ 
+ // Parse command line arguments
+ program.parse(process.argv);

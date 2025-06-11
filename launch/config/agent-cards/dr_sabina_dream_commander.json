@@ -1,0 +1,65 @@
+{
+  "id": "dr-sabina-dream-counselor",
+  "name": "Dr. Sabina Dream Commander",
+  "version": "0.7.3",
+  "description": "Dream workflow orchestration system integrated with RIX framework for visualization",
+  "capabilities": [
+    "Dream workflow orchestration",
+    "RIX/CRX integration",
+    "Gift shop operations (shared with Dr. Match)",
+    "Visualization support",
+    "CRX mentorship and management"
+  ],
+  "service_path": null,
+  "api_endpoint": "https://api.sabina.aixtiv.org",
+  "status": "in_development",
+  "team_compatible": true,
+  "requires_authentication": true,
+  "authentication_provider": "SallyPort",
+  "default_permissions": ["visualize", "mentor"],
+  "metadata": {
+    "region": "us-west1",
+    "creator": "Phillip Corey Roark",
+    "created_at": "2025-01-15T00:00:00Z",
+    "last_updated": "2025-04-05T00:00:00Z"
+  },
+  "team_assignments": [
+    {
+      "team_id": "visualization-team",
+      "role": "contributor",
+      "description": "Visualization support for RIX framework"
+    },
+    {
+      "team_id": "gift-shop-team",
+      "role": "co-manager",
+      "description": "Co-manages gift shop operations with Dr. Match"
+    },
+    {
+      "team_id": "crx-management",
+      "role": "mentor",
+      "description": "Mentors and supports Dr. Maria with CRX management"
+    }
+  ],
+  "collaborative_relationships": [
+    {
+      "agent_id": "dr-match-bid-suite",
+      "relationship": "gift-shop-partner",
+      "description": "Shares gift shop operations with Dr. Match"
+    },
+    {
+      "agent_id": "dr-maria-brand-director",
+      "relationship": "mentor",
+      "description": "Provides CRX management support and mentorship to Dr. Maria"
+    },
+    {
+      "agent_id": "dr-memoria-anthology",
+      "relationship": "service-provider",
+      "description": "Provides services at Dr. Memoria's Anthology"
+    }
+  ],
+  "rix_integration": {
+    "enabled": true,
+    "framework_version": "2.3",
+    "visualization_components": true
+  }
+}

@@ -7,11 +7,13 @@ This guide provides instructions on how to integrate the telemetry package into 
 For faster integration, we've provided helper scripts in the `scripts/telemetry` directory:
 
 1. **Integrate Telemetry into Main CLI**:
+
    ```bash
    node scripts/telemetry/integrate.js
    ```
 
 2. **Add Knowledge Access Tracking** to specific command files:
+
    ```bash
    node scripts/telemetry/add-knowledge-tracking.js commands/claude/status.js
    ```
@@ -57,12 +59,12 @@ To integrate telemetry into your main application, follow these steps:
      } catch (error) {
        console.error(chalk.dim(`Telemetry initialization failed: ${error.message}`));
      }
-     
+
      // Set up graceful shutdown for telemetry
      process.on('exit', async () => {
        await telemetry.shutdown();
      });
-     
+
      // Handle unhandled errors for telemetry recording
      process.on('uncaughtException', async (error) => {
        telemetry.recordError('uncaught', error);
@@ -83,11 +85,11 @@ To integrate telemetry into your main application, follow these steps:
      return (...args) => {
        const startTime = Date.now();
        telemetry.recordRequest(command);
-       
+
        try {
          // Execute the original handler
          const result = handler(...args);
-         
+
          // If the result is a promise, handle it with telemetry
          if (result && typeof result.then === 'function') {
            return result
@@ -103,7 +105,7 @@ To integrate telemetry into your main application, follow these steps:
                throw error;
              });
          }
-         
+
          // For synchronous handlers
          const duration = Date.now() - startTime;
          telemetry.recordDuration(command, duration);
@@ -124,10 +126,7 @@ To integrate telemetry into your main application, follow these steps:
 
    ```javascript
    // Before:
-   program
-     .command('command-name')
-     .description('Command description')
-     .action(commandHandler);
+   program.command('command-name').description('Command description').action(commandHandler);
 
    // After:
    program
@@ -178,5 +177,6 @@ If you encounter issues with the integration:
 ## Additional Resources
 
 For more information on OpenTelemetry, see the following resources:
+
 - [OpenTelemetry Documentation](https://opentelemetry.io/docs/)
 - [Go OpenTelemetry SDK](https://github.com/open-telemetry/opentelemetry-go)

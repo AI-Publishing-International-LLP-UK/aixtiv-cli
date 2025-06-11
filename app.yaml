@@ -9,8 +9,8 @@ automatic_scaling:
   max_instances: 10
 
 env_variables:
-  GOOGLE_CLOUD_PROJECT: "api-for-warp-drive"
+  GOOGLE_CLOUD_PROJECT: 'api-for-warp-drive'
 
 handlers:
-- url: /.*
-  script: auto
+  - url: /.*
+    script: auto

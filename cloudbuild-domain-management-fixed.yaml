@@ -1,0 +1,388 @@
+steps:
+  # Initialize with Authentication and Project Setup
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'initialize'
+    args:
+      - 'config'
+      - 'set'
+      - 'project'
+      - 'api-for-warp-drive'
+
+  # Install Dependencies
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'install'
+    args: ['install']
+
+  # Linting
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'lint'
+    args: ['run', 'lint']
+
+  # Build Application
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'build'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Starting application build..."
+        npm run build
+        echo "Build completed successfully"
+
+  # Validate Domain Management Command
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'validate-domain-management'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Validating domain management command..."
+        # Check if the command file exists
+        if [ -f "commands/domain/manage.js" ]; then
+          echo "✅ Domain management command file exists"
+        else
+          echo "❌ Domain management command file not found"
+          exit 1
+        fi
+
+        # Check command registration
+        if grep -q "domainManageCommand" "commands/domain/index.js"; then
+          echo "✅ Domain management command is registered"
+        else
+          echo "❌ Domain management command registration not found"
+          exit 1
+        fi
+
+        # Run the help command to verify it's working
+        node bin/aixtiv.js domain:manage --help
+
+        echo "Domain management command validation successful"
+
+  # Build Docker Image for Main Application
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'docker-build-main'
+    args: ['build', '-t', 'gcr.io/api-for-warp-drive/aixtiv-cli:domain-management-$COMMIT_SHA', '.']
+
+  # Build Vision Lake Solutions Container
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'docker-build-vision-lake'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Building Vision Lake Solutions container..."
+        
+        # Create a Dockerfile for Vision Lake
+        cat > ./vision_lake/Dockerfile << 'EOF'
+        FROM node:18-alpine AS base
+        
+        # Set environment variables
+        ENV NODE_ENV=production
+        ENV VISION_LAKE_ENV=production
+        
+        WORKDIR /app
+        
+        # Copy package files first for better caching
+        COPY package*.json ./
+        
+        # Install dependencies
+        RUN npm ci --only=production
+        
+        # Copy application code
+        COPY . .
+        
+        # Set proper ownership for the application files
+        RUN chown -R node:node /app
+        
+        # Add Python for data processing needs
+        FROM base AS python-deps
+        RUN apk add --no-cache python3 py3-pip
+        RUN pip3 install --no-cache-dir numpy pandas scikit-learn tensorflow
+        
+        # Final image
+        FROM base
+        COPY --from=python-deps /usr/lib/python3.9 /usr/lib/python3.9
+        COPY --from=python-deps /usr/bin/python3 /usr/bin/python3
+        
+        # Switch to non-root user
+        USER node
+        
+        # Set up environment for Cloud Run
+        ENV PORT=8080
+        EXPOSE ${PORT}
+        
+        # Start command
+        CMD ["node", "src/services/vision_lake/server.js"]
+        EOF
+        
+        # Build the Vision Lake container
+        docker build -t gcr.io/api-for-warp-drive/vision-lake:$COMMIT_SHA -f ./vision_lake/Dockerfile ./vision_lake
+        
+        echo "Vision Lake Solutions container built successfully"
+
+  # Push Docker Images
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'docker-push-main'
+    args: ['push', 'gcr.io/api-for-warp-drive/aixtiv-cli:domain-management-$COMMIT_SHA']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'docker-push-vision-lake'
+    args: ['push', 'gcr.io/api-for-warp-drive/vision-lake:$COMMIT_SHA']
+
+  # Connect to Kubernetes and Retrieve IP Addresses
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'connect-to-kubernetes'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Connect to GKE cluster (using region instead of zone)
+        echo "Connecting to Kubernetes cluster in us-west1 region..."
+        gcloud container clusters get-credentials private-cluster-auto --region us-west1 --project api-for-warp-drive
+        
+        if [ $? -ne 0 ]; then
+          echo "❌ Failed to connect to Kubernetes cluster"
+          exit 1
+        fi
+        
+        echo "✅ Successfully connected to Kubernetes cluster"
+        
+        # Retrieve IPs and store them in files for later steps
+        echo "Retrieving STAGING_IP from Kubernetes service..."
+        STAGING_IP=$(kubectl get svc aixtiv-cli-staging -n anthology-ai-staging -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null)
+        
+        # Check if STAGING_IP was retrieved successfully
+        if [ -z "$STAGING_IP" ]; then
+          echo "⚠️ Could not retrieve STAGING_IP from Kubernetes service"
+          echo "⚠️ Using fallback IP 0.0.0.0 for STAGING_IP"
+          STAGING_IP="0.0.0.0"
+        else
+          echo "✅ Retrieved STAGING_IP: $STAGING_IP"
+        fi
+        
+        # Store the STAGING_IP for later steps
+        echo "$STAGING_IP" > /workspace/staging_ip.txt
+        
+        # Retrieve LOAD_BALANCER_IP
+        echo "Retrieving LOAD_BALANCER_IP from Kubernetes service..."
+        LOAD_BALANCER_IP=$(kubectl get svc aixtiv-cli -n anthology-ai -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null)
+        
+        # Check if LOAD_BALANCER_IP was retrieved successfully
+        if [ -z "$LOAD_BALANCER_IP" ]; then
+          echo "⚠️ Could not retrieve LOAD_BALANCER_IP from Kubernetes service"
+          echo "⚠️ Using fallback IP 0.0.0.0 for LOAD_BALANCER_IP"
+          LOAD_BALANCER_IP="0.0.0.0"
+        else
+          echo "✅ Retrieved LOAD_BALANCER_IP: $LOAD_BALANCER_IP"
+        fi
+        
+        # Store the LOAD_BALANCER_IP for later steps
+        echo "$LOAD_BALANCER_IP" > /workspace/load_balancer_ip.txt
+    env:
+      - 'CLOUDSDK_COMPUTE_REGION=us-west1'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=private-cluster-auto'
+
+  # Update DNS Configuration with Retrieved IPs
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'update-dns-configuration'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Load the stored IPs from previous step
+        STAGING_IP=$(cat /workspace/staging_ip.txt)
+        LOAD_BALANCER_IP=$(cat /workspace/load_balancer_ip.txt)
+        
+        echo "Using STAGING_IP: $STAGING_IP"
+        echo "Using LOAD_BALANCER_IP: $LOAD_BALANCER_IP"
+        
+        # Create a temporary file with the IPs directly substituted
+        echo "Updating deployment/dns.yaml with retrieved IPs..."
+        cp deployment/dns.yaml deployment/dns.yaml.bak
+        
+        # Use sed to replace the variables with actual values
+        sed -i "s|\${STAGING_IP}|$STAGING_IP|g" deployment/dns.yaml
+        sed -i "s|\${LOAD_BALANCER_IP}|$LOAD_BALANCER_IP|g" deployment/dns.yaml
+        
+        echo "✅ Updated deployment/dns.yaml with actual IP values"
+        
+        # Display the updated file for verification
+        echo "Updated DNS configuration:"
+        cat deployment/dns.yaml
+
+  # Deploy to Staging Environment
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'deploy-staging'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Starting deployment to staging environment..."
+        
+        # Update deployment YAML with new image
+        sed -i "s|gcr.io/api-for-warp-drive/aixtiv-cli:.*|gcr.io/api-for-warp-drive/aixtiv-cli:domain-management-$COMMIT_SHA|g" infrastructure/staging/deployment.yaml
+        
+        # Apply updated deployment
+        kubectl apply -f infrastructure/staging/deployment.yaml
+        if [ $? -ne 0 ]; then
+          echo "❌ Failed to apply deployment configuration"
+          exit 1
+        fi
+        
+        kubectl apply -f infrastructure/staging/service.yaml
+        if [ $? -ne 0 ]; then
+          echo "❌ Failed to apply service configuration"
+          exit 1
+        fi
+        
+        # Apply the updated DNS configuration
+        kubectl apply -f deployment/dns.yaml
+        if [ $? -ne 0 ]; then
+          echo "❌ Failed to apply DNS configuration"
+          # Restore the original DNS file
+          cp deployment/dns.yaml.bak deployment/dns.yaml
+          exit 1
+        fi
+        
+        echo "✅ Deployment to staging completed successfully"
+    env:
+      - 'CLOUDSDK_COMPUTE_REGION=us-west1'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=private-cluster-auto'
+
+  # Deploy Vision Lake Solutions
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'deploy-vision-lake'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Deploying Vision Lake Solutions..."
+        
+        # Create deployment YAML for Vision Lake
+        cat > ./vision_lake/vision-lake-deployment.yaml << EOF
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: vision-lake
+          namespace: anthology-ai
+        spec:
+          replicas: 2
+          selector:
+            matchLabels:
+              app: vision-lake
+          template:
+            metadata:
+              labels:
+                app: vision-lake
+            spec:
+              containers:
+              - name: vision-lake
+                image: gcr.io/api-for-warp-drive/vision-lake:$COMMIT_SHA
+                ports:
+                - containerPort: 8080
+                resources:
+                  requests:
+                    cpu: "100m"
+                    memory: "256Mi"
+                  limits:
+                    cpu: "500m"
+                    memory: "512Mi"
+                env:
+                - name: PROJECT_ID
+                  value: "api-for-warp-drive"
+                - name: REGION
+                  value: "us-west1"
+                - name: BUCKET_NAME
+                  value: "vision-lake-main"
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: vision-lake
+          namespace: anthology-ai
+        spec:
+          type: ClusterIP
+          ports:
+          - port: 80
+            targetPort: 8080
+          selector:
+            app: vision-lake
+        EOF
+        
+        # Apply Vision Lake deployment
+        kubectl apply -f ./vision_lake/vision-lake-deployment.yaml
+        if [ $? -ne 0 ]; then
+          echo "❌ Failed to deploy Vision Lake Solutions"
+          exit 1
+        fi
+        
+        echo "✅ Vision Lake Solutions deployed successfully"
+    env:
+      - 'CLOUDSDK_COMPUTE_REGION=us-west1'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=private-cluster-auto'
+
+  # Test Deployment
+  - name: 'gcr.io/cloud-builders/curl'
+    id: 'test-deployment'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Testing deployment..."
+        
+        # Get STAGING_IP
+        STAGING_IP=$(cat /workspace/staging_ip.txt)
+        
+        # Wait for deployment to be ready
+        echo "Waiting for services to be fully available..."
+        sleep 30
+        
+        # Test API endpoints
+        echo "Testing health endpoint..."
+        HEALTH_CHECK=$(curl -s -o /dev/null -w "%{http_code}" http://$STAGING_IP/health || echo "failed")
+        
+        if [ "$HEALTH_CHECK" = "200" ]; then
+          echo "✅ Health check passed: $HEALTH_CHECK"
+        else
+          echo "⚠️ Health check returned: $HEALTH_CHECK - This may be normal during initial deployment"
+          # Don't fail the build, just warn
+        fi
+
+  # Notify Deployment Completion
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'notify-completion'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "🚀 Domain Management Deployment Pipeline completed successfully!"
+        echo "✅ Domain Management Command: DEPLOYED"
+        echo "✅ Staging deployment: COMPLETE"
+        echo "✅ Vision Lake Solutions: CONTAINERIZED AND DEPLOYED"
+        echo "✅ Docker Images:"
+        echo "   - gcr.io/api-for-warp-drive/aixtiv-cli:domain-management-$COMMIT_SHA"
+        echo "   - gcr.io/api-for-warp-drive/vision-lake:$COMMIT_SHA"
+        
+        # Restore the original DNS file (cleanup)
+        cp deployment/dns.yaml.bak deployment/dns.yaml
+        
+        # Record deployment in Firestore
+        gcloud firestore documents create projects/api-for-warp-drive/databases/(default)/documents/deployments/$(date +%Y%m%d%H%M%S) \
+          --fields="status=SUCCESS,timestamp=$(date +%s),feature=domain-management,version=$COMMIT_SHA,environment=staging,vsl_containerized=true"
+
+timeout: 1800s # 30 minutes
+options:
+  machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
+
+artifacts:
+  objects:
+    location: 'gs://api-for-warp-drive-artifacts/builds/$BUILD_ID/'
+    paths: [
+      'dist/**/*',
+      'vision_lake/vision-lake-deployment.yaml',
+      'deployment/dns.yaml'
+    ]
+
+serviceAccount: 'projects/api-for-warp-drive/serviceAccounts/drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com'
+

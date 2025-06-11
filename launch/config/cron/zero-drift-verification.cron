@@ -1,0 +1,6 @@
+# Zero-Drift Verification for Coaching2100 Domains
+# Run verification daily at 3:00 AM UTC (after the domain autoscale job at 2:00 AM)
+0 3 * * * cd /path/to/aixtiv-cli && ./scripts/verify-zero-drift.sh >> /var/log/zero-drift-verification.log 2>&1
+
+# Run verification after each deployment (by adding to post-deploy hooks)
+# This is handled by the CI/CD pipeline integration

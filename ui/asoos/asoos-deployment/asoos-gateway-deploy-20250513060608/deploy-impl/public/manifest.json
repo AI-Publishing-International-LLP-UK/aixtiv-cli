@@ -1,0 +1,58 @@
+{
+  "name": "ASOOS - Aixtiv Symphony Orchestrating OS",
+  "short_name": "ASOOS",
+  "description": "An advanced AI orchestration system for Aixtiv Symphony",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1E293B",
+  "theme_color": "#3B82F6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your ASOOS Dashboard",
+      "url": "/?view=main",
+      "icons": [{ "src": "/shortcut-dashboard.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Statistics",
+      "short_name": "Stats",
+      "description": "View your ROI Statistics",
+      "url": "/?view=stats",
+      "icons": [{ "src": "/shortcut-stats.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "screenshots": [
+    {
+      "src": "/screenshot-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "ASOOS Dashboard"
+    },
+    {
+      "src": "/screenshot-2.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Statistics Dashboard"
+    }
+  ]
+}

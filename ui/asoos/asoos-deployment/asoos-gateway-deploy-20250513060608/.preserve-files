@@ -1,0 +1,17 @@
+# Files to preserve during updates
+# These files will be backed up before an update and restored afterwards
+
+# Configuration files
+mcp-config.json
+.env
+
+# Custom UI components (if any)
+public/custom/logo.png
+public/custom/branding.css
+
+# Server scripts
+start.sh
+gateway-server.js
+
+# Custom data (if any)
+data/user-preferences.json

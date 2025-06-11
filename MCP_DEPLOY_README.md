@@ -26,6 +26,7 @@ chmod +x deploy-mcp-drclaude.sh
 ```
 
 This script:
+
 1. Verifies the drclaude.live domain configuration
 2. Uses Dr. Claude Automation to prepare and sync deployment files
 3. Configures the Firebase project for drclaude.live
@@ -71,11 +72,13 @@ curl -X POST https://drclaude.live/claude-code-generate \
 If you encounter deployment issues:
 
 1. Check Firebase deployment logs:
+
    ```bash
    firebase deploy --only hosting,functions --project dr-claude-live --debug
    ```
 
 2. Verify domain configuration:
+
    ```bash
    aixtiv domain verify drclaude.live
    ```

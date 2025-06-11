@@ -5,10 +5,12 @@ This integration connects the coaching2100 Google Drive content with Aixtiv Symp
 ## Components
 
 1. **Firebase Functions**
+
    - `handleDriveChanges`: Processes notifications when files change
    - `processDriveFiles`: Extracts content and updates Firestore
 
 2. **Pub/Sub Topic**
+
    - Name: `drive-updates`
    - Purpose: Channel for Drive change notifications
 
@@ -27,6 +29,7 @@ This integration connects the coaching2100 Google Drive content with Aixtiv Symp
 ## Troubleshooting
 
 If the integration fails, check:
+
 1. Google Drive API is enabled
 2. Service account has access to the coaching2100 folders
 3. Firebase project is properly configured

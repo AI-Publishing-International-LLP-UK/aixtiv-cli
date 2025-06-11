@@ -1,0 +1,14 @@
+# Backup files
+*.bak
+
+# Test files
+*.test.js
+
+# Log files
+logs/*
+!logs/telemetry/.gitkeep
+
+# Development files
+.git
+.github
+.vscode

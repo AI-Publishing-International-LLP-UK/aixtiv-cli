@@ -6,12 +6,18 @@ const packageJson = require('../package.json');
 require('dotenv').config();
 
 // Display banner
-console.log(chalk.cyan(figlet.textSync('Aixtiv Project', { horizontalLayout: 'full' })));
+console.log(
+  chalk.cyan(
+    figlet.textSync('Aixtiv Project', { horizontalLayout: 'full' })
+  )
+);
 console.log(chalk.blue(`v${packageJson.version} - Aixtiv Project`));
 console.log();
 
 // Configure program
-program.version(packageJson.version).description('Aixtiv Project CLI');
+program
+  .version(packageJson.version)
+  .description('Aixtiv Project CLI');
 
 // Define commands here
 // Example:
