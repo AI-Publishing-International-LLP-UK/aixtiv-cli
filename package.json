@@ -4,25 +4,21 @@
   "description": "Aixtiv CLI for SallyPort Security Management",
   "main": "bin/aixtiv.js",
   "bin": {
-    "aixtiv": "bin/aixtiv.js"
+    "aixtiv": "./bin/aixtiv.js"
   },
-  "type": "commonjs",
   "scripts": {
-    "start": "node bin/aixtiv.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "commander": "^11.0.0",
+    "chalk": "^4.1.2",
+    "inquirer": "^8.2.5"
   },
   "keywords": [
     "cli",
     "security",
-    "agent",
     "sallyport"
   ],
-  "author": "Aixtiv Symphony",
-  "license": "PROPRIETARY",
-  "dependencies": {
-    "commander": "^11.0.0",
-    "chalk": "^4.1.2",
-    "inquirer": "^8.2.5",
-    "ora": "^5.4.1"
-  }
+  "author": "",
+  "license": "ISC"
 }
