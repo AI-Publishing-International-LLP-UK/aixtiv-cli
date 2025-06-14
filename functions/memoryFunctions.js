@@ -11,10 +11,11 @@
  * @version 1.0.0
  */
 
-const functions = require('firebase-functions/v2');
+const { onCall, HttpsError } = require('firebase-functions/v2/https');
+const { onDocumentCreated } = require('firebase-functions/v2/firestore');
+const { onSchedule } = require('firebase-functions/v2/scheduler');
 const admin = require('firebase-admin');
 const { v4: uuidv4 } = require('uuid');
-const { regional } = require('./config/region');
 
 // Initialize Firebase Admin SDK if not already initialized
 if (!admin.apps.length) {
@@ -26,10 +27,15 @@ const db = admin.firestore();
 /**
  * HTTP function to add a memory entry
  */
-exports.addMemory = functions.https.onCall(async (data, context) => {
+exports.addMemory = onCall({
+  region: 'us-west1',
+  memory: '256MiB'
+}, async (request) => {
+  const { data, auth } = request;
+  
   // Verify authentication
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
+  if (!auth) {
+    throw new HttpsError(
       'unauthenticated',
       'Authentication required to add memories'
     );
@@ -39,7 +45,7 @@ exports.addMemory = functions.https.onCall(async (data, context) => {
     const { content, sessionId, copilotId, type, importance, category, metadata = {} } = data;
 
     if (!content || !sessionId || !copilotId || !type) {
-      throw new functions.https.HttpsError(
+      throw new HttpsError(
         'invalid-argument',
         'Required fields missing: content, sessionId, copilotId, and type are required'
       );
@@ -52,7 +58,7 @@ exports.addMemory = functions.https.onCall(async (data, context) => {
     const memoryEntry = {
       id: memoryId,
       sessionId,
-      userId: context.auth.uid,
+      userId: auth.uid,
       copilotId,
       timestamp,
       type,
@@ -67,7 +73,7 @@ exports.addMemory = functions.https.onCall(async (data, context) => {
     await db.collection('chat_history').doc(memoryId).set(memoryEntry);
 
     // Update memory counters for analytics
-    const counterRef = db.collection('memory_metrics').doc(context.auth.uid);
+    const counterRef = db.collection('memory_metrics').doc(auth.uid);
     await counterRef.set(
       {
         total_memories: admin.firestore.FieldValue.increment(1),
@@ -82,7 +88,7 @@ exports.addMemory = functions.https.onCall(async (data, context) => {
   } catch (error) {
     console.error('Error adding memory:', error);
 
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       'internal',
       error.message || 'An unknown error occurred',
       error
@@ -93,10 +99,15 @@ exports.addMemory = functions.https.onCall(async (data, context) => {
 /**
  * HTTP function to query memories
  */
-exports.queryMemories = functions.https.onCall(async (data, context) => {
+exports.queryMemories = onCall({
+  region: 'us-west1',
+  memory: '256MiB'
+}, async (request) => {
+  const { data, auth } = request;
+  
   // Verify authentication
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
+  if (!auth) {
+    throw new HttpsError(
       'unauthenticated',
       'Authentication required to query memories'
     );
@@ -117,7 +128,7 @@ exports.queryMemories = functions.https.onCall(async (data, context) => {
     } = data;
 
     // Start building the query
-    let query = db.collection('chat_history').where('userId', '==', context.auth.uid);
+    let query = db.collection('chat_history').where('userId', '==', auth.uid);
 
     // Apply filters
     if (sessionId) {
@@ -167,7 +178,7 @@ exports.queryMemories = functions.https.onCall(async (data, context) => {
   } catch (error) {
     console.error('Error querying memories:', error);
 
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       'internal',
       error.message || 'An unknown error occurred',
       error
@@ -178,10 +189,15 @@ exports.queryMemories = functions.https.onCall(async (data, context) => {
 /**
  * HTTP function to get memory statistics
  */
-exports.getMemoryStats = functions.https.onCall(async (data, context) => {
+exports.getMemoryStats = onCall({
+  region: 'us-west1',
+  memory: '256MiB'
+}, async (request) => {
+  const { data, auth } = request;
+  
   // Verify authentication
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
+  if (!auth) {
+    throw new HttpsError(
       'unauthenticated',
       'Authentication required to get memory statistics'
     );
@@ -189,7 +205,7 @@ exports.getMemoryStats = functions.https.onCall(async (data, context) => {
 
   try {
     // Get basic memory stats from counters
-    const counterRef = db.collection('memory_metrics').doc(context.auth.uid);
+    const counterRef = db.collection('memory_metrics').doc(auth.uid);
     const counterDoc = await counterRef.get();
 
     let basicStats = {};
@@ -209,7 +225,7 @@ exports.getMemoryStats = functions.https.onCall(async (data, context) => {
     // Get active session count
     const activeSessions = await db
       .collection('sessions')
-      .where('userId', '==', context.auth.uid)
+      .where('userId', '==', auth.uid)
       .where('status', '==', 'active')
       .count()
       .get();
@@ -217,7 +233,7 @@ exports.getMemoryStats = functions.https.onCall(async (data, context) => {
     // Get recent memory activity
     const recentActivity = await db
       .collection('chat_history')
-      .where('userId', '==', context.auth.uid)
+      .where('userId', '==', auth.uid)
       .orderBy('timestamp', 'desc')
       .limit(5)
       .get();
@@ -239,7 +255,7 @@ exports.getMemoryStats = functions.https.onCall(async (data, context) => {
     const copilotStats = {};
     const copilotQuery = await db
       .collection('chat_history')
-      .where('userId', '==', context.auth.uid)
+      .where('userId', '==', auth.uid)
       .orderBy('timestamp', 'desc')
       .limit(1000) // Analyze last 1000 memories
       .get();
@@ -274,7 +290,7 @@ exports.getMemoryStats = functions.https.onCall(async (data, context) => {
   } catch (error) {
     console.error('Error getting memory statistics:', error);
 
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       'internal',
       error.message || 'An unknown error occurred',
       error
@@ -285,10 +301,15 @@ exports.getMemoryStats = functions.https.onCall(async (data, context) => {
 /**
  * HTTP function to clear session memories
  */
-exports.clearSessionMemories = functions.https.onCall(async (data, context) => {
+exports.clearSessionMemories = onCall({
+  region: 'us-west1',
+  memory: '256MiB'
+}, async (request) => {
+  const { data, auth } = request;
+  
   // Verify authentication
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
+  if (!auth) {
+    throw new HttpsError(
       'unauthenticated',
       'Authentication required to clear session memories'
     );
@@ -298,20 +319,20 @@ exports.clearSessionMemories = functions.https.onCall(async (data, context) => {
     const { sessionId } = data;
 
     if (!sessionId) {
-      throw new functions.https.HttpsError('invalid-argument', 'Session ID is required');
+      throw new HttpsError('invalid-argument', 'Session ID is required');
     }
 
     // Verify session ownership
     const sessionDoc = await db.collection('sessions').doc(sessionId).get();
 
     if (!sessionDoc.exists) {
-      throw new functions.https.HttpsError('not-found', 'Session not found');
+      throw new HttpsError('not-found', 'Session not found');
     }
 
     const sessionData = sessionDoc.data();
 
-    if (sessionData.userId !== context.auth.uid && !context.auth.token.admin) {
-      throw new functions.https.HttpsError(
+    if (sessionData.userId !== auth.uid && !auth.token.admin) {
+      throw new HttpsError(
         'permission-denied',
         'You do not have permission to clear this session'
       );
@@ -346,7 +367,7 @@ exports.clearSessionMemories = functions.https.onCall(async (data, context) => {
     });
 
     // Update memory counters
-    const counterRef = db.collection('memory_metrics').doc(context.auth.uid);
+    const counterRef = db.collection('memory_metrics').doc(auth.uid);
     await counterRef.set(
       {
         total_memories: admin.firestore.FieldValue.increment(-count),
@@ -360,7 +381,7 @@ exports.clearSessionMemories = functions.https.onCall(async (data, context) => {
   } catch (error) {
     console.error('Error clearing session memories:', error);
 
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       'internal',
       error.message || 'An unknown error occurred',
       error
@@ -371,91 +392,97 @@ exports.clearSessionMemories = functions.https.onCall(async (data, context) => {
 /**
  * Firestore trigger to handle memory importance analysis
  */
-exports.analyzeMemoryImportance = regional.firestore
-  .onDocumentCreated('chat_history/{memoryId}', async (event) => {
-    try {
-      // In v6.x, we need to check if data exists first
-      if (!event.data) {
-        console.log('No data associated with the event');
-        return null;
-      }
-
-      const memoryData = event.data.data();
-      
-      // Skip if importance is already set to a non-default value
-      if (memoryData.importance !== 5) {
-        return null;
-      }
-
-      // Simple importance analysis based on content and metadata
-      let importanceScore = 5; // Default score
-
-      // Content-based factors
-      const content = memoryData.content.toLowerCase();
-
-      // Check for importance indicators in content
-      const importantKeywords = [
-        'important',
-        'critical',
-        'essential',
-        'remember',
-        'key',
-        'significant',
-      ];
-      for (const keyword of importantKeywords) {
-        if (content.includes(keyword)) {
-          importanceScore += 1;
-        }
-      }
-
-      // Check for personal data indicators
-      const personalDataKeywords = ['phone', 'address', 'email', 'password', 'personal', 'private'];
-      for (const keyword of personalDataKeywords) {
-        if (content.includes(keyword)) {
-          importanceScore += 2;
-        }
-      }
-
-      // Metadata-based factors
-      if (memoryData.metadata) {
-        // Higher importance for user inputs
-        if (memoryData.type === 'user_input') {
-          importanceScore += 1;
-        }
-
-        // Higher importance for specific categories
-        if (memoryData.category === 'preference' || memoryData.category === 'personal') {
-          importanceScore += 1;
-        }
-
-        // Sentiment-based importance
-        if (
-          memoryData.metadata.sentiment === 'strongly_positive' ||
-          memoryData.metadata.sentiment === 'strongly_negative'
-        ) {
-          importanceScore += 1;
-        }
-      }
-
-      // Cap the score at 10
-      importanceScore = Math.min(10, importanceScore);
-
-      // Update the memory with the analyzed importance
-      return event.data.ref.update({
-        importance: importanceScore,
-        importanceAnalyzed: true,
-      });
-    } catch (error) {
-      console.error('Error analyzing memory importance:', error);
+exports.analyzeMemoryImportance = onDocumentCreated({
+  document: 'chat_history/{memoryId}',
+  region: 'us-west1',
+  memory: '256MiB'
+}, async (event) => {
+  try {
+    // In v2, we need to check if data exists first
+    if (!event.data) {
+      console.log('No data associated with the event');
       return null;
     }
-  });
+
+    const memoryData = event.data.data();
+    
+    // Skip if importance is already set to a non-default value
+    if (memoryData.importance !== 5) {
+      return null;
+    }
+
+    // Simple importance analysis based on content and metadata
+    let importanceScore = 5; // Default score
+
+    // Content-based factors
+    const content = memoryData.content.toLowerCase();
+
+    // Check for importance indicators in content
+    const importantKeywords = [
+      'important',
+      'critical',
+      'essential',
+      'remember',
+      'key',
+      'significant',
+    ];
+    for (const keyword of importantKeywords) {
+      if (content.includes(keyword)) {
+        importanceScore += 1;
+      }
+    }
+
+    // Check for personal data indicators
+    const personalDataKeywords = ['phone', 'address', 'email', 'password', 'personal', 'private'];
+    for (const keyword of personalDataKeywords) {
+      if (content.includes(keyword)) {
+        importanceScore += 2;
+      }
+    }
+
+    // Metadata-based factors
+    if (memoryData.metadata) {
+      // Higher importance for user inputs
+      if (memoryData.type === 'user_input') {
+        importanceScore += 1;
+      }
+
+      // Higher importance for specific categories
+      if (memoryData.category === 'preference' || memoryData.category === 'personal') {
+        importanceScore += 1;
+      }
+
+      // Sentiment-based importance
+      if (
+        memoryData.metadata.sentiment === 'strongly_positive' ||
+        memoryData.metadata.sentiment === 'strongly_negative'
+      ) {
+        importanceScore += 1;
+      }
+    }
+
+    // Cap the score at 10
+    importanceScore = Math.min(10, importanceScore);
+
+    // Update the memory with the analyzed importance
+    return event.data.ref.update({
+      importance: importanceScore,
+      importanceAnalyzed: true,
+    });
+  } catch (error) {
+    console.error('Error analyzing memory importance:', error);
+    return null;
+  }
+});
 
 /**
  * Scheduled function to archive old memories
  */
-exports.archiveOldMemories = regional.scheduler
-  .onSchedule('every 24 hours', async (context) => {
+exports.archiveOldMemories = onSchedule({
+  schedule: 'every 24 hours',
+  region: 'us-west1',
+  memory: '256MiB'
+}, async (context) => {
     try {
       console.log('Running memory archiving job');
 

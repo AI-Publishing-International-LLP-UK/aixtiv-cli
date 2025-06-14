@@ -1,7 +1,7 @@
 /**
- * Dewey Digital Index - Main Module
+ * DI:DC (Dewey Digital Index Cards) - Main Module
  * 
- * This is the main entry point for the Dewey Digital Index system,
+ * This is the main entry point for the DI:DC system,
  * which provides asset indexing, classification, and semantic search.
  */
 
@@ -59,7 +59,7 @@ async function classifyContent(source, indexedContentId) {
 }
 
 /**
- * Searches for content in the Dewey Digital Index
+ * Searches for content in the DI:DC system
  * @param {Object} query - The search query
  * @returns {Promise<Array>} - The search results
  */

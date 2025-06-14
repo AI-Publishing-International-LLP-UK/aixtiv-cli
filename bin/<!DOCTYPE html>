@@ -1,0 +1,2464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASOOS.2100.Cool - Aixtiv Symphony Orchestrating Operating System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #0a0a0a;
+      color: #ffffff;
+      overflow: hidden;
+      height: 100vh;
+    }
+    
+    /* Animations */
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+      }
+      33% {
+        transform: translateY(-10px) translateX(5px) rotate(5deg);
+      }
+      66% {
+        transform: translateY(5px) translateX(-5px) rotate(-5deg);
+      }
+    }
+    
+    @keyframes glow {
+      0%, 100% {
+        box-shadow: 0 0 5px rgba(11, 177, 187, 0.8), 0 0 20px rgba(11, 177, 187, 0.4);
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(11, 177, 187, 1), 0 0 40px rgba(11, 177, 187, 0.6);
+      }
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes breathe {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.02);
+      }
+    }
+    
+    @keyframes shimmer {
+      0% {
+        background-position: -200% 0;
+      }
+      100% {
+        background-position: 200% 0;
+      }
+    }
+    
+    @keyframes collaborationPulse {
+      0%, 100% {
+        opacity: 0.8;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.02);
+      }
+    }
+    
+    @keyframes scan {
+      0% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      50% {
+        transform: translateY(-50%);
+        opacity: 0.5;
+      }
+      100% {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+    }
+    
+    /* Main Container */
+    .main-container {
+      display: flex;
+      height: 100vh;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      position: relative;
+    }
+    
+    .page {
+      display: none;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .page.active {
+      display: flex;
+    }
+    
+    /* Particles */
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(11, 177, 187, 0.6);
+      border-radius: 50%;
+      animation: float 8s infinite ease-in-out;
+    }
+    
+    /* Glass Effect */
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 70px;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 0;
+      position: relative;
+      z-index: 100;
+    }
+    
+    .sidebar-icon {
+      width: 40px;
+      height: 40px;
+      margin: 12px 0;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+      z-index: 101;
+    }
+    
+    .sidebar-icon:hover {
+      transform: scale(1.1);
+    }
+    
+    .sidebar-icon.active {
+      animation: glow 2s infinite;
+    }
+    
+    .icon-tooltip {
+      position: absolute;
+      left: 60px;
+      top: 50%;
+      transform: translateY(-50%) translateX(-5px);
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 8px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(11, 177, 187, 0.5);
+      font-size: 11px;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+    
+    .sidebar-icon:hover .icon-tooltip {
+      opacity: 1;
+      transform: translateY(-50%) translateX(5px);
+    }
+    
+    /* Header */
+    .header {
+      height: 60px;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+    }
+    
+    .logo {
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #FFD700, #c7b299, #50C878, #0bb1bb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
+    }
+    
+    .tagline {
+      font-size: 11px;
+      color: #888;
+      margin-top: 3px;
+    }
+    
+    .user-info {
+      text-align: right;
+    }
+    
+    .user-name {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    .user-role {
+      font-size: 13px;
+      color: #0bb1bb;
+    }
+    
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .content-area {
+      flex: 1;
+      display: flex;
+      padding: 15px;
+      gap: 15px;
+    }
+    
+    /* Chat Area */
+    .chat-area {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .message {
+      max-width: 70%;
+      padding: 15px 20px;
+      border-radius: 20px;
+      animation: slideIn 0.3s ease;
+    }
+    
+    .message.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #0bb1bb, #0891a0);
+      color: white;
+    }
+    
+    .message.ai {
+      align-self: flex-start;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Scan to Do Button */
+    .scan-todo-button {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #0bb1bb, #50C878);
+      border-radius: 50%;
+      border: none;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(11, 177, 187, 0.4);
+      transition: all 0.3s;
+      overflow: hidden;
+    }
+    
+    .scan-todo-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(11, 177, 187, 0.6);
+    }
+    
+    .scan-todo-button svg {
+      width: 24px;
+      height: 24px;
+    }
+    
+    .scan-todo-button.scanning::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.4), transparent);
+      animation: scan 2s linear infinite;
+    }
+    
+    /* Video Area */
+    .video-area {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 160px;
+      height: 120px;
+      background: #000;
+      border-radius: 8px;
+      display: none;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(11, 177, 187, 0.5);
+    }
+    
+    .video-area.active {
+      display: block;
+    }
+    
+    /* Input Area */
+    .input-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 25px;
+      border: 2px solid transparent;
+      background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), 
+                        linear-gradient(135deg, #FFD700, #c7b299, #50C878, #0bb1bb);
+      background-origin: border-box;
+      background-clip: content-box, border-box;
+    }
+    
+    .input-field {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: white;
+      font-size: 16px;
+      padding: 5px 10px;
+    }
+    
+    .input-btn {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+    
+    .input-btn:hover {
+      background: rgba(11, 177, 187, 0.2);
+      border-color: #0bb1bb;
+      transform: scale(1.05);
+    }
+    
+    .input-btn.active {
+      background: #0bb1bb;
+      border-color: #0bb1bb;
+      animation: pulse 2s infinite;
+    }
+    
+    /* Right Panel */
+    .right-panel {
+      width: 350px;
+      display: flex;
+      flex-d
+    }irection: column;
+      gap: 20px;
+    }
+    
+    .panel-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    
+    .panel-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(11, 177, 187, 0.2);
+      border-color: rgba(11, 177, 187, 0.3);
+    }
+    
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      cursor: pointer;
+    }
+    
+    .panel-title {
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .panel-content {
+      display: none;
+    }
+    
+    .panel-content.active {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+    
+    /* AI Assistant */
+    .ai-assistant {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      background: rgba(11, 177, 187, 0.1);
+      border-radius: 15px;
+      border: 1px solid rgba(11, 177, 187, 0.3);
+    }
+    
+    .ai-avatar {
+      width: 50px;
+      height: 50px;
+      position: relative;
+    }
+    
+    .hex-avatar {
+      width: 100%;
+      height: 100%;
+      animation: breathe 3s infinite;
+    }
+    
+    .ai-info {
+      flex: 1;
+    }
+    
+    .ai-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #0bb1bb;
+    }
+    
+    .ai-status {
+      font-size: 12px;
+      color: #888;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #00ff88;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    /* DDI Card Display */
+    .ddi-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .ddi-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(11, 177, 187, 0.1), transparent);
+      transform: rotate(45deg);
+      transition: all 0.5s;
+      opacity: 0;
+    }
+    
+    .ddi-card:hover::before {
+      animation: shimmer 0.5s ease;
+      opacity: 1;
+    }
+    
+    .ddi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(11, 177, 187, 0.3);
+      border-color: rgba(11, 177, 187, 0.5);
+    }
+    
+    .ddi-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .ddi-card-id {
+      font-size: 11px;
+      color: #0bb1bb;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+    
+    .ddi-card-status {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0bb1bb, #50C878);
+      color: white;
+      font-weight: 500;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .ddi-card-status::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 3s infinite;
+    }
+    
+    .ddi-card-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .ddi-card-info {
+      font-size: 13px;
+      color: #aaa;
+      margin-bottom: 3px;
+    }
+    
+    .ddi-card-rewards {
+      font-size: 12px;
+      color: #0bb1bb;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    /* Squadron Stats */
+    .squadron-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .squadron-stat {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .squadron-stat-label {
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 3px;
+    }
+    
+    .squadron-stat-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0bb1bb;
+    }
+    
+    /* Bottom Bar */
+    .bottom-bar {
+      height: 50px;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+    }
+    
+    .integration-icons {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .integration-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 16px;
+      position: relative;
+    }
+    
+    .integration-icon:hover {
+      transform: scale(1.1) translateY(-2px);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #0bb1bb;
+    }
+    
+    .integration-icon::after {
+      content: attr(title);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.95);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      margin-bottom: 5px;
+      z-index: 1000;
+      border: 1px solid rgba(11, 177, 187, 0.5);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+    
+    .integration-icon:hover::after {
+      opacity: 1;
+    }
+    
+    .gateway-btn {
+      padding: 8px 16px;
+      background: #0bb1bb;
+      border: none;
+      border-radius: 20px;
+      color: black;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+    }
+    
+    .gateway-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(11, 177, 187, 0.5);
+    }
+    
+    /* Blockchain Indicator */
+    .blockchain-indicator {
+      position: fixed;
+      bottom: 15px;
+      left: 85px;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 18px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(11, 177, 187, 0.3);
+    }
+    
+    .blockchain-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    /* Voice Indicator */
+    .voice-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      background: rgba(66, 133, 244, 0.2);
+      border-radius: 15px;
+      font-size: 12px;
+      color: #4285f4;
+      border: 1px solid rgba(66, 133, 244, 0.3);
+    }
+    
+    /* Task Item */
+    .task-item {
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .task-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateX(5px);
+    }
+    
+    .task-dot {
+      width: 8px;
+      height: 8px;
+      background: #0bb1bb;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    /* Integration Page Styles */
+    .integration-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 25px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(11, 177, 187, 0.3);
+    }
+    
+    .stat-icon {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 5px;
+      background: linear-gradient(135deg, #0bb1bb, #50C878);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .stat-label {
+      font-size: 14px;
+      color: #888;
+    }
+    
+    .integration-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    
+    .integration-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 20px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    
+    .integration-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(11, 177, 187, 0.3);
+      border-color: rgba(11, 177, 187, 0.5);
+    }
+    
+    .integration-card.connected {
+      border-color: rgba(11, 177, 187, 0.5);
+    }
+    
+    /* Lifecycle Section */
+    .lifecycle-section {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border-radius: 15px;
+      padding: 30px;
+      margin-top: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .lifecycle-selector {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      font-family: 'Montserrat', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .lifecycle-selector:hover:not(:disabled) {
+      border-color: #0bb1bb;
+      box-shadow: 0 0 10px rgba(11, 177, 187, 0.3);
+    }
+    
+    .lifecycle-selector:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    /* Settings Section */
+    .settings-section {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 20px;
+    }
+    
+    .settings-section h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    
+    .setting-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .setting-label {
+      flex: 1;
+    }
+    
+    .setting-label h3 {
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    
+    .setting-label p {
+      font-size: 14px;
+      color: #888;
+    }
+    
+    .toggle-switch {
+      width: 50px;
+      height: 26px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 13px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .toggle-switch.active {
+      background: rgba(11, 177, 187, 0.5);
+    }
+    
+    .toggle-handle {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: all 0.3s;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    
+    .toggle-switch.active .toggle-handle {
+      left: 26px;
+      background: #0bb1bb;
+    }
+    
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 24px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 25px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #0bb1bb;
+      transform: translateX(-5px);
+    }
+    
+    /* Category Tabs */
+    .category-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+    
+    .category-tab {
+      padding: 10px 20px;
+      border-radius: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .category-tab:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #0bb1bb;
+    }
+    
+    .category-tab.active {
+      background: #0bb1bb;
+      color: black;
+      border-color: #0bb1bb;
+    }
+    
+    /* RSS Section */
+    .rss-section {
+      margin-top: 40px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .rss-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+    
+    .rss-item {
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      font-size: 14px;
+    }
+    
+    .rss-item:hover {
+      border-color: #0bb1bb;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(11, 177, 187, 0.3);
+    }
+    
+    .rss-item.selected {
+      background: #0bb1bb;
+      color: black;
+      border-color: #0bb1bb;
+      font-weight: 600;
+    }
+    
+    /* Connect Button */
+    .connect-btn {
+      padding: 6px 16px;
+      background: #0bb1bb;
+      border: none;
+      border-radius: 20px;
+      color: black;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+    
+    .connect-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(11, 177, 187, 0.4);
+    }
+    
+    .connect-btn.disconnect {
+      background: transparent;
+      color: #ff4757;
+      border: 1px solid #ff4757;
+    }
+    
+    .connect-btn.disconnect:hover {
+      background: rgba(255, 71, 87, 0.1);
+    }
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: rgba(11, 177, 187, 0.5);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(11, 177, 187, 0.8);
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <!-- Particles Background -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Main Page -->
+    <div id="mainPage" class="page active">
+      <!-- Sidebar with Squadron Icons -->
+      <div class="sidebar">
+        <!-- Squadron 01 Icons -->
+        <div class="sidebar-icon active" onclick="selectIcon(this, 'Dr. Lucy', '01')" data-archetype="Dr. Lucy" data-squadron="01">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#gradient1)" stroke-width="2">
+            <defs>
+              <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FFD700" />
+                <stop offset="50%" stop-color="#c7b299" />
+                <stop offset="100%" stop-color="#50C878" />
+              </linearGradient>
+            </defs>
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9 11l2 2 4-4" stroke="white" stroke-width="1.5"/>
+          </svg>
+          <div class="icon-tooltip">
+            <strong>Dr. Lucy RIX</strong><br>
+            Data Science & AI<br>
+            <small>Squadron 01 - Core</small>
+          </div>
+        </div>
+        
+        <div class="sidebar-icon" onclick="selectIcon(this, 'Dr. Grant', '01')" data-archetype="Dr. Grant" data-squadron="01">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#gradient2)" stroke-width="2">
+            <defs>
+              <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#4ECDC4" />
+                <stop offset="100%" stop-color="#c7b299" />
+              </linearGradient>
+            </defs>
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 8v4l3 3" stroke="white" stroke-width="1.5"/>
+          </svg>
+          <div class="icon-tooltip">
+            <strong>Dr. Grant</strong><br>
+            Executive Leadership<br>
+            <small>Squadron 01 - Core</small>
+          </div>
+        </div>
+        
+        <div class="sidebar-icon" onclick="selectIcon(this, 'Dr. Sabina', '03')" data-archetype="Dr. Sabina" data-squadron="03">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#gradient3)" stroke-width="2">
+            <defs>
+              <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#45B7D1" />
+                <stop offset="100%" stop-color="#FFD700" />
+              </linearGradient>
+            </defs>
+            <circle cx="12" cy="12" r="10" />
+            <path d="M8 12h8M12 8v8" stroke="white" stroke-width="1.5"/>
+          </svg>
+          <div class="icon-tooltip">
+            <strong>Dr. Sabina</strong><br>
+            Sales & Marketing<br>
+            <small>Squadron 03 - Engage</small>
+          </div>
+        </div>
+        
+        <div class="sidebar-icon" onclick="selectIcon(this, 'Dr. Cypriot', '02')" data-archetype="Dr. Cypriot" data-squadron="02">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#gradient4)" stroke-width="2">
+            <defs>
+              <linearGradient id="gradient4" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#96CEB4" />
+                <stop offset="100%" stop-color="#0bb1bb" />
+              </linearGradient>
+            </defs>
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" stroke="white" stroke-width="1.5"/>
+          </svg>
+          <div class="icon-tooltip">
+            <strong>Dr. Cypriot</strong><br>
+            HR & Benefits<br>
+            <small>Squadron 02 - Deploy</small>
+          </div>
+        </div>
+        
+        <div class="sidebar-icon" onclick="selectIcon(this, 'Dr. Maria', '02')" data-archetype="Dr. Maria" data-squadron="02">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#gradient5)" stroke-width="2">
+            <defs>
+              <linearGradient id="gradient5" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FECA57" />
+                <stop offset="100%" stop-color="#FF6B6B" />
+              </linearGradient>
+            </defs>
+            <circle cx="12" cy="12" r="10" />
+            <circle cx="12" cy="12" r="3" stroke="white" fill="none" stroke-width="1.5"/>
+          </svg>
+          <div class="icon-tooltip">
+            <strong>Dr. Maria</strong><br>
+            Customer Support<br>
+            <small>Squadron 02 - Deploy</small>
+          </div>
+        </div>
+        
+        <div class="sidebar-icon" onclick="selectIcon(this, 'Dr. Claude', '04')" data-archetype="Dr. Claude" data-squadron="04">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#gradient6)" stroke-width="2">
+            <defs>
+              <linearGradient id="gradient6" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#DDA0DD" />
+                <stop offset="100%" stop-color="#4ECDC4" />
+              </linearGradient>
+            </defs>
+            <circle cx="12" cy="12" r="10" />
+            <path d="M7 12h10M7 8h10M7 16h10" stroke="white" stroke-width="1.5"/>
+          </svg>
+          <div class="icon-tooltip">
+            <strong>Dr. Claude</strong><br>
+            Operations & Quality<br>
+            <small>Squadron 04 - RIX</small>
+          </div>
+        </div>
+        
+        <div class="sidebar-icon" onclick="toggleAcademy(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="url(#gradient7)" stroke-width="2">
+            <defs>
+              <linearGradient id="gradient7" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FF9FF3" />
+                <stop offset="100%" stop-color="#0bb1bb" />
+              </linearGradient>
+            </defs>
+            <path d="M12 2L22 20H2L12 2z" />
+          </svg>
+          <div class="icon-tooltip">
+            <strong>Academy</strong><br>
+            Learning & Training
+          </div>
+        </div>
+      </div>
+      
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+          <div>
+            <div class="logo">ASOOS</div>
+            <div class="tagline">Aixtiv Symphony Orchestrating Operating System</div>
+          </div>
+          <div class="user-info">
+            <div class="user-name">Mr. Phillip Corey Roark</div>
+            <div class="user-role">CEO / Principal</div>
+          </div>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="content-area">
+          <!-- Chat Area -->
+          <div class="chat-area">
+            <div class="messages" id="messages">
+              <div class="message ai">
+                <div>Welcome to ASOOS! I'm QB Lucy RIX, your AI-powered executive assistant. How can I help you achieve excellence today?</div>
+              </div>
+            </div>
+            
+            <!-- Video Area -->
+            <div class="video-area" id="videoArea">
+              <video id="remoteVideo" width="100%" height="100%"></video>
+            </div>
+            
+            <!-- Scan to Do Button -->
+            <button class="scan-todo-button" onclick="initiateScanToDo()" title="Scan to Approve Task">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9V5a2 2 0 0 1 2-2h4M3 15v4a2 2 0 0 0 2 2h4M15 3h4a2 2 0 0 1 2 2v4M15 21h4a2 2 0 0 0 2-2v-4"/>
+                <rect x="8" y="8" width="8" height="8" rx="1"/>
+              </svg>
+            </button>
+            
+            <div class="input-area">
+              <button class="input-btn" onclick="toggleVoice(this)" title="Google Voice Input">
+                <i class="fas fa-microphone"></i>
+              </button>
+              <input type="text" class="input-field" placeholder="Ask me anything..." id="chatInput" onkeypress="handleKeyPress(event)">
+              <button class="input-btn" onclick="toggleAudio(this)" title="Google TTS Output">
+                <i class="fas fa-volume-up"></i>
+              </button>
+              <button class="input-btn" onclick="toggleVideo(this)" title="Video Call">
+                <i class="fas fa-video"></i>
+              </button>
+              <button class="input-btn" onclick="sendMessage()">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Right Panel -->
+          <div class="right-panel">
+            <!-- AI Assistant Card -->
+            <div class="panel-card">
+              <div class="ai-assistant">
+                <div class="ai-avatar">
+                  <svg viewBox="0 0 100 100" class="hex-avatar">
+                    <defs>
+                      <linearGradient id="hexGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#0bb1bb" stop-opacity="0.8" />
+                        <stop offset="100%" stop-color="#50C878" stop-opacity="0.8" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="url(#hexGradient)" stroke="#0bb1bb" stroke-width="2" />
+                    <circle cx="35" cy="40" r="6" fill="white" />
+                    <circle cx="65" cy="40" r="6" fill="white" />
+                    <path d="M35 65 Q50 80 65 65" stroke="white" stroke-width="3" fill="none" />
+                  </svg>
+                </div>
+                <div class="ai-info">
+                  <div class="ai-name">QB Lucy RIX</div>
+                  <div class="ai-status">
+                    <span class="status-dot"></span>
+                    Active • Copilot 0001
+                  </div>
+                </div>
+                <div class="voice-indicator">
+                  <i class="fab fa-google"></i>
+                  <span>TTS/STT</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- DDI Cards Section -->
+            <div class="panel-card">
+              <div class="panel-header" onclick="togglePanel(this)">
+                <div class="panel-title">
+                  <i class="fas fa-bolt" style="color: #0bb1bb;"></i>
+                  DDI Cards - Active Collaborations
+                </div>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="panel-content active">
+                <!-- Live Collaboration Indicator -->
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding: 8px; background: rgba(11, 177, 187, 0.1); border-radius: 8px;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 8px; height: 8px; background: #00ff88; border-radius: 50%; animation: pulse 2s infinite;"></div>
+                    <span style="font-size: 12px; color: #0bb1bb;">Live Collaborations Active</span>
+                  </div>
+                  <span style="font-size: 14px; font-weight: 600; color: #00ff88;">7</span>
+                </div>
+                
+                <div class="ddi-card" onclick="selectDDICard('DDI-001')">
+                  <div class="ddi-card-header">
+                    <div class="ddi-card-id">DDI-001</div>
+                    <div class="ddi-card-status">Active</div>
+                  </div>
+                  <div class="ddi-card-title">Update Sales Dashboard</div>
+                  <div class="ddi-card-info">
+                    <i class="fas fa-users" style="color: #0bb1bb; font-size: 11px;"></i>
+                    <strong>Cross-Squadron Collaboration:</strong>
+                  </div>
+                  <div style="display: flex; gap: 8px; margin: 5px 0; flex-wrap: wrap;">
+                    <span style="background: linear-gradient(135deg, #FFD700, #50C878); padding: 3px 8px; border-radius: 12px; font-size: 11px; color: black;">Dr. Sabina (S03)</span>
+                    <span style="background: linear-gradient(135deg, #0bb1bb, #50C878); padding: 3px 8px; border-radius: 12px; font-size: 11px; color: white;">Dr. Lucy (S01)</span>
+                    <span style="background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 12px; font-size: 11px;">+3 Support Agents</span>
+                  </div>
+                  <div style="font-size: 12px; color: #888; margin: 5px 0;">
+                    <i class="fas fa-link" style="font-size: 10px;"></i> Tech Stack: Tableau, Power BI, SQL, Python
+                  </div>
+                  <div class="ddi-card-rewards">
+                    <i class="fas fa-coins"></i>
+                    AIRewards: 150 pts
+                    <span style="margin-left: 10px; font-size: 11px; color: #50C878;">
+                      <i class="fas fa-clock"></i> 72% Complete
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="ddi-card" onclick="selectDDICard('DDI-002')">
+                  <div class="ddi-card-header">
+                    <div class="ddi-card-id">DDI-002</div>
+                    <div class="ddi-card-status">Pending</div>
+                  </div>
+                  <div class="ddi-card-title">AI Strategy Review</div>
+                  <div class="ddi-card-info">
+                    <i class="fas fa-user-tie" style="color: #0bb1bb; font-size: 11px;"></i>
+                    <strong>Executive Squadron Lead:</strong>
+                  </div>
+                  <div style="display: flex; gap: 8px; margin: 5px 0; flex-wrap: wrap;">
+                    <span style="background: linear-gradient(135deg, #4ECDC4, #c7b299); padding: 3px 8px; border-radius: 12px; font-size: 11px; color: white;">Dr. Grant (S01-RIX)</span>
+                    <span style="background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 12px; font-size: 11px;">Awaiting: Finance Team</span>
+                  </div>
+                  <div style="font-size: 12px; color: #888; margin: 5px 0;">
+                    <i class="fas fa-link" style="font-size: 10px;"></i> Tech Stack: GPT-4, Claude, Strategic Planning Tools
+                  </div>
+                  <div class="ddi-card-rewards">
+                    <i class="fas fa-coins"></i>
+                    AIRewards: 300 pts
+                    <span style="margin-left: 10px; font-size: 11px; color: #fbbf24;">
+                      <i class="fas fa-hourglass-half"></i> Pending Approval
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="ddi-card" onclick="selectDDICard('DDI-003')">
+                  <div class="ddi-card-header">
+                    <div class="ddi-card-id">DDI-003</div>
+                    <div class="ddi-card-status">Ready</div>
+                  </div>
+                  <div class="ddi-card-title">Customer Support Training</div>
+                  <div class="ddi-card-info">
+                    <i class="fas fa-hands-helping" style="color: #0bb1bb; font-size: 11px;"></i>
+                    <strong>Multi-Department Collaboration:</strong>
+                  </div>
+                  <div style="display: flex; gap: 8px; margin: 5px 0; flex-wrap: wrap;">
+                    <span style="background: linear-gradient(135deg, #FECA57, #FF6B6B); padding: 3px 8px; border-radius: 12px; font-size: 11px; color: white;">Dr. Maria (S02)</span>
+                    <span style="background: linear-gradient(135deg, #DDA0DD, #4ECDC4); padding: 3px 8px; border-radius: 12px; font-size: 11px; color: white;">Dr. Claude (S04)</span>
+                    <span style="background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 12px; font-size: 11px;">Academy Team</span>
+                  </div>
+                  <div style="font-size: 12px; color: #888; margin: 5px 0;">
+                    <i class="fas fa-link" style="font-size: 10px;"></i> Tech Stack: Zendesk, Training Platform, Analytics
+                  </div>
+                  <div class="ddi-card-rewards">
+                    <i class="fas fa-coins"></i>
+                    AIRewards: 200 pts
+                    <span style="margin-left: 10px; font-size: 11px; color: #10b981;">
+                      <i class="fas fa-check-circle"></i> Ready to Execute
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="ddi-card" onclick="selectDDICard('DDI-004')" style="border: 2px dashed rgba(11, 177, 187, 0.5); background: rgba(11, 177, 187, 0.05);">
+                  <div class="ddi-card-header">
+                    <div class="ddi-card-id">DDI-004</div>
+                    <div class="ddi-card-status" style="background: linear-gradient(135deg, #FFD700, #0bb1bb);">New</div>
+                  </div>
+                  <div class="ddi-card-title">Blockchain Integration Phase 2</div>
+                  <div class="ddi-card-info">
+                    <i class="fas fa-project-diagram" style="color: #0bb1bb; font-size: 11px;"></i>
+                    <strong>Full Squadron Collaboration:</strong>
+                  </div>
+                  <div style="display: flex; gap: 8px; margin: 5px 0; flex-wrap: wrap;">
+                    <span style="background: linear-gradient(135deg, #FFD700, #0bb1bb); padding: 3px 8px; border-radius: 12px; font-size: 11px; color: black;">All Squadrons</span>
+                    <span style="background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 12px; font-size: 11px;">44 Agents</span>
+                    <span style="background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 12px; font-size: 11px;">Tower Network</span>
+                  </div>
+                  <div style="font-size: 12px; color: #888; margin: 5px 0;">
+                    <i class="fas fa-link" style="font-size: 10px;"></i> Tech Stack: Tower Blockchain, Smart Contracts, DeFi
+                  </div>
+                  <div class="ddi-card-rewards">
+                    <i class="fas fa-coins"></i>
+                    AIRewards: 500 pts
+                    <span style="margin-left: 10px; font-size: 11px; color: #0bb1bb;">
+                      <i class="fas fa-sparkles"></i> Queen Mint Eligible
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="squadron-grid">
+                  <div class="squadron-stat">
+                    <div class="squadron-stat-label">Active DDI Cards</div>
+                    <div class="squadron-stat-value">47</div>
+                  </div>
+                  <div class="squadron-stat">
+                    <div class="squadron-stat-label">Total AIRewards</div>
+                    <div class="squadron-stat-value">12,450</div>
+                  </div>
+                  <div class="squadron-stat">
+                    <div class="squadron-stat-label">Tower Blocks</div>
+                    <div class="squadron-stat-value">1,237</div>
+                  </div>
+                  <div class="squadron-stat">
+                    <div class="squadron-stat-label">Queen Mints</div>
+                    <div class="squadron-stat-value">89</div>
+                  </div>
+                </div>
+                
+                <!-- Collaboration Insights -->
+                <div style="margin-top: 15px; padding: 15px; background: rgba(11, 177, 187, 0.05); border-radius: 12px; border: 1px solid rgba(11, 177, 187, 0.2); animation: collaborationPulse 4s infinite ease-in-out;">
+                  <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 10px; color: #0bb1bb;">
+                    <i class="fas fa-network-wired"></i> Collaboration Insights
+                  </h4>
+                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 12px;">
+                    <div>
+                      <span style="color: #888;">Cross-Squadron Projects:</span>
+                      <strong style="color: #0bb1bb; margin-left: 5px;">18</strong>
+                    </div>
+                    <div>
+                      <span style="color: #888;">Active Collaborators:</span>
+                      <strong style="color: #50C878; margin-left: 5px;">127</strong>
+                    </div>
+                    <div>
+                      <span style="color: #888;">Avg. Completion Time:</span>
+                      <strong style="color: #FFD700; margin-left: 5px;">4.2 days</strong>
+                    </div>
+                    <div>
+                      <span style="color: #888;">Success Rate:</span>
+                      <strong style="color: #10b981; margin-left: 5px;">94.3%</strong>
+                    </div>
+                  </div>
+                  <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <div style="font-size: 11px; color: #888;">Most Active Collaboration Pairs:</div>
+                    <div style="display: flex; gap: 8px; margin-top: 5px; flex-wrap: wrap;">
+                      <span style="background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 12px; font-size: 11px;">
+                        Lucy + Sabina <span style="color: #0bb1bb;">(24)</span>
+                      </span>
+                      <span style="background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 12px; font-size: 11px;">
+                        Grant + Claude <span style="color: #0bb1bb;">(19)</span>
+                      </span>
+                      <span style="background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 12px; font-size: 11px;">
+                        Maria + Cypriot <span style="color: #0bb1bb;">(15)</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Agent Squadron Network -->
+            <div class="panel-card">
+              <div class="panel-header" onclick="togglePanel(this)">
+                <div class="panel-title">
+                  <i class="fas fa-users" style="color: #0bb1bb;"></i>
+                  Agent Squadron Network & Collaborations
+                </div>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="panel-content">
+                <div style="font-size: 13px; margin-bottom: 10px; color: #aaa;">320,000 Agent Instances • 44 Specialized Agents • 4 Squadrons</div>
+                <div class="squadron-grid">
+                  <div class="squadron-stat">
+                    <div class="squadron-stat-label">Squadron 01 (Core)</div>
+                    <div class="squadron-stat-value">11</div>
+                  </div>
+                  <div class="squadron-stat">
+                    <div class="squadron-stat-label">Squadron 02 (Deploy)</div>
+                    <div class="squadron-stat-value">11</div>
+                  </div>
+                  <div class="squadron-stat">
+                    <div class="squadron-stat-label">Squadron 03 (Engage)</div>
+                    <div class="squadron-stat-value">11</div>
+                  </div>
+                  <div class="squadron-stat">
+                    <div class="squadron-stat-label">Squadron 04 (RIX)</div>
+                    <div class="squadron-stat-value">11</div>
+                  </div>
+                </div>
+                <div style="margin-top: 15px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                  <div style="font-size: 12px; color: #888; margin-bottom: 8px;">Collaboration Matrix:</div>
+                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 11px;">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                      <div style="width: 8px; height: 8px; background: #0bb1bb; border-radius: 50%;"></div>
+                      <span>S01 ↔ S03: High synergy (Sales + Core)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                      <div style="width: 8px; height: 8px; background: #50C878; border-radius: 50%;"></div>
+                      <span>S02 ↔ S04: Operational excellence</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                      <div style="width: 8px; height: 8px; background: #FFD700; border-radius: 50%;"></div>
+                      <span>S01 ↔ S04: Strategic planning</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                      <div style="width: 8px; height: 8px; background: #c7b299; border-radius: 50%;"></div>
+                      <span>All Squadrons: 23% of projects</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- S2DO Panel -->
+            <div class="panel-card">
+              <div class="panel-header" onclick="togglePanel(this)">
+                <div class="panel-title">
+                  <i class="fas fa-tasks" style="color: #0bb1bb;"></i>
+                  S2DO's
+                </div>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="panel-content">
+                <div class="task-item">
+                  <div class="task-dot"></div>
+                  <span>Update sales dashboard with Q3 results</span>
+                </div>
+                <div class="task-item">
+                  <div class="task-dot"></div>
+                  <span>Schedule review meeting with marketing team</span>
+                </div>
+                <div class="task-item">
+                  <div class="task-dot"></div>
+                  <span>Finalize integration with new CRM system</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Bottom Bar -->
+        <div class="bottom-bar">
+          <button class="input-btn" onclick="showSettings()" style="width: 35px; height: 35px;">
+            <i class="fas fa-cog"></i>
+          </button>
+          <div class="integration-icons">
+            <div class="integration-icon" title="Zapier">⚡</div>
+            <div class="integration-icon" title="Slack">💬</div>
+            <div class="integration-icon" title="GitHub">🐙</div>
+            <div class="integration-icon" title="GPT-4">🧠</div>
+            <div class="integration-icon" title="Salesforce">☁️</div>
+          </div>
+          <button class="gateway-btn" onclick="showIntegrations()">
+            <i class="fas fa-link"></i>
+            Integration Gateway
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Blockchain Indicator -->
+    <div class="blockchain-indicator">
+      <div class="blockchain-dot"></div>
+      <span>Tower Blockchain Connected</span>
+    </div>
+    
+    <!-- Integration Gateway Page -->
+    <div id="integrationPage" class="page">
+      <div class="main-content">
+        <div class="header">
+          <div class="flex items-center gap-4">
+            <button class="back-btn" onclick="showMain()">
+              <i class="fas fa-arrow-left"></i>
+              Back
+            </button>
+            <div>
+              <div class="logo">Integration Gateway</div>
+              <div class="tagline">320,000 Agent Network • 50 Sectors • 15+ Lifecycles</div>
+            </div>
+          </div>
+          <div class="user-info">
+            <div class="user-name">ASOOS.2100.Cool</div>
+            <div class="user-role">Intelligent Success Companion</div>
+          </div>
+        </div>
+        
+        <div style="flex: 1; padding: 30px; overflow-y: auto;">
+          <!-- Stats Cards -->
+          <div class="integration-stats">
+            <div class="stat-card">
+              <div class="stat-icon">👥</div>
+              <div class="stat-value">320K</div>
+              <div class="stat-label">Total Roles</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">🏢</div>
+              <div class="stat-value">50</div>
+              <div class="stat-label">Sectors</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">🔄</div>
+              <div class="stat-value">15+</div>
+              <div class="stat-label">Lifecycles</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">📊</div>
+              <div class="stat-value">1.6M</div>
+              <div class="stat-label">DDI Cards</div>
+            </div>
+          </div>
+          
+          <!-- Category Tabs -->
+          <div class="category-tabs">
+            <button class="category-tab active" onclick="filterIntegrations('all')">All Integrations</button>
+            <button class="category-tab" onclick="filterIntegrations('productivity')">Productivity</button>
+            <button class="category-tab" onclick="filterIntegrations('developer')">Developer</button>
+            <button class="category-tab" onclick="filterIntegrations('crm')">CRM & Support</button>
+            <button class="category-tab" onclick="filterIntegrations('llm')">Language Models</button>
+            <button class="category-tab" onclick="filterIntegrations('data')">Data & Analytics</button>
+            <button class="category-tab" onclick="filterIntegrations('cloud')">Cloud Services</button>
+            <button class="category-tab" onclick="filterIntegrations('blockchain')">Blockchain</button>
+            <button class="category-tab" onclick="filterIntegrations('voice')">Voice & Video</button>
+          </div>
+          
+          <h2 style="font-size: 24px; margin-bottom: 20px;">Available Integrations</h2>
+          <div class="integration-grid" id="integrationGrid">
+            <!-- Integrations will be populated by JavaScript -->
+          </div>
+          
+          <!-- Lifecycle Visualization Section -->
+          <div class="lifecycle-section">
+            <h3 style="font-size: 22px; font-weight: bold; margin-bottom: 16px; color: #0bb1bb;">
+              <i class="fas fa-network-wired"></i>
+              Tech Integration Visualization by Lifecycles
+            </h3>
+            <p style="font-size: 14px; color: #aaa; margin-bottom: 24px;">
+              Explore technology solutions based on your sector, role, and lifecycle stage. Supporting 320,000 roles across 50 sectors.
+            </p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 24px;">
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 500;">1. Choose Sector/Industry</label>
+                <select id="sectorSelect" onchange="updateJobRoles()" class="lifecycle-selector">
+                  <option value="">Select a sector...</option>
+                </select>
+              </div>
+              
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 500;">2. Choose Your Job</label>
+                <select id="jobSelect" onchange="updateLifecycles()" class="lifecycle-selector" disabled>
+                  <option value="">Select a job role...</option>
+                </select>
+              </div>
+              
+              <div>
+                <label style="display: block; margin-bottom: 8px; font-weight: 500;">3. Pick a Lifecycle</label>
+                <select id="lifecycleSelect" onchange="showTechIntegrations()" class="lifecycle-selector" disabled>
+                  <option value="">Select a lifecycle...</option>
+                </select>
+              </div>
+            </div>
+            
+            <div id="techIntegrationResults" style="display: none;">
+              <h4 style="font-size: 18px; font-weight: bold; margin-bottom: 12px;">Recommended Technology Integrations</h4>
+              <div id="recommendedTech" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;">
+                <!-- Dynamic tech recommendations will appear here -->
+              </div>
+              
+              <div style="margin-top: 24px; padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 2px dashed #0bb1bb;">
+                <h5 style="font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #0bb1bb;">
+                  <i class="fas fa-cube"></i>
+                  DDI Card Integration
+                </h5>
+                <p style="font-size: 13px; color: #aaa; margin-bottom: 12px;">This configuration will generate a DDI card linking:</p>
+                <ul style="font-size: 13px; color: #ccc; margin-left: 20px; line-height: 1.8;">
+                  <li>Selected Role: <span id="selectedRoleDisplay" style="font-weight: bold; color: #0bb1bb;"></span></li>
+                  <li>Lifecycle Stage: <span id="selectedLifecycleDisplay" style="font-weight: bold; color: #0bb1bb;"></span></li>
+                  <li>Tech Stack: <span id="selectedTechDisplay" style="font-weight: bold; color: #0bb1bb;"></span></li>
+                </ul>
+                <button onclick="generateDDICard()" style="margin-top: 16px; padding: 10px 20px; background: #0bb1bb; color: black; border: none; border-radius: 20px; cursor: pointer; font-weight: 600;">
+                  <i class="fas fa-plus"></i>
+                  Generate DDI Card
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- RSS Feed Setup Section -->
+          <div class="rss-section">
+            <h3 style="font-size: 20px; font-weight: bold; margin-bottom: 12px;">
+              <i class="fas fa-rss"></i>
+              Industry RSS Feeds
+            </h3>
+            <p style="font-size: 14px; color: #aaa; margin-bottom: 16px;">Select industries to automatically configure RSS feeds for your agents:</p>
+            <div class="rss-grid" id="rssGrid">
+              <!-- RSS items will be dynamically loaded -->
+            </div>
+            <button onclick="setupRSSFeeds()" style="margin-top: 20px; padding: 10px 20px; background: #0bb1bb; color: black; border: none; border-radius: 20px; cursor: pointer; font-weight: 600;">
+              <i class="fas fa-check"></i>
+              Configure Selected RSS Feeds
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Settings Page -->
+    <div id="settingsPage" class="page">
+      <div class="main-content">
+        <div class="header">
+          <div class="flex items-center gap-4">
+            <button class="back-btn" onclick="showMain()">
+              <i class="fas fa-arrow-left"></i>
+              Back
+            </button>
+            <div>
+              <div class="logo">Vision Lake</div>
+              <div class="tagline">Executive Configuration Center</div>
+            </div>
+          </div>
+          <div class="user-info">
+            <div class="user-name">ASOOS.2100.Cool</div>
+            <div class="user-role">Intelligent Success Companion</div>
+          </div>
+        </div>
+        
+        <div style="flex: 1; padding: 30px; overflow-y: auto;">
+          <!-- Account Section -->
+          <div class="settings-section">
+            <h2>
+              <i class="fas fa-user" style="color: #0bb1bb;"></i>
+              Account & Profile
+            </h2>
+            <div style="display: flex; gap: 30px; align-items: flex-start;">
+              <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #0bb1bb, #50C878); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: bold;">
+                PCR
+              </div>
+              <div style="flex: 1;">
+                <div style="margin-bottom: 20px;">
+                  <label style="display: block; margin-bottom: 8px; color: #888;">Full Name</label>
+                  <input type="text" value="Mr. Phillip Corey Roark" disabled style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                  <label style="display: block; margin-bottom: 8px; color: #888;">Email</label>
+                  <input type="email" value="pr@coaching2100.com" disabled style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white;">
+                </div>
+                <div>
+                  <label style="display: block; margin-bottom: 8px; color: #888;">Role</label>
+                  <input type="text" value="CEO / Principal" disabled style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white;">
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Voice & Audio Section -->
+          <div class="settings-section">
+            <h2>
+              <i class="fas fa-microphone" style="color: #0bb1bb;"></i>
+              Voice & Audio Settings
+            </h2>
+            <div class="setting-item">
+              <div class="setting-label">
+                <h3>Google Voice Input (STT)</h3>
+                <p>Enable voice commands using Google Speech-to-Text</p>
+              </div>
+              <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                <div class="toggle-handle"></div>
+              </div>
+            </div>
+            <div class="setting-item">
+              <div class="setting-label">
+                <h3>Google Voice Output (TTS)</h3>
+                <p>AI responses spoken using Google Text-to-Speech</p>
+              </div>
+              <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                <div class="toggle-handle"></div>
+              </div>
+            </div>
+            <div class="setting-item">
+              <div class="setting-label">
+                <h3>Voice Activation</h3>
+                <p>Start listening automatically on launch</p>
+              </div>
+              <div class="toggle-switch" onclick="toggleSwitch(this)">
+                <div class="toggle-handle"></div>
+              </div>
+            </div>
+            <div class="setting-item">
+              <div class="setting-label">
+                <h3>Sound Effects</h3>
+                <p>Play feedback sounds for actions</p>
+              </div>
+              <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                <div class="toggle-handle"></div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- System Status Section -->
+          <div class="settings-section">
+            <h2>
+              <i class="fas fa-chart-line" style="color: #0bb1bb;"></i>
+              DDI System Status
+            </h2>
+            <div class="settings-grid">
+              <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; text-align: center;">
+                <div style="font-size: 32px; font-weight: bold; color: #0bb1bb;">1.6M</div>
+                <div style="font-size: 14px; color: #888; margin-top: 5px;">Total DDI Cards</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; text-align: center;">
+                <div style="font-size: 32px; font-weight: bold; color: #50C878;">47,892</div>
+                <div style="font-size: 14px; color: #888; margin-top: 5px;">Active Workflows</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; text-align: center;">
+                <div style="font-size: 32px; font-weight: bold; color: #FFD700;">1,237</div>
+                <div style="font-size: 14px; color: #888; margin-top: 5px;">Tower Blocks</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; text-align: center;">
+                <div style="font-size: 32px; font-weight: bold; color: #c7b299;">89</div>
+                <div style="font-size: 14px; color: #888; margin-top: 5px;">Queen Mints</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Language Section -->
+          <div class="settings-section">
+            <h2>
+              <i class="fas fa-globe" style="color: #0bb1bb;"></i>
+              Language & Region
+            </h2>
+            <div class="settings-grid">
+              <div>
+                <label style="display: block; margin-bottom: 8px; color: #888;">Language</label>
+                <select style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white;">
+                  <option>English (United States)</option>
+                  <option>Spanish (Spain)</option>
+                  <option>French (France)</option>
+                  <option>German</option>
+                  <option>Japanese</option>
+                  <option>Chinese (Simplified)</option>
+                </select>
+              </div>
+              <div>
+                <label style="display: block; margin-bottom: 8px; color: #888;">Time Zone</label>
+                <select style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white;">
+                  <option>America/Mexico_City (UTC-06:00)</option>
+                  <option>America/Los_Angeles (UTC-08:00)</option>
+                  <option>America/New_York (UTC-05:00)</option>
+                  <option>Europe/London (UTC+00:00)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Global state
+    let audioEnabled = true;
+    let isListening = false;
+    let currentActiveAgent = 'Dr. Lucy';
+    let activeAgents = new Set(['Dr. Lucy']);
+    let selectedDDICard = null;
+    
+    // Initialize particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 8 + 's';
+        particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
+        particlesContainer.appendChild(particle);
+      }
+    }
+    
+    // Initialize on load
+    createParticles();
+    
+    // Page Navigation
+    function showMain() {
+      document.getElementById('mainPage').classList.add('active');
+      document.getElementById('integrationPage').classList.remove('active');
+      document.getElementById('settingsPage').classList.remove('active');
+    }
+    
+    function showIntegrations() {
+      document.getElementById('mainPage').classList.remove('active');
+      document.getElementById('integrationPage').classList.add('active');
+      document.getElementById('settingsPage').classList.remove('active');
+      populateIntegrations();
+      populateLifecycleSelectors();
+      populateRSSFeeds();
+    }
+    
+    function showSettings() {
+      document.getElementById('mainPage').classList.remove('active');
+      document.getElementById('integrationPage').classList.remove('active');
+      document.getElementById('settingsPage').classList.add('active');
+    }
+    
+    // Icon selection with squadron activation
+    function selectIcon(element, archetype, squadron) {
+      document.querySelectorAll('.sidebar-icon').forEach(icon => {
+        icon.classList.remove('active');
+      });
+      element.classList.add('active');
+      
+      currentActiveAgent = archetype;
+      activeAgents.add(archetype);
+      
+      // Update AI assistant display
+      document.querySelector('.ai-name').textContent = archetype === 'Dr. Lucy' ? 'QB Lucy RIX' : archetype;
+      document.querySelector('.ai-status').innerHTML = `
+        <span class="status-dot"></span>
+        Active • Squadron ${squadron} • Copilot 0001
+      `;
+      
+      // Send activation message
+      addMessage(`${archetype} from Squadron ${squadron} activated. Ready to assist with specialized expertise.`, 'ai');
+    }
+    
+    // Toggle academy mode
+    function toggleAcademy(element) {
+      element.classList.toggle('active');
+      if (element.classList.contains('active')) {
+        addMessage('Academy mode activated. Access to all training modules and learning resources enabled.', 'ai');
+      }
+    }
+    
+    // Toggle panel
+    function togglePanel(header) {
+      const content = header.nextElementSibling;
+      const chevron = header.querySelector('.fa-chevron-down');
+      content.classList.toggle('active');
+      chevron.style.transform = content.classList.contains('active') ? 'rotate(0deg)' : 'rotate(-90deg)';
+    }
+    
+    // Toggle switch
+    function toggleSwitch(element) {
+      element.classList.toggle('active');
+    }
+    
+    // Voice input toggle
+    function toggleVoice(button) {
+      isListening = !isListening;
+      button.classList.toggle('active');
+      
+      if (isListening) {
+        // Simulate Google STT
+        button.style.background = '#ea4335';
+        button.querySelector('i').classList.add('fa-pulse');
+        
+        setTimeout(() => {
+          document.getElementById('chatInput').value = 'Show me the DDI card workflow for Project Symphony';
+          toggleVoice(button);
+          sendMessage();
+        }, 3000);
+      } else {
+        button.style.background = '';
+        button.querySelector('i').classList.remove('fa-pulse');
+      }
+    }
+    
+    // Audio toggle
+    function toggleAudio(button) {
+      audioEnabled = !audioEnabled;
+      button.classList.toggle('active');
+      const icon = button.querySelector('i');
+      
+      if (audioEnabled) {
+        icon.className = 'fas fa-volume-up';
+        button.style.color = '#4285f4';
+      } else {
+        icon.className = 'fas fa-volume-mute';
+        button.style.color = '#888';
+      }
+    }
+    
+    // Video toggle
+    let videoEnabled = false;
+    function toggleVideo(button) {
+      videoEnabled = !videoEnabled;
+      button.classList.toggle('active');
+      const videoArea = document.getElementById('videoArea');
+      
+      if (videoEnabled) {
+        videoArea.classList.add('active');
+      } else {
+        videoArea.classList.remove('active');
+      }
+    }
+    
+    // Send message
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      
+      if (message) {
+        const messagesContainer = document.getElementById('messages');
+        
+        // Add user message
+        const userMsg = document.createElement('div');
+        userMsg.className = 'message user';
+        userMsg.innerHTML = `<div>${message}</div>`;
+        messagesContainer.appendChild(userMsg);
+        
+        input.value = '';
+        
+        // Simulate AI response
+        setTimeout(() => {
+          let response = '';
+          
+          if (message.toLowerCase().includes('ddi') || message.toLowerCase().includes('card')) {
+            response = `I've analyzed the DDI card system with enhanced collaboration features. Currently showing 4 active collaboration projects with 47 total in the pipeline.\n\nKey insights:\n- 18 cross-squadron projects active\n- 127 agents actively collaborating\n- 94.3% collaboration success rate\n- Most active pair: Dr. Lucy + Dr. Sabina (24 joint projects)\n\nThe new DDI-004 "Blockchain Integration Phase 2" is our flagship collaboration, involving all 44 specialized agents across every squadron. Would you like to explore specific collaboration patterns or review individual card details?`;
+          } else if (message.toLowerCase().includes('collaboration') || message.toLowerCase().includes('team')) {
+            response = `ASOOS excels at multi-agent collaboration! Our DDI card system orchestrates complex workflows:\n\n• Cross-Squadron Synergy: Agents from different squadrons bring specialized expertise\n• Tech Stack Integration: Each collaboration deploys optimal tool combinations\n• Real-time Synchronization: Tower Blockchain ensures all agents stay aligned\n• AIRewards Distribution: Collaborative projects earn 20-40% more rewards\n\nCurrent collaboration champions:\n1. Lucy + Sabina: 24 successful projects (Sales & AI integration)\n2. Grant + Claude: 19 projects (Strategic operations)\n3. Maria + Cypriot: 15 projects (Customer experience)\n\nWould you like to create a new collaborative DDI card?`;
+          } else if (message.toLowerCase().includes('squadron') || message.toLowerCase().includes('agent')) {
+            response = `The Squadron Network consists of 44 specialized agents across 4 squadrons, with access to 320,000 agent instances. Squadron 01 (Core) handles foundational operations, Squadron 02 (Deploy) manages implementation, Squadron 03 (Engage) focuses on customer interactions, and Squadron 04 (RIX) provides advanced intelligence. Each squadron has 11 active agents ready for deployment.`;
+          } else if (message.toLowerCase().includes('blockchain') || message.toLowerCase().includes('tower')) {
+            response = `Tower Blockchain is actively recording all DDI transactions. Current stats: 1,237 blocks mined, 89 Queen Mint NFTs generated, with a 99.97% validation rate. Each DDI card execution is immutably recorded with smart contract automation. The next Queen Mint will be generated after 11 more successful completions.`;
+          } else if (message.toLowerCase().includes('lifecycle') || message.toLowerCase().includes('integration')) {
+            response = `The Lifecycle Visualization system maps 320,000 job roles across 50 sectors to 15+ lifecycle stages. Each combination generates a unique DDI card with specific tech stack requirements. For example, a Software Engineer in the Technology sector during the Product Development Lifecycle would integrate Python, Git, Docker, AWS, and Jira. Would you like to explore a specific role-lifecycle combination?`;
+          } else {
+            response = `I understand you're asking about "${message}". Let me connect you with the appropriate squadron specialist to provide detailed assistance. Based on your query, I recommend activating ${currentActiveAgent} for optimal results.`;
+          }
+          
+          const aiMsg = document.createElement('div');
+          aiMsg.className = 'message ai';
+          aiMsg.innerHTML = `<div>${response}</div>`;
+          messagesContainer.appendChild(aiMsg);
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+          
+          // Simulate Google TTS
+          if (audioEnabled) {
+            const avatar = document.querySelector('.hex-avatar');
+            avatar.style.animation = 'pulse 0.5s ease 6';
+            setTimeout(() => {
+              avatar.style.animation = 'breathe 3s infinite';
+            }, 3000);
+          }
+        }, 1500);
+      }
+    }
+    
+    // Handle enter key
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    }
+    
+    // DDI Card selection
+    function selectDDICard(cardId) {
+      selectedDDICard = cardId;
+      
+      let message = '';
+      if (cardId === 'DDI-001') {
+        message = `DDI Card ${cardId} selected - "Update Sales Dashboard"\n\nThis is a cross-squadron collaboration between Dr. Sabina (Squadron 03 - Engage) and Dr. Lucy (Squadron 01 - Core), with 3 support agents. The project is 72% complete.\n\nTech stack deployed: Tableau, Power BI, SQL, and Python for comprehensive sales analytics.\n\nCollaboration highlights:\n- Real-time data synchronization\n- Predictive sales modeling\n- Customer behavior analysis\n\nWould you like to review the workflow or accelerate completion?`;
+      } else if (cardId === 'DDI-002') {
+        message = `DDI Card ${cardId} selected - "AI Strategy Review"\n\nLed by Dr. Grant RIX from Squadron 01 Executive Leadership. Currently pending approval from the Finance Team.\n\nThis strategic initiative involves:\n- GPT-4 and Claude integration analysis\n- ROI projections for AI investments\n- Strategic roadmap development\n\n300 AIRewards allocated. Shall I expedite the finance team approval?`;
+      } else if (cardId === 'DDI-003') {
+        message = `DDI Card ${cardId} selected - "Customer Support Training"\n\nMulti-department collaboration ready for execution:\n- Dr. Maria (Squadron 02 - Deploy): Customer experience design\n- Dr. Claude (Squadron 04 - RIX): Quality assurance protocols\n- Academy Team: Training module development\n\nIntegrated tech: Zendesk, custom training platform, and analytics dashboard.\n\nStatus: All prerequisites met. Ready to launch. Execute now?`;
+      } else if (cardId === 'DDI-004') {
+        message = `DDI Card ${cardId} selected - "Blockchain Integration Phase 2"\n\n🌟 FLAGSHIP PROJECT - Full squadron collaboration involving all 44 specialized agents!\n\nThis Queen Mint eligible project (500 AIRewards) will:\n- Expand Tower Blockchain capacity by 400%\n- Implement cross-chain smart contracts\n- Enable DeFi capabilities for AIRewards\n- Create autonomous agent trading protocols\n\nAll four squadrons synchronized:\n- S01 (Core): Infrastructure\n- S02 (Deploy): Implementation\n- S03 (Engage): User adoption\n- S04 (RIX): Intelligence optimization\n\nThis is a watershed moment for ASOOS. Shall we initiate Phase 2?`;
+      } else {
+        message = `DDI Card ${cardId} selected. This card orchestrates collaborative workflows between multiple agents across squadrons. The embedded tech stack and lifecycle parameters are being loaded. Would you like to execute this workflow?`;
+      }
+      
+      addMessage(message, 'ai');
+      
+      // Update blockchain indicator
+      const indicator = document.querySelector('.blockchain-dot');
+      indicator.style.background = '#fbbf24';
+      setTimeout(() => {
+        indicator.style.background = '#10b981';
+      }, 2000);
+    }
+    
+    // Scan to Do functionality
+    function initiateScanToDo() {
+      const button = document.querySelector('.scan-todo-button');
+      button.classList.add('scanning');
+      
+      addMessage("Initiating Scan-to-Do protocol. Biometric and QR scanning activated. Please present your authorization...", 'ai');
+      
+      setTimeout(() => {
+        button.classList.remove('scanning');
+        addMessage(`Scan successful! Task DDI-2024-SCAN approved and recorded on Tower Blockchain.
+        
+        New Collaboration Created:
+        • Smart contract initiated with 200 AIRewards
+        • Auto-assigned optimal agent team:
+          - Dr. Lucy (Lead) - Data analysis
+          - Dr. Grant (Support) - Strategic oversight
+          - 3 specialized agents from relevant squadrons
+        • Queen Mint NFT #90 will be generated upon completion
+        • Estimated completion: 3.2 days
+        
+        All relevant squadron agents have been notified and collaboration workspace activated.`, 'ai');
+        
+        // Update stats
+        const towerBlocks = document.querySelectorAll('.squadron-stat-value')[2];
+        if (towerBlocks) {
+          towerBlocks.textContent = parseInt(towerBlocks.textContent) + 1;
+        }
+        
+        // Update active collaborations
+        const activeCards = document.querySelectorAll('.squadron-stat-value')[0];
+        if (activeCards) {
+          activeCards.textContent = parseInt(activeCards.textContent) + 1;
+        }
+      }, 3000);
+    }
+    
+    // Populate integrations
+    function populateIntegrations() {
+      const integrations = [
+        { name: 'Zapier', icon: '⚡', desc: 'Connect with 5,000+ apps', connected: true, category: 'productivity' },
+        { name: 'Slack', icon: '💬', desc: 'Real-time messaging', connected: true, category: 'productivity' },
+        { name: 'GitHub', icon: '🐙', desc: 'Code repository hosting', connected: true, category: 'developer' },
+        { name: 'GPT-4', icon: '🧠', desc: 'OpenAI language model', connected: true, category: 'llm' },
+        { name: 'Claude', icon: '🤖', desc: 'Anthropic AI assistant', connected: true, category: 'llm' },
+        { name: 'Salesforce', icon: '☁️', desc: 'CRM platform', connected: true, category: 'crm' },
+        { name: 'Microsoft Teams', icon: '👥', desc: 'Team collaboration', connected: false, category: 'productivity' },
+        { name: 'Asana', icon: '🎯', desc: 'Project management', connected: false, category: 'productivity' },
+        { name: 'Jira', icon: '🔧', desc: 'Issue tracking', connected: false, category: 'developer' },
+        { name: 'HubSpot', icon: '🧲', desc: 'Marketing automation', connected: false, category: 'crm' },
+        { name: 'Zendesk', icon: '🎧', desc: 'Customer support', connected: true, category: 'crm' },
+        { name: 'Google Sheets', icon: '📊', desc: 'Spreadsheet collaboration', connected: false, category: 'data' },
+        { name: 'Tableau', icon: '📈', desc: 'Data visualization', connected: false, category: 'data' },
+        { name: 'AWS', icon: '🌩️', desc: 'Amazon cloud services', connected: true, category: 'cloud' },
+        { name: 'Tower Blockchain', icon: '🔗', desc: 'Proprietary blockchain', connected: true, category: 'blockchain' },
+        { name: 'Google STT/TTS', icon: '🎤', desc: 'Voice services', connected: true, category: 'voice' }
+      ];
+      
+      const grid = document.getElementById('integrationGrid');
+      grid.innerHTML = '';
+      
+      integrations.forEach(integration => {
+        const card = document.createElement('div');
+        card.className = `integration-card ${integration.connected ? 'connected' : ''}`;
+        card.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+            <div style="width: 50px; height: 50px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+              ${integration.icon}
+            </div>
+            <div style="flex: 1;">
+              <h3 style="font-size: 18px; margin-bottom: 5px;">${integration.name}</h3>
+              <p style="font-size: 14px; color: #888;">${integration.desc}</p>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 15px;">
+            <div style="display: flex; align-items: center; gap: 5px; font-size: 14px;">
+              <i class="fas fa-circle" style="font-size: 8px; color: ${integration.connected ? '#00ff88' : '#888'};"></i>
+              ${integration.connected ? 'Connected' : 'Not connected'}
+            </div>
+            <button class="connect-btn ${integration.connected ? 'disconnect' : ''}">
+              ${integration.connected ? 'Disconnect' : 'Connect'}
+            </button>
+          </div>
+        `;
+        card.setAttribute('data-category', integration.category);
+        grid.appendChild(card);
+      });
+    }
+    
+    // Filter integrations
+    function filterIntegrations(category) {
+      document.querySelectorAll('.category-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      const cards = document.querySelectorAll('.integration-card');
+      cards.forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+    
+    // Lifecycle Visualization
+    const sectors = [
+      'Agriculture', 'Healthcare', 'Finance', 'Technology', 'Manufacturing',
+      'Retail', 'Education', 'Real Estate', 'Automotive', 'Energy',
+      'Telecommunications', 'Entertainment', 'Hospitality', 'Transportation',
+      'Construction', 'Pharmaceuticals', 'Insurance', 'Legal', 'Marketing',
+      'Aerospace', 'Biotechnology', 'Cybersecurity', 'E-commerce', 'Gaming',
+      'Food & Beverage', 'Fashion', 'Media', 'Consulting', 'Architecture',
+      'Environmental', 'Logistics', 'Mining', 'Publishing', 'Sports',
+      'Tourism', 'Utilities', 'Waste Management', 'Social Services', 'Government',
+      'Non-Profit', 'Research', 'Veterinary', 'Beauty & Wellness', 'Fitness',
+      'Arts & Culture', 'Maritime', 'Aviation', 'Defense', 'Space', 'Robotics'
+    ];
+    
+    const jobRolesBySector = {
+      'Technology': ['Software Engineer', 'Data Scientist', 'Project Manager', 'DevOps Engineer', 'UI/UX Designer'],
+      'Healthcare': ['Nurse', 'Doctor', 'Medical Coder', 'Healthcare Administrator', 'Pharmacist'],
+      'Finance': ['Financial Analyst', 'Accountant', 'Investment Banker', 'Risk Manager', 'Compliance Officer'],
+      'Marketing': ['Marketing Manager', 'Content Creator', 'SEO Specialist', 'Social Media Manager', 'Brand Manager']
+    };
+    
+    const lifecycles = [
+      'Project Lifecycle',
+      'Product Development Lifecycle',
+      'Customer Journey Lifecycle',
+      'Employee Lifecycle',
+      'Sales Process Lifecycle',
+      'Marketing Campaign Lifecycle',
+      'Software Development Lifecycle',
+      'Supply Chain Lifecycle',
+      'Financial Planning Lifecycle',
+      'Career Development Lifecycle',
+      'Innovation Lifecycle',
+      'Service Delivery Lifecycle',
+      'Digital Transformation Lifecycle',
+      'Risk Management Lifecycle',
+      'Quality Assurance Lifecycle'
+    ];
+    
+    function populateLifecycleSelectors() {
+      const sectorSelect = document.getElementById('sectorSelect');
+      sectorSelect.innerHTML = '<option value="">Select a sector...</option>';
+      sectors.forEach(sector => {
+        sectorSelect.innerHTML += `<option value="${sector}">${sector}</option>`;
+      });
+    }
+    
+    function updateJobRoles() {
+      const sector = document.getElementById('sectorSelect').value;
+      const jobSelect = document.getElementById('jobSelect');
+      
+      if (!sector) {
+        jobSelect.disabled = true;
+        jobSelect.innerHTML = '<option value="">Select a job role...</option>';
+        return;
+      }
+      
+      jobSelect.disabled = false;
+      jobSelect.innerHTML = '<option value="">Select a job role...</option>';
+      
+      const roles = jobRolesBySector[sector] || ['Manager', 'Specialist', 'Analyst', 'Coordinator', 'Director'];
+      roles.forEach(role => {
+        jobSelect.innerHTML += `<option value="${role}">${role}</option>`;
+      });
+    }
+    
+    function updateLifecycles() {
+      const job = document.getElementById('jobSelect').value;
+      const lifecycleSelect = document.getElementById('lifecycleSelect');
+      
+      if (!job) {
+        lifecycleSelect.disabled = true;
+        lifecycleSelect.innerHTML = '<option value="">Select a lifecycle...</option>';
+        return;
+      }
+      
+      lifecycleSelect.disabled = false;
+      lifecycleSelect.innerHTML = '<option value="">Select a lifecycle...</option>';
+      
+      lifecycles.forEach(lifecycle => {
+        lifecycleSelect.innerHTML += `<option value="${lifecycle}">${lifecycle}</option>`;
+      });
+    }
+    
+    function showTechIntegrations() {
+      const sector = document.getElementById('sectorSelect').value;
+      const job = document.getElementById('jobSelect').value;
+      const lifecycle = document.getElementById('lifecycleSelect').value;
+      
+      if (!sector || !job || !lifecycle) return;
+      
+      document.getElementById('techIntegrationResults').style.display = 'block';
+      document.getElementById('selectedRoleDisplay').textContent = `${job} (${sector})`;
+      document.getElementById('selectedLifecycleDisplay').textContent = lifecycle;
+      
+      const techTools = ['Python', 'Git', 'Docker', 'AWS', 'Jira', 'Slack', 'Tableau'];
+      document.getElementById('selectedTechDisplay').textContent = techTools.slice(0, 5).join(', ');
+      
+      const recommendedTech = document.getElementById('recommendedTech');
+      recommendedTech.innerHTML = techTools.map(tool => `
+        <div style="padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; border: 1px solid rgba(11, 177, 187, 0.3);">
+          <div style="font-weight: 600; font-size: 15px; color: #0bb1bb;">${tool}</div>
+          <div style="font-size: 13px; color: #aaa; margin-top: 5px;">Recommended for ${lifecycle}</div>
+        </div>
+      `).join('');
+    }
+    
+    function generateDDICard() {
+      const sector = document.getElementById('sectorSelect').value;
+      const job = document.getElementById('jobSelect').value;
+      const lifecycle = document.getElementById('lifecycleSelect').value;
+      
+      if (!sector || !job || !lifecycle) {
+        alert('Please complete all selections before generating a DDI card.');
+        return;
+      }
+      
+      const ddiId = `DDI-${Date.now().toString(36).toUpperCase()}`;
+      
+      addMessage(`DDI Card ${ddiId} has been generated successfully!
+      - Role: ${job} in ${sector}
+      - Lifecycle: ${lifecycle}
+      - Tech Stack: Configured with optimal integrations
+      - AIRewards: 250 points allocated
+      
+      This card is now recorded on Tower Blockchain and will automatically orchestrate the appropriate squadron agents when activated.`, 'ai');
+      
+      // Update blockchain
+      const indicator = document.querySelector('.blockchain-dot');
+      indicator.style.background = '#fbbf24';
+      setTimeout(() => {
+        indicator.style.background = '#10b981';
+      }, 2000);
+      
+      // Reset selections and go back to main
+      document.getElementById('sectorSelect').value = '';
+      document.getElementById('jobSelect').value = '';
+      document.getElementById('jobSelect').disabled = true;
+      document.getElementById('lifecycleSelect').value = '';
+      document.getElementById('lifecycleSelect').disabled = true;
+      document.getElementById('techIntegrationResults').style.display = 'none';
+      
+      showMain();
+    }
+    
+    // RSS Feed setup
+    const industries = [
+      'Healthcare', 'Finance', 'Technology', 'Manufacturing', 'Retail',
+      'Education', 'Real Estate', 'Automotive', 'Energy', 'Agriculture',
+      'Telecommunications', 'Entertainment', 'Hospitality', 'Transportation',
+      'Construction', 'Pharmaceuticals', 'Insurance', 'Legal', 'Marketing',
+      'Aerospace', 'Biotechnology', 'Cybersecurity', 'E-commerce', 'Gaming'
+    ];
+    
+    function populateRSSFeeds() {
+      const grid = document.getElementById('rssGrid');
+      grid.innerHTML = industries.map(industry => `
+        <div class="rss-item" onclick="toggleRSSSelection(this, '${industry}')">
+          ${industry}
+        </div>
+      `).join('');
+    }
+    
+    function toggleRSSSelection(element, industry) {
+      element.classList.toggle('selected');
+    }
+    
+    function setupRSSFeeds() {
+      const selected = document.querySelectorAll('.rss-item.selected');
+      const industries = Array.from(selected).map(el => el.textContent.trim());
+      
+      if (industries.length > 0) {
+        addMessage(`RSS feeds configured successfully for: ${industries.join(', ')}. Your squadron agents will now receive real-time updates from these industries to enhance their decision-making capabilities.`, 'ai');
+        showMain();
+      } else {
+        alert('Please select at least one industry for RSS feeds.');
+      }
+    }
+    
+    // Message helper
+    function addMessage(text, sender) {
+      const messagesDiv = document.getElementById('messages');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${sender}`;
+      messageDiv.innerHTML = `<div>${text}</div>`;
+      messagesDiv.appendChild(messageDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+    
+    // Utility function for flex styling
+    document.querySelectorAll('.flex').forEach(el => {
+      el.style.display = 'flex';
+    });
+    document.querySelectorAll('.items-center').forEach(el => {
+      el.style.alignItems = 'center';
+    });
+    document.querySelectorAll('.gap-4').forEach(el => {
+      el.style.gap = '16px';
+    });
+    
+    // Simulate periodic updates
+    setInterval(() => {
+      // Update DDI card count
+      const activeCards = document.querySelectorAll('.squadron-stat-value')[0];
+      if (activeCards && Math.random() > 0.7) {
+        activeCards.textContent = parseInt(activeCards.textContent) + 1;
+      }
+      
+      // Update Tower blocks
+      const towerBlocks = document.querySelectorAll('.squadron-stat-value')[2];
+      if (towerBlocks && Math.random() > 0.9) {
+        towerBlocks.textContent = parseInt(towerBlocks.textContent) + 1;
+      }
+    }, 30000);
+  </script>
+</body>
+</html>

@@ -1,8 +1,8 @@
-# Implementation Plan: Dewey Digital Index Solution & Agent Training/Tracking Framework
+# Implementation Plan: DI:DC (Dewey Digital Index Cards) Solution & Agent Training/Tracking Framework
 
 ## Overview
 
-This document outlines the implementation strategy for integrating the Dewey Digital Index Solution and enhanced Agent Training/Tracking Framework into the Model Context Protocol (MCP) within the ASOOS ecosystem.
+This document outlines the implementation strategy for integrating the DI Dewey Index: DC Docs Cards Solution and enhanced Agent Training/Tracking Framework into the Model Context Protocol (MCP) within the ASOOS ecosystem.
 
 ## 1. Directory Structure Integration
 
@@ -10,7 +10,7 @@ This document outlines the implementation strategy for integrating the Dewey Dig
 /Users/as/asoos/
 ├── aixtiv-cli/                        # Current CLI infrastructure
 │   ├── core-protocols/
-│   │   ├── dewey-index/               # NEW: Dewey Digital Index core protocol
+│   │   ├── dewey-index/               # NEW: DI Dewey Index: DC Docs Cards core protocol
 │   │   │   ├── index.js               # Main export file
 │   │   │   ├── indexer.js             # Asset indexing engine
 │   │   │   ├── classifier.js          # Classification system
@@ -55,7 +55,7 @@ This document outlines the implementation strategy for integrating the Dewey Dig
 
 ## 2. Key Component Implementations
 
-### 2.1 Dewey Digital Index Solution
+### 2.1 DI Dewey Index: DC Docs Cards Solution
 
 #### 2.1.1 Core Functionality (core-protocols/dewey-index/)
 
@@ -139,7 +139,7 @@ This document outlines the implementation strategy for integrating the Dewey Dig
 ### 3.1 New Endpoints (server.js)
 
 ```javascript
-// Dewey Digital Index API endpoints
+// DI Dewey Index: DC Docs Cards API endpoints
 app.post('/api/dewey/index', (req, res) => {
   // Implement document indexing
 });
@@ -173,7 +173,7 @@ app.get('/api/agent/capabilities', (req, res) => {
 ### 3.2 CLI Commands
 
 ```javascript
-// Dewey Digital Index CLI commands
+// DI Dewey Index: DC Docs Cards CLI commands
 executeCliCommand('dewey:index', {
   source: sourceDocument,
   type: documentType,

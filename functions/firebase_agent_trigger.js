@@ -10,11 +10,12 @@
  * @version 1.0.0
  */
 
-const functions = require('firebase-functions/v2');
+const { onCall, HttpsError } = require('firebase-functions/v2/https');
+const { onDocumentCreated } = require('firebase-functions/v2/firestore');
+const { onSchedule } = require('firebase-functions/v2/scheduler');
 const admin = require('firebase-admin');
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios');
-const { regional } = require('./config/region');
 
 // Initialize Firebase Admin SDK if not already initialized
 if (!admin.apps.length) {
@@ -44,10 +45,15 @@ const AGENT_FAMILIES = {
 /**
  * HTTP function to trigger a specific agent
  */
-exports.triggerAgent = functions.https.onCall(async (data, context) => {
+exports.triggerAgent = onCall({
+  region: 'us-west1',
+  memory: '256MiB'
+}, async (request) => {
+  const { data, auth } = request;
+  
   // Verify authentication
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
+  if (!auth) {
+    throw new HttpsError(
       'unauthenticated',
       'Authentication required to trigger agents'
     );
@@ -57,13 +63,13 @@ exports.triggerAgent = functions.https.onCall(async (data, context) => {
     const { agentId, prompt, options = {} } = data;
 
     if (!agentId || !prompt) {
-      throw new functions.https.HttpsError('invalid-argument', 'Agent ID and prompt are required');
+      throw new HttpsError('invalid-argument', 'Agent ID and prompt are required');
     }
 
     // Get agent configuration
     const agentConfig = await getAgentConfig(agentId);
     if (!agentConfig) {
-      throw new functions.https.HttpsError(
+      throw new HttpsError(
         'not-found',
         `Agent ${agentId} not found or not configured`
       );
@@ -71,7 +77,7 @@ exports.triggerAgent = functions.https.onCall(async (data, context) => {
 
     // Prepare trigger context
     const triggerContext = {
-      userId: context.auth.uid,
+      userId: auth.uid,
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
       sessionId: options.sessionId || uuidv4(),
       promptType: options.promptType || 'user_input',
@@ -102,7 +108,7 @@ exports.triggerAgent = functions.https.onCall(async (data, context) => {
       },
       {
         ...options,
-        userId: context.auth.uid,
+        userId: auth.uid,
       }
     );
 
@@ -110,7 +116,7 @@ exports.triggerAgent = functions.https.onCall(async (data, context) => {
   } catch (error) {
     console.error('Error triggering agent:', error);
 
-    throw new functions.https.HttpsError(
+    throw new HttpsError(
       'internal',
       error.message || 'An unknown error occurred',
       error
@@ -121,8 +127,11 @@ exports.triggerAgent = functions.https.onCall(async (data, context) => {
 /**
  * Firestore trigger for automated agent responses based on chat messages
  */
-exports.onChatMessageCreated = regional.firestore
-  .onDocumentCreated('chats/{chatId}/messages/{messageId}', async (event) => {
+exports.onChatMessageCreated = onDocumentCreated({
+  document: 'chats/{chatId}/messages/{messageId}',
+  region: 'us-west1',
+  memory: '256MiB'
+}, async (event) => {
     try {
       const message = event.data.data();
       const { chatId, messageId } = event.params;
@@ -282,8 +291,11 @@ exports.onChatMessageCreated = regional.firestore
 /**
  * Scheduled function to trigger periodic agent actions
  */
-exports.scheduledAgentActions = regional.scheduler
-  .onSchedule('every 30 minutes', async (event) => {
+exports.scheduledAgentActions = onSchedule({
+  schedule: 'every 30 minutes',
+  region: 'us-west1',
+  memory: '256MiB'
+}, async (event) => {
     try {
       console.log('Running scheduled agent actions');
 
@@ -395,8 +407,11 @@ exports.scheduledAgentActions = regional.scheduler
 /**
  * Firestore trigger to process scheduled agent actions
  */
-exports.processScheduledAgentActions = regional.firestore
-  .onDocumentCreated('scheduled_agent_actions/{actionId}', async (event) => {
+exports.processScheduledAgentActions = onDocumentCreated({
+  document: 'scheduled_agent_actions/{actionId}',
+  region: 'us-west1',
+  memory: '256MiB'
+}, async (event) => {
     try {
       const actionData = event.data.data();
       

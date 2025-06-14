@@ -1,7 +1,7 @@
 /**
- * Dewey Digital Index - Classifier
+ * DI:DC (Dewey Digital Index Cards) - Classifier
  * 
- * This module implements the classification system for the Dewey Digital Index,
+ * This module implements the classification system for the DI:DC system,
  * which categorizes content according to a taxonomic hierarchy.
  */
 

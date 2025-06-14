@@ -1,7 +1,7 @@
 /**
- * Dewey Digital Index - Indexer
+ * DI:DC (Dewey Digital Index Cards) - Indexer
  * 
- * This module implements the indexing engine for the Dewey Digital Index,
+ * This module implements the indexing engine for the DI:DC system,
  * which processes documents and extracts metadata.
  */
 
@@ -85,7 +85,7 @@ function chunkContent(content, maxChunkSize = 1000) {
 }
 
 /**
- * Indexes content in the Dewey Digital Index
+ * Indexes content in the DI:DC system
  * @param {Object} content - The content to index
  * @returns {Promise<string>} - The ID of the indexed content
  */

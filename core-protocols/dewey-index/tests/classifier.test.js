@@ -1,7 +1,7 @@
 /**
- * Dewey Digital Index Solution - Classifier Tests
+ * DI:DC (Dewey Digital Index Cards) Solution - Classifier Tests
  * 
- * This test file validates the core functionality of the Dewey Digital Index classifier:
+ * This test file validates the core functionality of the DI:DC classifier:
  * 1. Basic classification test
  * 2. Tag extraction test
  * 3. Taxonomy management test
@@ -22,7 +22,7 @@ const mockFMS = {
   retrieveMemory: sinon.stub().returns({ id: 'mock-memory-id', found: true, data: {} })
 };
 
-describe('Dewey Digital Index - Classifier Tests', () => {
+describe('DI:DC - Classifier Tests', () => {
   let classifier;
 
   beforeEach(() => {
