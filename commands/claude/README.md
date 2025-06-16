@@ -17,7 +17,6 @@ aixtiv claude:agent:delegate -p "New Marketing Website" -d "Develop a responsive
 ```
 
 Options:
-
 - `-p, --project <name>` (required): Project name
 - `-d, --description <description>` (required): Project description
 - `--priority <priority>`: Project priority (low, medium, high)
@@ -38,7 +37,6 @@ aixtiv claude:automation:github -r AIXTIV-SYMPHONY -a align -b main --security-c
 ```
 
 Options:
-
 - `-r, --repository <repo>` (required): Repository name or "all" for all repositories
 - `-a, --action <action>` (required): Action to perform:
   - `align`: Organize files according to best practices
@@ -61,7 +59,6 @@ aixtiv claude:code:generate -t "Create a React component for a user profile card
 ```
 
 Options:
-
 - `-t, --task <task>` (required): Coding task description
 - `-l, --language <language>`: Programming language (javascript, python, typescript, etc.)
 - `-o, --output-file <path>`: Where to save the generated code

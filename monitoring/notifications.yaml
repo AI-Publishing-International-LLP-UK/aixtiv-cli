@@ -1,13 +1,13 @@
 notification_channels:
   mobile:
-    name: 'Critical Alerts'
-    type: 'mobile'
+    name: "Critical Alerts"
+    type: "mobile"
     labels:
-      priority: 'p0'
+      priority: "p0"
     recipients:
-      - name: 'Philip Corey Roark'
-        phone: '${MOBILE_NUMBER}'
-        apps: ['cloud_console_mobile']
+      - name: "Philip Corey Roark"
+        phone: "${MOBILE_NUMBER}"
+        apps: ["cloud_console_mobile"]
     alert_policies:
       - uptime
       - synthetic_monitoring

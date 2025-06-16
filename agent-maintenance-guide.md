@@ -1,7 +1,6 @@
 # Agent Maintenance Quick Reference Guide
 
 ## Checking Agent Status
-
 ```bash
 ./bin/aixtiv.js claude:status
 ```
@@ -9,13 +8,11 @@
 ## Manually Activating Agents
 
 ### Activate All Agents
-
 ```bash
 ./bin/aixtiv.js agent:activate
 ```
 
 ### Activate a Specific Agent
-
 ```bash
 ./bin/aixtiv.js agent:activate --agent dr-claude-orchestrator
 ```

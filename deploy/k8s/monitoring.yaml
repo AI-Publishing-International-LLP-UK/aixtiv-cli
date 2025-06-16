@@ -13,7 +13,7 @@ spec:
         app: monitoring-system
     spec:
       containers:
-        - name: monitoring
-          image: c2100lab.azurecr.io/monitoring-service:1.0.0
-          ports:
-            - containerPort: 8080
+      - name: monitoring
+        image: c2100lab.azurecr.io/monitoring-service:1.0.0
+        ports:
+        - containerPort: 8080

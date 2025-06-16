@@ -18,13 +18,11 @@ Claude Orchestration Auto Scaling is the central intelligence system that coordi
 Claude Orchestration provides seamless integration with multiple services:
 
 1. **LinkedIn Integration**
-
    - Coordinates Dr. Memoria and Dr. Match LinkedIn apps
    - Manages authentication and data synchronization
    - Optimizes API usage to prevent rate limiting
 
 2. **GitHub Integration**
-
    - Powers Dr. Lucy Automation C2100-PR GitHub app
    - Orchestrates code analysis and documentation generation
    - Manages pull request workflows
@@ -62,13 +60,11 @@ Claude Orchestration provides seamless integration with multiple services:
 Claude Orchestration leverages Kubernetes for container orchestration:
 
 1. **Horizontal Pod Autoscaler (HPA)**
-
    - Automatically scales pods based on CPU and memory metrics
    - Supports custom metrics like API request rates
    - Ensures optimal resource utilization
 
 2. **Resource Quotas**
-
    - Enforces CPU and memory limits per namespace
    - Prevents resource starvation
    - Ensures fair allocation across components
@@ -83,13 +79,11 @@ Claude Orchestration leverages Kubernetes for container orchestration:
 Claude Orchestration is tightly integrated with the CI/CD CTTT pipeline:
 
 1. **Pipeline Orchestration**
-
    - Manages the execution of pipeline stages
    - Dynamically allocates resources to pipeline jobs
    - Optimizes build and deployment processes
 
 2. **Deployment Management**
-
    - Coordinates automated deployments
    - Manages rollouts and canary deployments
    - Handles rollbacks if issues are detected
@@ -128,24 +122,22 @@ spec:
   minReplicas: 2
   maxReplicas: 10
   metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 50
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
 ```
 
 ## Security Considerations
 
 1. **API Key Management**
-
    - All API keys stored in GCP Secret Manager
    - Rotation policies implemented
    - Least privilege principle enforced
 
 2. **Network Security**
-
    - All communication encrypted in transit
    - Network policies restrict pod-to-pod communication
    - Service mesh provides mTLS for all services
@@ -160,13 +152,11 @@ spec:
 Claude Orchestration provides comprehensive monitoring:
 
 1. **Metrics Dashboard**
-
    - Real-time utilization metrics
    - Scaling event history
    - API call volume and latency
 
 2. **Alerting**
-
    - Proactive alerts for resource constraints
    - Scaling event notifications
    - Error rate monitoring
@@ -195,15 +185,6 @@ aixtiv claude:scale --component=pinecone-integration --replicas=5
 
 # View orchestration logs
 aixtiv claude:logs --component=auto-scaler
-
-# Execute LinkedIn Memory Indexing workflow (production)
-aixtiv claude:live --workflow linkedin --userId user123 --accessToken token123
-
-# Execute GitHub Repository Analysis workflow (production)
-aixtiv claude:live --workflow github --userId user123 --accessToken token123 --repository owner/repo-name
-
-# Execute Claude Content Generation workflow (production)
-aixtiv claude:live --workflow claude --userId user123 --prompt "Generate a blog post about AI" --format markdown --context "Technology blog for executives"
 ```
 
 ### API Endpoints
@@ -213,42 +194,7 @@ GET /api/v1/orchestration/status
 GET /api/v1/orchestration/metrics
 POST /api/v1/orchestration/config
 PUT /api/v1/orchestration/scale
-POST /api/v1/workflows/linkedin
-POST /api/v1/workflows/github
-POST /api/v1/workflows/claude
 ```
-
-### Live Workflow Orchestration
-
-Claude Orchestration now provides production-ready workflow orchestration with real APIs:
-
-#### LinkedIn Memory Indexing
-
-This workflow:
-
-1. Fetches user's LinkedIn profile and posts via LinkedIn API
-2. Generates vector embeddings using OpenAI embedding models
-3. Stores embeddings and metadata in Pinecone for semantic search
-4. Records workflow execution details in Firestore
-
-#### GitHub Repository Analysis
-
-This workflow:
-
-1. Analyzes GitHub repositories via GitHub API
-2. Processes repository metadata, file contents, and commit history
-3. Generates vector embeddings for all components
-4. Indexes everything in Pinecone for semantic code search
-5. Provides detailed repository analytics
-
-#### Claude Content Generation
-
-This workflow:
-
-1. Takes a user prompt with optional context and format settings
-2. Generates high-quality content using Anthropic's Claude API
-3. Formats the content according to specifications
-4. Stores the generated content in Firestore for future reference
 
 ## Conclusion
 

@@ -1,6 +1,6 @@
 /**
  * TypeScript definitions for Pinecone integration
- *
+ * 
  * @module types/pinecone
  * @author Aixtiv Symphony Team
  * @copyright 2025 AI Publishing International LLP
@@ -14,7 +14,7 @@ declare namespace Pinecone {
   interface Filter {
     [key: string]: any;
   }
-
+  
   /**
    * Metadata for Pinecone vectors
    */
@@ -29,7 +29,7 @@ declare namespace Pinecone {
     timestamp?: string;
     [key: string]: any;
   }
-
+  
   /**
    * Vector for Pinecone storage
    */
@@ -38,7 +38,7 @@ declare namespace Pinecone {
     values: number[];
     metadata?: Metadata;
   }
-
+  
   /**
    * Match result from Pinecone query
    */
@@ -48,7 +48,7 @@ declare namespace Pinecone {
     values?: number[];
     metadata?: Metadata;
   }
-
+  
   /**
    * Response from Pinecone query
    */
@@ -56,7 +56,7 @@ declare namespace Pinecone {
     matches: Match[];
     namespace?: string;
   }
-
+  
   /**
    * Index operations for Pinecone
    */
@@ -72,7 +72,7 @@ declare namespace Pinecone {
     fetch(ids: string[]): Promise<{ vectors: Record<string, Vector> }>;
     delete(ids?: string[], filter?: Filter): Promise<{ deletedCount: number }>;
   }
-
+  
   /**
    * Memory item for Pinecone storage
    */
@@ -88,7 +88,7 @@ declare namespace Pinecone {
     timestamp?: Date | string;
     metadata?: Record<string, any>;
   }
-
+  
   /**
    * Prompt item for Pinecone storage
    */
@@ -103,7 +103,7 @@ declare namespace Pinecone {
     timestamp?: Date | string;
     metadata?: Record<string, any>;
   }
-
+  
   /**
    * Search options for Pinecone queries
    */
@@ -111,7 +111,7 @@ declare namespace Pinecone {
     topK?: number;
     filter?: Filter;
   }
-
+  
   /**
    * Combined search results
    */
@@ -120,7 +120,7 @@ declare namespace Pinecone {
     prompts: Match[];
     combined?: Match[];
   }
-
+  
   /**
    * Pinecone service interface
    */
@@ -128,16 +128,8 @@ declare namespace Pinecone {
     initPinecone(): any;
     generateEmbeddings(texts: string | string[]): Promise<number[][]>;
     createIndexIfNotExists(indexName: string): Promise<boolean>;
-    storeInPinecone(
-      indexName: string,
-      items: Array<{ id?: string; text: string; metadata?: Metadata }>
-    ): Promise<boolean>;
-    searchPinecone(
-      indexName: string,
-      queryText: string,
-      filter?: Filter,
-      topK?: number
-    ): Promise<Match[]>;
+    storeInPinecone(indexName: string, items: Array<{ id?: string; text: string; metadata?: Metadata }>): Promise<boolean>;
+    searchPinecone(indexName: string, queryText: string, filter?: Filter, topK?: number): Promise<Match[]>;
     deleteFromPinecone(indexName: string, ids: string[]): Promise<boolean>;
     storeMemoryInPinecone(memory: MemoryItem): Promise<boolean>;
     storePromptInPinecone(prompt: PromptItem): Promise<boolean>;

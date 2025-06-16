@@ -106,7 +106,7 @@ while IFS= read -r domain || [ -n "$domain" ]; do
   fi
   
   # Set default expiry date (1 year from now)
-  EXPIRY_DATE=$(date -d "1 year" +"%Y-%m-%d" 2>/dev/null || date -j -v+1y +"%Y-%m-%d" 2>/dev/null || date +"%Y-%m-%d")
+  EXPIRY_DATE=$(date -v+1y +"%Y-%m-%d")
   
   # Create Firebase project ID based on domain
   SITE_NAME=$(echo "$domain" | sed 's/\./-/g')

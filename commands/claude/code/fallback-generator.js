@@ -175,26 +175,17 @@ print(sort_array(unsorted))  # Output: [1, 2, 3, 4, 5, 8]`,
  * @returns {object} Generated code and explanation
  */
 function generateCode(task, language = 'javascript') {
-  // If task is undefined, set a default task
-  if (!task) {
-    console.warn('Warning: Task description is missing. Using default placeholder task.');
-    task = 'generic function implementation';
-  }
-
   // Normalize language name
   const normalizedLanguage = language.toLowerCase();
 
   // Detect task type from keywords
   let taskType = 'generic';
 
-  // Add null check before calling toLowerCase()
-  const taskLower = (task || '').toLowerCase();
-  
-  if (taskLower.includes('factorial')) {
+  if (task.toLowerCase().includes('factorial')) {
     taskType = 'factorial';
-  } else if (taskLower.includes('fibonacci')) {
+  } else if (task.toLowerCase().includes('fibonacci')) {
     taskType = 'fibonacci';
-  } else if (taskLower.includes('sort')) {
+  } else if (task.toLowerCase().includes('sort')) {
     taskType = 'sort';
   }
 
@@ -208,6 +199,7 @@ function generateCode(task, language = 'javascript') {
     createGenericFallback(task, normalizedLanguage);
 
   // Return result object
+  
   return {
     code: codeTemplate,
     explanation: `This is a local fallback implementation for "${task}" in ${normalizedLanguage}. The Claude API could not be reached, so a basic template was used.`,
@@ -222,19 +214,17 @@ function generateCode(task, language = 'javascript') {
  * @returns {string} Generic function template
  */
 function createGenericFallback(task, language) {
-  // Handle undefined or empty task
-  const taskToUse = task || 'generic_implementation';
-  
-  const normalizedTask = taskToUse
+  const normalizedTask = task
     .replace(/[^\w\s]/gi, '')
     .replace(/\s+/g, '_')
     .toLowerCase();
 
   if (language === 'python') {
     // Return Python template
-    return `def ${normalizedTask}_function():
+  
+  return `def ${normalizedTask}_function():
     """
-    Implementation for: ${taskToUse}
+    Implementation for: ${task}
     
     This is a fallback template. Please implement the actual logic.
     """
@@ -247,14 +237,15 @@ function createGenericFallback(task, language) {
   }
 
   // Default to JavaScript
+  
   return `/**
- * ${taskToUse}
+ * ${task}
  * @returns {any} Result of the function
  */
 function ${normalizedTask}Function() {
   // TODO: Implement the function based on the task description
+  // TODO: Implement the function based on the task description
   return "Not yet implemented";
-}
 
 // Example usage
 // const result = ${normalizedTask}Function();

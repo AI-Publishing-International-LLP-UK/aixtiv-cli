@@ -1,22 +1,19 @@
 /**
  * Aixtiv CLI Owner-Subscriber V1-V2 Immersive System
  * Firebase Cloud Functions Main Entry Point
- *
+ * 
  * This file exports all Cloud Functions for the Aixtiv CLI Owner-Subscriber system,
  * including Universal Dispatcher, Memory System, and Agent Trigger functions.
- *
+ * 
  * @module functions/index
  * @author Aixtiv Symphony Team
  * @copyright 2025 AI Publishing International LLP
  * @version 1.0.0
  */
 
-const { onRequest } = require('firebase-functions/v2/https');
+const { https, pubsub, firestore } = require('firebase-functions/v1');
 const logger = require('firebase-functions/logger');
 const admin = require('firebase-admin');
-
-// Import region configuration to set global defaults
-require('./config/region');
 
 // Initialize Firebase Admin SDK if not already initialized
 if (!admin.apps.length) {
@@ -33,24 +30,17 @@ const pineconeIntegrationFunctions = require('./pineconeIntegrationFunctions');
 // Configuration for functions
 const runtimeOpts = {
   memory: '512MB',
-  timeoutSeconds: 60,
+  timeoutSeconds: 60
 };
 
 // Higher memory configuration for complex operations
 const highMemoryOpts = {
   memory: '1GB',
-  timeoutSeconds: 120,
+  timeoutSeconds: 120
 };
 
-// Export Dr. Claude functions with v2 and us-west1 region
-exports.drClaude = onRequest(
-  {
-    regions: ['us-central1', 'us-west1'],
-    memory: '512MiB',
-    timeoutSeconds: 60
-  },
-  drClaude
-);
+// Export Dr. Claude functions
+exports.drClaude = https.onRequest(drClaude);
 
 // Export Universal Dispatcher functions
 exports.handleDispatch = universalDispatcherFunctions.handleDispatch;
@@ -75,96 +65,71 @@ exports.onChatMessageCreated = agentTriggerFunctions.onChatMessageCreated;
 exports.scheduledAgentActions = agentTriggerFunctions.scheduledAgentActions;
 exports.processScheduledAgentActions = agentTriggerFunctions.processScheduledAgentActions;
 
-// Context storage endpoint with v2 and us-west1 region
-exports.contextStorage = onRequest(
-  {
-    regions: ['us-central1', 'us-west1', 'europe-west1'],
-    memory: '256MiB',
-    timeoutSeconds: 30
-  },
-  (request, response) => {
-    if (request.method === 'GET') {
-      logger.info('Context retrieval request', { structuredData: true });
-
-      // Return context data
-      response.json({
-        context: 'Sample context data',
-        timestamp: new Date().toISOString(),
-        status: 'success',
-        region: 'us-west1'
-      });
-    } else if (request.method === 'POST') {
-      logger.info('Context storage request', { structuredData: true });
-
-      // Store context data
-      response.json({
-        status: 'success',
-        message: 'Context stored successfully',
-        region: 'us-west1'
-      });
-    } else {
-      response.status(405).send('Method not allowed');
-    }
-  }
-);
-
-// Model metrics endpoint with v2 and us-west1 region
-exports.modelMetrics = onRequest(
-  {
-    regions: ['us-central1', 'us-west1', 'europe-west1'],
-    memory: '256MiB',
-    timeoutSeconds: 30
-  },
-  (request, response) => {
-    logger.info('Model metrics request', { structuredData: true });
-
-    // Return metrics data
-    response.json({
-      model: 'claude-3-opus-20240229',
-      region: 'us-west1',
-      latency: {
-        p50: 1200,
-        p90: 1800,
-        p99: 2500,
-      },
-      throughput: 120,
-      errors: {
-        rate: 0.001,
-        types: {
-          timeout: 2,
-          rate_limit: 1,
-          server: 0,
-        },
-      },
-      status: 'healthy',
-    });
-  }
-);
-
-// Health check endpoint with v2 and us-west1 region
-exports.healthCheck = onRequest(
-  {
-    regions: ['us-central1', 'us-west1', 'europe-west1'],
-    memory: '256MiB',
-    timeoutSeconds: 30
-  },
-  (request, response) => {
-    logger.info('Health check request', { structuredData: true });
-
-    response.json({
-      status: 'healthy',
-      version: '1.0.0',
-      region: 'us-west1',
+// Context storage endpoint
+exports.contextStorage = https.onRequest((request, response) => {
+  if (request.method === 'GET') {
+    logger.info('Context retrieval request', { structuredData: true });
+    
+    // Return context data
+    response.json({ 
+      context: 'Sample context data',
       timestamp: new Date().toISOString(),
-      services: {
-        dispatcher: 'operational',
-        memory: 'operational',
-        agents: 'operational',
-        pinecone: 'operational',
-      },
+      status: 'success'
     });
+  } else if (request.method === 'POST') {
+    logger.info('Context storage request', { structuredData: true });
+    
+    // Store context data
+    response.json({ 
+      status: 'success', 
+      message: 'Context stored successfully'
+    });
+  } else {
+    response.status(405).send('Method not allowed');
   }
-);
+});
+
+// Model metrics endpoint
+exports.modelMetrics = https.onRequest((request, response) => {
+  logger.info('Model metrics request', { structuredData: true });
+  
+  // Return metrics data
+  response.json({
+    model: 'claude-3-opus-20240229',
+    latency: {
+      p50: 1200,
+      p90: 1800,
+      p99: 2500,
+    },
+    throughput: 120,
+    errors: {
+      rate: 0.001,
+      types: {
+        timeout: 2,
+        rate_limit: 1,
+        server: 0,
+      },
+    },
+    status: 'healthy',
+  });
+});
+
+// Health check endpoint
+exports.healthCheck = https.onRequest((request, response) => {
+  logger.info('Health check request', { structuredData: true });
+
+  response.json({
+    status: 'healthy',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    services: {
+      dispatcher: 'operational',
+      memory: 'operational',
+      agents: 'operational',
+      pinecone: 'operational'
+    }
+  });
+});
 
 // Export Pinecone Integration functions
 exports.searchMemories = pineconeIntegrationFunctions.searchMemories;
@@ -172,6 +137,6 @@ exports.searchPrompts = pineconeIntegrationFunctions.searchPrompts;
 exports.storeMemory = pineconeIntegrationFunctions.storeMemory;
 exports.storePrompt = pineconeIntegrationFunctions.storePrompt;
 exports.deleteFromPinecone = pineconeIntegrationFunctions.deleteFromPinecone;
-exports.onPineconeChatHistoryCreated = pineconeIntegrationFunctions.onPineconeChatHistoryCreated;
-exports.onPineconePromptRunCreated = pineconeIntegrationFunctions.onPineconePromptRunCreated;
+exports.onPineconeChatHistoryCreated = pineconeIntegrationFunctions.onChatHistoryCreated;
+exports.onPineconePromptRunCreated = pineconeIntegrationFunctions.onPromptRunCreated;
 exports.ensurePineconeIndexes = pineconeIntegrationFunctions.ensurePineconeIndexes;

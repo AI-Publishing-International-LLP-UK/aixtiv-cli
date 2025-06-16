@@ -2,7 +2,7 @@ name: Deploy Dr. Claude Orchestration Function
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
     paths:
       - 'cloud-functions/dr-claude/**'
       - '.github/workflows/dr-claude-automation-deploy.yml'
@@ -51,16 +51,16 @@ jobs:
       - name: Prepare Dr. Claude Function
         run: |
           echo "Preparing Dr. Claude function deployment..."
-
+          
           # Copy Dr. Claude function files to functions directory
           cp cloud-functions/dr-claude/index.js functions/dr-claude.js
-
+          
           # Update package.json if needed
           if grep -q '"firebase-admin": "\^13' functions/package.json; then
             echo "Downgrading firebase-admin version for compatibility..."
             sed -i 's/"firebase-admin": "\^13[^"]*"/"firebase-admin": "^12.7.0"/g' functions/package.json
           fi
-
+          
           # Install dependencies with legacy peer deps flag
           cd functions
           npm install --legacy-peer-deps
@@ -76,13 +76,13 @@ jobs:
           echo "Verifying function deployment..."
           # Wait for function to be fully deployed
           sleep 15
-
+          
           # Get the function URL
           FUNCTION_URL=$(firebase functions:list | grep ${{ env.FUNCTION_NAME }} | grep -o 'https://[^ ]*')
-
+          
           # Check health endpoint
           HEALTH_STATUS=$(curl -s $FUNCTION_URL)
-
+          
           if [[ $HEALTH_STATUS == *"status"*"ok"* ]]; then
             echo "✅ Function is healthy: $HEALTH_STATUS"
           else
@@ -97,7 +97,7 @@ jobs:
             --region=${{ env.TARGET_REGION }} \
             --member=allUsers \
             --role=roles/cloudfunctions.invoker
-
+          
           # Also ensure proper IAM for Firestore access
           gcloud functions add-iam-policy-binding ${{ env.FUNCTION_NAME }} \
             --region=${{ env.TARGET_REGION }} \
@@ -122,3 +122,4 @@ jobs:
           echo "Project ID: **${{ env.FIREBASE_PROJECT }}**" >> $GITHUB_STEP_SUMMARY
           echo "Function name: **${{ env.FUNCTION_NAME }}**" >> $GITHUB_STEP_SUMMARY
           echo "Deployment timestamp: **$(date -u +'%Y-%m-%d %H:%M:%S UTC')**" >> $GITHUB_STEP_SUMMARY
+

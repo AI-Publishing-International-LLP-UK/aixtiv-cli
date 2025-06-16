@@ -17,4 +17,4 @@ storage:
 deployment:
   status: live
   version: v1.0.0
-  timestamp: '2025-01-29T12:47:00Z'
+  timestamp: "2025-01-29T12:47:00Z"

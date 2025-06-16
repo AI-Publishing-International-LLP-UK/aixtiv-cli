@@ -7,3 +7,4 @@ spec:
   addressType: EXTERNAL
   ipVersion: IPV4
   networkTier: PREMIUM
+

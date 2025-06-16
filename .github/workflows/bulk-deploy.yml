@@ -2,7 +2,7 @@ name: Deploy Vertex AI Endpoints
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
     paths:
       - 'config/bulk-activation.json'
 

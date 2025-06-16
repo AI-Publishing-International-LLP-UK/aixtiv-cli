@@ -13,13 +13,13 @@ The validator performs the following checks:
 
 ## Required Environment Variables
 
-| Variable               | Type     | Description                        |
-| ---------------------- | -------- | ---------------------------------- |
-| `ANTHROPIC_API_KEY`    | Critical | API key for Claude services        |
-| `CLAUDE_API_ENDPOINT`  | Critical | Endpoint URL for Claude API        |
-| `FIREBASE_CONFIG`      | Critical | Firebase configuration JSON        |
+| Variable | Type | Description |
+|----------|------|-------------|
+| `ANTHROPIC_API_KEY` | Critical | API key for Claude services |
+| `CLAUDE_API_ENDPOINT` | Critical | Endpoint URL for Claude API |
+| `FIREBASE_CONFIG` | Critical | Firebase configuration JSON |
 | `SALLYPORT_AUTH_TOKEN` | Critical | Authentication token for SallyPort |
-| `AGENT_TRACKING_DB`    | Warning  | Path to agent tracking database    |
+| `AGENT_TRACKING_DB` | Warning | Path to agent tracking database |
 
 ## Usage
 
@@ -51,9 +51,7 @@ const results = validateEnvironment(true);
 if (results.isValid) {
   console.log('All environment variables are valid!');
 } else {
-  console.log(
-    `Failed with ${results.criticalErrors} critical errors and ${results.warnings} warnings`
-  );
+  console.log(`Failed with ${results.criticalErrors} critical errors and ${results.warnings} warnings`);
 }
 ```
 
@@ -62,7 +60,7 @@ if (results.isValid) {
 This validator supports the Aixtiv Symphony Orchestrating Operating System by:
 
 1. Logging validation events to the Flight Memory System (FMS)
-2. Supporting the Wing agent orchestration system
+2. Supporting the Wing agent orchestration system 
 3. Ensuring cross-service compatibility
 4. Maintaining security standards for Dr. Grant Cybersecurity
 

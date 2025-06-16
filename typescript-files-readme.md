@@ -1,13 +1,11 @@
 # How to Handle TypeScript Files
 
 ## Overview
-
 You've been trying to run TypeScript (.ts) files directly from the command line, but TypeScript files need to be compiled to JavaScript before they can be executed.
 
 ## What I Fixed
 
 1. **Fixed aixtiv-cli Installation**:
-
    - Commented out references to the missing serpew module in bin/aixtiv.js
    - Verified that the CLI now works properly
 
@@ -58,7 +56,6 @@ node file.js
 ```
 
 This will provide options to:
-
 1. View the file contents
 2. Attempt to convert it to JavaScript
 
@@ -67,7 +64,6 @@ This will provide options to:
 If you need to properly implement the missing SERPEW module:
 
 1. Create a proper directory structure:
-
    ```
    commands/serpew/index.js
    ```
@@ -76,7 +72,7 @@ If you need to properly implement the missing SERPEW module:
 
 3. Uncomment the lines in bin/aixtiv.js:
    ```javascript
-   const registerSerpewCommands = require('../commands/serpew');
+   const registerSerpewCommands = require("../commands/serpew");
    // ...
    registerSerpewCommands(program);
    ```

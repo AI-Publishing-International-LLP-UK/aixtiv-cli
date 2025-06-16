@@ -25,16 +25,16 @@ data_transfer:
     - location: iowa
       type: cloud_storage
       bucket: iowa-data
-  schedule: '0 0 * * *' # Daily at midnight
+  schedule: "0 0 * * *"  # Daily at midnight
   window:
-    start: '02:00'
-    end: '06:00'
+    start: "02:00"
+    end: "06:00"
 
 monitoring:
   metrics_prefix: vision_lake
   alert_configs:
     - name: storage_usage
-      threshold: 85 # Alert at 85% capacity
+      threshold: 85  # Alert at 85% capacity
     - name: transfer_latency
-      threshold: 300 # Alert if transfer takes > 5 minutes
+      threshold: 300  # Alert if transfer takes > 5 minutes
   notification_channel: cloud-monitoring

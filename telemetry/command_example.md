@@ -11,14 +11,14 @@ const { table } = require('table');
 
 async function claudeStatus(options) {
   const { agent } = options;
-
+  
   try {
     // Get agent status from API
     const agents = await fetchAgentStatus(agent);
-
+    
     // Display agent status
     displayAgentStatus(agents);
-
+    
     return agents;
   } catch (error) {
     console.error(chalk.red('Error fetching agent status:'), error.message);
@@ -28,7 +28,9 @@ async function claudeStatus(options) {
 
 async function fetchAgentStatus(agentId) {
   // Mock implementation
-  return [{ id: agentId || 'dr-claude', status: 'active', workload: 'medium' }];
+  return [
+    { id: agentId || 'dr-claude', status: 'active', workload: 'medium' }
+  ];
 }
 
 function displayAgentStatus(agents) {
@@ -49,17 +51,17 @@ const telemetry = require('../../lib/telemetry');
 
 async function claudeStatus(options) {
   const { agent } = options;
-
+  
   try {
-    // Record knowledge access
+    // Record knowledge access 
     telemetry.recordKnowledgeAccess('agent-status');
-
+    
     // Get agent status from API
     const agents = await fetchAgentStatus(agent);
-
+    
     // Display agent status
     displayAgentStatus(agents);
-
+    
     return agents;
   } catch (error) {
     console.error(chalk.red('Error fetching agent status:'), error.message);
@@ -70,9 +72,11 @@ async function claudeStatus(options) {
 async function fetchAgentStatus(agentId) {
   // We don't need to add telemetry here since the middleware handles
   // the request and error recording for the main command
-
+  
   // Mock implementation
-  return [{ id: agentId || 'dr-claude', status: 'active', workload: 'medium' }];
+  return [
+    { id: agentId || 'dr-claude', status: 'active', workload: 'medium' }
+  ];
 }
 
 function displayAgentStatus(agents) {

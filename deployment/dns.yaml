@@ -8,7 +8,7 @@ data:
   staging: staging.2100.cool
   records:
     - type: A
-      name: '@'
+      name: "@"
       value: ${LOAD_BALANCER_IP}
     - type: A
       name: staging

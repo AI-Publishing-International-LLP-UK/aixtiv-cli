@@ -4,9 +4,9 @@ metadata:
   name: anthology-lb-rule
   namespace: anthology-ai
 spec:
-  description: 'Frontend load balancer for 2100.cool'
+  description: "Frontend load balancer for 2100.cool"
   loadBalancingScheme: EXTERNAL
-  portRange: '443'
+  portRange: "443"
   IPProtocol: TCP
   target: ${TARGET_PROXY}
   networkTier: PREMIUM
@@ -20,7 +20,7 @@ metadata:
 spec:
   checkIntervalSec: 5
   timeoutSec: 5
-  unhealthyThreshold: 2
+  unhealthyThreshold: 2 
   healthyThreshold: 2
   tcpHealthCheck:
     port: 443

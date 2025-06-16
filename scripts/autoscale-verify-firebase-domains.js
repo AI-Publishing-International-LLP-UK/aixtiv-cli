@@ -130,7 +130,7 @@ const logger = {
    * @param {string} command - The command being executed
    */
   command: (command) => {
-    console.log(`${chalk.cyan('Running: ')} ${command}\n`);
+    console.log(`${chalk.cyan('Running: ' + command)}\n`);
   },
   
   /**

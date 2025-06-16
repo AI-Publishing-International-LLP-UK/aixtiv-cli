@@ -58,13 +58,13 @@ module.exports = async function automateGithubTasks(options) {
       AI_PUBLISHING_REPOS.forEach((repo) => console.log(chalk.cyan(`- ${repo}`)));
       console.log(chalk.yellow('\nUse --organization=custom to work with external repositories.'));
       // Display debug information
-      debugDisplay({
-        thought: internalThought,
-        result: { status: 'error', message: 'Repository not found' },
-        command: 'claude:return',
-      });
-
-      return;
+  debugDisplay({
+    thought: internalThought,
+    result: { status: 'error', message: 'Repository not found' },
+    command: 'claude:return'
+  });
+  
+  return;
     }
 
     // Execute GitHub automation with spinner
@@ -97,9 +97,9 @@ module.exports = async function automateGithubTasks(options) {
         debugDisplay({
           thought: internalThought,
           result: operationResult,
-          command: 'claude:return',
+          command: 'claude:return'
         });
-
+  
         return operationResult;
       }
     );
@@ -161,12 +161,12 @@ module.exports = async function automateGithubTasks(options) {
   } catch (error) {
     console.error(chalk.red('\nGitHub automation failed:'), error.message);
     // Display debug information
-    debugDisplay({
-      thought: internalThought,
-      result: { status: 'error', message: error.message },
-      command: 'claude:process.exit',
-    });
-
-    process.exit(1);
+  debugDisplay({
+    thought: internalThought,
+    result: { status: 'error', message: error.message },
+    command: 'claude:process.exit'
+  });
+  
+  process.exit(1);
   }
 };

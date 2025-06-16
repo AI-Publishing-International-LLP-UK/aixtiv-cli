@@ -3,7 +3,7 @@ validation:
     preValidation:
       enabled: true
       strict: true
-      schemas: ['json', 'yaml', 'protobuf']
+      schemas: ["json", "yaml", "protobuf"]
       sanitization: true
     runtime:
       typeChecking: true
@@ -23,17 +23,17 @@ validation:
   monitoring:
     errorTracking:
       enabled: true
-      detail: 'full'
-      retention: '90d'
+      detail: "full"
+      retention: "90d"
     anomalyDetection:
       enabled: true
-      sensitivity: 'high'
+      sensitivity: "high"
       autoRemediation: true
 
   prevention:
     predictiveAnalysis:
       enabled: true
-      mlModels: ['error', 'anomaly', 'pattern']
+      mlModels: ["error", "anomaly", "pattern"]
     autoCorrection:
       enabled: true
       confidence: 99.99
@@ -48,5 +48,5 @@ validation:
         - preventionRate
     alerts:
       threshold: 0.01
-      channels: ['slack', 'email', 'pagerduty']
-      priority: 'p1'
+      channels: ["slack", "email", "pagerduty"]
+      priority: "p1"

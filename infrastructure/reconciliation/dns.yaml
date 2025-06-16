@@ -4,7 +4,7 @@ metadata:
   name: 2100-cool
   namespace: anthology-ai
 spec:
-  description: 'DNS zone for 2100.cool domain'
+  description: "DNS zone for 2100.cool domain"
   dnsName: 2100.cool.
   visibility: public
   dnssecConfig:

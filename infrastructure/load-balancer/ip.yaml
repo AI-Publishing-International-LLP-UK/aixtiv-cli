@@ -8,5 +8,5 @@ spec:
   addressType: EXTERNAL
   ipVersion: IPV4
   networkTier: PREMIUM
-  purpose: 'GCE_ENDPOINT'
-  description: 'Global IP for anthology load balancer'
+  purpose: "GCE_ENDPOINT"
+  description: "Global IP for anthology load balancer"

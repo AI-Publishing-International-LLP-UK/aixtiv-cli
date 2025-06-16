@@ -19,11 +19,11 @@ echo "Using Dr. Claude Automation to prepare and sync deployment..."
 
 # Step 3: Configure firebase project for drclaude.live
 echo "Configuring Firebase project for drclaude.live..."
-firebase use api-for-warp-drive
+firebase use dr-claude-live
 
 # Step 4: Deploy to Firebase hosting and functions
 echo "Deploying to Firebase hosting and functions..."
-firebase deploy --only hosting,functions --project api-for-warp-drive
+firebase deploy --only hosting,functions --project dr-claude-live
 
 echo "✅ Model Context Protocol server deployment complete!"
 echo "Your MCP server is now available at: https://drclaude.live/"

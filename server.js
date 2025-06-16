@@ -11,7 +11,10 @@ const PORT = process.env.PORT || 3333;
 // Configure winston logger
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
-  format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
   transports: [
     new winston.transports.Console({
       format: winston.format.combine(
@@ -19,16 +22,16 @@ const logger = winston.createLogger({
         winston.format.printf(({ timestamp, level, message, ...meta }) => {
           return `${timestamp} ${level}: ${message} ${Object.keys(meta).length ? JSON.stringify(meta, null, 2) : ''}`;
         })
-      ),
+      )
     }),
     new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'logs/combined.log' }),
-  ],
+    new winston.transports.File({ filename: 'logs/combined.log' })
+  ]
 });
 
 // Validate required environment variables
 const requiredEnvVars = ['PROJECT_ID', 'SERVICE_ACCOUNT', 'DR_CLAUDE_API'];
-const missingEnvVars = requiredEnvVars.filter((envVar) => !process.env[envVar]);
+const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
 
 if (missingEnvVars.length > 0) {
   logger.warn(`Missing required environment variables: ${missingEnvVars.join(', ')}`);
@@ -40,9 +43,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Add request logging middleware
 app.use((req, res, next) => {
-  logger.info(`${req.method} ${req.url}`, {
-    ip: req.ip,
-    userAgent: req.get('user-agent'),
+  logger.info(`${req.method} ${req.url}`, { 
+    ip: req.ip, 
+    userAgent: req.get('user-agent') 
   });
   next();
 });
@@ -50,10 +53,10 @@ app.use((req, res, next) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   logger.error('Express error', { error: err.message, stack: err.stack });
-  res.status(500).json({
-    status: 'error',
+  res.status(500).json({ 
+    status: 'error', 
     message: 'An internal server error occurred',
-    requestId: req.id,
+    requestId: req.id
   });
 });
 
@@ -65,9 +68,9 @@ process.on('uncaughtException', (err) => {
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  logger.error('Unhandled Promise Rejection', {
+  logger.error('Unhandled Promise Rejection', { 
     reason: reason instanceof Error ? reason.message : reason,
-    stack: reason instanceof Error ? reason.stack : 'No stack trace available',
+    stack: reason instanceof Error ? reason.stack : 'No stack trace available'
   });
 });
 
@@ -75,12 +78,12 @@ process.on('unhandledRejection', (reason, promise) => {
 function executeCliCommand(command, args = {}, timeout = 30000) {
   return new Promise((resolve, reject) => {
     const cliPath = path.join(__dirname, 'bin', 'aixtiv.js');
-
+    
     // Convert args object to CLI arguments string
     const argsString = Object.entries(args)
       .map(([key, value]) => `--${key}=${value}`)
       .join(' ');
-
+    
     const fullCommand = `node ${cliPath} ${command} ${argsString}`;
     logger.debug(`Executing CLI command: ${fullCommand}`);
 
@@ -112,7 +115,7 @@ app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
     version: packageJson.version,
-    timestamp: new Date().toISOString(),
+    timestamp: new Date().toISOString()
   });
 });
 
@@ -126,50 +129,45 @@ app.get('/', (req, res) => {
       {
         path: '/health',
         method: 'GET',
-        description: 'Health check endpoint for monitoring',
+        description: 'Health check endpoint for monitoring'
       },
       {
         path: '/claude-code-generate',
         method: 'POST',
         description: 'Generate code using Claude AI',
-        body: { task: 'string', language: 'string' },
+        body: { task: 'string', language: 'string' }
       },
       {
         path: '/api/agent/grant',
         method: 'POST',
         description: 'Grant agent access to a resource',
-        body: { email: 'string', agent: 'string', resource: 'string', type: 'string (optional)' },
+        body: { email: 'string', agent: 'string', resource: 'string', type: 'string (optional)' }
       },
       {
         path: '/api/agent/revoke',
         method: 'POST',
         description: 'Revoke agent access to a resource',
-        body: { email: 'string', agent: 'string', resource: 'string' },
+        body: { email: 'string', agent: 'string', resource: 'string' }
       },
       {
         path: '/api/auth/verify',
         method: 'POST',
         description: 'Verify authentication with SallyPort',
-        body: { email: 'string (optional)', agent: 'string (optional)' },
+        body: { email: 'string (optional)', agent: 'string (optional)' }
       },
       {
         path: '/api/copilot/list',
         method: 'GET',
         description: 'List co-pilots linked to a principal',
-        query: { email: 'string (optional)', status: 'string (optional)' },
+        query: { email: 'string (optional)', status: 'string (optional)' }
       },
       {
         path: '/api/claude/project/list',
         method: 'GET',
         description: 'List Claude projects',
-        query: {
-          status: 'string (optional)',
-          tags: 'string (optional)',
-          priority: 'string (optional)',
-          limit: 'number (optional)',
-        },
-      },
-    ],
+        query: { status: 'string (optional)', tags: 'string (optional)', priority: 'string (optional)', limit: 'number (optional)' }
+      }
+    ]
   });
 });
 
@@ -180,44 +178,44 @@ app.post('/claude-code-generate', (req, res) => {
   logger.info(`Received code generation request`, { task, language });
 
   // Call the actual CLI command instead of mock response
-  executeCliCommand('claude:code:generate', {
-    task,
-    language: language || 'javascript',
+  executeCliCommand('claude:code:generate', { 
+    task, 
+    language: language || 'javascript' 
   })
-    .then((result) => {
-      res.json(result);
-    })
-    .catch((error) => {
-      logger.error('Code generation failed', { error: error.message });
-      res.status(500).json({
-        status: 'error',
-        message: 'Code generation failed',
-        error: error.message,
-      });
+  .then(result => {
+    res.json(result);
+  })
+  .catch(error => {
+    logger.error('Code generation failed', { error: error.message });
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Code generation failed', 
+      error: error.message 
     });
+  });
 });
 
 // Add API endpoint for agent:grant command
 app.post('/api/agent/grant', (req, res) => {
   const { email, agent, resource, type = 'full' } = req.body;
-
+  
   if (!email || !agent || !resource) {
-    return res.status(400).json({
-      status: 'error',
-      message: 'Missing required parameters: email, agent, and resource are required',
+    return res.status(400).json({ 
+      status: 'error', 
+      message: 'Missing required parameters: email, agent, and resource are required' 
     });
   }
 
   executeCliCommand('agent:grant', { email, agent, resource, type })
-    .then((result) => {
+    .then(result => {
       res.json({ status: 'success', result });
     })
-    .catch((error) => {
+    .catch(error => {
       logger.error('Agent grant failed', { error: error.message });
-      res.status(500).json({
-        status: 'error',
-        message: 'Failed to grant agent access',
-        error: error.message,
+      res.status(500).json({ 
+        status: 'error', 
+        message: 'Failed to grant agent access', 
+        error: error.message 
       });
     });
 });
@@ -225,24 +223,24 @@ app.post('/api/agent/grant', (req, res) => {
 // Add API endpoint for agent:revoke command
 app.post('/api/agent/revoke', (req, res) => {
   const { email, agent, resource } = req.body;
-
+  
   if (!email || !agent || !resource) {
-    return res.status(400).json({
-      status: 'error',
-      message: 'Missing required parameters: email, agent, and resource are required',
+    return res.status(400).json({ 
+      status: 'error', 
+      message: 'Missing required parameters: email, agent, and resource are required' 
     });
   }
 
   executeCliCommand('agent:revoke', { email, agent, resource })
-    .then((result) => {
+    .then(result => {
       res.json({ status: 'success', result });
     })
-    .catch((error) => {
+    .catch(error => {
       logger.error('Agent revoke failed', { error: error.message });
-      res.status(500).json({
-        status: 'error',
-        message: 'Failed to revoke agent access',
-        error: error.message,
+      res.status(500).json({ 
+        status: 'error', 
+        message: 'Failed to revoke agent access', 
+        error: error.message 
       });
     });
 });
@@ -250,11 +248,11 @@ app.post('/api/agent/revoke', (req, res) => {
 // Add API endpoint for auth:verify command
 app.post('/api/auth/verify', (req, res) => {
   const { email, agent } = req.body;
-
+  
   if (!email && !agent) {
-    return res.status(400).json({
-      status: 'error',
-      message: 'At least one of email or agent is required',
+    return res.status(400).json({ 
+      status: 'error', 
+      message: 'At least one of email or agent is required' 
     });
   }
 
@@ -263,15 +261,15 @@ app.post('/api/auth/verify', (req, res) => {
   if (agent) args.agent = agent;
 
   executeCliCommand('auth:verify', args)
-    .then((result) => {
+    .then(result => {
       res.json({ status: 'success', result });
     })
-    .catch((error) => {
+    .catch(error => {
       logger.error('Auth verification failed', { error: error.message });
-      res.status(500).json({
-        status: 'error',
-        message: 'Authentication verification failed',
-        error: error.message,
+      res.status(500).json({ 
+        status: 'error', 
+        message: 'Authentication verification failed', 
+        error: error.message 
       });
     });
 });
@@ -279,20 +277,20 @@ app.post('/api/auth/verify', (req, res) => {
 // Add API endpoint for copilot:list command
 app.get('/api/copilot/list', (req, res) => {
   const { email, status = 'active' } = req.query;
-
+  
   const args = { status };
   if (email) args.email = email;
 
   executeCliCommand('copilot:list', args)
-    .then((result) => {
+    .then(result => {
       res.json({ status: 'success', result });
     })
-    .catch((error) => {
+    .catch(error => {
       logger.error('Copilot list failed', { error: error.message });
-      res.status(500).json({
-        status: 'error',
-        message: 'Failed to list copilots',
-        error: error.message,
+      res.status(500).json({ 
+        status: 'error', 
+        message: 'Failed to list copilots', 
+        error: error.message 
       });
     });
 });
@@ -300,21 +298,21 @@ app.get('/api/copilot/list', (req, res) => {
 // Add API endpoint for claude:project:list command
 app.get('/api/claude/project/list', (req, res) => {
   const { status = 'active', tags, priority, limit = '20' } = req.query;
-
+  
   const args = { status, limit };
   if (tags) args.tags = tags;
   if (priority) args.priority = priority;
 
   executeCliCommand('claude:project:list', args)
-    .then((result) => {
+    .then(result => {
       res.json({ status: 'success', result });
     })
-    .catch((error) => {
+    .catch(error => {
       logger.error('Claude project list failed', { error: error.message });
-      res.status(500).json({
-        status: 'error',
-        message: 'Failed to list Claude projects',
-        error: error.message,
+      res.status(500).json({ 
+        status: 'error', 
+        message: 'Failed to list Claude projects', 
+        error: error.message 
       });
     });
 });

@@ -141,18 +141,18 @@ function executeCommand(commandString, intent, options = {}) {
   try {
     logger.info(`Executing command: ${commandString}`);
     logger.info(`Current working directory: ${process.cwd()}`);
-
+    
     // Try updating the command to use node directly
     // Instead of: aixtiv domain list
     // Use: node /Users/as/asoos/aixtiv-cli/bin/aixtiv.js domain list
     const absolutePath = path.resolve(__dirname, '../../bin/aixtiv.js');
-
+    
     // Extract the base command and any arguments
     const baseCommand = commandString.replace(/^aixtiv /, '');
     const updatedCommandString = `node ${absolutePath} ${baseCommand}`;
-
+    
     logger.info(`Updated command string: ${updatedCommandString}`);
-
+    
     // Try the updated command string
     const output = execSync(updatedCommandString, { encoding: 'utf8' });
 

@@ -5,8 +5,8 @@
     "regions": {
       "primary": "us-west1-b",
       "backup": {
-        "region": "us-west1",
-        "location": "Oregon"
+        "region": "us-central1",
+        "location": "Iowa"
       }
     }
   }

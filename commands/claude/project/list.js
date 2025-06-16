@@ -16,7 +16,7 @@ module.exports = async function listProjects(options) {
     status: 'active',
     tags: null,
     priority: null,
-    limit: 20,
+    limit: 20
   });
 
   try {
@@ -49,25 +49,25 @@ module.exports = async function listProjects(options) {
           return {
             success: true,
             message: 'No projects found with the specified criteria.',
-            projects: [],
+            projects: []
           };
         }
 
         // Extract projects from the snapshot
         let projects = [];
-        snapshot.forEach((doc) => {
+        snapshot.forEach(doc => {
           projects.push({
             id: doc.id,
-            ...doc.data(),
+            ...doc.data()
           });
         });
 
         // Apply tags filter if provided (needs to be done client-side since Firestore doesn't support array contains any with multiple values)
         if (tags) {
-          const tagList = tags.split(',').map((tag) => tag.trim());
-          projects = projects.filter((project) => {
+          const tagList = tags.split(',').map(tag => tag.trim());
+          projects = projects.filter(project => {
             if (!project.tags) return false;
-            return tagList.some((tag) => project.tags.includes(tag));
+            return tagList.some(tag => project.tags.includes(tag));
           });
         }
 
@@ -75,7 +75,7 @@ module.exports = async function listProjects(options) {
         return {
           success: true,
           message: `Found ${projects.length} projects.`,
-          projects,
+          projects
         };
       }
     );
@@ -84,26 +84,26 @@ module.exports = async function listProjects(options) {
     if (result.success && result.projects.length > 0) {
       // Define table headers
       const headers = [
-        'ID',
-        'Project Name',
-        'Status',
-        'Priority',
-        'Deadline',
+        'ID', 
+        'Project Name', 
+        'Status', 
+        'Priority', 
+        'Deadline', 
         'Assigned To',
-        'Tags',
+        'Tags'
       ];
 
       // Format project data for table rows
-      const rows = result.projects.map((project) => [
+      const rows = result.projects.map(project => [
         chalk.cyan(project.id),
         chalk.white(project.name || 'Unnamed'),
         colorizeStatus(project.status || 'unknown'),
         colorizePriority(project.priority || 'medium'),
         chalk.blue(project.deadline || 'Not set'),
         chalk.yellow(project.assigned_to || 'Unassigned'),
-        project.tags && project.tags.length > 0
-          ? project.tags.map((tag) => chalk.cyan(`#${tag}`)).join(' ')
-          : chalk.gray('No tags'),
+        (project.tags && project.tags.length > 0) 
+          ? project.tags.map(tag => chalk.cyan(`#${tag}`)).join(' ') 
+          : chalk.gray('No tags')
       ]);
 
       // Create and display the table
@@ -114,17 +114,18 @@ module.exports = async function listProjects(options) {
       // Show a summary
       console.log('\nSummary:');
       console.log(`Total projects: ${result.projects.length}`);
-
+      
       // Count by status
       const statusCounts = result.projects.reduce((acc, project) => {
         const status = project.status || 'unknown';
         acc[status] = (acc[status] || 0) + 1;
         return acc;
       }, {});
-
+      
       Object.entries(statusCounts).forEach(([status, count]) => {
         console.log(`${colorizeStatus(status)}: ${count}`);
       });
+      
     } else {
       console.log(chalk.yellow('\nNo projects found matching your criteria.'));
       console.log(chalk.dim('Try different filters or create new projects using:'));
@@ -135,25 +136,25 @@ module.exports = async function listProjects(options) {
     debugDisplay({
       thought: internalThought,
       result: result,
-      command: 'claude:project:list',
+      command: 'claude:project:list'
     });
   } catch (error) {
     console.error(chalk.red('\nError fetching projects:'), error.message);
-
+    
     if (error.message.includes('permission-denied') || error.message.includes('unauthorized')) {
       console.error(chalk.yellow('\nTroubleshooting tips:'));
       console.error('1. Ensure you have proper permissions to access the projects collection');
       console.error('2. Check that your Firebase authentication credentials are valid');
       console.error('3. Make sure the projects collection exists in your Firestore database');
     }
-
+    
     // Display debug information
     debugDisplay({
       thought: internalThought,
       result: { error: error.message },
-      command: 'claude:project:list',
+      command: 'claude:project:list'
     });
-
+    
     process.exit(1);
   }
 };
@@ -199,3 +200,4 @@ function colorizePriority(priority) {
       return chalk.white(priority);
   }
 }
+

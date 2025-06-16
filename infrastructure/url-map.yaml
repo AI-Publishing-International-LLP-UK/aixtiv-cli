@@ -4,12 +4,12 @@ metadata:
   name: anthology-url-map
   namespace: anthology-ai
 spec:
-  defaultService: 'projects/api-for-warp-drive/global/backendServices/lb-ip-2100-cool-backend'
+  defaultService: "projects/api-for-warp-drive/global/backendServices/lb-ip-2100-cool-backend"
   hostRules:
-    - hosts:
-        - '2100.cool'
-        - '*.2100.cool'
-      pathMatcher: 'main'
+  - hosts:
+    - "2100.cool"
+    - "*.2100.cool"
+    pathMatcher: "main"
   pathMatchers:
-    - name: 'main'
-      defaultService: 'projects/api-for-warp-drive/global/backendServices/lb-ip-2100-cool-backend'
+  - name: "main"
+    defaultService: "projects/api-for-warp-drive/global/backendServices/lb-ip-2100-cool-backend"

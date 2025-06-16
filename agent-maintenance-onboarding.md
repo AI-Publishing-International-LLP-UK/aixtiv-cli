@@ -8,9 +8,9 @@ This guide will help you understand how to maintain and troubleshoot the agent s
 
 The Aixtiv CLI includes a sophisticated agent system that:
 
-- Shows status of various solution agents (Dr. Claude, Dr. Lucy, etc.)
-- Allows delegation of tasks to these agents
-- Requires regular maintenance to keep agents appearing as "available"
+* Shows status of various solution agents (Dr. Claude, Dr. Lucy, etc.)
+* Allows delegation of tasks to these agents
+* Requires regular maintenance to keep agents appearing as "available"
 
 ## Common Tasks
 
@@ -40,9 +40,9 @@ If agents are showing as "offline", you can manually activate them:
 
 A cron job should be running that handles this automatically:
 
-- Script: `scripts/maintain-agent-status.sh`
-- Schedule: Every 6 hours
-- Logs: Check `logs/agent-maintenance.log` for any issues
+* Script: `scripts/maintain-agent-status.sh`
+* Schedule: Every 6 hours
+* Logs: Check `logs/agent-maintenance.log` for any issues
 
 ## Technical Details
 
@@ -56,9 +56,9 @@ Agent status is determined by:
 
 ### Key Files
 
-- `commands/claude/status.js` - Controls status display logic
-- `commands/agent/activate.js` - Implements the activation command
-- `scripts/maintain-agent-status.sh` - Scheduled maintenance script
+* `commands/claude/status.js` - Controls status display logic
+* `commands/agent/activate.js` - Implements the activation command
+* `scripts/maintain-agent-status.sh` - Scheduled maintenance script
 
 ## Getting Help
 

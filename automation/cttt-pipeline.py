@@ -545,50 +545,21 @@ class CTTTPipeline:
         except Exception as e:
             logger.error(f"Failed to update Firestore: {str(e)}")
 
-def run_domain_autoscale():
-    """Run the domain autoscale integration"""
-    logger.info("Running domain autoscale integration")
-    log_agent_action("domain_autoscale_start", "Starting domain autoscale integration")
-
-    try:
-        # Import the domain autoscale module
-        sys.path.append(str(Path(__file__).parent))
-        from domain_autoscale_integration import DomainAutoscaleManager
-
-        # Initialize the domain autoscale manager
-        autoscale_manager = DomainAutoscaleManager(project_id=os.environ.get("PROJECT_ID", "api-for-warp-drive"),
-                                                  agent_id=os.environ.get("AGENT_ID", "DR_CLAUDE_AUTOMATION"))
-
-        # Run the full autoscale pipeline
-        results = autoscale_manager.run_full_pipeline()
-
-        # Log completion
-        log_agent_action("domain_autoscale_complete",
-                        f"Domain autoscale completed: {results.get('domains_verified', 0)} domains verified")
-
-        logger.info(f"Domain autoscale completed: {results.get('domains_verified', 0)} domains verified")
-        return results
-    except Exception as e:
-        logger.error(f"Domain autoscale failed: {str(e)}")
-        log_agent_action("domain_autoscale_error", f"Domain autoscale failed: {str(e)}")
-        return {"success": False, "error": str(e)}
-
 def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(description="CTTT Pipeline for Aixtiv Platform")
     parser.add_argument("--project-id", default="api-for-warp-drive", help="GCP Project ID")
     parser.add_argument("--agent-id", default="DR_CLAUDE_AUTOMATION", help="Agent ID for tracking")
-    parser.add_argument("--phase", choices=["test", "train", "tune", "docs", "domain", "full"], default="full",
+    parser.add_argument("--phase", choices=["test", "train", "tune", "docs", "full"], default="full",
                        help="Pipeline phase to run (default: full)")
     parser.add_argument("--test-type", choices=["unit", "integration", "e2e", "all"], default="all",
                        help="Type of tests to run (default: all)")
-    parser.add_argument("--run-domain-autoscale", action="store_true", help="Run domain autoscale integration")
-
+    
     args = parser.parse_args()
-
+    
     # Initialize pipeline
     pipeline = CTTTPipeline(project_id=args.project_id, agent_id=args.agent_id)
-
+    
     # Run requested phase
     if args.phase == "test":
         results = pipeline.run_tests(test_type=args.test_type)
@@ -598,29 +569,13 @@ def main():
         results = pipeline.run_tuning()
     elif args.phase == "docs":
         results = pipeline.generate_documentation()
-    elif args.phase == "domain":
-        results = run_domain_autoscale()
     else:  # full pipeline
         results = pipeline.run_full_pipeline()
-
-        # Run domain autoscale if requested or in full mode
-        if args.run_domain_autoscale or args.phase == "full":
-            domain_results = run_domain_autoscale()
-            results["domain_autoscale"] = domain_results
-
+    
     # Print summary
-    if isinstance(results, dict):
-        if "domain_autoscale" in results:
-            domain_success = results["domain_autoscale"].get("success", False)
-            domain_verified = results["domain_autoscale"].get("domains_verified", 0)
-            print(f"\nDomain Autoscale: {'✅' if domain_success else '❌'} {domain_verified} domains verified")
-
-        success = all(phase.get("success", False) for phase in results.values() if isinstance(phase, dict))
-    else:
-        success = results.get("success", False)
-
+    success = all(phase.get("success", False) for phase in results.values() if isinstance(phase, dict))
     print(f"\n{'✅' if success else '❌'} CTTT Pipeline {'Completed Successfully' if success else 'Completed with Errors'}")
-
+    
     # Return success code
     return 0 if success else 1
 

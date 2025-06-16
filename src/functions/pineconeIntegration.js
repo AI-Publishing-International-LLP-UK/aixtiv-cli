@@ -1,9 +1,9 @@
 /**
  * Pinecone Integration for Aixtiv CLI Owner-Subscriber V1-V2 Immersive System
- *
+ * 
  * This module provides integration with Pinecone for vector database capabilities,
  * enabling semantic search across prompts, memories, and agent outputs.
- *
+ * 
  * @module pineconeIntegration
  * @author Aixtiv Symphony Team
  * @copyright 2025 AI Publishing International LLP
@@ -30,7 +30,7 @@ function initPinecone() {
   // This is a simplified implementation that uses Axios for API calls
   // In a production environment, use the official Pinecone SDK
   const pineconeBaseUrl = `https://${PINECONE_ENVIRONMENT}.pinecone.io/v1`;
-
+  
   return {
     createIndex: async (indexName, dimension = DIMENSION, metric = 'cosine') => {
       try {
@@ -39,13 +39,13 @@ function initPinecone() {
           {
             name: indexName,
             dimension,
-            metric,
+            metric
           },
           {
             headers: {
               'Api-Key': PINECONE_API_KEY,
-              'Content-Type': 'application/json',
-            },
+              'Content-Type': 'application/json'
+            }
           }
         );
         return response.data;
@@ -54,53 +54,62 @@ function initPinecone() {
         throw error;
       }
     },
-
+    
     listIndexes: async () => {
       try {
-        const response = await axios.get(`${pineconeBaseUrl}/indexes`, {
-          headers: {
-            'Api-Key': PINECONE_API_KEY,
-          },
-        });
+        const response = await axios.get(
+          `${pineconeBaseUrl}/indexes`,
+          {
+            headers: {
+              'Api-Key': PINECONE_API_KEY
+            }
+          }
+        );
         return response.data;
       } catch (error) {
         console.error('Error listing Pinecone indexes:', error.response?.data || error.message);
         throw error;
       }
     },
-
+    
     deleteIndex: async (indexName) => {
       try {
-        const response = await axios.delete(`${pineconeBaseUrl}/indexes/${indexName}`, {
-          headers: {
-            'Api-Key': PINECONE_API_KEY,
-          },
-        });
+        const response = await axios.delete(
+          `${pineconeBaseUrl}/indexes/${indexName}`,
+          {
+            headers: {
+              'Api-Key': PINECONE_API_KEY
+            }
+          }
+        );
         return response.data;
       } catch (error) {
         console.error('Error deleting Pinecone index:', error.response?.data || error.message);
         throw error;
       }
     },
-
+    
     describeIndex: async (indexName) => {
       try {
-        const response = await axios.get(`${pineconeBaseUrl}/indexes/${indexName}`, {
-          headers: {
-            'Api-Key': PINECONE_API_KEY,
-          },
-        });
+        const response = await axios.get(
+          `${pineconeBaseUrl}/indexes/${indexName}`,
+          {
+            headers: {
+              'Api-Key': PINECONE_API_KEY
+            }
+          }
+        );
         return response.data;
       } catch (error) {
         console.error('Error describing Pinecone index:', error.response?.data || error.message);
         throw error;
       }
     },
-
+    
     getIndex: (indexName) => {
       // Return an object with methods for the specific index
       const indexUrl = `${pineconeBaseUrl}/indexes/${indexName}`;
-
+      
       return {
         upsert: async (vectors) => {
           try {
@@ -110,8 +119,8 @@ function initPinecone() {
               {
                 headers: {
                   'Api-Key': PINECONE_API_KEY,
-                  'Content-Type': 'application/json',
-                },
+                  'Content-Type': 'application/json'
+                }
               }
             );
             return response.data;
@@ -120,14 +129,8 @@ function initPinecone() {
             throw error;
           }
         },
-
-        query: async (
-          vector,
-          topK = 10,
-          includeMetadata = true,
-          includeValues = false,
-          filter = {}
-        ) => {
+        
+        query: async (vector, topK = 10, includeMetadata = true, includeValues = false, filter = {}) => {
           try {
             const response = await axios.post(
               `${indexUrl}/query`,
@@ -136,13 +139,13 @@ function initPinecone() {
                 topK,
                 includeMetadata,
                 includeValues,
-                filter,
+                filter
               },
               {
                 headers: {
                   'Api-Key': PINECONE_API_KEY,
-                  'Content-Type': 'application/json',
-                },
+                  'Content-Type': 'application/json'
+                }
               }
             );
             return response.data;
@@ -151,39 +154,46 @@ function initPinecone() {
             throw error;
           }
         },
-
+        
         fetch: async (ids) => {
           try {
-            const response = await axios.get(`${indexUrl}/vectors/fetch`, {
-              params: { ids: ids.join(',') },
-              headers: {
-                'Api-Key': PINECONE_API_KEY,
-              },
-            });
+            const response = await axios.get(
+              `${indexUrl}/vectors/fetch`,
+              {
+                params: { ids: ids.join(',') },
+                headers: {
+                  'Api-Key': PINECONE_API_KEY
+                }
+              }
+            );
             return response.data;
           } catch (error) {
             console.error('Error fetching vectors:', error.response?.data || error.message);
             throw error;
           }
         },
-
+        
         delete: async (ids, filter = null) => {
           try {
             const payload = filter ? { filter } : { ids };
-            const response = await axios.post(`${indexUrl}/vectors/delete`, payload, {
-              headers: {
-                'Api-Key': PINECONE_API_KEY,
-                'Content-Type': 'application/json',
-              },
-            });
+            const response = await axios.post(
+              `${indexUrl}/vectors/delete`,
+              payload,
+              {
+                headers: {
+                  'Api-Key': PINECONE_API_KEY,
+                  'Content-Type': 'application/json'
+                }
+              }
+            );
             return response.data;
           } catch (error) {
             console.error('Error deleting vectors:', error.response?.data || error.message);
             throw error;
           }
-        },
+        }
       };
-    },
+    }
   };
 }
 
@@ -195,23 +205,23 @@ function initPinecone() {
 async function generateEmbeddings(texts) {
   // Convert single text to array if needed
   const inputTexts = Array.isArray(texts) ? texts : [texts];
-
+  
   try {
     const response = await axios.post(
       'https://api.openai.com/v1/embeddings',
       {
         input: inputTexts,
-        model: EMBEDDING_MODEL,
+        model: EMBEDDING_MODEL
       },
       {
         headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
       }
     );
-
-    return response.data.data.map((item) => item.embedding);
+    
+    return response.data.data.map(item => item.embedding);
   } catch (error) {
     console.error('Error generating embeddings:', error.response?.data || error.message);
     throw error;
@@ -225,16 +235,16 @@ async function generateEmbeddings(texts) {
  */
 async function createIndexIfNotExists(indexName) {
   const pinecone = initPinecone();
-
+  
   try {
     // Check if index already exists
     const indexes = await pinecone.listIndexes();
-
+    
     if (indexes.includes(indexName)) {
       console.log(`Index ${indexName} already exists`);
       return true;
     }
-
+    
     // Create the index
     await pinecone.createIndex(indexName);
     console.log(`Index ${indexName} created successfully`);
@@ -255,25 +265,25 @@ async function storeInPinecone(indexName, items) {
   try {
     // Ensure index exists
     await createIndexIfNotExists(indexName);
-
+    
     // Prepare items for embedding
-    const texts = items.map((item) => item.text);
-
+    const texts = items.map(item => item.text);
+    
     // Generate embeddings
     const embeddings = await generateEmbeddings(texts);
-
+    
     // Prepare vectors for Pinecone
     const vectors = items.map((item, index) => ({
       id: item.id || uuidv4(),
       values: embeddings[index],
-      metadata: item.metadata || {},
+      metadata: item.metadata || {}
     }));
-
+    
     // Store in Pinecone
     const pinecone = initPinecone();
     const index = pinecone.getIndex(indexName);
     await index.upsert(vectors);
-
+    
     console.log(`Stored ${vectors.length} vectors in Pinecone index ${indexName}`);
     return true;
   } catch (error) {
@@ -294,11 +304,11 @@ async function searchPinecone(indexName, queryText, filter = {}, topK = 10) {
   try {
     // Generate embedding for the query
     const [queryEmbedding] = await generateEmbeddings(queryText);
-
+    
     // Search Pinecone
     const pinecone = initPinecone();
     const index = pinecone.getIndex(indexName);
-
+    
     const results = await index.query(
       queryEmbedding,
       topK,
@@ -306,7 +316,7 @@ async function searchPinecone(indexName, queryText, filter = {}, topK = 10) {
       false, // includeValues
       filter
     );
-
+    
     return results.matches || [];
   } catch (error) {
     console.error('Error searching Pinecone:', error);
@@ -324,9 +334,9 @@ async function deleteFromPinecone(indexName, ids) {
   try {
     const pinecone = initPinecone();
     const index = pinecone.getIndex(indexName);
-
+    
     await index.delete(ids);
-
+    
     console.log(`Deleted ${ids.length} vectors from Pinecone index ${indexName}`);
     return true;
   } catch (error) {
@@ -343,7 +353,7 @@ async function deleteFromPinecone(indexName, ids) {
 async function storeMemoryInPinecone(memory) {
   try {
     const indexName = 'aixtiv-memories';
-
+    
     const item = {
       id: memory.id || uuidv4(),
       text: memory.content,
@@ -354,13 +364,11 @@ async function storeMemoryInPinecone(memory) {
         type: memory.type,
         category: memory.category,
         importance: memory.importance,
-        timestamp: memory.timestamp
-          ? new Date(memory.timestamp).toISOString()
-          : new Date().toISOString(),
-        ...memory.metadata,
-      },
+        timestamp: memory.timestamp ? new Date(memory.timestamp).toISOString() : new Date().toISOString(),
+        ...memory.metadata
+      }
     };
-
+    
     return await storeInPinecone(indexName, [item]);
   } catch (error) {
     console.error('Error storing memory in Pinecone:', error);
@@ -376,7 +384,7 @@ async function storeMemoryInPinecone(memory) {
 async function storePromptInPinecone(prompt) {
   try {
     const indexName = 'aixtiv-prompts';
-
+    
     const item = {
       id: prompt.id || prompt.promptId || uuidv4(),
       text: prompt.content || prompt.promptText,
@@ -385,13 +393,11 @@ async function storePromptInPinecone(prompt) {
         agentId: prompt.agentId,
         type: prompt.type || 'default',
         category: prompt.category || 'general',
-        timestamp: prompt.timestamp
-          ? new Date(prompt.timestamp).toISOString()
-          : new Date().toISOString(),
-        ...prompt.metadata,
-      },
+        timestamp: prompt.timestamp ? new Date(prompt.timestamp).toISOString() : new Date().toISOString(),
+        ...prompt.metadata
+      }
     };
-
+    
     return await storeInPinecone(indexName, [item]);
   } catch (error) {
     console.error('Error storing prompt in Pinecone:', error);
@@ -431,5 +437,5 @@ module.exports = {
   storeMemoryInPinecone,
   storePromptInPinecone,
   searchSimilarMemories,
-  searchSimilarPrompts,
+  searchSimilarPrompts
 };

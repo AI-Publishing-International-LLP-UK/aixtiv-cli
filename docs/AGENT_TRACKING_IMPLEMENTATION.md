@@ -70,12 +70,12 @@ This script sets up the agent tracking system:
 
 Agents are identified using the following convention:
 
-| Agent Type      | ID Format                          | Example                     |
-| --------------- | ---------------------------------- | --------------------------- |
-| Human Operators | `HUMAN-<name>`                     | `HUMAN-ADMIN`               |
-| AI Assistants   | `<provider>-Agent-<number>-<name>` | `ANTHROPIC-AGENT-01-CLAUDE` |
-| CI/CD Systems   | `CI-<system>-<job>`                | `CI-GITHUB-BUILD`           |
-| Custom Tools    | `TOOL-<name>`                      | `TOOL-DOMAIN-SCANNER`       |
+| Agent Type | ID Format | Example |
+|------------|-----------|---------|
+| Human Operators | `HUMAN-<name>` | `HUMAN-ADMIN` |
+| AI Assistants | `<provider>-Agent-<number>-<name>` | `ANTHROPIC-AGENT-01-CLAUDE` |
+| CI/CD Systems | `CI-<system>-<job>` | `CI-GITHUB-BUILD` |
+| Custom Tools | `TOOL-<name>` | `TOOL-DOMAIN-SCANNER` |
 
 ## Integration Points
 
@@ -95,7 +95,7 @@ const { logAgentAction } = require('../lib/agent-tracking');
 
 async function deployService() {
   await logAgentAction('deploy_start', { service: 'api-gateway' });
-
+  
   try {
     // Deployment logic
     await logAgentAction('deploy_complete', { status: 'success' });
@@ -130,9 +130,9 @@ from automation.agent_tracking import log_agent_action
 
 def train_model(model_name):
     log_agent_action("model_training_start", f"Starting training for {model_name}")
-
+    
     # Training logic
-
+    
     log_agent_action("model_training_complete", f"Training completed for {model_name}")
 ```
 

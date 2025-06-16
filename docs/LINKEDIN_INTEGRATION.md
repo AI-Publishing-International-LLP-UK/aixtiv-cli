@@ -9,25 +9,21 @@ This document describes the LinkedIn integration with the Aixtiv CLI system, pro
 The LinkedIn integration provides the following capabilities:
 
 1. **OAuth2 Authentication**
-
    - Secure authentication using LinkedIn's OAuth2 API
    - Token management and refresh
    - Controlled scope access
 
 2. **Profile Management**
-
    - Fetch and store LinkedIn user profiles
    - Synchronize profile data with Firestore
    - Connect multiple LinkedIn accounts
 
 3. **Content Sharing**
-
    - Share content on personal profiles
    - Post to company pages
    - Schedule posts for future publishing
 
 4. **Organization Management**
-
    - List and manage company pages
    - Store organization data in Firestore
    - Track user-organization relationships
@@ -43,15 +39,15 @@ The LinkedIn integration provides the following capabilities:
 
 The LinkedIn integration uses the following Firestore collections:
 
-| Collection                                 | Purpose                                        |
-| ------------------------------------------ | ---------------------------------------------- |
-| `linkedin_profiles`                        | User LinkedIn profile data                     |
-| `linkedin_profiles/{userId}/posts`         | User's LinkedIn posts                          |
-| `linkedin_profiles/{userId}/organizations` | User's LinkedIn organizations                  |
-| `linkedin_organizations`                   | Global LinkedIn organizations                  |
-| `linkedin_organizations/{orgId}/posts`     | Organization LinkedIn posts                    |
-| `linkedin_posts`                           | All LinkedIn posts (personal and organization) |
-| `linkedin_scheduled_posts`                 | Scheduled posts pending publication            |
+| Collection | Purpose |
+|------------|---------|
+| `linkedin_profiles` | User LinkedIn profile data |
+| `linkedin_profiles/{userId}/posts` | User's LinkedIn posts |
+| `linkedin_profiles/{userId}/organizations` | User's LinkedIn organizations |
+| `linkedin_organizations` | Global LinkedIn organizations |
+| `linkedin_organizations/{orgId}/posts` | Organization LinkedIn posts |
+| `linkedin_posts` | All LinkedIn posts (personal and organization) |
+| `linkedin_scheduled_posts` | Scheduled posts pending publication |
 
 ### User Management
 
@@ -72,7 +68,6 @@ LinkedIn profiles are associated with Aixtiv users through the `users` collectio
 LinkedIn authentication leverages the centralized OAuth2 service:
 
 1. Get authorization URL:
-
    ```javascript
    const authUrl = await linkedInService.getAuthorizationUrl(redirectUri);
    ```
@@ -99,9 +94,9 @@ const authUrl = await linkedInService.getAuthorizationUrl(
 
 // Step 2: Handle callback
 const profile = await linkedInService.handleOAuthCallback(
-  code, // from callback query parameter
-  redirectUri, // same as in step 1
-  'user123' // the user ID
+  code,           // from callback query parameter
+  redirectUri,    // same as in step 1
+  'user123'       // the user ID
 );
 ```
 
@@ -111,22 +106,29 @@ const profile = await linkedInService.handleOAuthCallback(
 const linkedInService = require('../services/linkedin');
 
 // Share on personal profile
-const result = await linkedInService.shareContent('user123', {
-  text: 'Check out this amazing article!',
-  title: 'New Insights on AI',
-  linkUrl: 'https://example.com/article',
-  imageUrl: 'https://example.com/image.jpg',
-  linkDescription: 'Learn the latest about AI innovations',
-});
+const result = await linkedInService.shareContent(
+  'user123',
+  {
+    text: 'Check out this amazing article!',
+    title: 'New Insights on AI',
+    linkUrl: 'https://example.com/article',
+    imageUrl: 'https://example.com/image.jpg',
+    linkDescription: 'Learn the latest about AI innovations'
+  }
+);
 
 // Share on company page
-const orgResult = await linkedInService.shareToCompanyPage('user123', 'organization456', {
-  text: 'Exciting news from our company!',
-  title: 'Company Announcement',
-  linkUrl: 'https://company.example.com/news',
-  imageUrl: 'https://company.example.com/logo.jpg',
-  linkDescription: 'Learn about our latest product release',
-});
+const orgResult = await linkedInService.shareToCompanyPage(
+  'user123',
+  'organization456',
+  {
+    text: 'Exciting news from our company!',
+    title: 'Company Announcement',
+    linkUrl: 'https://company.example.com/news',
+    imageUrl: 'https://company.example.com/logo.jpg',
+    linkDescription: 'Learn about our latest product release'
+  }
+);
 ```
 
 ### Schedule a Post for Future Publishing
@@ -158,13 +160,11 @@ const syncResults = await linkedInService.synchronizeData('user123');
 ## Security Considerations
 
 1. **Token Storage**
-
    - OAuth2 tokens are stored securely using the centralized OAuth2 service
    - Access tokens are short-lived and refreshed automatically
    - Refresh tokens are stored with proper encryption
 
 2. **Permission Management**
-
    - Users must explicitly authorize required scopes
    - Firestore security rules protect LinkedIn data
    - Access is revoked when requested by the user

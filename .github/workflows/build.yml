@@ -2,7 +2,7 @@ name: Aixtiv CLI Build & Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   workflow_dispatch:
     inputs:
       environment:
@@ -17,9 +17,6 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   REGION: us-west1
-  ATTESTOR_NAME: aixtiv-attestor
-  KEY_RING: binauthz
-  KEY_NAME: attestor-key
 
 jobs:
   build:
@@ -29,159 +26,77 @@ jobs:
       id-token: 'write'
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+    - name: Install dependencies
+      run: npm ci
 
-      - name: Google Cloud Authentication
-        uses: google-github-actions/auth@v1
-        with:
-          workload_identity_provider: 'projects/${{ secrets.GCP_PROJECT }}/locations/global/workloadIdentityPools/${{ secrets.WORKLOAD_IDENTITY_POOL }}/providers/${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}'
-          service_account: 'github-actions-deploy@${{ secrets.GCP_PROJECT }}.iam.gserviceaccount.com'
-          create_credentials_file: true
+    - name: Google Cloud Authentication
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: 'projects/${{ secrets.GCP_PROJECT }}/locations/global/workloadIdentityPools/${{ secrets.WORKLOAD_IDENTITY_POOL }}/providers/${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}'
+        service_account: 'github-actions-deploy@${{ secrets.GCP_PROJECT }}.iam.gserviceaccount.com'
+        create_credentials_file: true
 
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ secrets.GCP_PROJECT }}
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: ${{ secrets.GCP_PROJECT }}
 
-      - name: Run linting
-        run: npm run lint || echo "No linting configured"
+    - name: Run linting
+      run: npm run lint || echo "No linting configured"
 
-      - name: Run tests
-        run: npm test || echo "No tests configured"
+    - name: Run tests
+      run: npm test || echo "No tests configured"
 
-      - name: Build application
-        run: npm run build || echo "No build script configured"
+    - name: Build application
+      run: npm run build || echo "No build script configured"
 
-      - name: Build Docker image
-        run: |
-          echo "Building Docker image for aixtiv-cli"
-          COMMIT_SHA=$(git rev-parse --short HEAD)
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/aixtiv-cli:$COMMIT_SHA .
-          docker tag gcr.io/${{ secrets.GCP_PROJECT }}/aixtiv-cli:$COMMIT_SHA gcr.io/${{ secrets.GCP_PROJECT }}/aixtiv-cli:latest
+    - name: Build Docker image
+      run: |
+        echo "Building Docker image for aixtiv-cli"
+        COMMIT_SHA=$(git rev-parse --short HEAD)
+        docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/aixtiv-cli:$COMMIT_SHA .
+        docker tag gcr.io/${{ secrets.GCP_PROJECT }}/aixtiv-cli:$COMMIT_SHA gcr.io/${{ secrets.GCP_PROJECT }}/aixtiv-cli:latest
 
-      - name: Configure Docker authentication for GCR
-        run: |
-          gcloud auth configure-docker gcr.io
+    - name: Configure Docker authentication for GCR
+      run: |
+        gcloud auth configure-docker gcr.io
 
-      - name: Push Docker image to GCR
-        run: |
-          COMMIT_SHA=$(git rev-parse --short HEAD)
-          docker push gcr.io/${{ secrets.GCP_PROJECT }}/aixtiv-cli:$COMMIT_SHA
-          docker push gcr.io/${{ secrets.GCP_PROJECT }}/aixtiv-cli:latest
+    - name: Push Docker image to GCR
+      run: |
+        COMMIT_SHA=$(git rev-parse --short HEAD)
+        docker push gcr.io/${{ secrets.GCP_PROJECT }}/aixtiv-cli:$COMMIT_SHA
+        docker push gcr.io/${{ secrets.GCP_PROJECT }}/aixtiv-cli:latest
 
-      - name: Set up Binary Authorization prerequisites
-        run: |
-          echo "Setting up Binary Authorization prerequisites..."
-          
-          # Enable required APIs if not already enabled
-          gcloud services enable \
-            binaryauthorization.googleapis.com \
-            containeranalysis.googleapis.com \
-            cloudkms.googleapis.com
-          
-          # Check if key ring exists, create if it doesn't
-          KEY_RING_EXISTS=$(gcloud kms keyrings list --location global --filter="name:${KEY_RING}" --format="value(name)")
-          if [[ -z "$KEY_RING_EXISTS" ]]; then
-            echo "Creating KMS key ring: ${KEY_RING}"
-            gcloud kms keyrings create ${KEY_RING} --location global
-          fi
-          
-          # Check if key exists, create if it doesn't
-          KEY_EXISTS=$(gcloud kms keys list --location global --keyring ${KEY_RING} --filter="name:${KEY_NAME}" --format="value(name)")
-          if [[ -z "$KEY_EXISTS" ]]; then
-            echo "Creating KMS key: ${KEY_NAME}"
-            gcloud kms keys create ${KEY_NAME} \
-              --location global \
-              --keyring ${KEY_RING} \
-              --purpose asymmetric-signing \
-              --default-algorithm rsa-sign-pkcs1-2048-sha256
-          fi
-          
-          # Check if attestor exists, create if it doesn't
-          ATTESTOR_EXISTS=$(gcloud container binauthz attestors list --filter="name:${ATTESTOR_NAME}" --format="value(name)")
-          if [[ -z "$ATTESTOR_EXISTS" ]]; then
-            echo "Creating attestor: ${ATTESTOR_NAME}"
-            gcloud container binauthz attestors create ${ATTESTOR_NAME} \
-              --attestation-authority-note=${ATTESTOR_NAME}-note \
-              --attestation-authority-note-project=${{ secrets.GCP_PROJECT }}
-            
-            # Add the public key to the attestor
-            gcloud container binauthz attestors public-keys add \
-              --attestor=${ATTESTOR_NAME} \
-              --keyversion-project=${{ secrets.GCP_PROJECT }} \
-              --keyversion-location=global \
-              --keyversion-keyring=${KEY_RING} \
-              --keyversion-key=${KEY_NAME} \
-              --keyversion=1
-          fi
+    - name: Deploy to Cloud Run
+      run: |
+        COMMIT_SHA=$(git rev-parse --short HEAD)
+        gcloud run deploy aixtiv-cli \
+          --image gcr.io/${{ secrets.GCP_PROJECT }}/aixtiv-cli:$COMMIT_SHA \
+          --platform managed \
+          --region ${{ env.REGION }} \
+          --allow-unauthenticated \
+          --project ${{ secrets.GCP_PROJECT }}
 
-      - name: Create attestation for Docker image
-        run: |
-          COMMIT_SHA=$(git rev-parse --short HEAD)
-          IMAGE_PATH=gcr.io/${{ secrets.GCP_PROJECT }}/aixtiv-cli:$COMMIT_SHA
-          
-          echo "Creating attestation for image: ${IMAGE_PATH}"
-          
-          # Create attestation
-          gcloud container binauthz attestations sign-and-create \
-            --artifact-url="${IMAGE_PATH}" \
-            --attestor="${ATTESTOR_NAME}" \
-            --attestor-project="${{ secrets.GCP_PROJECT }}" \
-            --keyversion-project="${{ secrets.GCP_PROJECT }}" \
-            --keyversion-location=global \
-            --keyversion-keyring="${KEY_RING}" \
-            --keyversion-key="${KEY_NAME}" \
-            --keyversion=1
-          
-          # Verify attestation was created
-          ATTESTATIONS=$(gcloud container binauthz attestations list \
-            --attestor="${ATTESTOR_NAME}" \
-            --attestor-project="${{ secrets.GCP_PROJECT }}" \
-            --artifact-url="${IMAGE_PATH}")
-          
-          echo "Attestations for ${IMAGE_PATH}:"
-          echo "${ATTESTATIONS}"
+    - name: Post Deployment Summary
+      run: |
+        echo "### Aixtiv CLI Build and Deployment Completed ✅" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Successfully built and deployed aixtiv-cli to Cloud Run" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Deployment Information:**" >> $GITHUB_STEP_SUMMARY
+        echo "- Region: ${{ env.REGION }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Project: ${{ secrets.GCP_PROJECT }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Service: aixtiv-cli" >> $GITHUB_STEP_SUMMARY
+        echo "- Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
 
-      - name: Deploy to Cloud Run
-        run: |
-          COMMIT_SHA=$(git rev-parse --short HEAD)
-          
-          # Configure Binary Authorization policy for Cloud Run if needed
-          # Note: This is a simplified example. In production, you might want a more complex policy.
-          
-          # Deploy to Cloud Run with secure configuration
-          gcloud run deploy aixtiv-cli \
-            --image gcr.io/${{ secrets.GCP_PROJECT }}/aixtiv-cli:$COMMIT_SHA \
-            --platform managed \
-            --region ${{ env.REGION }} \
-            --allow-unauthenticated \
-            --project ${{ secrets.GCP_PROJECT }} \
-            --service-account="github-actions-deploy@${{ secrets.GCP_PROJECT }}.iam.gserviceaccount.com" \
-            --memory=1Gi \
-            --cpu=1
-
-      - name: Post Deployment Summary
-        run: |
-          echo "### Aixtiv CLI Build and Deployment Completed ✅" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Successfully built and deployed aixtiv-cli to Cloud Run" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Deployment Information:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Region: ${{ env.REGION }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Project: ${{ secrets.GCP_PROJECT }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Service: aixtiv-cli" >> $GITHUB_STEP_SUMMARY
-          echo "- Non-root user: Enabled" >> $GITHUB_STEP_SUMMARY
-          echo "- Supply chain attestation: Enabled" >> $GITHUB_STEP_SUMMARY
-          echo "- Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY

@@ -1,13 +1,10 @@
+const fetch = require('node-fetch');
 const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
-const fetch = require('node-fetch');
 const { parseOptions, withSpinner, displayResult } = require('../../../lib/utils');
 const { logAgentAction, getCurrentAgentId } = require('../../../lib/agent-tracking');
-const { debugDisplay } = require('../../../lib/debug-display');
-const telemetry = require('../../../lib/telemetry');
-const codeGenerator = require('../../../lib/code-generator');
 const fallbackGenerator = require('./fallback-generator');
 
 // AIXTIV SYMPHONY vision statement for alignment with ASOOS principles
@@ -16,48 +13,34 @@ const AIXTIV_SYMPHONY_VISION = `AIXTIV SYMPHONY ORCHESTRATING OPERATING SYSTEM -
 ASOOS defines a new technology category with OS of ASOOS referring to the first AI-Human focused OS. A smart Operating System designed to accelerate AI-Human-Synchronization. The acceleration increases AI-Human Synchronosity (AI-H-SYN) through an array of methods that involves the overall authentication process, professional skills, experience, and deep behavioral research modeling for a highly reliable outcome that forms the foundation of many key functions of the innovative OS, ASOOS.`;
 
 // API endpoint configuration
+// Code generation endpoint
 const functionUrl =
   process.env.CLAUDE_API_ENDPOINT ||
   process.env.DR_CLAUDE_API ||
   'https://api.anthropic.com/v1/messages';
 
 /**
- * Generate code using Claude Code assistant or local code generator
+ * Generate code using Claude Code assistant
  * @param {object} options - Command options
  */
+// Debug display functionality is available through utils
+
+// Import debug display
+const { debugDisplay } = require('../../../lib/debug-display');
+const telemetry = require('../../../lib/telemetry');
+
 module.exports = async function generateCode(options) {
   // Record knowledge access for telemetry
   telemetry.recordKnowledgeAccess('ai-model');
+  // Capture internal reasoning
+  const internalThought = `Processing generateCode command with parameters: ${JSON.stringify(arguments[0])}`;
 
-  // Parse command options
-  const { task, language = 'javascript', outputFile, context } = parseOptions(options);
-  
-  // Validate task parameter early
-  if (!task) {
-    console.error(chalk.red('Error: Task description is required'));
-    logAgentAction('code_generation_error', {
-      error: 'Task description is required',
-      language,
-      agent_id: getCurrentAgentId(),
-    });
-    
-    displayResult({
-      success: false,
-      message: 'Code generation failed',
-      error: 'Task description is required. Please provide a task description using the --task option.',
-      details: {
-        language,
-        performed_by: getCurrentAgentId(),
-      },
-    });
-    
-    return;
-  }
+  const { task, language, outputFile, context } = parseOptions(options);
 
   // Log the code generation request with agent attribution
   logAgentAction('code_generation_request', {
     task,
-    language,
+    language: language || 'javascript',
     has_context: !!context,
     agent_id: getCurrentAgentId(),
   });
@@ -88,23 +71,11 @@ module.exports = async function generateCode(options) {
 
     // Execute code generation with spinner
     const result = await withSpinner(
-      `Generating ${chalk.cyan(language)} code for your task`,
+      `Claude Code is generating ${chalk.cyan(language || 'javascript')} code for your task`,
       async () => {
         try {
-          // First try using the local code generator
-          if (process.env.USE_LOCAL_GENERATOR === 'true') {
-            console.log(chalk.blue('Using local code generator...'));
-            const code = codeGenerator.generateCode(language, task);
-            return {
-              status: 'completed',
-              code,
-              isLocalGenerator: true,
-            };
-          }
-
-          // If local generator isn't explicitly requested, try using Claude API
           const payload = {
-            model: 'claude-3-sonnet-20240229',
+            model: 'claude-3-sonnet-20240229', // Use a valid model name
             max_tokens: 4000,
             messages: [
               {
@@ -112,9 +83,7 @@ module.exports = async function generateCode(options) {
                 content: [
                   {
                     type: 'text',
-                    text: `Task: ${task}\n\nPlease generate code in ${language} for the task described above.${
-                      contextFiles.length > 0 ? '\n\nHere is additional context:' : ''
-                    }`,
+                    text: `Task: ${task}\n\nPlease generate code in ${language || 'javascript'} for the task described above.${contextFiles.length > 0 ? '\n\nHere is additional context:' : ''}`,
                   },
                 ],
               },
@@ -142,93 +111,69 @@ module.exports = async function generateCode(options) {
             rejectUnauthorized: false,
           });
 
-          const response = await fetch(functionUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'anthropic-api-key': process.env.ANTHROPIC_API_KEY || process.env.DR_CLAUDE_API || '',
-              'anthropic-version': '2023-06-01',
-              'X-Agent-ID': getCurrentAgentId(),
-            },
-            body: JSON.stringify(payload),
-            agent: httpsAgent,
-            timeout: 15000, // 15 second timeout
-          });
+          try {
+            const response = await fetch(functionUrl, {
+              method: 'POST', // Explicitly set HTTP method to POST
+              headers: {
+                'Content-Type': 'application/json',
+                'anthropic-api-key':
+                  process.env.ANTHROPIC_API_KEY || process.env.DR_CLAUDE_API || '',
+                'anthropic-version': '2023-06-01',
+                'X-Agent-ID': getCurrentAgentId(), // Add agent ID in headers for tracking
+              },
+              body: JSON.stringify(payload),
+              agent: httpsAgent, // Add this line to ignore SSL certificate validation
+              timeout: 15000, // 15 second timeout
+            });
 
-          if (!response.ok) {
-            // Capture the error response details
-            try {
-              const errorBody = await response.text();
-              console.error(`Anthropic API Error (${response.status}):\n`, errorBody);
-              throw new Error(`API responded with status ${response.status}: ${errorBody}`);
-            } catch (e) {
-              throw new Error(`API responded with status ${response.status}`);
-            }
-          }
-
-          const jsonResponse = await response.json();
-
-          // Extract the code from the assistant's response
-          let code = '';
-          let explanation = '';
-
-          if (jsonResponse.content && jsonResponse.content.length > 0) {
-            // The Claude API response includes an array of content blocks
-            // We need to extract the code blocks from the response
-            for (const block of jsonResponse.content) {
-              if (block.type === 'text') {
-                code += block.text;
+            if (!response.ok) {
+              // Capture the error response details
+              try {
+                const errorBody = await response.text();
+                console.error(`Anthropic API Error (${response.status}):\n`, errorBody);
+                throw new Error(`API responded with status ${response.status}: ${errorBody}`);
+              } catch (e) {
+                throw new Error(`API responded with status ${response.status}`);
               }
             }
-          }
 
-          return {
-            status: 'completed',
-            code,
-            explanation,
-          };
+            const jsonResponse = await response.json();
+
+            // Extract the code from the assistant's response
+            let code = '';
+            let explanation = '';
+
+            if (jsonResponse.content && jsonResponse.content.length > 0) {
+              // The Claude API response includes an array of content blocks
+              // We need to extract the code blocks from the response
+              for (const block of jsonResponse.content) {
+                if (block.type === 'text') {
+                  code += block.text;
+                }
+              }
+            }
+          } catch (error) {
+            // If API call fails with network error or timeout, use fallback generator
+            if (
+              error.message.includes('ECONNREFUSED') ||
+              error.message.includes('404') ||
+              error.message.includes('timeout') ||
+              error.message.includes('network')
+            ) {
+              console.warn(
+                chalk.yellow(
+                  '\nCould not reach Claude API endpoint. Using local fallback generator.'
+                )
+              );
+
+              // Use fallback generator
+              const fallbackResult = fallbackGenerator.generateCode(task, language || 'javascript');
+            } else {
+              throw error;
+            }
+          }
         } catch (error) {
-          console.warn(chalk.yellow(`API error: ${error.message}`));
-
-          // If API call fails, use our custom code generator
-          if (
-            error.message.includes('ECONNREFUSED') ||
-            error.message.includes('404') ||
-            error.message.includes('timeout') ||
-            error.message.includes('network')
-          ) {
-            console.log(chalk.blue('Using local code generator as fallback...'));
-
-            // Try our custom code generator first
-            try {
-              // Make sure task is not undefined before passing to generator
-              if (!task) {
-                throw new Error('Task description is required');
-              }
-              
-              const code = codeGenerator.generateCode(language, task);
-              return {
-                status: 'completed',
-                code,
-                isLocalGenerator: true,
-              };
-            } catch (genError) {
-              console.warn(chalk.yellow(`Local generator error: ${genError.message}`));
-
-              // If our generator fails, use the fallback generator as a last resort
-              console.log(chalk.blue('Using basic fallback generator...'));
-              // Pass the task (which could be undefined) and let the fallback handle it
-              const fallbackResult = fallbackGenerator.generateCode(task, language);
-              return {
-                status: 'completed',
-                code: fallbackResult.code,
-                explanation: fallbackResult.explanation,
-                isLocalFallback: true,
-              };
-            }
-          } else {
-            throw error;
-          }
+          throw new Error(`Failed to generate code: ${error.message}`);
         }
       }
     );
@@ -236,41 +181,29 @@ module.exports = async function generateCode(options) {
     // Log the result with agent attribution
     logAgentAction('code_generation_result', {
       success: result.status === 'completed',
-      task, 
-      language,
+      task,
+      language: language || 'javascript',
       agent_id: getCurrentAgentId(),
-      generator_used: result.isLocalGenerator
-        ? 'local'
-        : result.isLocalFallback
-          ? 'fallback'
-          : 'api',
+      usedFallback: result.isLocalFallback || false,
     });
 
     // Display result
     displayResult({
       success: result.status === 'completed',
-      message: `Code generation ${result.status === 'completed' ? 'successfully completed' : 'failed'}${
-        result.isLocalGenerator
-          ? ' (using local generator)'
-          : result.isLocalFallback
-            ? ' (using basic fallback)'
-            : ''
-      }`,
+      message: `Code generation ${result.status === 'completed' ? 'successfully completed' : 'failed'}${result.isLocalFallback ? ' (using local fallback)' : ''}`,
       details: {
         task: task,
-        language,
+        language: language || 'javascript',
         performed_by: getCurrentAgentId(),
-        mode: result.isLocalGenerator ? 'local' : result.isLocalFallback ? 'fallback' : 'api',
+        mode: result.isLocalFallback ? 'local' : 'api',
       },
     });
 
     if (result.status === 'completed' && result.code) {
-      if (result.isLocalGenerator) {
-        console.log(chalk.blue('\nNote: This code was generated using the LOCAL code generator.'));
-      } else if (result.isLocalFallback) {
+      if (result.isLocalFallback) {
         console.log(
           chalk.yellow(
-            '\nNote: This code was generated using a BASIC FALLBACK generator because the Claude API was not available.'
+            '\nNote: This code was generated using a LOCAL FALLBACK generator because the Claude API was not available.'
           )
         );
       }
@@ -294,13 +227,9 @@ module.exports = async function generateCode(options) {
           // Log file save action
           logAgentAction('code_saved_to_file', {
             output_file: outputFile,
-            language,
+            language: language || 'javascript',
             agent_id: getCurrentAgentId(),
-            generator_used: result.isLocalGenerator
-              ? 'local'
-              : result.isLocalFallback
-                ? 'fallback'
-                : 'api',
+            usedFallback: result.isLocalFallback || false,
           });
         } catch (err) {
           console.error(chalk.red(`\nError saving to file: ${err.message}`));
@@ -326,11 +255,11 @@ module.exports = async function generateCode(options) {
     logAgentAction('code_generation_error', {
       error: error.message,
       task,
-      language,
+      language: language || 'javascript',
       agent_id: getCurrentAgentId(),
     });
 
-    // Show helpful error information
+    // Show more helpful error information
     if (error.message.includes('ECONNREFUSED') || error.message.includes('404')) {
       console.error(chalk.yellow('\nTroubleshooting tips:'));
       console.error('1. Check if the Claude API service is running locally');
@@ -339,7 +268,6 @@ module.exports = async function generateCode(options) {
         '   Example: export CLAUDE_API_ENDPOINT=https://your-claude-api-endpoint.com/claude-code-generate'
       );
       console.error('3. Make sure your network connection can reach the Claude API service');
-      console.error('4. Set USE_LOCAL_GENERATOR=true to use only the local generator');
       console.error('\nCurrent endpoint: ' + functionUrl);
     }
   }

@@ -1,8 +1,8 @@
 deployment:
-  target: 'https://2100.cool/claude'
-  version: '1.0.0'
-  type: 'blueGreen'
-
+  target: "https://2100.cool/claude"
+  version: "1.0.0"
+  type: "blueGreen"
+  
 components:
   - interface
   - memory

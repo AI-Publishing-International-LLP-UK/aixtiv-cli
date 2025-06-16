@@ -1,5 +1,5 @@
 sslStatus:
-  check: 'now'
+  check: "now"
   domains:
     - staging.2100.cool
     - 2100.cool
@@ -12,4 +12,4 @@ validation:
   monitoring: true
   alerts:
     enabled: true
-    threshold: '30d'
+    threshold: "30d"

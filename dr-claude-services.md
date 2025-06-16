@@ -43,18 +43,15 @@ cat config/claude.json
 
 If you can't access Dr. Claude services directly, consider these alternatives:
 
-1. **Use Claude API directly**:
-
+1. **Use Claude API directly**: 
    - If you have an Anthropic API key, you can use it directly
    - See the "claude:code:generate" command in your CLI
 
 2. **Use the OAuth2 CLI tool**:
-
    - The OAuth2 CLI tool you just installed can be used for authentication
    - Example: `oauth2 auth /path/to/key.json`
 
 3. **GitHub Claude App**:
-
    - Check for Claude for GitHub in your GitHub organization's installed apps
    - Access it through: `https://github.com/organizations/AI-Publishing-International-LLP-UK/settings/installations`
 

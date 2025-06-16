@@ -1,8 +1,8 @@
 /**
  * Network Request Interface for Video System
- *
+ * 
  * Provides network request handling for video recording system.
- *
+ * 
  * (c) 2025 Copyright AI Publishing International LLP All Rights Reserved.
  * Developed with assistance from the Pilots of Vision Lake.
  */
@@ -23,7 +23,7 @@ class NetworkRequest {
     this._startTime = Date.now();
     this._endTime = null;
   }
-
+  
   /**
    * Get request ID
    * @returns {string} Request ID
@@ -31,7 +31,7 @@ class NetworkRequest {
   id() {
     return this._id;
   }
-
+  
   /**
    * Get request URL
    * @returns {string} Request URL
@@ -39,7 +39,7 @@ class NetworkRequest {
   url() {
     return this._url;
   }
-
+  
   /**
    * Get request method
    * @returns {string} HTTP method
@@ -47,7 +47,7 @@ class NetworkRequest {
   method() {
     return this._method;
   }
-
+  
   /**
    * Get request headers
    * @returns {Object} Headers object
@@ -55,7 +55,7 @@ class NetworkRequest {
   headers() {
     return { ...this._headers };
   }
-
+  
   /**
    * Get resource type
    * @returns {string} Resource type
@@ -63,7 +63,7 @@ class NetworkRequest {
   resourceType() {
     return this._resourceType;
   }
-
+  
   /**
    * Get request status
    * @returns {string} Status ('pending', 'completed', 'failed')
@@ -71,7 +71,7 @@ class NetworkRequest {
   status() {
     return this._status;
   }
-
+  
   /**
    * Get response if available
    * @returns {Object|null} Response object or null
@@ -79,7 +79,7 @@ class NetworkRequest {
   response() {
     return this._response;
   }
-
+  
   /**
    * Get error if request failed
    * @returns {Error|null} Error object or null
@@ -87,7 +87,7 @@ class NetworkRequest {
   error() {
     return this._error;
   }
-
+  
   /**
    * Get request start time
    * @returns {number} Start time in milliseconds
@@ -95,7 +95,7 @@ class NetworkRequest {
   startTime() {
     return this._startTime;
   }
-
+  
   /**
    * Get request end time
    * @returns {number|null} End time in milliseconds or null if not completed
@@ -103,7 +103,7 @@ class NetworkRequest {
   endTime() {
     return this._endTime;
   }
-
+  
   /**
    * Mark request as completed with response
    * @param {Object} response - Response object
@@ -113,7 +113,7 @@ class NetworkRequest {
     this._response = response;
     this._endTime = Date.now();
   }
-
+  
   /**
    * Mark request as failed with error
    * @param {Error} error - Error object
@@ -123,7 +123,7 @@ class NetworkRequest {
     this._error = error;
     this._endTime = Date.now();
   }
-
+  
   /**
    * Determine resource type based on URL and headers
    * @param {string} url - Request URL
@@ -132,39 +132,39 @@ class NetworkRequest {
    */
   _determineResourceType(url) {
     const extension = url.split('.').pop().toLowerCase();
-
+    
     // Map extensions to resource types
     const resourceTypeMap = {
-      png: 'image',
-      jpg: 'image',
-      jpeg: 'image',
-      gif: 'image',
-      webp: 'image',
-      svg: 'image',
-
-      css: 'stylesheet',
-
-      js: 'script',
-
-      mp4: 'media',
-      webm: 'media',
-      mp3: 'media',
-      wav: 'media',
-      ogg: 'media',
-
-      ttf: 'font',
-      woff: 'font',
-      woff2: 'font',
-      eot: 'font',
-      otf: 'font',
-
-      json: 'fetch',
-      xml: 'fetch',
+      'png': 'image',
+      'jpg': 'image',
+      'jpeg': 'image',
+      'gif': 'image',
+      'webp': 'image',
+      'svg': 'image',
+      
+      'css': 'stylesheet',
+      
+      'js': 'script',
+      
+      'mp4': 'media',
+      'webm': 'media',
+      'mp3': 'media',
+      'wav': 'media',
+      'ogg': 'media',
+      
+      'ttf': 'font',
+      'woff': 'font',
+      'woff2': 'font',
+      'eot': 'font',
+      'otf': 'font',
+      
+      'json': 'fetch',
+      'xml': 'fetch'
     };
-
+    
     return resourceTypeMap[extension] || 'document';
   }
-
+  
   /**
    * Is this a navigation request
    * @returns {boolean} True if this is a navigation request
@@ -172,7 +172,7 @@ class NetworkRequest {
   isNavigationRequest() {
     return this._resourceType === 'document';
   }
-
+  
   /**
    * Is this request finished
    * @returns {boolean} True if request is completed or failed

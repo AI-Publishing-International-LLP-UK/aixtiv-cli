@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
 const { parseOptions, withSpinner, displayResult } = require('../../lib/utils');
-const telemetry = require('../../lib/telemetry');
 
 /**
  * Initialize a new aixtiv project with basic structure and configuration
@@ -10,11 +9,7 @@ const telemetry = require('../../lib/telemetry');
  */
 module.exports = async function initializeProject(options) {
   // Record knowledge access for telemetry
-  try {
-    telemetry.recordKnowledgeAccess('general');
-  } catch (error) {
-    console.warn('Warning: Unable to record telemetry:', error.message);
-  }
+  telemetry.recordKnowledgeAccess('general');
   const { name, force } = parseOptions(options, {
     name: 'aixtiv-project',
   });
@@ -113,6 +108,7 @@ program
 //   .description('Example command description')
 //   .option('-o, --option <value>', 'Option description')
 //   .action(require('./commands/example'));
+const telemetry = require('../../lib/telemetry');
 
 // Parse command line arguments
 program.parse(process.argv);
