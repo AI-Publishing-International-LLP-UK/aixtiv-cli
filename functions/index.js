@@ -45,7 +45,7 @@ const highMemoryOpts = {
 // Export Dr. Claude functions with v2 and us-west1 region
 exports.drClaude = onRequest(
   {
-    region: 'us-west1',
+    regions: ['us-central1', 'us-west1'],
     memory: '512MiB',
     timeoutSeconds: 60
   },
@@ -78,7 +78,7 @@ exports.processScheduledAgentActions = agentTriggerFunctions.processScheduledAge
 // Context storage endpoint with v2 and us-west1 region
 exports.contextStorage = onRequest(
   {
-    region: 'us-west1',
+    regions: ['us-central1', 'us-west1', 'europe-west1'],
     memory: '256MiB',
     timeoutSeconds: 30
   },
@@ -111,7 +111,7 @@ exports.contextStorage = onRequest(
 // Model metrics endpoint with v2 and us-west1 region
 exports.modelMetrics = onRequest(
   {
-    region: 'us-west1',
+    regions: ['us-central1', 'us-west1', 'europe-west1'],
     memory: '256MiB',
     timeoutSeconds: 30
   },
@@ -144,7 +144,7 @@ exports.modelMetrics = onRequest(
 // Health check endpoint with v2 and us-west1 region
 exports.healthCheck = onRequest(
   {
-    region: 'us-west1',
+    regions: ['us-central1', 'us-west1', 'europe-west1'],
     memory: '256MiB',
     timeoutSeconds: 30
   },
