@@ -1,0 +1,54 @@
+{
+  "region": "us-west1",
+  "zone": "us-west1-b",
+  "providers": {
+    "slack": {
+      "entity_id": "https://slack.com/saml/metadata",
+      "assertion_consumer_service": "https://slack.com/sso/saml",
+      "recipient": "https://slack.com/sso/saml",
+      "audience": "https://slack.com"
+    },
+    "openai": {
+      "entity_id": "https://auth0.openai.com/samlp/metadata",
+      "assertion_consumer_service": "https://auth0.openai.com/login/callback",
+      "recipient": "https://auth0.openai.com/login/callback",
+      "audience": "urn:auth0:openai"
+    },
+    "anthropic": {
+      "entity_id": "https://console.anthropic.com",
+      "assertion_consumer_service": "https://console.anthropic.com/saml/acs",
+      "recipient": "https://console.anthropic.com/saml/acs",
+      "audience": "https://console.anthropic.com"
+    },
+    "github": {
+      "entity_id": "https://github.com/orgs/asoos/saml/metadata",
+      "assertion_consumer_service": "https://github.com/orgs/asoos/saml/consume",
+      "recipient": "https://github.com/orgs/asoos/saml/consume",
+      "audience": "https://github.com/orgs/asoos"
+    },
+    "gitlab": {
+      "entity_id": "https://gitlab.com",
+      "assertion_consumer_service": "https://gitlab.com/users/auth/saml/callback",
+      "recipient": "https://gitlab.com/users/auth/saml/callback",
+      "audience": "https://gitlab.com"
+    },
+    "atlassian": {
+      "entity_id": "https://api.atlassian.com/saml/metadata/AIXTIV",
+      "assertion_consumer_service": "https://auth.atlassian.com/saml/callback",
+      "recipient": "https://auth.atlassian.com/saml/callback",
+      "audience": "https://api.atlassian.com"
+    }
+  },
+  "idp": {
+    "entity_id": "https://accounts.google.com/o/saml2?idpid=C04cj3jky",
+    "sso_url": "https://accounts.google.com/o/saml2/idp?idpid=C04cj3jky",
+    "metadata_path": "config/saml/idp-metadata.xml"
+  },
+  "default_attributes": {
+    "email": "email",
+    "firstName": "first_name",
+    "lastName": "last_name",
+    "groups": "groups"
+  }
+}
+
