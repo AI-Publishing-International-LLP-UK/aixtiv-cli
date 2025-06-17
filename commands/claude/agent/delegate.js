@@ -110,10 +110,9 @@ module.exports = async function delegateProjectToAgent(options) {
             assignee: assignTo,
           });
 
-          // Display debug information
+  // Display debug information
   debugDisplay({
     thought: internalThought,
-    result: result,
     command: 'claude:return'
   });
   
@@ -169,7 +168,6 @@ module.exports = async function delegateProjectToAgent(options) {
             // Display debug information
   debugDisplay({
     thought: internalThought,
-    result: result,
     command: 'claude:return'
   });
   
@@ -259,7 +257,6 @@ module.exports = async function delegateProjectToAgent(options) {
     // Display debug information
   debugDisplay({
     thought: internalThought,
-    result: result,
     command: 'claude:process.exit'
   });
   
@@ -285,36 +282,17 @@ function getPriorityColor(priority) {
       // Display debug information
   debugDisplay({
     thought: internalThought,
-    result: result,
     command: 'claude:return'
   });
   
   return chalk.red('High');
     case 'medium':
-      // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
   
   return chalk.yellow('Medium');
     case 'low':
-      // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
   
   return chalk.blue('Low');
     default:
-      // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    result: result,
-    command: 'claude:return'
-  });
   
   return chalk.green(priority);
   }

@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "api-for-warp-drive",
+  "private_key_id": "4a4d99be666ef90060ee09aef10ef9bd0fa9beff",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC+UzifpheaKVeA\nNCp4mOk+Q9MU1H+GBqXZ/8fFXnPRh0bKu7rnS3IDPSo+vriQF3PaWpXxagTdKodD\nUxqnM2SX83xwW5YAh9wS2uPX5g6wFnEEzGH/T76js9p+VHDAYcdvCeH4c9yTqn7G\n4Y12jeY5zwd1e+uG5T7CO3p6vqex4g60+zoIuSaXAQlcw2E/2NAuxebYpyIJUxr9\n/vkrbIHG6vgXG0LQSmSpxiF8BOYt8YUzCTzrQjbebZuxLGoRTai8Ur+mG543dIb4\n8tQrDpnkmoryz5/NRi0Ek7tHAyuoEhTpnzUX3N1CpOIGymSIL0NmpUw9iQuaFXxJ\nA3yWtfhbAgMBAAECggEAD8DSqIA2ZueyGuX2d/nsIF+7yncWQREuzB78OY1qV7bz\nOJeWTkuz2anH496kZyTRzYp+67cDRQ0emgd4Zst9sYgRTjl+bnfQUu00O6wKni+V\nVjjWiavfkywxUxCJLptJRxsRzZ9FbCGKEcsciuoO2s0UiHhj08wIyEnlBuDd/36a\nOnDiXyuzp6Qf/HYOr1+sGvMmB+QXzzG9+IbYp92LmRW9ujxtty4nQvQQxEsSb0Mm\nKGyHsG5AD8V0822mR6eCmwKpMSKzadN5Arh8v3x6wDtAog/TmumQSRkY8w6PTQVU\nGwP0pbdPd/pUTDkiXer9mCgh23/DeM/WUD0sjMe0NQKBgQD5QQAMWNM2wFAw9YWW\n6UI6PlmJTGmN9H582CHxCPtTM/22Hkk99ld+K6nKfptO5ybjY1hZcob3i2MBuFgr\nFShoToB5a3Uj2jY4PPZ/7uJ0ASMv60AD0aDnkc4vWaaVU7NAWR/kFhUwWWNSJJBy\n7tPbUyTTvyDKLtzfHFrPrPvdHQKBgQDDeewV4CBSvVW1hfxZmMKMF/WUsPmEKeZg\n1MU20oLDXkREc1++IIhXNXDybXsEoZZkkxX+ri5B/WJ9DESaenff9wX3DGHhVrZm\nCebhlIf5lnJV/RYCBvbJ0WBKiJqC8/LMhn1Nk8xKqisPulPfSRyRbyP4ngttfmoL\nA2OSIgpJ1wKBgQCr6yRwX7fXNNBa5I3u6BaQ+75gD/9iNTglPiIzEWHgIqUlP0B/\nZ3EzikRDcg4HXzIYdsZSc8cZ6N8yKYdOt/o176d3mCGkx/bL1WikFw3Eu6AchiOS\nPr2/23aefDSFHMUvZgm0FXMp9Q2nc6baT1Z7GZ72GgcwzR/1F6afRY43FQKBgGkv\nNRN8W8hJ61HXPDf2FFGQHuyY4lr0tOvL8icS1ZxNIEz5DD7hgJv0vMcmlDikvql1\n4DMABRIrR5DkRhId7l1MriAGwLChmVqE34DpDNYH15RfsDT9DFUC3l6c7Q+kNzVI\n9SoGarqOoMdAyxruW3oCpQeF+746dNNiSnT67jBXAoGBANPZ87okbVMxH0RJd1s+\nethrKpUkPI81bpW5VAATYi0hDd5uG073rIsPvK/2ifKQLaBsb1i+CqDZm3wiOll0\n+MV8/aXGYQhW9VmcAyMiKzxrOmwRwC6i+N5+pMgUfJexZHDhb2AdjnrtvYkSlR6A\nE4k9fwKlCRCZLGn/eExRJZuJ\n-----END PRIVATE KEY-----\n",
+  "client_email": "aixtiv-gateway-agent@api-for-warp-drive.iam.gserviceaccount.com",
+  "client_id": "101464315380871167052",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/aixtiv-gateway-agent%40api-for-warp-drive.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
