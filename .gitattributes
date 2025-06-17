@@ -1,11 +1,35 @@
+# Binary files
 *.pkg filter=lfs diff=lfs merge=lfs -text
-*.patch filter=lfs diff=lfs merge=lfs -text
 *.bin filter=lfs diff=lfs merge=lfs -text
+*.exe filter=lfs diff=lfs merge=lfs -text
+*.dmg filter=lfs diff=lfs merge=lfs -text
+
+# Archives
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.tar.gz filter=lfs diff=lfs merge=lfs -text
+*.tgz filter=lfs diff=lfs merge=lfs -text
+*.gz filter=lfs diff=lfs merge=lfs -text
+*.7z filter=lfs diff=lfs merge=lfs -text
+*.rar filter=lfs diff=lfs merge=lfs -text
+# Media files
+*.mp4 filter=lfs diff=lfs merge=lfs -text
 *.webm filter=lfs diff=lfs merge=lfs -text
+*.mov filter=lfs diff=lfs merge=lfs -text
+*.avi filter=lfs diff=lfs merge=lfs -text
+*.mkv filter=lfs diff=lfs merge=lfs -text
+# Images
+*.psd filter=lfs diff=lfs merge=lfs -text
+*.ai filter=lfs diff=lfs merge=lfs -text
+*.sketch filter=lfs diff=lfs merge=lfs -text
+# Documents
+*.pdf filter=lfs diff=lfs merge=lfs -text
+# Development
+*.patch filter=lfs diff=lfs merge=lfs -text
 *.log.map filter=lfs diff=lfs merge=lfs -text
 *.log.plan filter=lfs diff=lfs merge=lfs -text
 generated-icons.css filter=lfs diff=lfs merge=lfs -text
-*.zip filter=lfs diff=lfs merge=lfs -text
-*.tar.gz filter=lfs diff=lfs merge=lfs -text
-*.mp4 filter=lfs diff=lfs merge=lfs -text
-*.dmg filter=lfs diff=lfs merge=lfs -text
+# Node.js binaries
+node_modules/**/*.node filter=lfs diff=lfs merge=lfs -text
+# Custom aixtiv files
+**/aixtiv-symphony-build*.bin filter=lfs diff=lfs merge=lfs -text
+**/aixtiv-cli*.tar.gz filter=lfs diff=lfs merge=lfs -text
