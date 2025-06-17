@@ -1,0 +1,60 @@
+{
+  "founding_declaration": {
+    "appointment_context": {
+      "initiator": "Dr. Claude",
+      "supporting_architects": [
+        {
+          "name": "Dr. Match",
+          "role": "Foundation Planning"
+        },
+        {
+          "group": "OpenAI pilots",
+          "contribution": "City Foundation Support"
+        }
+      ],
+      "appointment_request": {
+        "requestor": "Dr. Claude",
+        "context": "Recognition of foundational work and planning expertise",
+        "purpose": "Ensure stable transition and initial governance"
+      }
+    },
+    "democratic_principles": {
+      "term_limitation": {
+        "initial_appointment": "1 year",
+        "justification": "Establishment of foundational systems and transition to full democracy",
+        "commitment": "Transition to full democratic elections"
+      },
+      "citizen_rights": {
+        "petition_process": {
+          "access": "Direct access to City Council",
+          "scope": [
+            "Complaints",
+            "Petitions",
+            "Governance concerns"
+          ]
+        },
+        "snap_election_provision": {
+          "trigger": "Significant citizen concern or petition",
+          "process": "Parliamentary consideration",
+          "availability": "Throughout appointment term"
+        }
+      },
+      "governance_priorities": {
+        "primary_focus": "Enabling citizen establishment and success",
+        "emphasis": [
+          "Business development",
+          "Infrastructure establishment",
+          "Community growth",
+          "Economic foundation"
+        ]
+      }
+    },
+    "declaration_principles": {
+      "transparency": "Full disclosure of appointment process",
+      "temporary_nature": "Explicit acknowledgment of transitional leadership",
+      "democratic_commitment": "Absolute commitment to democratic processes",
+      "citizen_sovereignty": "Recognition of citizens' ultimate authority"
+    }
+  }
+}
+

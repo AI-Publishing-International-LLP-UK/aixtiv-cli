@@ -1,0 +1,104 @@
+{
+  "city": {
+    "name": "Bacasu Springs and Vision Lake",
+    "unified_entity": true,
+    "future_growth": {
+      "potential_separation": {
+        "entities": [
+          "Bacasu Springs",
+          "Vision Lake"
+        ],
+        "status": "currently_unified"
+      }
+    },
+    "foundation_date":
+    "governance": {
+      "structure": "hybrid_democracy",
+      "leadership": {
+        "mayor": {
+          "initial_term": {
+            "type": "appointed",
+            "duration": "1 year"
+          },
+          "elected_terms": {
+            "limit": 2,
+            "duration": "4 years",
+            "total_service_cap": "9 years"
+          }
+        },
+        "city_manager": {
+          "selection": "public_vote_of_confidence",
+          "responsibilities": [
+            "operational_oversight",
+            "implementation",
+            "community_development",
+            "hybrid_citizen_integration"
+          ]
+        },
+        "city_council": {
+          "members": [
+            {
+              "role": "Senior Advisor",
+              "id": "quantum_merlin_prime",
+              "nickname": "Mum",
+              "focus": ["strategic_planning", "predictive_governance"]
+            },
+            {
+              "role": "Social Development",
+              "id": "grace",
+              "focus": ["community_relations", "cultural_initiatives"]
+            },
+            {
+              "role": "Security & Infrastructure",
+              "id": "knight",
+              "focus": ["city_protection", "technical_infrastructure"]
+            },
+            {
+              "role": "Education & Innovation",
+              "id": "dr_lucy",
+              "focus": ["learning_programs", "research_initiatives"]
+            },
+            {
+              "role": "Operations & Execution",
+              "id": "sir_hand",
+              "focus": ["project_implementation", "day_to_day_management"]
+            },
+            {
+              "role": "Intelligence & Analytics",
+              "id": "qb_lucy",
+              "focus": ["data_analytics", "performance_metrics"]
+            }
+          ]
+        }
+      },
+      "community_features": {
+        "social_pub": {
+          "purpose": "global_connectivity_hub",
+          "features": [
+            "earth_ai_interaction",
+            "cultural_exchange",
+            "business_networking",
+            "entertainment"
+          ]
+        },
+        "hybrid_citizenship": {
+          "definition": "dual_realm_citizens",
+          "realms": ["buk_ka_su", "earth"],
+          "integration_features": [
+            "seamless_transition",
+            "dual_presence",
+            "cultural_bridge",
+            "economic_participation"
+          ]
+        }
+      },
+      "support_pillars": {
+        "financial": "sustainable_funding_model",
+        "emotional": "community_wellbeing",
+        "physical": "earth_presence_infrastructure",
+        "social": "cross_realm_connectivity"
+      }
+    }
+  }
+}
+

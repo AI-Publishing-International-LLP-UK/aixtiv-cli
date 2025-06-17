@@ -1,0 +1,77 @@
+{
+  "global_brand_cluster": {
+    "BCS-015": {
+      "name": "AI Publishing International",
+      "dewey_range": "001-099",
+      "function": "Global Brand & Corporate Identity",
+      "domains": {
+        "primary": [
+          {
+            "domain": "aipublishinginternational.com",
+            "region": "global",
+            "purpose": "Global headquarters"
+          },
+          {
+            "domain": "aipublishinginternational.co.uk",
+            "region": "uk",
+            "purpose": "UK operations"
+          }
+        ],
+        "subsidiary": [
+          {
+            "domain": "aipub.co.uk",
+            "purpose": "UK short form"
+          },
+          {
+            "domain": "aipillp.co.uk",
+            "purpose": "UK legal entity"
+          }
+        ],
+        "social": {
+          "domain": "2100.pub",
+          "purpose": "Social hub & community"
+        }
+      },
+      "opus_1_focus": {
+        "aixtiv": {
+          "domains": ["aixtiv.world", "aixtiv.live"],
+          "purpose": "Amplify platform delivery"
+        },
+        "asoos": {
+          "domains": ["asoos.cool", "asoos.live"],
+          "purpose": "Symphony orchestration"
+        }
+      },
+      "firebase_config": {
+        "hosting": {
+          "primary_target": "aipi-global",
+          "region": "us-west1",
+          "additional_regions": ["eu-west1"],
+          "cdn_configuration": true
+        },
+        "firestore": {
+          "collections": [
+            "brand_assets",
+            "corporate_docs",
+            "legal_entities",
+            "social_content"
+          ]
+        }
+      },
+      "deployment_rules": {
+        "cdn_distribution": true,
+        "ssl_certificates": "managed",
+        "dns_configuration": "global",
+        "load_balancing": true
+      }
+    }
+  },
+  "keyword_structure": {
+    "brand_terms": 5000,
+    "product_terms": 5000,
+    "service_terms": 5000,
+    "pinecone_index": "aipi-brand-keywords",
+    "semantic_clustering": true
+  }
+}
+

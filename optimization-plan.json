@@ -1,0 +1,56 @@
+{
+  "optimization_plan": {
+    "core_modules": {
+      "cli": {
+        "essential": [
+          "command-processor",
+          "authentication",
+          "configuration"
+        ],
+        "lazy_loaded": [
+          "advanced-features",
+          "analytics",
+          "reporting"
+        ]
+      },
+      "functions": {
+        "split_by_feature": {
+          "auth": "authentication functions",
+          "billing": "payment processing",
+          "domains": "domain management"
+        },
+        "shared_code": "common utilities"
+      },
+      "assets": {
+        "cdn_delivery": true,
+        "lazy_loading": true,
+        "compression": "enabled"
+      }
+    },
+    "dependencies": {
+      "production": [
+        "@pinecone-database/pinecone",
+        "firebase-admin",
+        "express"
+      ],
+      "development": [
+        "eslint",
+        "prettier",
+        "jest"
+      ]
+    },
+    "git_optimization": {
+      "large_files": [
+        "wing/wing_consolidation_20250315_165832.log.map",
+        "wing/wing_consolidation_20250315_165832.log.plan",
+        "opus/academy/academy-core/src/assets/generated-icons.css"
+      ],
+      "actions": [
+        "Move large files to LFS",
+        "Clean old branches",
+        "Optimize history"
+      ]
+    }
+  }
+}
+
