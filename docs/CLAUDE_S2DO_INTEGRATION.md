@@ -22,6 +22,7 @@ aixtiv claude:governance:s2do -w "Project Execution" -d "Execute and track proje
 ```
 
 **Options:**
+
 - `-w, --workflow <name>` (required): Workflow name
 - `-d, --description <description>`: Workflow description
 - `-t, --type <type>`: Workflow type (approval, notification, escalation)
@@ -38,6 +39,7 @@ aixtiv claude:governance:approve -w workflow-123 -s step-1 --comments "Approved 
 ```
 
 **Options:**
+
 - `-w, --workflow <workflowId>` (required): Workflow ID
 - `-s, --step <stepId>` (required): Step ID to approve
 - `--comments <comments>`: Approval comments
@@ -52,6 +54,7 @@ aixtiv claude:governance:verify -w workflow-123 --detailed
 ```
 
 **Options:**
+
 - `-w, --workflow <workflowId>` (required): Workflow ID
 - `--detailed`: Include detailed workflow information
 

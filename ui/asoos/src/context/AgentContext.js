@@ -11,9 +11,9 @@ export const AgentProvider = ({ children }) => {
       return {
         text: 'I understand your message.',
         emotion: '😊',
-        tone: 'Professional'
+        tone: 'Professional',
       };
-    }
+    },
   });
 
   return (

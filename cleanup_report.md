@@ -1,5 +1,7 @@
 ===================================================
+
 # Aixtiv CLI Launch Cleanup Report
+
 ===================================================
 
 ## Orphan Files Identified
@@ -65,7 +67,7 @@
 ./dist/aixtiv-cli-1.0.3/src/cli/aixtiv-cli-1.0.3/commands/resource/scan.js.bak
 ./launch/bin/aixtiv.js.orig
 ./launch/src/cli/aixtiv-cli-1.0.3/bin/aixtiv.js.orig
-./node_modules/openai/src/resources/responses/input-items.ts.orig
+./node*modules/openai/src/resources/responses/input-items.ts.orig
 ./src/cli/aixtiv-cli-1.0.3/bin/aixtiv.js.orig
 ./archive/backups
 ./archive/backups/aixtiv-symphony-git-backup
@@ -83,14 +85,14 @@
 ./launch/functions/node_modules/@firebase/database/dist/src/core/SnapshotHolder.d.ts
 ./launch/functions/node_modules/google-gax/build/protos/google/protobuf/editions/golden
 ./launch/src/cli/aixtiv-cli-1.0.3/bin/aixtiv.js.backup
-./node_modules/lodash/_copySymbolsIn.js
+./node_modules/lodash/\_copySymbolsIn.js
 ./node_modules/lodash/fp/placeholder.js
-./node_modules/lodash/_countHolders.js
-./node_modules/lodash/_getHolder.js
-./node_modules/lodash/_copyObject.js
-./node_modules/lodash/_copyArray.js
-./node_modules/lodash/_copySymbols.js
-./node_modules/lodash/_replaceHolders.js
+./node_modules/lodash/\_countHolders.js
+./node_modules/lodash/\_getHolder.js
+./node_modules/lodash/\_copyObject.js
+./node_modules/lodash/\_copyArray.js
+./node_modules/lodash/\_copySymbols.js
+./node_modules/lodash/\_replaceHolders.js
 ./node_modules/async/foldr.js
 ./node_modules/async/foldl.js
 ./node_modules/es-abstract/helpers/caseFolding.json
@@ -124,19 +126,19 @@
 ./functions/node_modules/@firebase/database/dist/node-esm/src/core/SnapshotHolder.d.ts
 ./functions/node_modules/@firebase/database/dist/src/core/SnapshotHolder.d.ts
 ./functions/node_modules/google-gax/build/protos/google/protobuf/editions/golden
-./venv/agent-deploy/lib/python3.13/site-packages/google/cloud/resourcemanager_v3/types/__pycache__/folders.cpython-313.pyc
-./venv/agent-deploy/lib/python3.13/site-packages/google/cloud/resourcemanager_v3/types/__pycache__/tag_holds.cpython-313.pyc
+./venv/agent-deploy/lib/python3.13/site-packages/google/cloud/resourcemanager_v3/types/**pycache**/folders.cpython-313.pyc
+./venv/agent-deploy/lib/python3.13/site-packages/google/cloud/resourcemanager_v3/types/**pycache**/tag_holds.cpython-313.pyc
 ./venv/agent-deploy/lib/python3.13/site-packages/google/cloud/resourcemanager_v3/types/folders.py
 ./venv/agent-deploy/lib/python3.13/site-packages/google/cloud/resourcemanager_v3/types/tag_holds.py
 ./venv/agent-deploy/lib/python3.13/site-packages/google/cloud/resourcemanager_v3/services/tag_holds
 ./venv/agent-deploy/lib/python3.13/site-packages/google/cloud/resourcemanager_v3/services/folders
-./venv/agent-deploy/lib/python3.13/site-packages/google/cloud/bigquery/job/copy_.py
-./venv/agent-deploy/lib/python3.13/site-packages/google/cloud/bigquery/job/__pycache__/copy_.cpython-313.pyc
+./venv/agent-deploy/lib/python3.13/site-packages/google/cloud/bigquery/job/copy*.py
+./venv/agent-deploy/lib/python3.13/site-packages/google/cloud/bigquery/job/**pycache**/copy\_.cpython-313.pyc
 ./venv/agent-deploy/lib/python3.13/site-packages/numpy/ma/tests/test_old_ma.py
-./venv/agent-deploy/lib/python3.13/site-packages/numpy/ma/tests/__pycache__/test_old_ma.cpython-313.pyc
-./venv/agent-deploy/lib/python3.13/site-packages/numpy/_core/tests/data/astype_copy.pkl
+./venv/agent-deploy/lib/python3.13/site-packages/numpy/ma/tests/**pycache**/test_old_ma.cpython-313.pyc
+./venv/agent-deploy/lib/python3.13/site-packages/numpy/\_core/tests/data/astype_copy.pkl
 ./venv/agent-deploy/lib/python3.13/site-packages/pydantic/deprecated/copy_internals.py
-./venv/agent-deploy/lib/python3.13/site-packages/pydantic/deprecated/__pycache__/copy_internals.cpython-313.pyc
+./venv/agent-deploy/lib/python3.13/site-packages/pydantic/deprecated/**pycache**/copy_internals.cpython-313.pyc
 ./cloud-functions/dr-claude/node_modules/@google-cloud/firestore/build/protos/google/firestore/admin/v1/backup.proto
 ./cloud-functions/dr-claude/node_modules/google-gax/build/protos/google/protobuf/editions/golden
 ./src/cli/aixtiv-cli-1.0.3/bin/aixtiv.js.backup

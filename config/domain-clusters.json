@@ -4,10 +4,7 @@
       "name": "Memory Plaza",
       "dewey_range": "700-799",
       "function": "Knowledge, Loops",
-      "domains": [
-        "2100.institute",
-        "c2100.co"
-      ],
+      "domains": ["2100.institute", "c2100.co"],
       "firebase_config": {
         "hosting_target": "memory-plaza",
         "region": "us-west1"
@@ -17,12 +14,7 @@
       "name": "Vision Lake",
       "dewey_range": ["100-199", "800-899"],
       "function": "Meditation & Council, Pilots & Testimony",
-      "domains": [
-        "coaching2100.org",
-        "getready2100.com",
-        "drmatch.live",
-        "queenlucy.live"
-      ],
+      "domains": ["coaching2100.org", "getready2100.com", "drmatch.live", "queenlucy.live"],
       "firebase_config": {
         "hosting_target": "vision-lake",
         "region": "us-west1"
@@ -32,10 +24,7 @@
       "name": "Edge Labs",
       "dewey_range": "400-409",
       "function": "Simulation & Scenario",
-      "domains": [
-        "aixtiv.world",
-        "asoos.live"
-      ],
+      "domains": ["aixtiv.world", "asoos.live"],
       "firebase_config": {
         "hosting_target": "edge-labs",
         "region": "us-west1"
@@ -45,10 +34,7 @@
       "name": "Queen Mint Mark",
       "dewey_range": "620-629",
       "function": "Certification, Legacy Transactions",
-      "domains": [
-        "2100.foundation",
-        "2100.cool"
-      ],
+      "domains": ["2100.foundation", "2100.cool"],
       "firebase_config": {
         "hosting_target": "queen-mint-mark",
         "region": "us-west1"
@@ -74,4 +60,3 @@
     }
   }
 }
-

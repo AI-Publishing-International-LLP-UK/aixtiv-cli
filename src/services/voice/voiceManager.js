@@ -42,7 +42,7 @@ class VoiceManager {
       text,
       model: pilotVoice.model,
       emotion,
-      language
+      language,
     });
   }
 
@@ -51,7 +51,7 @@ class VoiceManager {
     const request = {
       input: { text },
       voice: { languageCode: voice.split('-')[0] + '-' + voice.split('-')[1], name: voice },
-      audioConfig: { audioEncoding: 'MP3' }
+      audioConfig: { audioEncoding: 'MP3' },
     };
     const [response] = await this.googleTTS.synthesizeSpeech(request);
     return response.audioContent;
@@ -62,7 +62,7 @@ class VoiceManager {
     const request = {
       input: { text },
       voice: { languageCode: 'en-US', name: voice },
-      audioConfig: { audioEncoding: 'MP3' }
+      audioConfig: { audioEncoding: 'MP3' },
     };
     const [response] = await this.googleTTS.synthesizeSpeech(request);
     return response.audioContent;
@@ -70,4 +70,3 @@ class VoiceManager {
 }
 
 module.exports = new VoiceManager();
-

@@ -52,6 +52,7 @@ This ensures that:
 To verify the non-root user configuration, you can:
 
 1. Run the container locally:
+
    ```bash
    docker run --rm gcr.io/api-for-warp-drive/aixtiv-cli:latest id
    ```
@@ -74,10 +75,12 @@ Supply chain attestation:
 Binary Authorization and attestations have been integrated into our CI/CD pipeline:
 
 1. **Setup Binary Authorization Prerequisites**:
+
    - Key rings and keys for signing attestations
    - Attestor configuration for validating images
 
 2. **Attestation Creation**:
+
    - Every image build generates a cryptographic attestation
    - The attestation is signed with a secure key
    - The attestation is attached to the image in GCR
@@ -127,6 +130,7 @@ After deployment, you can validate both security improvements:
 For maintaining these security improvements:
 
 1. **Non-Root User Best Practices**:
+
    - Always test the application with non-root users during development
    - Set appropriate file permissions for any new files/directories
    - Use volume mounts with correct permissions for persistent data
@@ -140,4 +144,3 @@ For maintaining these security improvements:
 ---
 
 These security improvements ensure our Docker images comply with best practices and security requirements, providing better protection against security threats and ensuring a verifiable software supply chain.
-

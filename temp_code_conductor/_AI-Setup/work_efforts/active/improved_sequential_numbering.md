@@ -9,16 +9,19 @@ This work effort updates the counter system to use sequential numbers for work e
 ### Changes Made
 
 1. Updated the regex pattern to support variable-length numbers:
+
    - Old pattern: `r"^(\d{4})_"` (only matched 4-digit numbers)
    - New pattern: `r"^(\d+)_"` (matches any number at the start)
 
 2. Added support for handling numbers beyond 9999:
+
    - Numbers 1-9999 are formatted with leading zeros (e.g., "0042")
    - Numbers ≥10000 use their natural length without padding (e.g., "10000")
 
 3. Added the `format_work_effort_number` method to the `WorkEffortCounter` class to handle formatting based on number size.
 
 4. Added support for date-prefixed numbering:
+
    - Standard format: `0042_example_name.md`
    - Date-prefixed format: `20250317042_example_name.md`
 
@@ -36,10 +39,12 @@ This work effort updates the counter system to use sequential numbers for work e
 Created demonstration work efforts in three different formats:
 
 1. Standard Sequential:
+
    - `0001_sequential_numbering_example.md`
    - `0002_another_sequential_example.md`
 
 2. Date-Prefixed:
+
    - `202503170001_sequential_numbering_example.md`
    - `202503170002_another_sequential_example.md`
 

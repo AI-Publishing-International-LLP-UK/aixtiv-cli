@@ -44,7 +44,9 @@ The framework is specifically configured for the `api-for-warp-drive` project an
 2. **Import the Framework**:
 
    ```javascript
-   const { SallyPortSecurity } = require('./ASOOS/VLS/SOLUTIONS/DR-GRANTS-SECURITY/sally-port-security-framework.js');
+   const {
+     SallyPortSecurity,
+   } = require('./ASOOS/VLS/SOLUTIONS/DR-GRANTS-SECURITY/sally-port-security-framework.js');
    ```
 
 3. **Initialize with Firebase**:
@@ -52,13 +54,13 @@ The framework is specifically configured for the `api-for-warp-drive` project an
    ```javascript
    const securityFramework = new SallyPortSecurity({
      firebaseConfig: {
-       apiKey: "YOUR_API_KEY",
-       authDomain: "api-for-warp-drive.firebaseapp.com",
-       projectId: "api-for-warp-drive",
+       apiKey: 'YOUR_API_KEY',
+       authDomain: 'api-for-warp-drive.firebaseapp.com',
+       projectId: 'api-for-warp-drive',
        // Add other Firebase config properties
      },
-     domains: ["example.com", "api.example.com"],
-     strictMode: true
+     domains: ['example.com', 'api.example.com'],
+     strictMode: true,
    });
    ```
 
@@ -66,11 +68,12 @@ The framework is specifically configured for the `api-for-warp-drive` project an
 
    ```javascript
    // User authentication request
-   securityFramework.authenticate(userContext)
-     .then(token => {
+   securityFramework
+     .authenticate(userContext)
+     .then((token) => {
        // Proceed with authenticated user
      })
-     .catch(error => {
+     .catch((error) => {
        // Handle authentication failure
      });
    ```
@@ -89,9 +92,9 @@ For environments with multiple domains (250+), use the domain group configuratio
 
 ```javascript
 securityFramework.setDomainGroups({
-  internal: ["*.internal.company.com"],
-  partners: ["*.partner-network.com"],
-  public: ["*.public-api.com"]
+  internal: ['*.internal.company.com'],
+  partners: ['*.partner-network.com'],
+  public: ['*.public-api.com'],
 });
 ```
 
@@ -99,10 +102,10 @@ securityFramework.setDomainGroups({
 
 ```javascript
 securityFramework.addAuthRule({
-  name: "geo-restriction",
-  condition: (user, context) => context.location.country === "US",
-  action: "BLOCK",
-  priority: 10
+  name: 'geo-restriction',
+  condition: (user, context) => context.location.country === 'US',
+  action: 'BLOCK',
+  priority: 10,
 });
 ```
 
@@ -124,4 +127,3 @@ Common issues and solutions:
 
 This framework is proprietary and part of the AIXTIV SYMPHONY OPUS OPERATING SYSTEM.
 Copyright © 2025 AIXTIV SYMPHONY. All rights reserved.
-

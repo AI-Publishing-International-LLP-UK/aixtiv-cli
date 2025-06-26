@@ -102,7 +102,7 @@ const aiRewardsSchema = {
     },
     venueRevenue: {
       AgentShare: 0.7,
-      Development Fund: 0.2,
+      "Development Fund": 0.2,
       CityTreasury: 0.1
     }
   },
@@ -123,7 +123,7 @@ const aiRewardsSchema = {
 };
 
 module.exports = {
-  AIRewardsSchema,
+  AIRewardsSchema: aiRewardsSchema,
   version: '1.0.1',
   lastUpdated: '2025-06-17',
   status: 'active'

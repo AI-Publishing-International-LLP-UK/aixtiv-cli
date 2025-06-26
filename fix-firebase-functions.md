@@ -11,6 +11,7 @@ TypeError: functions.firestore.document is not a function
 This error is caused by inconsistent import patterns between different files in the project. Specifically:
 
 - In `index.js`: Firebase Functions is imported using destructuring from the v1 package:
+
   ```javascript
   const { https, pubsub, firestore } = require('firebase-functions/v1');
   ```
@@ -45,11 +46,13 @@ Throughout the file, replace all instances of:
 #### For HTTP callable functions:
 
 Change:
+
 ```javascript
 exports.storeMemory = functions.https.onCall(storeMemory);
 ```
 
 To:
+
 ```javascript
 exports.storeMemory = https.onCall(storeMemory);
 ```
@@ -57,20 +60,21 @@ exports.storeMemory = https.onCall(storeMemory);
 #### For Firestore triggers:
 
 On line 373, change:
+
 ```javascript
-exports.analyzeMemoryImportance = functions.firestore
-  .document('chat_history/{memoryId}')
+exports.analyzeMemoryImportance = functions.firestore.document('chat_history/{memoryId}');
 ```
 
 To:
+
 ```javascript
-exports.analyzeMemoryImportance = firestore
-  .document('chat_history/{memoryId}')
+exports.analyzeMemoryImportance = firestore.document('chat_history/{memoryId}');
 ```
 
 #### For HttpsError:
 
 Change:
+
 ```javascript
 throw new functions.https.HttpsError(
   'invalid-argument',
@@ -79,11 +83,9 @@ throw new functions.https.HttpsError(
 ```
 
 To:
+
 ```javascript
-throw new https.HttpsError(
-  'invalid-argument',
-  'Memory data must include input and session_uuid'
-);
+throw new https.HttpsError('invalid-argument', 'Memory data must include input and session_uuid');
 ```
 
 ### Step 3: Complete List of Required Changes
@@ -104,12 +106,15 @@ Here are all the lines that need to be changed in `memoryFunctions.js`:
 And so on for all other instances of `functions.https.HttpsError` and `functions.https.onCall` in the file.
 
 The most critical change is on line 373:
+
 ```javascript
-exports.analyzeMemoryImportance = functions.firestore
+exports.analyzeMemoryImportance = functions.firestore;
 ```
+
 To:
+
 ```javascript
-exports.analyzeMemoryImportance = firestore
+exports.analyzeMemoryImportance = firestore;
 ```
 
 ### Step 4: Review and Save
@@ -121,6 +126,7 @@ After making these changes, save the file and make sure there are no remaining r
 After making these changes:
 
 1. Return to the project root directory:
+
    ```
    cd /Users/as/asoos/aixtiv-cli
    ```
@@ -145,4 +151,3 @@ If you encounter additional errors after fixing this one, they might also be rel
 3. Update all references to match the imports
 
 This approach will ensure consistency across your codebase and prevent similar errors in the future.
-

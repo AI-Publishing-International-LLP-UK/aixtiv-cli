@@ -19,7 +19,7 @@ async function orchestrateAgent(email, agentId, taskType, taskData) {
     message: `Agent ${agentId} has been orchestrated to perform ${taskType}`,
     taskId: `task-${Date.now()}`,
     status: 'initiated',
-    agent: agentId
+    agent: agentId,
   };
 }
 
@@ -35,7 +35,7 @@ async function storeMemory(memoryType, memoryData) {
     success: true,
     message: `Memory of type ${memoryType} has been stored in FMS`,
     memoryId: `memory-${Date.now()}`,
-    status: 'stored'
+    status: 'stored',
   };
 }
 
@@ -55,9 +55,9 @@ async function queryMemory(queryParams) {
         id: 'memory-sample-1',
         type: 'conversation',
         timestamp: new Date().toISOString(),
-        data: { summary: 'Sample memory 1' }
-      }
-    ]
+        data: { summary: 'Sample memory 1' },
+      },
+    ],
   };
 }
 
@@ -73,7 +73,7 @@ async function verifySecurity(email, token) {
     success: true,
     message: 'Security verification successful',
     accessLevel: 'standard',
-    validUntil: new Date(Date.now() + 3600000).toISOString() // 1 hour from now
+    validUntil: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
   };
 }
 
@@ -89,7 +89,7 @@ async function manageWorkflow(workflowType, workflowData) {
     success: true,
     message: `Workflow of type ${workflowType} has been created/updated`,
     workflowId: `workflow-${Date.now()}`,
-    status: 'active'
+    status: 'active',
   };
 }
 
@@ -107,7 +107,7 @@ async function getWorkflowStatus(workflowId) {
     status: 'in_progress',
     completedSteps: 2,
     totalSteps: 5,
-    lastUpdated: new Date().toISOString()
+    lastUpdated: new Date().toISOString(),
   };
 }
 
@@ -117,6 +117,5 @@ module.exports = {
   queryMemory,
   verifySecurity,
   manageWorkflow,
-  getWorkflowStatus
+  getWorkflowStatus,
 };
-

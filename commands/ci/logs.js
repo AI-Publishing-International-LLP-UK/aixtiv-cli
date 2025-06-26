@@ -16,19 +16,19 @@ const logsCommand = new Command('logs')
   .option('--cat <filename>', 'Display contents of a specific log file')
   .action(async (options) => {
     const spinner = ora('Checking for logs...').start();
-    
+
     // If user wants to view a specific log file
     if (options.cat) {
       try {
         const logPath = path.resolve(options.path, options.cat);
-        
+
         // Security check to make sure we're not accessing files outside logs dir
         const normalizedLogDir = path.resolve(options.path);
         if (!logPath.startsWith(normalizedLogDir)) {
           spinner.fail('Security error: Cannot access files outside the logs directory');
           return;
         }
-        
+
         if (fs.existsSync(logPath)) {
           spinner.succeed(`Displaying log file: ${options.cat}`);
           console.log(chalk.cyan('\n=== Log Contents ==='));
@@ -46,49 +46,51 @@ const logsCommand = new Command('logs')
         return;
       }
     }
-    
+
     // List available log files
     try {
       if (fs.existsSync(options.path)) {
         const files = fs.readdirSync(options.path);
-        
+
         // Filter log files
-        let logFiles = files.filter(file => {
+        let logFiles = files.filter((file) => {
           if (options.filter) {
             return file.includes(options.filter);
           }
           return true;
         });
-        
+
         // Apply limit
         const limit = parseInt(options.limit);
         if (logFiles.length > limit) {
           logFiles = logFiles.slice(0, limit);
         }
-        
+
         if (logFiles.length > 0) {
           spinner.succeed(`Found ${logFiles.length} log files in ${options.path}`);
           console.log();
-          
+
           // Display files with details
-          logFiles.forEach(file => {
+          logFiles.forEach((file) => {
             try {
               const filePath = path.join(options.path, file);
               const stats = fs.statSync(filePath);
               const fileSizeKb = (stats.size / 1024).toFixed(2);
               const modifiedDate = stats.mtime.toISOString().replace(/T/, ' ').replace(/\..+/, '');
-              
+
               console.log(
-                chalk.green(`${file}`) + 
-                chalk.gray(` (${fileSizeKb} KB, modified: ${modifiedDate})`)
+                chalk.green(`${file}`) +
+                  chalk.gray(` (${fileSizeKb} KB, modified: ${modifiedDate})`)
               );
             } catch (error) {
               console.log(chalk.green(file) + chalk.red(' (error reading file details)'));
             }
           });
-          
+
           console.log();
-          console.log(chalk.blue(`Use 'aixtiv ci logs --cat FILENAME' to view a specific log file`));
+          console.log(
+            chalk.blue(`Use 'aixtiv ci logs --cat FILENAME' to view a specific log file`)
+          );
         } else {
           spinner.info('No log files found matching your criteria');
         }

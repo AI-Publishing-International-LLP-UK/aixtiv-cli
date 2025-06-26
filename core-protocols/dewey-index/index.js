@@ -1,19 +1,19 @@
 /**
  * DI:DC (Dewey Digital Index Cards) - Main Module
- * 
+ *
  * This is the main entry point for the DI:DC system,
  * which provides asset indexing, classification, and semantic search.
  */
 
-const path = require("path");
-const fs = require("fs");
+const path = require('path');
+const fs = require('fs');
 
 // Import core components
-const driveConnector = require("./integrations/drive-connector/connector");
+const driveConnector = require('./integrations/drive-connector/connector');
 
 // Initialize connectors
 const connectors = {
-  drive: driveConnector
+  drive: driveConnector,
 };
 
 /**
@@ -26,14 +26,14 @@ async function indexContent(source, data) {
   if (!connectors[source]) {
     throw new Error(`Unknown source: ${source}`);
   }
-  
+
   console.log(`Indexing content from ${source}`);
-  
+
   // Use the appropriate connector to index the content
-  if (source === "drive") {
+  if (source === 'drive') {
     return await connectors.drive.indexDriveFile(data);
   }
-  
+
   throw new Error(`Indexing not implemented for source: ${source}`);
 }
 
@@ -47,14 +47,14 @@ async function classifyContent(source, indexedContentId) {
   if (!connectors[source]) {
     throw new Error(`Unknown source: ${source}`);
   }
-  
+
   console.log(`Classifying content from ${source}`);
-  
+
   // Use the appropriate connector to classify the content
-  if (source === "drive") {
+  if (source === 'drive') {
     return await connectors.drive.classifyDocument(indexedContentId);
   }
-  
+
   throw new Error(`Classification not implemented for source: ${source}`);
 }
 
@@ -73,6 +73,5 @@ module.exports = {
   indexContent,
   classifyContent,
   searchContent,
-  connectors
+  connectors,
 };
-

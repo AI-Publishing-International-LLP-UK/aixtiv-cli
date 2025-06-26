@@ -30,6 +30,7 @@ This guide provides instructions for testing the Aixtiv CLI and its Elite Enhanc
 ## Test Output
 
 Test output includes:
+
 - Pass/fail status for each test
 - Detailed information about test failures
 - Summary of tests run, passed, and failed

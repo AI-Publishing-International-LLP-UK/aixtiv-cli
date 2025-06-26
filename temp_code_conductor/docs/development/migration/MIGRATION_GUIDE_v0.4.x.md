@@ -7,18 +7,22 @@ This guide is intended to help developers migrate their code and workflows to th
 The following major changes have been implemented:
 
 1. **Package Structure Standardization**
+
    - Moved from a flat directory structure to a proper package-based structure
    - Consolidated duplicate functionality into `src/code_conductor` package
 
 2. **Import Path Standardization**
+
    - Updated all import paths to use the package structure
    - Added compatibility modules for backward compatibility
 
 3. **Consolidated Duplicate Directories**
+
    - Merged duplicate directories (utils, creators, providers, templates)
    - Standardized utility function locations
 
 4. **Improved Validation**
+
    - Enhanced error handling for edge cases
    - Added proper validation for titles, dates, and paths
 
@@ -29,6 +33,7 @@ The following major changes have been implemented:
 ## 📦 Package Structure Changes
 
 ### Old Structure (Pre-v0.4.x)
+
 ```
 code_conductor/
 ├── utils/
@@ -40,6 +45,7 @@ code_conductor/
 ```
 
 ### New Structure (v0.4.x)
+
 ```
 code_conductor/
 ├── src/
@@ -58,12 +64,14 @@ code_conductor/
 ### 1. Updating Import Paths
 
 #### Before:
+
 ```python
 from utils import helper_function
 from creators import create_work_effort
 ```
 
 #### After:
+
 ```python
 from src.code_conductor.utils import helper_function
 from src.code_conductor.creators import create_work_effort
@@ -72,6 +80,7 @@ from src.code_conductor.creators import create_work_effort
 ### 2. Using WorkEffortManager
 
 #### Before:
+
 ```python
 from work_effort_manager import create_work_effort
 
@@ -79,6 +88,7 @@ create_work_effort("Title", "Description")
 ```
 
 #### After:
+
 ```python
 from src.code_conductor.work_effort_manager import WorkEffortManager
 
@@ -91,6 +101,7 @@ manager.create_work_effort("Title", "Description")
 The system now has more robust validation. Be sure to handle these cases:
 
 #### Before:
+
 ```python
 def process_title(title):
     # No validation
@@ -98,6 +109,7 @@ def process_title(title):
 ```
 
 #### After:
+
 ```python
 from src.code_conductor.utils.validation import validate_title
 
@@ -114,15 +126,19 @@ def process_title(title):
 ### 4. Working with Work Efforts
 
 #### Before:
+
 Work efforts were often stored as loose files in the work_efforts directory.
 
 #### After:
+
 Each work effort is now in its own directory, following the naming pattern:
+
 ```
 work_efforts/[status]/[timestamp]_[title]/[timestamp]_[title].md
 ```
 
 To work with these files:
+
 ```python
 from src.code_conductor.work_effort_manager import WorkEffortManager
 
@@ -137,6 +153,7 @@ work_efforts = manager.list_work_efforts()
 **Issue**: `ModuleNotFoundError: No module named 'utils'`
 
 **Solution**: Update import to use the package path:
+
 ```python
 from src.code_conductor.utils import module_name
 ```
@@ -146,6 +163,7 @@ from src.code_conductor.utils import module_name
 **Issue**: Files not found at expected paths
 
 **Solution**: Use the package's path resolution utilities:
+
 ```python
 from src.code_conductor.utils.path_helpers import get_project_root
 
@@ -158,6 +176,7 @@ file_path = project_root / "relative" / "path" / "to" / "file"
 **Issue**: Functions fail with unexpected input values
 
 **Solution**: Use the new validation functions and add proper error handling:
+
 ```python
 from src.code_conductor.utils.validation import validate_title, validate_date
 

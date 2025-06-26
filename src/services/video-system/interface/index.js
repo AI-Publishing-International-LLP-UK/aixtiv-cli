@@ -1,9 +1,9 @@
 /**
  * Video System Interface
- * 
+ *
  * Main entry point for the video system interface components.
  * This file exports the interface components for the video system.
- * 
+ *
  * (c) 2025 Copyright AI Publishing International LLP All Rights Reserved.
  * Developed with assistance from the Pilots of Vision Lake.
  */
@@ -21,17 +21,17 @@ module.exports = {
    * Browser class for video recording automation
    */
   Browser,
-  
+
   /**
    * Page class for video recording automation
    */
   Page,
-  
+
   /**
    * NetworkRequest class for handling network requests
    */
   NetworkRequest,
-  
+
   /**
    * Create a new browser instance
    * @param {Object} options - Browser options
@@ -40,7 +40,7 @@ module.exports = {
   createBrowser: (options = {}) => {
     return new Browser(options);
   },
-  
+
   /**
    * Version information
    */
@@ -50,7 +50,7 @@ module.exports = {
     features: [
       'Green screen recording',
       'Video composition',
-      'Google Video Generation API integration'
-    ]
-  }
+      'Google Video Generation API integration',
+    ],
+  },
 };

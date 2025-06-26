@@ -7,17 +7,20 @@ This document provides guidance for troubleshooting and resolving SSL certificat
 ### 1. Certificate Mismatch Error
 
 **Symptoms:**
+
 - Browser shows "Your connection is not private" error
 - Error message indicates certificate is from a different domain (e.g., firebaseapp.com)
 - Error code like NET::ERR_CERT_COMMON_NAME_INVALID
 
 **Causes:**
+
 - Firebase Hosting using default certificate instead of custom domain certificate
 - Incomplete or incorrect DNS configuration
 - Pending certificate provisioning or failed validation
 
 **Resolution:**
 Use the `fix-coaching2100-ssl.sh` script (adaptable for any domain) to:
+
 1. Remove domain from Firebase Hosting
 2. Re-add domain to trigger new certificate provisioning
 3. Verify DNS configuration
@@ -31,6 +34,7 @@ Use the `fix-coaching2100-ssl.sh` script (adaptable for any domain) to:
 ### 2. Expired SSL Certificate
 
 **Symptoms:**
+
 - Browser shows "Your connection is not private" error
 - Error message indicates certificate has expired
 - Error code like NET::ERR_CERT_DATE_INVALID
@@ -46,6 +50,7 @@ firebase hosting:domain:update example.com --site example-com --project your-pro
 ### 3. Missing SSL Certificate
 
 **Symptoms:**
+
 - Site loads over HTTP but not HTTPS
 - Certificate not found when checking with OpenSSL
 
@@ -109,11 +114,13 @@ aixtiv domain ssl-check --all
 ## Firebase Hosting vs. GCP Load Balancer Certificates
 
 ### Firebase Hosting
+
 - Managed certificates with automatic renewal
 - Limited to Firebase Hosting sites
 - Best for static content and simple web applications
 
 ### GCP Load Balancer
+
 - More control over certificate configuration
 - Works with any GCP resource (VM instances, Cloud Run, etc.)
 - Supports advanced routing options

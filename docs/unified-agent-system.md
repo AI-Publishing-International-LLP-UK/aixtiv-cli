@@ -10,29 +10,30 @@ The Aixtiv CLI Unified Agent System consolidates agent and co-pilot management i
 
 Agents are organized into squadrons, each with a specific focus:
 
-| Squadron | Name | Description |
-|----------|------|-------------|
-| S01 | Command Squadron | Strategic oversight and mission coordination |
-| S02 | Science Squadron | Research, analysis, and knowledge systems |
-| S03 | Engineering Squadron | Development, deployment, and technical implementation |
-| S04 | Operations Squadron | Day-to-day execution and operational management |
-| S05 | Intelligence Squadron | Data intelligence, insights, and strategic recommendations |
-| S06 | Support Squadron | Assistance, collaboration, and specialized support |
+| Squadron | Name                  | Description                                                |
+| -------- | --------------------- | ---------------------------------------------------------- |
+| S01      | Command Squadron      | Strategic oversight and mission coordination               |
+| S02      | Science Squadron      | Research, analysis, and knowledge systems                  |
+| S03      | Engineering Squadron  | Development, deployment, and technical implementation      |
+| S04      | Operations Squadron   | Day-to-day execution and operational management            |
+| S05      | Intelligence Squadron | Data intelligence, insights, and strategic recommendations |
+| S06      | Support Squadron      | Assistance, collaboration, and specialized support         |
 
 ### Agent Types
 
 All agents share a common schema but can be specialized with different types:
 
-| Type | Description | Capabilities |
-|------|-------------|-------------|
-| BASE | Standard capability agent | Basic interaction, task execution |
-| RIX | Enhanced reasoning and intelligence agent | Advanced reasoning, complex decision-making, autonomous operation |
-| QRIX | Composite agent with quantum reasoning capabilities | Cross-domain integration, multi-agent orchestration, quantum reasoning |
-| COPILOT | Collaborative assistant with human partnership focus | Human collaboration, assistance, augmentation |
+| Type    | Description                                          | Capabilities                                                           |
+| ------- | ---------------------------------------------------- | ---------------------------------------------------------------------- |
+| BASE    | Standard capability agent                            | Basic interaction, task execution                                      |
+| RIX     | Enhanced reasoning and intelligence agent            | Advanced reasoning, complex decision-making, autonomous operation      |
+| QRIX    | Composite agent with quantum reasoning capabilities  | Cross-domain integration, multi-agent orchestration, quantum reasoning |
+| COPILOT | Collaborative assistant with human partnership focus | Human collaboration, assistance, augmentation                          |
 
 ### Agent ID Format
 
 Agent IDs follow the format `{Squadron}-{Number}`, for example:
+
 - `S01-01` - First agent in Command Squadron
 - `S02-03` - Third agent in Science Squadron
 - `S06-42` - Forty-second agent in Support Squadron
@@ -100,6 +101,7 @@ aixtiv agent:migrate
 ```
 
 This will:
+
 1. Convert existing agents to the unified schema (squadron S04 by default)
 2. Convert co-pilots to COPILOT type agents (squadron S06 by default)
 3. Preserve all relationships and access permissions
@@ -175,4 +177,3 @@ aixtiv resource:grant --principal "user@example.com" --agent S06-01 --resource "
 3. **Extensible Architecture**: Agents can evolve without re-registration
 4. **Backward Compatibility**: Legacy commands continue to work while encouraging migration
 5. **Enhanced Capabilities**: Unified schema supports richer metadata and relationships
-

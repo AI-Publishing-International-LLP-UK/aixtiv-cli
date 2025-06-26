@@ -1,6 +1,6 @@
 /**
  * Dr. Claude Command Suite for Aixtiv CLI
- * 
+ *
  * This module registers all commands for the Dr. Claude suite, including:
  * - Agent commands for delegation and orchestration
  * - Project commands for listing and management
@@ -18,6 +18,5 @@ const telemetry = require('../../lib/telemetry');
 module.exports = {
   agent,
   project,
-  code
+  code,
 };
-

@@ -22,7 +22,7 @@ s2do.configure({
     enabled: true,
     strictMode: process.env.COMPLIANCE_STRICT_MODE === 'true',
     region: process.env.CLOUD_REGION || 'us-west1',
-  }
+  },
 });
 
 /**
@@ -32,20 +32,12 @@ s2do.configure({
 module.exports = async function governanceWorkflow(options) {
   // Record knowledge access for telemetry
   telemetry.recordKnowledgeAccess('blockchain');
-  
+
   // Capture internal reasoning
   const internalThought = `Processing S2DO governance workflow with parameters: ${JSON.stringify(options)}`;
 
-  const { 
-    workflow, 
-    description, 
-    type, 
-    steps, 
-    priority, 
-    project, 
-    agent,
-    verify 
-  } = parseOptions(options);
+  const { workflow, description, type, steps, priority, project, agent, verify } =
+    parseOptions(options);
 
   try {
     // Execute workflow creation with spinner
@@ -56,7 +48,7 @@ module.exports = async function governanceWorkflow(options) {
         if (!workflow) {
           throw new Error('Workflow name is required');
         }
-        
+
         // Create workflow steps array if provided as comma-separated string
         let workflowSteps = [];
         if (steps) {
@@ -81,7 +73,7 @@ module.exports = async function governanceWorkflow(options) {
             orchestratedBy: 'dr-claude',
             createdAt: new Date().toISOString(),
           },
-          blockchainVerification: true
+          blockchainVerification: true,
         });
 
         // Log the workflow creation
@@ -97,7 +89,7 @@ module.exports = async function governanceWorkflow(options) {
         if (project && firestore) {
           const projectRef = firestore.collection('projects').doc(project);
           const projectDoc = await projectRef.get();
-          
+
           if (projectDoc.exists) {
             // Update the project with governance workflow ID
             await projectRef.update({
@@ -106,9 +98,9 @@ module.exports = async function governanceWorkflow(options) {
                 type: type || 'approval',
                 blockchainVerified: true,
                 createdAt: new Date().toISOString(),
-                status: 'active'
+                status: 'active',
               },
-              updated_at: new Date().toISOString()
+              updated_at: new Date().toISOString(),
             });
           }
         }
@@ -116,7 +108,9 @@ module.exports = async function governanceWorkflow(options) {
         // If verify is true, get the workflow to verify blockchain integrity
         let verificationResult = null;
         if (verify) {
-          verificationResult = await s2do.getWorkflow(createdWorkflow.id, { verifyBlockchain: true });
+          verificationResult = await s2do.getWorkflow(createdWorkflow.id, {
+            verifyBlockchain: true,
+          });
         }
 
         return {
@@ -129,10 +123,12 @@ module.exports = async function governanceWorkflow(options) {
           blockchain_reference: createdWorkflow.blockchainReference || null,
           certificate_id: createdWorkflow.certificateId || null,
           project_id: project || null,
-          verification: verificationResult ? {
-            verified: verificationResult.blockchainVerification?.verified || false,
-            timestamp: verificationResult.blockchainVerification?.timestamp || null
-          } : null
+          verification: verificationResult
+            ? {
+                verified: verificationResult.blockchainVerification?.verified || false,
+                timestamp: verificationResult.blockchainVerification?.timestamp || null,
+              }
+            : null,
         };
       }
     );
@@ -150,34 +146,44 @@ module.exports = async function governanceWorkflow(options) {
       console.log(`Name: ${chalk.yellow(workflow)}`);
       console.log(`Type: ${chalk.blue(type || 'approval')}`);
       console.log(`Blockchain Verified: ${chalk.green('Yes')}`);
-      console.log(`Blockchain Reference: ${chalk.magenta(result.blockchain_reference || 'Pending')}`);
-      
+      console.log(
+        `Blockchain Reference: ${chalk.magenta(result.blockchain_reference || 'Pending')}`
+      );
+
       if (result.certificate_id) {
         console.log(`Certificate ID: ${chalk.cyan(result.certificate_id)}`);
       }
-      
+
       if (result.project_id) {
         console.log(`Integrated with Project: ${chalk.yellow(result.project_id)}`);
       }
 
       console.log(chalk.bold('\nNext Steps:'));
-      console.log(`Use ${chalk.yellow(`aixtiv claude:governance:approve -w ${result.workflow_id} -s step-1`)} to approve the first workflow step.`);
-      console.log(`Use ${chalk.yellow(`aixtiv claude:governance:verify -w ${result.workflow_id}`)} to verify blockchain integrity.`);
-      
+      console.log(
+        `Use ${chalk.yellow(`aixtiv claude:governance:approve -w ${result.workflow_id} -s step-1`)} to approve the first workflow step.`
+      );
+      console.log(
+        `Use ${chalk.yellow(`aixtiv claude:governance:verify -w ${result.workflow_id}`)} to verify blockchain integrity.`
+      );
+
       if (agent) {
-        console.log(`Dr. Claude will coordinate with ${chalk.magenta(agent)} for workflow execution.`);
+        console.log(
+          `Dr. Claude will coordinate with ${chalk.magenta(agent)} for workflow execution.`
+        );
       } else {
-        console.log(`Dr. Claude will orchestrate the workflow execution through the Flight Memory System.`);
+        console.log(
+          `Dr. Claude will orchestrate the workflow execution through the Flight Memory System.`
+        );
       }
     }
   } catch (error) {
     console.error(chalk.red('\nWorkflow creation failed:'), error.message);
-    
+
     // Display debug information
     debugDisplay({
       thought: internalThought,
       error: error.message,
-      command: 'claude:governance:s2do'
+      command: 'claude:governance:s2do',
     });
 
     process.exit(1);

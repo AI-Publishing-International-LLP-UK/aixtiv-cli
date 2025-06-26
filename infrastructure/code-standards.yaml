@@ -2,16 +2,16 @@ codeStandards:
   quality:
     linting:
       enabled: true
-      tools: ["eslint", "pylint", "golangci-lint"]
+      tools: ['eslint', 'pylint', 'golangci-lint']
       autoFix: true
     testing:
       coverage: 95
-      types: ["unit", "integration", "e2e"]
+      types: ['unit', 'integration', 'e2e']
       required: true
     security:
-      scanning: ["SAST", "DAST", "SCA"]
+      scanning: ['SAST', 'DAST', 'SCA']
       vulnerabilityCheck: true
-      
+
   cicd:
     preCommit:
       linting: true
@@ -19,10 +19,10 @@ codeStandards:
       security: true
     pipeline:
       automated: true
-      stages: ["build", "test", "scan", "deploy"]
+      stages: ['build', 'test', 'scan', 'deploy']
     monitoring:
       enabled: true
-      metrics: ["quality", "coverage", "security"]
+      metrics: ['quality', 'coverage', 'security']
 
   documentation:
     required: true

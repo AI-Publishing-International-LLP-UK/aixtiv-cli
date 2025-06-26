@@ -77,6 +77,7 @@ code-conductor work --no-sequential-numbering
 ## Testing
 
 The counter system has been tested for:
+
 - Sequential number generation and persistence
 - Proper handling of transitions from 4 to 5+ digits
 - Recovery from corrupt counter files

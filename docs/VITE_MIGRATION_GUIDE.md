@@ -3,6 +3,7 @@
 This guide provides step-by-step instructions for migrating from Create React App to Vite, configuring Firebase hosting for multiple domains (coaching2100.com, 2100.cool, and asoos.2100.cool), and properly setting up TypeScript interfaces.
 
 ## Table of Contents
+
 - [Migration Steps: Create React App to Vite](#migration-steps-create-react-app-to-vite)
 - [Firebase Multi-Site Hosting Configuration](#firebase-multi-site-hosting-configuration)
 - [TypeScript Interface Organization](#typescript-interface-organization)
@@ -32,14 +33,11 @@ import { resolve } from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    tsconfigPaths()
-  ],
+  plugins: [react(), tsconfigPaths()],
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src')
-    }
+      '@': resolve(__dirname, './src'),
+    },
   },
   build: {
     outDir: 'build', // Match CRA output directory for seamless Firebase integration
@@ -49,17 +47,23 @@ export default defineConfig({
         manualChunks: {
           // Split large dependencies into separate chunks
           vendor: ['react', 'react-dom'],
-          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/functions', 'firebase/storage']
-        }
-      }
-    }
+          firebase: [
+            'firebase/app',
+            'firebase/auth',
+            'firebase/firestore',
+            'firebase/functions',
+            'firebase/storage',
+          ],
+        },
+      },
+    },
   },
   server: {
     port: 3000, // Match CRA default port
     host: true, // Listen on all addresses
     region: 'us-west1', // Use consistent region
-    strictPort: true
-  }
+    strictPort: true,
+  },
 });
 ```
 
@@ -117,6 +121,7 @@ Replace the Create React App scripts in your `package.json`:
 Create environment files for development and production:
 
 `.env.development`:
+
 ```
 VITE_API_KEY=your_dev_api_key
 VITE_AUTH_DOMAIN=app-2100-cool.firebaseapp.com
@@ -128,6 +133,7 @@ VITE_REGION=us-west1
 ```
 
 `.env.production`:
+
 ```
 VITE_API_KEY=your_prod_api_key
 VITE_AUTH_DOMAIN=app-2100-cool.firebaseapp.com
@@ -163,11 +169,7 @@ import { BrowserRouter } from 'react-router-dom';
 import './App.css';
 
 const App: React.FC = () => {
-  return (
-    <BrowserRouter>
-      {/* Your app content */}
-    </BrowserRouter>
-  );
+  return <BrowserRouter>{/* Your app content */}</BrowserRouter>;
 };
 
 export default App;
@@ -207,37 +209,41 @@ Update `.firebaserc` to include all three domains:
   "targets": {
     "app-2100-cool": {
       "hosting": {
-        "coaching2100-com": [
-          "coaching2100-com"
-        ],
-        "main-2100-cool": [
-          "main-2100-cool"
-        ],
-        "asoos-2100-cool": [
-          "asoos-2100-cool"
-        ],
-        "doctors-live": [
-          "doctors-live"
-        ],
-        "experts-ai": [
-          "experts-ai"
-        ],
-        "drclaude-live": [
-          "drclaude-live"
-        ]
+        "coaching2100-com": ["coaching2100-com"],
+        "main-2100-cool": ["main-2100-cool"],
+        "asoos-2100-cool": ["asoos-2100-cool"],
+        "doctors-live": ["doctors-live"],
+        "experts-ai": ["experts-ai"],
+        "drclaude-live": ["drclaude-live"]
       }
     }
   },
   "doctorSites": {
     "doctors-live": [
-      "drclaude-live", "drmatch-live", "drlucy-live", "drsabina-live", "drgrant-live", 
-      "drburby-live", "professorlee-live", "drmaria-live", "drcypriot-live", 
-      "drmemoria-live", "drroark-live"
+      "drclaude-live",
+      "drmatch-live",
+      "drlucy-live",
+      "drsabina-live",
+      "drgrant-live",
+      "drburby-live",
+      "professorlee-live",
+      "drmaria-live",
+      "drcypriot-live",
+      "drmemoria-live",
+      "drroark-live"
     ],
     "experts-ai": [
-      "drclaude-ai", "drmatch-ai", "drlucy-ai", "drsabina-ai", "drgrant-ai", 
-      "drburby-ai", "professorlee-ai", "drmaria-ai", "drcypriot-ai", 
-      "drmemoria-ai", "drroark-ai"
+      "drclaude-ai",
+      "drmatch-ai",
+      "drlucy-ai",
+      "drsabina-ai",
+      "drgrant-ai",
+      "drburby-ai",
+      "professorlee-ai",
+      "drmaria-ai",
+      "drcypriot-ai",
+      "drmemoria-ai",
+      "drroark-ai"
     ]
   },
   "etags": {}
@@ -268,11 +274,7 @@ firebase target:apply hosting asoos-2100-cool asoos-2100-cool
     {
       "target": "coaching2100-com",
       "public": "build",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
@@ -294,11 +296,7 @@ firebase target:apply hosting asoos-2100-cool asoos-2100-cool
     {
       "target": "main-2100-cool",
       "public": "build",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
@@ -320,11 +318,7 @@ firebase target:apply hosting asoos-2100-cool asoos-2100-cool
     {
       "target": "asoos-2100-cool",
       "public": "build",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "**",
@@ -346,11 +340,7 @@ firebase target:apply hosting asoos-2100-cool asoos-2100-cool
     {
       "target": "drclaude-live",
       "public": "public",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
         {
           "source": "/claude-code-generate",
@@ -379,12 +369,7 @@ firebase target:apply hosting asoos-2100-cool asoos-2100-cool
     "source": "functions",
     "runtime": "nodejs22",
     "region": ["us-west1"],
-    "ignore": [
-      "node_modules",
-      ".git",
-      "firebase-debug.log",
-      "firebase-debug.*.log"
-    ]
+    "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log"]
   },
   "database": {
     "rules": "database.rules.json"
@@ -408,6 +393,7 @@ firebase hosting:channel:deploy production --site asoos-2100-cool
 ```
 
 Then, go to the Firebase console → Hosting → Connect domain and follow the steps to connect:
+
 - coaching2100.com to coaching2100-com site
 - 2100.cool to main-2100-cool site
 - asoos.2100.cool to asoos-2100-cool site
@@ -483,7 +469,7 @@ export enum UserRole {
   WING_LEADER = 'wing_leader',
   PILOT = 'pilot',
   AP = 'ap', // AI Pilot
-  HP = 'hp'  // Human Pilot
+  HP = 'hp', // Human Pilot
 }
 
 export interface User {
@@ -585,7 +571,7 @@ export enum AcademyModuleType {
   COURSE = 'course',
   WORKSHOP = 'workshop',
   ASSESSMENT = 'assessment',
-  DAILY_INTEGRATION = 'daily_integration'
+  DAILY_INTEGRATION = 'daily_integration',
 }
 
 export interface AcademyModule {
@@ -702,15 +688,15 @@ export interface FirebaseService {
   db: Firestore;
   functions: Functions;
   storage: Storage;
-  
+
   // Auth methods
   getCurrentUser: () => FirebaseUser | null;
   mapFirebaseUserToUser: (firebaseUser: FirebaseUser) => Promise<User>;
-  
+
   // Firestore methods
   getUserProfile: (userId: string) => Promise<User | null>;
   updateUserProfile: (userId: string, data: Partial<User>) => Promise<void>;
-  
+
   // Functions methods
   callFunction: <T, R>(name: string, data: T) => Promise<R>;
 }
@@ -728,4 +714,3 @@ This guide provided a comprehensive approach to:
 After following these steps, your project will have a modern, type-safe structure that supports multiple domains through Firebase hosting. The TypeScript interfaces will provide strong typing throughout your application, improving development experience and code quality.
 
 Remember to update your CI/CD pipelines to use the new Vite build commands if you have automated deployments.
-

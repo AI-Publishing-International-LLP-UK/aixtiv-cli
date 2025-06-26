@@ -1,22 +1,22 @@
 claudeInterface:
   endpoints:
-    base: "https://2100.cool/claude"
-    api: "https://2100.cool/claude/api"
-    status: "https://2100.cool/claude/status"
-    
+    base: 'https://2100.cool/claude'
+    api: 'https://2100.cool/claude/api'
+    status: 'https://2100.cool/claude/status'
+
   features:
     streaming: true
     multimodal: true
     codeInterpreter: true
     fileProcessing: true
-    
+
   security:
     authentication: true
     rateLimit: true
     monitoring: true
-    
+
   ui:
-    theme: "modern"
+    theme: 'modern'
     responsiveDesign: true
     components:
       - inputArea
@@ -24,7 +24,7 @@ claudeInterface:
       - fileUpload
       - statusIndicator
       - settingsPanel
-    
+
   integration:
     vertex: true
     monitoring: true

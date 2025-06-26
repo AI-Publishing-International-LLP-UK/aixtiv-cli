@@ -1,6 +1,6 @@
 /**
  * Test Setup Configuration
- * 
+ *
  * This file configures the testing environment for the Aixtiv CLI ecosystem,
  * particularly for the DI:DC (Dewey Digital Index Cards) and related components.
  */
@@ -17,7 +17,7 @@ const { getFirestore, connectFirestoreEmulator } = require('@firebase/firestore'
 
 // Configure Chai
 chai.use(chaiAsPromised); // Enables handling of promises in assertions
-chai.use(sinonChai);      // Enables Sinon-specific assertions
+chai.use(sinonChai); // Enables Sinon-specific assertions
 
 // Export globally accessible testing tools
 global.expect = chai.expect;
@@ -32,14 +32,14 @@ const useRealFirestore = process.env.TEST_USE_REAL_FIRESTORE === 'true';
 
 // Firebase configuration for testing
 const firebaseConfig = {
-  apiKey: "test-api-key",
-  authDomain: "test-project-id.firebaseapp.com",
-  projectId: "test-project-id",
-  storageBucket: "test-project-id.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef1234567890",
+  apiKey: 'test-api-key',
+  authDomain: 'test-project-id.firebaseapp.com',
+  projectId: 'test-project-id',
+  storageBucket: 'test-project-id.appspot.com',
+  messagingSenderId: '123456789',
+  appId: '1:123456789:web:abcdef1234567890',
   // Specify us-west1 region
-  locationId: "us-west1"
+  locationId: 'us-west1',
 };
 
 // Initialize real Firestore if enabled
@@ -48,7 +48,7 @@ if (useRealFirestore) {
   try {
     const app = initializeApp(firebaseConfig);
     firestore = getFirestore(app);
-    
+
     // Connect to Firestore emulator if FIRESTORE_EMULATOR_HOST is set
     if (process.env.FIRESTORE_EMULATOR_HOST) {
       const [host, port] = process.env.FIRESTORE_EMULATOR_HOST.split(':');
@@ -98,7 +98,7 @@ global.firestoreMock = createFirestoreMock();
 // Helper function to reset all test stubs/mocks between tests
 global.resetTestMocks = () => {
   sinon.restore();
-  
+
   // Reinitialize mocks if needed after restore
   global.firestoreMock = createFirestoreMock();
 };
@@ -111,7 +111,7 @@ global.createTestDocument = (metadata = {}) => ({
     title: 'Test Document',
     author: 'Test Author',
     created: new Date().toISOString(),
-    ...metadata
+    ...metadata,
   },
   vectorEmbedding: new Array(128).fill(0).map(() => Math.random()),
 });
@@ -141,6 +141,6 @@ module.exports = {
   resetTestMocks: global.resetTestMocks,
   createTestDocument: global.createTestDocument,
   isUsingRealFirestore: useRealFirestore,
-  getFirestore: () => useRealFirestore && global.firestore ? global.firestore : global.firestoreMock
+  getFirestore: () =>
+    useRealFirestore && global.firestore ? global.firestore : global.firestoreMock,
 };
-

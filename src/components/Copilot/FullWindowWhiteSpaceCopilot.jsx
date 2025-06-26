@@ -1,9 +1,9 @@
 /**
  * FullWindowWhiteSpaceCopilot Component
- * 
+ *
  * Provides a full-window video copilot interface with green screen processing
  * and subtle emotion tuning capabilities for VIP users.
- * 
+ *
  * Features:
  * - Full-window video display with proper scaling
  * - Green screen processing for professional appearance
@@ -11,7 +11,7 @@
  * - White space design principles
  * - Hidden emotion tuning capabilities for VIP users only
  * - Keyboard shortcuts for VIPs to change emotional tones
- * 
+ *
  * (c) 2025 Copyright AI Publishing International LLP All Rights Reserved.
  * Developed with assistance from the Pilots of Vision Lake.
  */
@@ -50,8 +50,8 @@ const EMOTION_SHORTCUTS = {
 // Session data
 const SESSION_ID = uuidv4();
 
-const FullWindowWhiteSpaceCopilot = ({ 
-  userConfig = {}, 
+const FullWindowWhiteSpaceCopilot = ({
+  userConfig = {},
   vipStatus = false,
   onMessage,
   customStyles = {},
@@ -84,7 +84,7 @@ const FullWindowWhiteSpaceCopilot = ({
   const animationFrameRef = useRef(null);
   const recognitionRef = useRef(null);
   const speechSynthesisRef = useRef(null);
-  
+
   // Merged styles with customization
   const styles = {
     container: {
@@ -167,7 +167,7 @@ const FullWindowWhiteSpaceCopilot = ({
       backgroundColor: 'rgba(255, 255, 255, 0.7)',
       borderRadius: '12px',
       boxShadow: `0 2px 10px ${COLORS.shadow}`,
-      opacity: (transcript || interimTranscript) ? 1 : 0,
+      opacity: transcript || interimTranscript ? 1 : 0,
       transition: 'opacity 0.3s ease',
       ...customStyles.transcriptContainer,
     },
@@ -249,7 +249,7 @@ const FullWindowWhiteSpaceCopilot = ({
       ...customStyles.errorMessage,
     },
   };
-  
+
   // Initialize the component
   useEffect(() => {
     const initialize = async () => {
@@ -257,7 +257,7 @@ const FullWindowWhiteSpaceCopilot = ({
         // Initialize services
         await emotionTuningService.initialize();
         await videoSystem.initialize();
-        
+
         // Set up video session
         const session = await videoSystem.createSession({
           agentId: 'aixtiv-copilot',
@@ -269,18 +269,18 @@ const FullWindowWhiteSpaceCopilot = ({
           greenScreen: videoSettings.greenScreen,
           interfaceVersion: 'v2',
         });
-        
+
         setVideoSession(session);
-        
+
         // Load available backgrounds
         const backgrounds = await videoSystem.listBackgrounds();
         if (backgrounds && backgrounds.length > 0) {
-          setVideoSettings(prev => ({
+          setVideoSettings((prev) => ({
             ...prev,
             backgroundId: backgrounds[0].id,
           }));
         }
-        
+
         // Set up speech recognition
         if (window.SpeechRecognition || window.webkitSpeechRecognition) {
           const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -288,23 +288,22 @@ const FullWindowWhiteSpaceCopilot = ({
           recognitionRef.current.continuous = SPEECH_RECOGNITION_CONFIG.continuous;
           recognitionRef.current.interimResults = SPEECH_RECOGNITION_CONFIG.interimResults;
           recognitionRef.current.lang = SPEECH_RECOGNITION_CONFIG.lang;
-          
+
           recognitionRef.current.onresult = handleSpeechResult;
           recognitionRef.current.onerror = handleSpeechError;
           recognitionRef.current.onend = handleSpeechEnd;
         } else {
           console.warn('Speech recognition not supported in this browser');
         }
-        
+
         // Set up speech synthesis
         if (window.speechSynthesis) {
           speechSynthesisRef.current = window.speechSynthesis;
         } else {
           console.warn('Speech synthesis not supported in this browser');
         }
-        
+
         setIsInitialized(true);
-        
       } catch (error) {
         console.error('Initialization error:', error);
         setErrorMessage('Failed to initialize copilot: ' + error.message);
@@ -312,21 +311,21 @@ const FullWindowWhiteSpaceCopilot = ({
         setIsLoading(false);
       }
     };
-    
+
     initialize();
-    
+
     // Set up keyboard shortcut listener for VIP users
     const handleKeyDown = (event) => {
       if (!isVIP) return;
-      
+
       const keyCombo = `${event.altKey ? 'Alt+' : ''}${event.key}`;
-      
+
       if (keyCombo === 'Alt+0') {
         // Toggle emotion controls
-        setShowEmotionControls(prev => !prev);
+        setShowEmotionControls((prev) => !prev);
         return;
       }
-      
+
       // Check for emotion shortcuts
       Object.entries(EMOTION_SHORTCUTS).forEach(([shortcut, emotion]) => {
         if (shortcut === keyCombo) {
@@ -339,32 +338,32 @@ const FullWindowWhiteSpaceCopilot = ({
         }
       });
     };
-    
+
     window.addEventListener('keydown', handleKeyDown);
-    
+
     // Clean up
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       stopVideoProcessing();
-      
+
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
-      
+
       if (speechSynthesisRef.current) {
         speechSynthesisRef.current.cancel();
       }
     };
   }, [isVIP, videoSettings]);
-  
+
   // Set up video stream and processing
   useEffect(() => {
     if (!isInitialized) return;
-    
+
     const setupVideoStream = async () => {
       try {
         // Request user media
-        const stream = await navigator.mediaDevices.getUserMedia({ 
+        const stream = await navigator.mediaDevices.getUserMedia({
           video: {
             width: { ideal: 1920 },
             height: { ideal: 1080 },
@@ -372,7 +371,7 @@ const FullWindowWhiteSpaceCopilot = ({
           },
           audio: false,
         });
-        
+
         // Set video source
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
@@ -381,61 +380,60 @@ const FullWindowWhiteSpaceCopilot = ({
             startVideoProcessing();
           };
         }
-        
       } catch (error) {
         console.error('Error accessing video stream:', error);
         setErrorMessage('Could not access camera: ' + error.message);
       }
     };
-    
+
     setupVideoStream();
-    
+
     return () => {
       // Clean up video stream
       if (videoRef.current && videoRef.current.srcObject) {
         const tracks = videoRef.current.srcObject.getTracks();
-        tracks.forEach(track => track.stop());
+        tracks.forEach((track) => track.stop());
       }
     };
   }, [isInitialized]);
-  
+
   // Start video processing
   const startVideoProcessing = () => {
     if (!videoRef.current || !canvasRef.current || !outputCanvasRef.current) return;
-    
+
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const outputCanvas = outputCanvasRef.current;
     const processingContext = canvas.getContext('2d');
     const outputContext = outputCanvas.getContext('2d');
-    
+
     // Set canvas dimensions
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     outputCanvas.width = window.innerWidth;
     outputCanvas.height = window.innerHeight;
-    
+
     // Process video frames
     const processFrame = () => {
       if (!video.paused && !video.ended) {
         // Draw video frame to processing canvas
         processingContext.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
+
         // Apply green screen effect
         if (videoSettings.greenScreen) {
           applyGreenScreenEffect(processingContext, canvas.width, canvas.height);
         }
-        
+
         // Draw to output canvas with proper scaling
         const outputWidth = outputCanvas.width;
         const outputHeight = outputCanvas.height;
-        
+
         // Calculate proper scaling to maintain aspect ratio
         const videoAspect = canvas.width / canvas.height;
         const canvasAspect = outputWidth / outputHeight;
-        
+
         let drawWidth, drawHeight, offsetX, offsetY;
-        
+
         if (videoAspect > canvasAspect) {
           // Video is wider than canvas
           drawHeight = outputHeight;
@@ -449,41 +447,48 @@ const FullWindowWhiteSpaceCopilot = ({
           offsetX = 0;
           offsetY = (outputHeight - drawHeight) / 2;
         }
-        
+
         // Clear output canvas and draw processed frame
         outputContext.clearRect(0, 0, outputWidth, outputHeight);
-        outputContext.drawImage(canvas, 0, 0, canvas.width, canvas.height, offsetX, offsetY, drawWidth, drawHeight);
+        outputContext.drawImage(
+          canvas,
+          0,
+          0,
+          canvas.width,
+          canvas.height,
+          offsetX,
+          offsetY,
+          drawWidth,
+          drawHeight
+        );
       }
-      
+
       // Continue processing
       animationFrameRef.current = requestAnimationFrame(processFrame);
     };
-    
+
     // Start processing
     animationFrameRef.current = requestAnimationFrame(processFrame);
   };
-  
+
   // Apply green screen effect
   const applyGreenScreenEffect = (context, width, height) => {
     const imageData = context.getImageData(0, 0, width, height);
     const data = imageData.data;
-    
+
     // Green screen settings
     const threshold = 80;
     const greenThreshold = 100;
-    
+
     // Process each pixel
     for (let i = 0; i < data.length; i += 4) {
       const red = data[i];
       const green = data[i + 1];
       const blue = data[i + 2];
-      
+
       // Check if pixel is green (green is significantly higher than red and blue)
-      const isGreen = 
-        green > greenThreshold && 
-        green > red + threshold && 
-        green > blue + threshold;
-      
+      const isGreen = green > greenThreshold && green > red + threshold && green > blue + threshold;
+
       // If it's a green pixel, make it transparent
       if (isGreen) {
         // Calculate transparency based on how "green" it is
@@ -491,11 +496,11 @@ const FullWindowWhiteSpaceCopilot = ({
         data[i + 3] = 255 * (1.0 - greenness); // Alpha channel
       }
     }
-    
+
     // Put processed image data back
     context.putImageData(imageData, 0, 0);
   };
-  
+
   // Stop video processing
   const stopVideoProcessing = () => {
     if (animationFrameRef.current) {
@@ -503,12 +508,12 @@ const FullWindowWhiteSpaceCopilot = ({
       animationFrameRef.current = null;
     }
   };
-  
+
   // Handle speech recognition result
   const handleSpeechResult = (event) => {
     let interimText = '';
     let finalText = '';
-    
+
     for (let i = 0; i < event.results.length; i++) {
       if (event.results[i].isFinal) {
         finalText += event.results[i][0].transcript;
@@ -516,22 +521,22 @@ const FullWindowWhiteSpaceCopilot = ({
         interimText += event.results[i][0].transcript;
       }
     }
-    
+
     setInterimTranscript(interimText);
-    
+
     if (finalText) {
       setTranscript(finalText);
       processUserInput(finalText);
     }
   };
-  
+
   // Handle speech recognition error
   const handleSpeechError = (event) => {
     console.error('Speech recognition error:', event.error);
     setErrorMessage(`Speech recognition error: ${event.error}`);
     setIsListening(false);
   };
-  
+
   // Handle speech recognition end
   const handleSpeechEnd = () => {
     // Auto restart if we were listening
@@ -539,7 +544,7 @@ const FullWindowWhiteSpaceCopilot = ({
       recognitionRef.current.start();
     }
   };
-  
+
   // Start listening
   const startListening = () => {
     if (recognitionRef.current) {
@@ -547,7 +552,7 @@ const FullWindowWhiteSpaceCopilot = ({
       setIsListening(true);
     }
   };
-  
+
   // Stop listening
   const stopListening = () => {
     if (recognitionRef.current) {
@@ -555,7 +560,7 @@ const FullWindowWhiteSpaceCopilot = ({
       setIsListening(false);
     }
   };
-  
+
   // Toggle listening
   const toggleListening = () => {
     if (isListening) {
@@ -564,23 +569,23 @@ const FullWindowWhiteSpaceCopilot = ({
       startListening();
     }
   };
-  
+
   // Process user input
   const processUserInput = async (input) => {
     try {
       // Reset interim transcript
       setInterimTranscript('');
-      
+
       // Get suggested tone based on user input
       const toneSuggestion = await emotionTuningService.suggestTone(input);
-      
+
       // Use VIP preferences if VIP, otherwise use suggested tone
       const toneToUse = isVIP ? currentEmotion : toneSuggestion.tone;
       const intensityToUse = isVIP ? emotionIntensity : toneSuggestion.intensity;
-      
+
       // Generate response (mock API call for demonstration)
       const mockResponse = `I understand you're asking about "${input}". This is a simulated response from the copilot, which would normally be adjusted using the emotion tuning service with tone: ${toneToUse} and intensity: ${intensityToUse}.`;
-      
+
       // Adjust response tone
       const adjustedResponse = await emotionTuningService.adjustTone(
         mockResponse,
@@ -588,10 +593,10 @@ const FullWindowWhiteSpaceCopilot = ({
         intensityToUse,
         { userId: 'user-123', conversationId: SESSION_ID }
       );
-      
+
       // Set response
       setResponse(adjustedResponse.adjustedMessage);
-      
+
       // Speak response if speech synthesis is available
       if (speechSynthesisRef.current) {
         const utterance = new SpeechSynthesisUtterance(adjustedResponse.adjustedMessage);
@@ -599,7 +604,7 @@ const FullWindowWhiteSpaceCopilot = ({
         utterance.onend = () => setIsSpeaking(false);
         speechSynthesisRef.current.speak(utterance);
       }
-      
+
       // Call onMessage callback if provided
       if (onMessage) {
         onMessage({
@@ -610,52 +615,38 @@ const FullWindowWhiteSpaceCopilot = ({
           timestamp: new Date().toISOString(),
         });
       }
-      
     } catch (error) {
       console.error('Error processing input:', error);
       setErrorMessage('Failed to process your request: ' + error.message);
     }
   };
-  
+
   // Change emotion setting (for VIP users)
   const changeEmotion = (emotion) => {
     if (!isVIP) return;
     setCurrentEmotion(emotion);
   };
-  
+
   // Change emotion intensity (for VIP users)
   const changeIntensity = (event) => {
     if (!isVIP) return;
     setEmotionIntensity(parseInt(event.target.value, 10));
   };
-  
+
   // Render the component
   return (
     <div style={styles.container}>
       {/* Video container */}
       <div style={styles.videoContainer}>
-        <video 
-          ref={videoRef}
-          style={styles.video}
-          autoPlay
-          playsInline
-          muted
-        />
-        
+        <video ref={videoRef} style={styles.video} autoPlay playsInline muted />
+
         {/* Processing canvas (hidden) */}
-        <canvas 
-          ref={canvasRef}
-          style={styles.processingCanvas}
-        />
-        
+        <canvas ref={canvasRef} style={styles.processingCanvas} />
+
         {/* Output canvas */}
-        <canvas 
-          ref={outputCanvasRef}
-          style={styles.outputCanvas}
-          onClick={toggleListening}
-        />
+        <canvas ref={outputCanvasRef} style={styles.outputCanvas} onClick={toggleListening} />
       </div>
-      
+
       {/* Transcript display */}
       <div style={styles.transcriptContainer}>
         <p style={styles.transcriptText}>
@@ -663,12 +654,12 @@ const FullWindowWhiteSpaceCopilot = ({
           <span style={styles.interimTranscript}>{interimTranscript}</span>
         </p>
       </div>
-      
+
       {/* Response display */}
       <div style={styles.responseContainer}>
         <p style={styles.responseText}>{response}</p>
       </div>
-      
+
       {/* VIP Emotion controls */}
       {isVIP && (
         <div style={styles.emotionControls}>
@@ -678,7 +669,7 @@ const FullWindowWhiteSpaceCopilot = ({
               key={emotion}
               style={{
                 ...styles.emotionButton,
-                ...(currentEmotion === emotion ? styles.emotionButtonActive : {})
+                ...(currentEmotion === emotion ? styles.emotionButtonActive : {}),
               }}
               onClick={() => changeEmotion(emotion)}
             >
@@ -700,18 +691,14 @@ const FullWindowWhiteSpaceCopilot = ({
           </div>
         </div>
       )}
-      
+
       {/* Loading overlay */}
       <div style={styles.loadingOverlay}>
         <div>Loading Copilot...</div>
       </div>
-      
+
       {/* Error message */}
-      {errorMessage && (
-        <div style={styles.errorMessage}>
-          {errorMessage}
-        </div>
-      )}
+      {errorMessage && <div style={styles.errorMessage}>{errorMessage}</div>}
     </div>
   );
 };

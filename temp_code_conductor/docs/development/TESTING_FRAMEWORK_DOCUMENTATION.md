@@ -5,6 +5,7 @@
 We've implemented a comprehensive testing system for Code Conductor v0.4.5 that supports automated test discovery, categorization, execution, and reporting. The new system includes non-interactive test execution capabilities, making it suitable for CI/CD pipelines.
 
 **Key Features:**
+
 - Automatic test discovery and categorization
 - Modular test organization by type (simple, unit, integration, etc.)
 - Flexible test selection through command-line options
@@ -15,6 +16,7 @@ We've implemented a comprehensive testing system for Code Conductor v0.4.5 that 
 ## Problem Statement
 
 The Code Conductor project previously lacked a structured testing framework that could:
+
 1. Discover and organize tests automatically
 2. Run tests reliably in CI/CD environments
 3. Generate detailed reports of test results
@@ -36,6 +38,7 @@ We took a modular approach to solve these issues, creating several specialized c
 ### Test Discovery (`test_discovery.sh`)
 
 This script:
+
 - Scans the codebase for test files using pattern matching
 - Categorizes tests based on naming patterns, content, and location
 - Organizes tests into categories (simple, integration, unit, etc.)
@@ -78,6 +81,7 @@ SIMPLE_TESTS=(
 ### Test Runner (`test_runner.sh`)
 
 Responsible for:
+
 - Executing tests with timeout protection
 - Managing test process isolation
 - Capturing test output and results
@@ -108,6 +112,7 @@ run_tests_from_array() {
 ### Test Reporting (`test_reporting.sh`)
 
 Generates markdown reports that include:
+
 - Environment details
 - Test results with pass/fail status
 - Execution time for each test
@@ -134,6 +139,7 @@ generate_report_summary() {
 ### Utilities (`test_utils.sh`)
 
 Common utility functions used by other components:
+
 - Colored output helpers
 - File and command existence checking
 - Script preparation for non-interactive execution
@@ -166,6 +172,7 @@ EOF
 ### Main Script (`run_all_tests.sh`)
 
 The entry point that ties everything together:
+
 - Processes command-line arguments for test selection
 - Runs the test discovery to update the catalog
 - Sources the test catalog and other components
@@ -194,6 +201,7 @@ fi
 ### CLI Enhancement (`cli.py`)
 
 We enhanced the CLI to support non-interactive work effort creation:
+
 - Added a `-y/--yes` option for non-interactive mode
 - Implemented a `non_interactive_mode` function that uses command-line arguments
 - Added validation for required arguments
@@ -216,6 +224,7 @@ async def non_interactive_mode(args, template_path, active_dir, manager_info=Non
 ### Work Effort Creation Script (`create_test_work_effort.sh`)
 
 A script specifically designed for CI/CD environments that:
+
 - Creates a work effort in non-interactive mode
 - Captures test results for documentation
 - Provides detailed output about the work effort creation
@@ -244,6 +253,7 @@ We implemented three simple tests to provide a baseline for the testing framewor
 3. **Setup Test** (`simple_setup_test.sh`): Tests the `code-conductor setup` command in non-interactive mode
 
 These tests are:
+
 - Fast (complete in 1-2 seconds each)
 - Reliable (minimal dependencies)
 - Self-contained (clean up after themselves)
@@ -276,16 +286,19 @@ if [ $EXIT_CODE -eq 0 ]; then
 ### Basic Usage
 
 To run all tests:
+
 ```bash
 ./run_all_tests.sh
 ```
 
 To run only simple tests:
+
 ```bash
 ./run_all_tests.sh --simple
 ```
 
 To run with verbose output:
+
 ```bash
 ./run_all_tests.sh -v
 ```
@@ -293,6 +306,7 @@ To run with verbose output:
 ### Advanced Usage
 
 Run tests from a specific category:
+
 ```bash
 ./run_all_tests.sh -c simple
 ./run_all_tests.sh -c unit
@@ -301,11 +315,13 @@ Run tests from a specific category:
 ```
 
 Run a specific test:
+
 ```bash
 ./run_all_tests.sh -t simple-help
 ```
 
 Set maximum execution time for tests:
+
 ```bash
 ./run_all_tests.sh -m 60
 ```
@@ -313,14 +329,15 @@ Set maximum execution time for tests:
 ### CI/CD Usage
 
 To use in GitHub Actions:
+
 ```yaml
 name: Run Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
@@ -350,6 +367,7 @@ The discovery system scans the codebase for test files using pattern matching, t
 - Location (e.g., tests in the `tests/` directory)
 
 The discovery process automatically handles:
+
 - Excluding utility scripts and temporary files
 - Detecting simple tests that may not follow the `test_*.sh` naming convention
 - Categorizing Python tests based on their content and imports
@@ -357,12 +375,14 @@ The discovery process automatically handles:
 ### Test Execution
 
 Tests are executed with:
+
 - Timeout protection to prevent hanging tests
 - Process isolation to avoid test interference
 - Output capturing for debugging and reporting
 - Error handling for non-zero exit codes
 
 Shell scripts are modified on-the-fly to run in non-interactive mode by:
+
 - Adding environment variables to signal non-interactive mode
 - Replacing any interactive prompts with automatic responses
 - Removing existing interactive flags
@@ -371,6 +391,7 @@ Shell scripts are modified on-the-fly to run in non-interactive mode by:
 ### Test Reporting
 
 Reports are generated in Markdown format with:
+
 - Environment details (Python version, shell version, etc.)
 - Test results with pass/fail status and duration
 - Detailed output from each test
@@ -379,6 +400,7 @@ Reports are generated in Markdown format with:
 ### Non-interactive Mode
 
 The CLI has been enhanced to support non-interactive mode by:
+
 - Adding a `-y/--yes` flag to skip interactive prompts
 - Implementing default values for all required inputs
 - Providing validation for command-line arguments

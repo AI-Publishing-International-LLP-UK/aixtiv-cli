@@ -1,22 +1,22 @@
 persistentMemory:
   storage:
-    type: "distributed"
-    engine: "vectorDB"
+    type: 'distributed'
+    engine: 'vectorDB'
     backup: true
-  
+
   retrieval:
-    contextWindow: "unlimited"
+    contextWindow: 'unlimited'
     semanticSearch: true
-    
+
   features:
     conversationHistory: true
     knowledgeBase: true
     personalizedContext: true
-    
+
   security:
-    encryption: "AES-256"
-    access: "roleBasedAuth"
-    
+    encryption: 'AES-256'
+    access: 'roleBasedAuth'
+
   integration:
     vertex: true
     claude: true

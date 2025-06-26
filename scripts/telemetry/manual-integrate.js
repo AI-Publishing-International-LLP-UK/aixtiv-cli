@@ -2,7 +2,7 @@
 
 /**
  * Manual telemetry integration script
- * 
+ *
  * This script makes targeted changes to the main CLI file to add telemetry
  * support without comprehensive rewrapping of all commands.
  */
@@ -24,15 +24,17 @@ if (!fs.existsSync(BACKUP_CLI_PATH)) {
 let content = fs.readFileSync(MAIN_CLI_PATH, 'utf8');
 
 // Check if telemetry is already integrated
-if (content.includes('require(\'../lib/telemetry\')') || 
-    content.includes('require("../lib/telemetry")')) {
+if (
+  content.includes("require('../lib/telemetry')") ||
+  content.includes('require("../lib/telemetry")')
+) {
   console.log('Telemetry import already found in the main CLI file.');
 } else {
   // Add telemetry import and initialization
   // Find the line after the initial import statements
   const lines = content.split('\n');
   let insertPosition = 0;
-  
+
   // Look for a good insertion point after imports
   for (let i = 0; i < lines.length; i++) {
     if (lines[i].includes('const program = new Command()')) {
@@ -40,12 +42,12 @@ if (content.includes('require(\'../lib/telemetry\')') ||
       break;
     }
   }
-  
+
   if (insertPosition === 0) {
     console.error('Could not find a suitable insertion point for telemetry initialization.');
     process.exit(1);
   }
-  
+
   // Insert telemetry initialization
   const telemetryCode = `
 // Initialize telemetry
@@ -63,17 +65,19 @@ const telemetry = require('../lib/telemetry');
     console.error('Failed to initialize telemetry:', error);
   }
 })();`;
-  
+
   lines.splice(insertPosition, 0, telemetryCode);
   content = lines.join('\n');
-  
+
   // Write the updated content
   fs.writeFileSync(MAIN_CLI_PATH, content);
   console.log('Added telemetry initialization to the main CLI file.');
 }
 
 console.log('\nTelemetry has been manually integrated into the main CLI file.');
-console.log('To track commands and errors, you need to add calls to the telemetry functions in your code:');
+console.log(
+  'To track commands and errors, you need to add calls to the telemetry functions in your code:'
+);
 console.log('- telemetry.recordRequest(commandName)');
 console.log('- telemetry.recordError(commandName, error)');
 console.log('- telemetry.recordDuration(commandName, durationMs)');

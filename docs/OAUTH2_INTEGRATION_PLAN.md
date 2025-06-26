@@ -9,11 +9,13 @@ This document outlines the OAuth2 integration needs across the Aixtiv Symphony e
 ### Core Platform Integration Points
 
 1. **Firebase Authentication**
+
    - Status: Partially implemented
    - Need: Unified OAuth2 flow for all Firebase services
    - Priority: High
 
 2. **GCP Service Accounts**
+
    - Status: Implemented but siloed
    - Need: Centralized management with OAuth2 token rotation
    - Priority: High
@@ -26,12 +28,14 @@ This document outlines the OAuth2 integration needs across the Aixtiv Symphony e
 ### LLM Provider Integrations
 
 1. **OpenAI API**
+
    - Status: API key based
    - Need: Migrate to OAuth2 where applicable
    - Priority: Medium
 
 2. **Anthropic/Claude API**
-   - Status: API key based  
+
+   - Status: API key based
    - Need: Implement OAuth2 when Anthropic supports it
    - Priority: Low (pending provider support)
 
@@ -43,11 +47,13 @@ This document outlines the OAuth2 integration needs across the Aixtiv Symphony e
 ### Agent Factory & Orchestration
 
 1. **Universal Dispatcher**
+
    - Status: Internal auth, no OAuth2
    - Need: OAuth2 integration for cross-service communication
    - Priority: High
 
 2. **Dr. Match & Dr. Lucy Agents**
+
    - Status: API key based auth
    - Need: OAuth2 token support for identity-aware operations
    - Priority: Medium
@@ -60,16 +66,19 @@ This document outlines the OAuth2 integration needs across the Aixtiv Symphony e
 ### Third-Party Tool Integrations
 
 1. **GitHub Integration**
+
    - Status: Personal access tokens
    - Need: Full OAuth2 flow with proper scopes
    - Priority: High
 
 2. **Atlassian (Jira/Confluence)**
+
    - Status: Basic API token
    - Need: OAuth2 implementation with proper scopes
    - Priority: Medium
 
 3. **GitLab Integration**
+
    - Status: Not implemented
    - Need: OAuth2 from initial implementation
    - Priority: Medium
@@ -126,6 +135,7 @@ Establish service mesh authentication:
 ### Phase 1: Critical Infrastructure (Immediate)
 
 1. **Firestore & Firebase Integration**
+
    - Implement OAuth2 for Firebase Admin SDK
    - Set up Firebase Authentication OAuth2 providers
    - Create identity federation between GCP and Firebase
@@ -138,6 +148,7 @@ Establish service mesh authentication:
 ### Phase 2: Key External Services (1-2 months)
 
 1. **GitHub Integration**
+
    - Replace personal access tokens with OAuth2
    - Implement proper scopes for different operations
    - Set up automatic token refresh
@@ -150,6 +161,7 @@ Establish service mesh authentication:
 ### Phase 3: Agent Services (2-3 months)
 
 1. **Universal Dispatcher**
+
    - Implement OAuth2 for agent-to-agent communication
    - Set up proper identity verification
    - Create audit trail of all authentications
@@ -162,6 +174,7 @@ Establish service mesh authentication:
 ### Phase 4: Remaining Integrations (3-6 months)
 
 1. **GitLab & Additional SCM Tools**
+
    - Implement OAuth2 for all code management tools
    - Standardize on consistent scope patterns
    - Create unified authentication facade
@@ -234,16 +247,19 @@ Establish service mesh authentication:
 ## Security Considerations
 
 1. **Token Storage**
+
    - Never store refresh tokens in client storage
    - Use GCP Secret Manager for all sensitive credentials
    - Implement proper encryption at rest
 
 2. **Scope Management**
+
    - Always request minimum required scopes
    - Implement scope validation on token use
    - Document all required scopes per integration
 
 3. **Token Lifetime**
+
    - Implement proper token refresh mechanisms
    - Set up monitoring for token expiration
    - Create graceful failure modes for auth failures

@@ -6,7 +6,7 @@ const api = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-  }
+  },
 });
 
 // Add a request interceptor to attach auth tokens
@@ -16,14 +16,14 @@ api.interceptors.request.use(
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
-    
+
     // Add anthropic-api-key header if it exists in localStorage
     const anthropicKey = localStorage.getItem('anthropic_api_key');
     if (anthropicKey) {
       config.headers['anthropic-api-key'] = anthropicKey;
       config.headers['anthropic-version'] = '2023-06-01';
     }
-    
+
     return config;
   },
   (error) => {
@@ -40,7 +40,7 @@ const universalDispatcherService = {
         message,
         userId,
         agentId,
-        operation: 'process-message'
+        operation: 'process-message',
       });
       return response.data;
     } catch (error) {
@@ -48,12 +48,12 @@ const universalDispatcherService = {
       throw error;
     }
   },
-  
+
   // Get agent S2DO tasks
   getTasks: async (userId, agentId = 'dr-claude-orchestrator') => {
     try {
       const response = await api.get('/universal-dispatcher/tasks', {
-        params: { userId, agentId }
+        params: { userId, agentId },
       });
       return response.data;
     } catch (error) {
@@ -61,20 +61,20 @@ const universalDispatcherService = {
       throw error;
     }
   },
-  
+
   // Update task status
   updateTask: async (taskId, status, userId) => {
     try {
       const response = await api.put(`/universal-dispatcher/tasks/${taskId}`, {
         status,
-        userId
+        userId,
       });
       return response.data;
     } catch (error) {
       console.error('Error updating task in Universal Dispatcher:', error);
       throw error;
     }
-  }
+  },
 };
 
 // SallyPort authentication API
@@ -89,7 +89,7 @@ const sallyPortService = {
       throw error;
     }
   },
-  
+
   // Check token validity
   validateToken: async (token) => {
     try {
@@ -100,7 +100,7 @@ const sallyPortService = {
       throw error;
     }
   },
-  
+
   // Log out user
   logout: async () => {
     try {
@@ -110,7 +110,7 @@ const sallyPortService = {
       console.error('Error logging out from SallyPort:', error);
       throw error;
     }
-  }
+  },
 };
 
 // Agent access APIs
@@ -119,7 +119,7 @@ const agentService = {
   getAgents: async (userId) => {
     try {
       const response = await api.get('/agent/list', {
-        params: { userId }
+        params: { userId },
       });
       return response.data;
     } catch (error) {
@@ -127,7 +127,7 @@ const agentService = {
       throw error;
     }
   },
-  
+
   // Set agent configuration for current session
   configureAgent: async (agentId, config) => {
     try {
@@ -138,7 +138,7 @@ const agentService = {
       throw error;
     }
   },
-  
+
   // Get agent details
   getAgentDetails: async (agentId) => {
     try {
@@ -148,7 +148,7 @@ const agentService = {
       console.error('Error fetching agent details:', error);
       throw error;
     }
-  }
+  },
 };
 
 // Resource access APIs
@@ -157,7 +157,7 @@ const resourceService = {
   getResources: async (userId) => {
     try {
       const response = await api.get('/resource/scan', {
-        params: { userId }
+        params: { userId },
       });
       return response.data;
     } catch (error) {
@@ -165,7 +165,7 @@ const resourceService = {
       throw error;
     }
   },
-  
+
   // Get a specific resource
   getResource: async (resourceId) => {
     try {
@@ -176,7 +176,7 @@ const resourceService = {
       throw error;
     }
   },
-  
+
   // Grant access to a resource
   grantAccess: async (userId, agentId, resourceId, accessType = 'readonly') => {
     try {
@@ -184,14 +184,14 @@ const resourceService = {
         email: userId,
         agent: agentId,
         resource: resourceId,
-        type: accessType
+        type: accessType,
       });
       return response.data;
     } catch (error) {
       console.error('Error granting resource access:', error);
       throw error;
     }
-  }
+  },
 };
 
 // Telemetry tracking API
@@ -202,14 +202,14 @@ const telemetryService = {
       await api.post('/telemetry/record', {
         type: interactionType,
         details,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
       // Silently fail telemetry - non-critical
       console.warn('Telemetry recording failed:', error);
     }
   },
-  
+
   // Get system status metrics
   getMetrics: async () => {
     try {
@@ -219,7 +219,7 @@ const telemetryService = {
       console.error('Error fetching telemetry metrics:', error);
       throw error;
     }
-  }
+  },
 };
 
 export {
@@ -228,5 +228,5 @@ export {
   sallyPortService,
   agentService,
   resourceService,
-  telemetryService
+  telemetryService,
 };

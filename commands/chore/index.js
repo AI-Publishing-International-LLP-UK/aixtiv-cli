@@ -10,4 +10,3 @@ const choreCommand = new Command('chore')
   .addCommand(deploy);
 
 module.exports = choreCommand;
-

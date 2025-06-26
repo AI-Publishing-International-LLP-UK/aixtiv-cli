@@ -61,13 +61,13 @@ Work nodes are stored as markdown files in the `_AI-Setup/work_effort/node/` dir
 
 ```markdown
 ---
-title: "Feature Implementation"
-created: "2025-03-17 13:22:00"
-category: "implementation"
+title: 'Feature Implementation'
+created: '2025-03-17 13:22:00'
+category: 'implementation'
 connected_document:
-  - "[[doc1.md]]"
-  - "[[doc2.md]]"
-description: "Documents related to feature implementation"
+  - '[[doc1.md]]'
+  - '[[doc2.md]]'
+description: 'Documents related to feature implementation'
 ---
 
 # Feature Implementation
@@ -82,13 +82,15 @@ description: "Documents related to feature implementation"
 Documents related to feature implementation
 
 ## Connection Map
-
 ```
+
     Feature Implementation
        |
        ├── doc1.md
        └── doc2.md
+
 ```
+
 ```
 
 ## Benefits

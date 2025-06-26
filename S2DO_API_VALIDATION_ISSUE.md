@@ -4,14 +4,14 @@
 **Blockchain Reference:** a0a64beea3e7c6c1d9c67f59f9f6942b12a60426e084b6ca8b9c243680395b0b  
 **Certificate ID:** cert-c6b0c26c-eddc-4ddd-89d4-f64a387a3324  
 **Created:** 2025-06-14T01:33:03Z  
-**Priority:** HIGH  
+**Priority:** HIGH
 
 ## Issue Summary
 
 **Problem:** Hallucinated API endpoint used in curl command  
 **Endpoint:** `pct-safe.wipo.int`  
 **Status:** DOES NOT EXIST  
-**Impact:** Command fails with "Could not resolve host" error  
+**Impact:** Command fails with "Could not resolve host" error
 
 ## Root Cause Analysis
 
@@ -24,7 +24,7 @@
 ✅ **Network Connectivity:** Confirmed working (google.com responds)  
 ✅ **WIPO Main Domain:** `wipo.int` resolves correctly  
 ✅ **WIPO Website:** `www.wipo.int` is accessible  
-❌ **Target Endpoint:** `pct-safe.wipo.int` does not exist  
+❌ **Target Endpoint:** `pct-safe.wipo.int` does not exist
 
 ## Files Affected
 
@@ -59,4 +59,3 @@
 **Assigned To:** Wing Agent R2 Squadron  
 **Deadline:** Immediate  
 **Escalation Path:** Dr. Claude → RIX → Owner-Subscriber
-

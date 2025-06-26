@@ -10,9 +10,11 @@ It provides a secure way to handle API keys and integration with the Claude API.
 ## Deployment Steps
 
 1. **Upload this package to your web server**
+
    - Copy all files to your web root directory for asoos.2100.cool
 
 2. **Set up environment variables**
+
    ```
    export GATEWAY_ENDPOINT="https://us-west1-api-for-warp-drive.cloudfunctions.net/integration-gateway"
    export NODE_ENV="production"
@@ -20,11 +22,13 @@ It provides a secure way to handle API keys and integration with the Claude API.
    ```
 
 3. **Install dependencies**
+
    ```
    npm install express
    ```
 
 4. **Start the server**
+
    ```
    node gateway-server.js
    ```

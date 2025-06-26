@@ -22,12 +22,7 @@
   "team_compatible": true,
   "requires_authentication": true,
   "authentication_provider": "SallyPort",
-  "default_permissions": [
-    "create",
-    "read",
-    "process",
-    "qrix_operations"
-  ],
+  "default_permissions": ["create", "read", "process", "qrix_operations"],
   "metadata": {
     "region": "us-west1",
     "zone": "us-west1-b",

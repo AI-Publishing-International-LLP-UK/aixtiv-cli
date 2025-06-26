@@ -50,6 +50,5 @@ function getTelemetry() {
 
 module.exports = {
   recordKnowledgeAccess: (knowledgeType) => getTelemetry().recordKnowledgeAccess(knowledgeType),
-  recordError: (commandName, error) => getTelemetry().recordError(commandName, error)
+  recordError: (commandName, error) => getTelemetry().recordError(commandName, error),
 };
-

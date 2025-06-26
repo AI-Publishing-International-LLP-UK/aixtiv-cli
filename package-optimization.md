@@ -40,6 +40,7 @@ grep -r "figlet" --include="*.js" --include="*.jsx" --include="*.ts" --include="
 ```
 
 Likely locations:
+
 - CLI startup banners
 - Help screens
 - Welcome messages
@@ -139,4 +140,3 @@ node_modules/figlet/
 ## Conclusion
 
 Removing the figlet package is a straightforward optimization that will reduce the build size by approximately 7.1MB. By using one of the alternative approaches, the application will maintain its visual identity while achieving size savings.
-

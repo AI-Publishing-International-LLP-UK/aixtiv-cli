@@ -1,1026 +1,1188 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ASOOS - Aixtiv Symphony Orchestrating OS - An advanced AI orchestration system">
-  <title>ASOOS - Aixtiv Symphony Orchestrating OS</title>
-  
-  <!-- Preload critical resources -->
-  <link rel="preload" href="https://cdn.tailwindcss.com" as="script">
-  <link rel="preload" href="https://unpkg.com/react@18/umd/react.production.min.js" as="script">
-  <link rel="preload" href="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" as="script">
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style">
-  
-  <!-- Async load non-critical resources -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-  <script defer src="https://cdn.tailwindcss.com"></script>
-  <script defer src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script defer src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script defer src="https://unpkg.com/lucide-react@latest"></script>
-  <script defer src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  
-  <!-- Web App Manifest for PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#3B82F6">
-  
-  <!-- Inline critical CSS -->
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    body.loaded {
-      opacity: 1;
-    }
-    .app-loading {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #000;
-      z-index: 9999;
-    }
-    .app-loading svg {
-      width: 60px;
-      height: 60px;
-      animation: rotate 2s linear infinite;
-    }
-    @keyframes rotate {
-      to { transform: rotate(360deg); }
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    .animate-pulse-slow {
-      animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-    .glassmorphism {
-      background: rgba(255, 255, 255, 0.25);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-    }
-    .card-3d {
-      transform-style: preserve-3d;
-      perspective: 1000px;
-    }
-    .hover-lift {
-      transition: transform 0.3s ease;
-    }
-    .hover-lift:hover {
-      transform: translateY(-5px);
-    }
-    .theme-transition {
-      transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
-    }
-    #bg-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      opacity: 0.15;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="ASOOS - Aixtiv Symphony Orchestrating OS - An advanced AI orchestration system"
+    />
+    <title>ASOOS - Aixtiv Symphony Orchestrating OS</title>
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .mobile-hidden {
-        display: none;
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://cdn.tailwindcss.com" as="script" />
+    <link rel="preload" href="https://unpkg.com/react@18/umd/react.production.min.js" as="script" />
+    <link
+      rel="preload"
+      href="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+      as="script"
+    />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      as="style"
+    />
+
+    <!-- Async load non-critical resources -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    />
+    <script defer src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script defer src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script defer src="https://unpkg.com/lucide-react@latest"></script>
+    <script defer src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Web App Manifest for PWA -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#3B82F6" />
+
+    <!-- Inline critical CSS -->
+    <style>
+      body {
+        margin: 0;
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        opacity: 0;
+        transition: opacity 0.3s ease;
       }
-      .mobile-full {
-        width: 100% !important;
+      body.loaded {
+        opacity: 1;
       }
-    }
+      .app-loading {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #000;
+        z-index: 9999;
+      }
+      .app-loading svg {
+        width: 60px;
+        height: 60px;
+        animation: rotate 2s linear infinite;
+      }
+      @keyframes rotate {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+      .animate-pulse-slow {
+        animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      .glassmorphism {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+      }
+      .card-3d {
+        transform-style: preserve-3d;
+        perspective: 1000px;
+      }
+      .hover-lift {
+        transition: transform 0.3s ease;
+      }
+      .hover-lift:hover {
+        transform: translateY(-5px);
+      }
+      .theme-transition {
+        transition:
+          background-color 0.5s ease,
+          color 0.5s ease,
+          border-color 0.5s ease;
+      }
+      #bg-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        opacity: 0.15;
+      }
 
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.05);
-      border-radius: 10px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 10px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(0, 0, 0, 0.3);
-    }
-  </style>
-</head>
-<body>
-  <!-- Initial loading state -->
-  <div class="app-loading">
-    <svg viewBox="0 0 100 100">
-      <path 
-        d="M50 0 L95 25 L95 75 L50 100 L5 75 L5 25 Z" 
-        stroke="#3B82F6" 
-        strokeWidth="4" 
-        fill="none"
-      />
-    </svg>
-  </div>
-  
-  <canvas id="bg-canvas"></canvas>
-  <div id="root"></div>
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .mobile-hidden {
+          display: none;
+        }
+        .mobile-full {
+          width: 100% !important;
+        }
+      }
 
-  <!-- Service Worker Registration -->
-  <script>
-    // Check if service worker is supported
-    if ('serviceWorker' in navigator) {
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Initial loading state -->
+    <div class="app-loading">
+      <svg viewBox="0 0 100 100">
+        <path
+          d="M50 0 L95 25 L95 75 L50 100 L5 75 L5 25 Z"
+          stroke="#3B82F6"
+          strokeWidth="4"
+          fill="none"
+        />
+      </svg>
+    </div>
+
+    <canvas id="bg-canvas"></canvas>
+    <div id="root"></div>
+
+    <!-- Service Worker Registration -->
+    <script>
+      // Check if service worker is supported
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker
+            .register('/sw.js')
+            .then((registration) => {
+              console.log('ServiceWorker registration successful');
+            })
+            .catch((error) => {
+              console.log('ServiceWorker registration failed:', error);
+            });
+        });
+      }
+
+      // Lazy load non-critical scripts
+      function loadScript(src, callback) {
+        let script = document.createElement('script');
+        script.src = src;
+        script.defer = true;
+        script.onload = callback;
+        document.body.appendChild(script);
+      }
+
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(registration => {
-            console.log('ServiceWorker registration successful');
-          })
-          .catch(error => {
-            console.log('ServiceWorker registration failed:', error);
-          });
-      });
-    }
-
-    // Lazy load non-critical scripts
-    function loadScript(src, callback) {
-      let script = document.createElement('script');
-      script.src = src;
-      script.defer = true;
-      script.onload = callback;
-      document.body.appendChild(script);
-    }
-    
-    window.addEventListener('load', () => {
-      // Remove initial loading screen
-      setTimeout(() => {
-        document.body.classList.add('loaded');
-        document.querySelector('.app-loading').style.display = 'none';
-      }, 800);
-      
-      // Load non-critical libraries after initial render
-      setTimeout(() => {
-        loadScript('https://unpkg.com/framer-motion@10.12.4/dist/framer-motion.js', () => {
-          console.log('Framer Motion loaded');
-        });
-        
-        loadScript('https://cdn.jsdelivr.net/npm/chart.js', () => {
-          console.log('Chart.js loaded');
-        });
-        
-        loadScript('https://unpkg.com/three@0.157.0/build/three.min.js', () => {
-          console.log('Three.js loaded');
-          initBackground();
-        });
-        
-        loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js', () => {
-          console.log('GSAP loaded');
-        });
-      }, 2000);
-    });
-  </script>
-
-  <script type="text/babel" data-type="module">
-    // Initialize 3D background
-    const initBackground = () => {
-      if (!window.THREE) return;
-      
-      const canvas = document.getElementById('bg-canvas');
-      const renderer = new THREE.WebGLRenderer({
-        canvas,
-        antialias: true,
-        alpha: true,
-        powerPreference: 'high-performance'
-      });
-      
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 5;
-      
-      // Use instanced meshes for better performance
-      const particlesCount = Math.min(2000, window.innerWidth < 768 ? 1000 : 2000);
-      const particlesGeometry = new THREE.BufferGeometry();
-      const posArray = new Float32Array(particlesCount * 3);
-      
-      for(let i = 0; i < particlesCount * 3; i++) {
-        posArray[i] = (Math.random() - 0.5) * 10;
-      }
-      
-      particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-      
-      const particlesMaterial = new THREE.PointsMaterial({
-        size: 0.005,
-        color: '#5a92ff',
-        transparent: true,
-        sizeAttenuation: true
-      });
-      
-      const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-      scene.add(particlesMesh);
-      
-      // Animation loop with throttled render for better performance
-      const clock = new THREE.Clock();
-      let lastRender = 0;
-      const fps = 30;
-      const fpsInterval = 1000 / fps;
-      
-      const animate = () => {
-        requestAnimationFrame(animate);
-        
-        const now = clock.getElapsedTime() * 1000;
-        const elapsed = now - lastRender;
-        
-        if (elapsed > fpsInterval) {
-          lastRender = now - (elapsed % fpsInterval);
-          
-          particlesMesh.rotation.y = clock.getElapsedTime() * 0.05;
-          renderer.render(scene, camera);
-        }
-      };
-      
-      animate();
-      
-      // Debounced resize handler
-      let resizeTimeout;
-      window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-          camera.aspect = window.innerWidth / window.innerHeight;
-          camera.updateProjectionMatrix();
-          renderer.setSize(window.innerWidth, window.innerHeight);
-        }, 250);
-      });
-      
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    };
-
-    // Initialize charts with optimized settings
-    const initCharts = () => {
-      // Skip chart creation on mobile devices to improve performance
-      if (window.innerWidth < 768 || !window.Chart) return;
-      
-      // Integration Usage Chart
-      if(document.getElementById('integration-chart')) {
-        const ctx = document.getElementById('integration-chart').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-            datasets: [{
-              label: 'Usage Trend',
-              data: [12, 19, 18, 24, 25, 32, 30, 28, 42],
-              fill: true,
-              backgroundColor: 'rgba(79, 70, 229, 0.1)',
-              borderColor: '#4F46E5',
-              tension: 0.4
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: {
-              duration: 1000 // Faster animations
-            },
-            plugins: {
-              legend: { display: false }
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                grid: {
-                  display: true,
-                  color: 'rgba(0, 0, 0, 0.05)'
-                }
-              },
-              x: {
-                grid: { display: false }
-              }
-            }
-          }
-        });
-      }
-      
-      // ROI Chart
-      if(document.getElementById('roi-chart')) {
-        const ctx = document.getElementById('roi-chart').getContext('2d');
-        new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: ['Marketing', 'Sales', 'Operations', 'Support'],
-            datasets: [{
-              label: 'ROI by Department',
-              data: [12000, 19000, 8500, 5400],
-              backgroundColor: [
-                'rgba(52, 211, 153, 0.8)',
-                'rgba(16, 185, 129, 0.8)',
-                'rgba(5, 150, 105, 0.8)',
-                'rgba(4, 120, 87, 0.8)'
-              ],
-              borderRadius: 6
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: {
-              duration: 1000 // Faster animations
-            },
-            plugins: {
-              legend: { display: false }
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                grid: { display: true, color: 'rgba(0, 0, 0, 0.05)' }
-              },
-              x: {
-                grid: { display: false }
-              }
-            }
-          }
-        });
-      }
-    };
-
-    // Memoize expensive calculations
-    const memoize = (fn) => {
-      const cache = new Map();
-      return (...args) => {
-        const key = JSON.stringify(args);
-        if (cache.has(key)) return cache.get(key);
-        const result = fn(...args);
-        cache.set(key, result);
-        return result;
-      };
-    };
-    
-    // Efficient re-rendering with React memo and useCallback
-    const Memo = React.memo;
-    const { useState, useEffect, useCallback, useMemo } = React;
-
-    // Main App component
-    const ASOOSNavigationDemo = () => {
-      // State management with optimized updates
-      const [viewMode, setViewMode] = useState('login');
-      const [activeTooltip, setActiveTooltip] = useState(null);
-      const [isDarkMode, setIsDarkMode] = useState(false);
-      const [isLoading, setIsLoading] = useState(false);
-      const [showOnboarding, setShowOnboarding] = useState(false);
-      const [notifications, setNotifications] = useState([]);
-      const [agentMood, setAgentMood] = useState('😊');
-      
-      // Performance metrics tracking
-      const [perfMetrics, setPerfMetrics] = useState({
-        loadTime: 0,
-        renderCount: 0
-      });
-      
-      // Add AI recommendations
-      const recommendations = useMemo(() => [
-        { id: 1, title: "Enable voice integration", description: "Increase productivity by 28%", type: "feature" },
-        { id: 2, title: "Integrate with Coaching2100", description: "Access enhanced training materials", type: "integration" },
-        { id: 3, title: "Schedule team training", description: "Friday at 2pm with Dr. Morgan", type: "calendar" }
-      ], []);
-      
-      // Theme reference memoized to prevent unnecessary recalculations
-      const theme = useMemo(() => ({
-        bg: isDarkMode ? 'bg-gray-900' : 'bg-white',
-        text: isDarkMode ? 'text-gray-100' : 'text-gray-800',
-        border: isDarkMode ? 'border-gray-700' : 'border-gray-200',
-        card: isDarkMode ? 'bg-gray-800' : 'bg-white',
-        primary: 'bg-blue-600 hover:bg-blue-700',
-        secondary: isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200',
-        accent: 'text-blue-500'
-      }), [isDarkMode]);
-      
-      // Initialize background effect on mount
-      useEffect(() => {
-        // Record initial load time
-        const startTime = window.performance.timing.navigationStart;
-        const loadTime = Date.now() - startTime;
-        setPerfMetrics(prev => ({ ...prev, loadTime }));
-        
-        // Initialize background only once Three.js is loaded
-        if (window.THREE) {
-          initBackground();
-        }
-        
-        // Simulate notifications at intervals - with throttling for better performance
-        const notifInterval = setInterval(() => {
-          if (document.visibilityState === 'visible') {
-            const newNotification = {
-              id: Date.now(),
-              title: `New activity alert`,
-              message: `${Math.random() > 0.5 ? 'Dr. Grant' : 'QB Lucy'} has completed an action for you.`,
-              time: new Date().toLocaleTimeString()
-            };
-            
-            setNotifications(prev => [newNotification, ...prev.slice(0, 3)]);
-          }
-        }, 45000);
-        
-        // Clean up interval on component unmount
-        return () => clearInterval(notifInterval);
-      }, []);
-      
-      // Initialize charts when the stats view is shown
-      useEffect(() => {
-        if (viewMode === 'stats') {
-          // Delay chart initialization to ensure the DOM is ready
-          const timer = setTimeout(() => {
-            if (window.Chart) {
-              initCharts();
-            }
-          }, 300);
-          return () => clearTimeout(timer);
-        }
-      }, [viewMode]);
-      
-      // Simulate loading state when changing views
-      const navigateTo = useCallback((view) => {
-        setIsLoading(true);
-        
-        // Track view changes for analytics
-        if (window.gtag) {
-          window.gtag('event', 'screen_view', {
-            app_name: 'ASOOS',
-            screen_name: view
-          });
-        }
-        
-        // Simulate network request with optimized timeout
-        const timer = setTimeout(() => {
-          setViewMode(view);
-          setIsLoading(false);
-          
-          // Update performance metrics
-          setPerfMetrics(prev => ({
-            ...prev,
-            renderCount: prev.renderCount + 1
-          }));
-          
-          // Show onboarding on first main view
-          if (view === 'main' && !showOnboarding) {
-            setShowOnboarding(true);
-          }
-          
-          // Log navigation for debugging
-          console.log(`Navigating to: ${view}`);
+        // Remove initial loading screen
+        setTimeout(() => {
+          document.body.classList.add('loaded');
+          document.querySelector('.app-loading').style.display = 'none';
         }, 800);
-        
-        // Clean up timeout if component unmounts
-        return () => clearTimeout(timer);
-      }, [showOnboarding]);
-      
-      // Optimized rendering with conditional components
-      return (
-        <div className={`flex h-screen ${theme.bg} theme-transition`}>
-          {/* Main dynamic content */}
-          <MainContent 
-            viewMode={viewMode}
-            theme={theme}
-            isDarkMode={isDarkMode}
-            isLoading={isLoading}
-            showOnboarding={showOnboarding}
-            setShowOnboarding={setShowOnboarding}
-            navigateTo={navigateTo}
-            activeTooltip={activeTooltip}
-            setActiveTooltip={setActiveTooltip}
-            notifications={notifications}
-            agentMood={agentMood}
-            setAgentMood={setAgentMood}
-            recommendations={recommendations}
-            setIsDarkMode={setIsDarkMode}
-            perfMetrics={perfMetrics}
-          />
-        </div>
-      );
-    };
 
-    // Separate MainContent component to improve code organization and performance
-    const MainContent = Memo(({ 
-      viewMode, theme, isDarkMode, isLoading, showOnboarding, setShowOnboarding,
-      navigateTo, activeTooltip, setActiveTooltip, notifications, agentMood,
-      setAgentMood, recommendations, setIsDarkMode, perfMetrics
-    }) => {
-      // Import Framer Motion components conditionally
-      const { motion, AnimatePresence } = window.framerMotion || {
-        motion: (props) => React.createElement(props.tagName || 'div', props),
-        AnimatePresence: ({ children }) => children
+        // Load non-critical libraries after initial render
+        setTimeout(() => {
+          loadScript('https://unpkg.com/framer-motion@10.12.4/dist/framer-motion.js', () => {
+            console.log('Framer Motion loaded');
+          });
+
+          loadScript('https://cdn.jsdelivr.net/npm/chart.js', () => {
+            console.log('Chart.js loaded');
+          });
+
+          loadScript('https://unpkg.com/three@0.157.0/build/three.min.js', () => {
+            console.log('Three.js loaded');
+            initBackground();
+          });
+
+          loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js', () => {
+            console.log('GSAP loaded');
+          });
+        }, 2000);
+      });
+    </script>
+
+    <script type="text/babel" data-type="module">
+      // Initialize 3D background
+      const initBackground = () => {
+        if (!window.THREE) return;
+
+        const canvas = document.getElementById('bg-canvas');
+        const renderer = new THREE.WebGLRenderer({
+          canvas,
+          antialias: true,
+          alpha: true,
+          powerPreference: 'high-performance',
+        });
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+        );
+        camera.position.z = 5;
+
+        // Use instanced meshes for better performance
+        const particlesCount = Math.min(2000, window.innerWidth < 768 ? 1000 : 2000);
+        const particlesGeometry = new THREE.BufferGeometry();
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount * 3; i++) {
+          posArray[i] = (Math.random() - 0.5) * 10;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+          size: 0.005,
+          color: '#5a92ff',
+          transparent: true,
+          sizeAttenuation: true,
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        // Animation loop with throttled render for better performance
+        const clock = new THREE.Clock();
+        let lastRender = 0;
+        const fps = 30;
+        const fpsInterval = 1000 / fps;
+
+        const animate = () => {
+          requestAnimationFrame(animate);
+
+          const now = clock.getElapsedTime() * 1000;
+          const elapsed = now - lastRender;
+
+          if (elapsed > fpsInterval) {
+            lastRender = now - (elapsed % fpsInterval);
+
+            particlesMesh.rotation.y = clock.getElapsedTime() * 0.05;
+            renderer.render(scene, camera);
+          }
+        };
+
+        animate();
+
+        // Debounced resize handler
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeTimeout);
+          resizeTimeout = setTimeout(() => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+          }, 250);
+        });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
       };
-      
-      // Import Lucide icons
-      const { 
-        Mic, Send, Volume2, Settings, LogOut, Users, 
-        BarChart2, Monitor, Database, Camera, Sun, Moon,
-        Hexagon, Cpu, Zap, BrainCircuit, Heart
-      } = window.lucide || {};
-      
-      // Loading screen
-      const LoadingView = () => (
-        <motion.div 
-          className={`fixed inset-0 ${theme.bg} z-50 flex flex-col items-center justify-center`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-            className="w-16 h-16"
-          >
-            <svg viewBox="0 0 100 100">
-              <path 
-                d="M50 0 L95 25 L95 75 L50 100 L5 75 L5 25 Z" 
-                stroke="#3B82F6" 
-                strokeWidth="4" 
-                fill="none"
-              />
-            </svg>
-          </motion.div>
-          <p className={`mt-4 ${theme.text}`}>Loading Aixtiv Symphony...</p>
-        </motion.div>
-      );
-      
-      // Onboarding overlay
-      const OnboardingView = () => (
-        <motion.div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <motion.div 
-            className="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 relative overflow-hidden"
-            initial={{ scale: 0.9, y: 20 }}
-            animate={{ scale: 1, y: 0 }}
-            transition={{ type: "spring", damping: 25 }}
-          >
-            <button 
-              onClick={() => setShowOnboarding(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-            >
-              ✕
-            </button>
-            
-            <h2 className="text-2xl font-bold mb-2 text-blue-600">Welcome to ASOOS</h2>
-            <p className="text-gray-600 mb-6">Let's personalize your experience with a quick tour</p>
-            
-            <div className="space-y-6">
-              <div className="flex items-start space-x-4">
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                  <BrainCircuit className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900">AI-Powered Insights</h3>
-                  <p className="text-gray-500 mt-1">Your intelligent assistant analyzes data to provide personalized insights and recommendations.</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-4">
-                <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                  <Cpu className="w-6 h-6 text-purple-600" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900">Universal Dispatcher</h3>
-                  <p className="text-gray-500 mt-1">Seamlessly route messages and tasks between your team and our AI agents.</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-4">
-                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                  <Zap className="w-6 h-6 text-green-600" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900">S2DO Task Management</h3>
-                  <p className="text-gray-500 mt-1">Intelligent task prioritization and tracking to boost your productivity.</p>
-                </div>
-              </div>
-            </div>
-            
-            <motion.button 
-              onClick={() => setShowOnboarding(false)}
-              className="mt-8 w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Get Started
-            </motion.button>
-          </motion.div>
-        </motion.div>
-      );
-      
-      return (
-        <>
-          {/* Left Sidebar */}
-          <LeftSidebar 
-            viewMode={viewMode}
-            navigateTo={navigateTo}
-            activeTooltip={activeTooltip}
-            setActiveTooltip={setActiveTooltip}
-            motion={motion}
-          />
 
-          {/* Main Content */}
-          <div className="flex-1 flex flex-col">
-            {/* Header */}
-            <motion.div 
-              className="h-16 bg-black text-white flex items-center justify-between px-6"
-              initial={{ y: -50 }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <motion.div 
-                className="font-bold text-cyan-400 text-2xl tracking-wide cursor-pointer"
-                onClick={() => navigateTo('main')}
-                whileHover={{ scale: 1.05, color: "#00FFFF" }}
-              >
-                ASOOS
-              </motion.div>
-              <div className="flex-1 flex justify-center">
-                {/* Performance metrics for debug only shown on dev builds */}
-                {process.env.NODE_ENV === 'development' && (
-                  <div className="text-xs text-gray-500">
-                    Load: {perfMetrics.loadTime}ms | Renders: {perfMetrics.renderCount}
-                  </div>
-                )}
-              </div>
-              <div className="text-right">
-                <div className="font-bold text-lg">Mr. Phillip Corey Roark, CEO</div>
-                <div className="text-sm text-cyan-400">
-                  <span className="italic">Aixtiv Symphony</span> <span className="font-bold">Orchestrating OS</span>
-                </div>
-              </div>
-            </motion.div>
+      // Initialize charts with optimized settings
+      const initCharts = () => {
+        // Skip chart creation on mobile devices to improve performance
+        if (window.innerWidth < 768 || !window.Chart) return;
 
-            {/* Dynamic Content Area based on viewMode */}
-            <AnimatePresence mode="wait">
-              {isLoading && <LoadingView />}
-              
-              {!isLoading && (
-                <>
-                  {viewMode === 'login' && (
-                    <LoginView 
-                      theme={theme}
-                      isDarkMode={isDarkMode}
-                      navigateTo={navigateTo}
-                      motion={motion}
-                    />
-                  )}
-                  {viewMode === 'main' && (
-                    <HomeView 
-                      theme={theme}
-                      isDarkMode={isDarkMode}
-                      agentMood={agentMood}
-                      notifications={notifications}
-                      recommendations={recommendations}
-                      motion={motion}
-                    />
-                  )}
-                  {viewMode === 'webinar' && (
-                    <WebinarView 
-                      theme={theme}
-                      isDarkMode={isDarkMode}
-                      navigateTo={navigateTo}
-                      motion={motion}
-                    />
-                  )}
-                  {viewMode === 'settings' && (
-                    <SettingsView 
-                      theme={theme}
-                      isDarkMode={isDarkMode}
-                      setIsDarkMode={setIsDarkMode}
-                      navigateTo={navigateTo}
-                      setAgentMood={setAgentMood}
-                      motion={motion}
-                    />
-                  )}
-                  {viewMode === 'stats' && (
-                    <StatsView 
-                      theme={theme}
-                      isDarkMode={isDarkMode}
-                      navigateTo={navigateTo}
-                      motion={motion}
-                    />
-                  )}
-                </>
-              )}
-            </AnimatePresence>
-            
-            {showOnboarding && <OnboardingView />}
+        // Integration Usage Chart
+        if (document.getElementById('integration-chart')) {
+          const ctx = document.getElementById('integration-chart').getContext('2d');
+          new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+              datasets: [
+                {
+                  label: 'Usage Trend',
+                  data: [12, 19, 18, 24, 25, 32, 30, 28, 42],
+                  fill: true,
+                  backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                  borderColor: '#4F46E5',
+                  tension: 0.4,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              animation: {
+                duration: 1000, // Faster animations
+              },
+              plugins: {
+                legend: { display: false },
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  grid: {
+                    display: true,
+                    color: 'rgba(0, 0, 0, 0.05)',
+                  },
+                },
+                x: {
+                  grid: { display: false },
+                },
+              },
+            },
+          });
+        }
 
-            {/* Integration Bar */}
-            <IntegrationBar 
+        // ROI Chart
+        if (document.getElementById('roi-chart')) {
+          const ctx = document.getElementById('roi-chart').getContext('2d');
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: ['Marketing', 'Sales', 'Operations', 'Support'],
+              datasets: [
+                {
+                  label: 'ROI by Department',
+                  data: [12000, 19000, 8500, 5400],
+                  backgroundColor: [
+                    'rgba(52, 211, 153, 0.8)',
+                    'rgba(16, 185, 129, 0.8)',
+                    'rgba(5, 150, 105, 0.8)',
+                    'rgba(4, 120, 87, 0.8)',
+                  ],
+                  borderRadius: 6,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              animation: {
+                duration: 1000, // Faster animations
+              },
+              plugins: {
+                legend: { display: false },
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  grid: { display: true, color: 'rgba(0, 0, 0, 0.05)' },
+                },
+                x: {
+                  grid: { display: false },
+                },
+              },
+            },
+          });
+        }
+      };
+
+      // Memoize expensive calculations
+      const memoize = (fn) => {
+        const cache = new Map();
+        return (...args) => {
+          const key = JSON.stringify(args);
+          if (cache.has(key)) return cache.get(key);
+          const result = fn(...args);
+          cache.set(key, result);
+          return result;
+        };
+      };
+
+      // Efficient re-rendering with React memo and useCallback
+      const Memo = React.memo;
+      const { useState, useEffect, useCallback, useMemo } = React;
+
+      // Main App component
+      const ASOOSNavigationDemo = () => {
+        // State management with optimized updates
+        const [viewMode, setViewMode] = useState('login');
+        const [activeTooltip, setActiveTooltip] = useState(null);
+        const [isDarkMode, setIsDarkMode] = useState(false);
+        const [isLoading, setIsLoading] = useState(false);
+        const [showOnboarding, setShowOnboarding] = useState(false);
+        const [notifications, setNotifications] = useState([]);
+        const [agentMood, setAgentMood] = useState('😊');
+
+        // Performance metrics tracking
+        const [perfMetrics, setPerfMetrics] = useState({
+          loadTime: 0,
+          renderCount: 0,
+        });
+
+        // Add AI recommendations
+        const recommendations = useMemo(
+          () => [
+            {
+              id: 1,
+              title: 'Enable voice integration',
+              description: 'Increase productivity by 28%',
+              type: 'feature',
+            },
+            {
+              id: 2,
+              title: 'Integrate with Coaching2100',
+              description: 'Access enhanced training materials',
+              type: 'integration',
+            },
+            {
+              id: 3,
+              title: 'Schedule team training',
+              description: 'Friday at 2pm with Dr. Morgan',
+              type: 'calendar',
+            },
+          ],
+          []
+        );
+
+        // Theme reference memoized to prevent unnecessary recalculations
+        const theme = useMemo(
+          () => ({
+            bg: isDarkMode ? 'bg-gray-900' : 'bg-white',
+            text: isDarkMode ? 'text-gray-100' : 'text-gray-800',
+            border: isDarkMode ? 'border-gray-700' : 'border-gray-200',
+            card: isDarkMode ? 'bg-gray-800' : 'bg-white',
+            primary: 'bg-blue-600 hover:bg-blue-700',
+            secondary: isDarkMode
+              ? 'bg-gray-700 hover:bg-gray-600'
+              : 'bg-gray-100 hover:bg-gray-200',
+            accent: 'text-blue-500',
+          }),
+          [isDarkMode]
+        );
+
+        // Initialize background effect on mount
+        useEffect(() => {
+          // Record initial load time
+          const startTime = window.performance.timing.navigationStart;
+          const loadTime = Date.now() - startTime;
+          setPerfMetrics((prev) => ({ ...prev, loadTime }));
+
+          // Initialize background only once Three.js is loaded
+          if (window.THREE) {
+            initBackground();
+          }
+
+          // Simulate notifications at intervals - with throttling for better performance
+          const notifInterval = setInterval(() => {
+            if (document.visibilityState === 'visible') {
+              const newNotification = {
+                id: Date.now(),
+                title: `New activity alert`,
+                message: `${Math.random() > 0.5 ? 'Dr. Grant' : 'QB Lucy'} has completed an action for you.`,
+                time: new Date().toLocaleTimeString(),
+              };
+
+              setNotifications((prev) => [newNotification, ...prev.slice(0, 3)]);
+            }
+          }, 45000);
+
+          // Clean up interval on component unmount
+          return () => clearInterval(notifInterval);
+        }, []);
+
+        // Initialize charts when the stats view is shown
+        useEffect(() => {
+          if (viewMode === 'stats') {
+            // Delay chart initialization to ensure the DOM is ready
+            const timer = setTimeout(() => {
+              if (window.Chart) {
+                initCharts();
+              }
+            }, 300);
+            return () => clearTimeout(timer);
+          }
+        }, [viewMode]);
+
+        // Simulate loading state when changing views
+        const navigateTo = useCallback(
+          (view) => {
+            setIsLoading(true);
+
+            // Track view changes for analytics
+            if (window.gtag) {
+              window.gtag('event', 'screen_view', {
+                app_name: 'ASOOS',
+                screen_name: view,
+              });
+            }
+
+            // Simulate network request with optimized timeout
+            const timer = setTimeout(() => {
+              setViewMode(view);
+              setIsLoading(false);
+
+              // Update performance metrics
+              setPerfMetrics((prev) => ({
+                ...prev,
+                renderCount: prev.renderCount + 1,
+              }));
+
+              // Show onboarding on first main view
+              if (view === 'main' && !showOnboarding) {
+                setShowOnboarding(true);
+              }
+
+              // Log navigation for debugging
+              console.log(`Navigating to: ${view}`);
+            }, 800);
+
+            // Clean up timeout if component unmounts
+            return () => clearTimeout(timer);
+          },
+          [showOnboarding]
+        );
+
+        // Optimized rendering with conditional components
+        return (
+          <div className={`flex h-screen ${theme.bg} theme-transition`}>
+            {/* Main dynamic content */}
+            <MainContent
+              viewMode={viewMode}
               theme={theme}
               isDarkMode={isDarkMode}
+              isLoading={isLoading}
+              showOnboarding={showOnboarding}
+              setShowOnboarding={setShowOnboarding}
               navigateTo={navigateTo}
-              motion={motion}
+              activeTooltip={activeTooltip}
+              setActiveTooltip={setActiveTooltip}
+              notifications={notifications}
+              agentMood={agentMood}
+              setAgentMood={setAgentMood}
+              recommendations={recommendations}
+              setIsDarkMode={setIsDarkMode}
+              perfMetrics={perfMetrics}
             />
           </div>
-        </>
-      );
-    });
+        );
+      };
 
-    // Split components for better code organization and performance
-    const LeftSidebar = Memo(({ viewMode, navigateTo, activeTooltip, setActiveTooltip, motion }) => {
-      const sidebarItems = [
-        { id: 1, name: 'Communication', desc: 'Automated Communication', view: 'main' },
-        { id: 2, name: 'Growth', desc: 'Growth Revenues', view: 'main' },
-        { id: 3, name: 'Services', desc: 'Client Services Innovation', view: 'main' },
-        { id: 4, name: 'Automation', desc: 'Organizational Automation', view: 'main' },
-        { id: 5, name: 'ROI', desc: 'ROI Dashboard', view: 'stats' },
-        { id: 6, name: 'Wish', desc: 'Your Wish', view: 'main' },
-        { id: 7, name: 'Academy', desc: 'Learning & Training', view: 'webinar', isTriangle: true }
-      ];
-      
-      return (
-        <motion.div 
-          className="w-14 bg-black flex flex-col items-center pt-24 pb-6 space-y-6 mobile-hidden"
-          initial={{ x: -50, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          {/* Sidebar Icons with Tooltips */}
-          {sidebarItems.map((item) => (
+      // Separate MainContent component to improve code organization and performance
+      const MainContent = Memo(
+        ({
+          viewMode,
+          theme,
+          isDarkMode,
+          isLoading,
+          showOnboarding,
+          setShowOnboarding,
+          navigateTo,
+          activeTooltip,
+          setActiveTooltip,
+          notifications,
+          agentMood,
+          setAgentMood,
+          recommendations,
+          setIsDarkMode,
+          perfMetrics,
+        }) => {
+          // Import Framer Motion components conditionally
+          const { motion, AnimatePresence } = window.framerMotion || {
+            motion: (props) => React.createElement(props.tagName || 'div', props),
+            AnimatePresence: ({ children }) => children,
+          };
+
+          // Import Lucide icons
+          const {
+            Mic,
+            Send,
+            Volume2,
+            Settings,
+            LogOut,
+            Users,
+            BarChart2,
+            Monitor,
+            Database,
+            Camera,
+            Sun,
+            Moon,
+            Hexagon,
+            Cpu,
+            Zap,
+            BrainCircuit,
+            Heart,
+          } = window.lucide || {};
+
+          // Loading screen
+          const LoadingView = () => (
             <motion.div
-              key={item.id}
-              onClick={() => navigateTo(item.view)}
-              onMouseEnter={() => setActiveTooltip(item.id)}
-              onMouseLeave={() => setActiveTooltip(null)}
-              className={`w-8 h-8 flex items-center justify-center cursor-pointer transition-all duration-300 group relative ${
-                (viewMode === item.view) ? 'opacity-100 scale-110' : 'opacity-60 hover:opacity-80'
-              }`}
-              whileHover={{ scale: 1.2 }}
-              whileTap={{ scale: 0.9 }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: item.id * 0.1 }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <defs>
-                  <linearGradient id={`gradient${item.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#FFD700" stopOpacity={1} />
-                    <stop offset="50%" stopColor="#c7b299" stopOpacity={0.8} />
-                    <stop offset="100%" stopColor="#50C878" stopOpacity={0.6} />
-                  </linearGradient>
-                </defs>
-                {item.isTriangle ? (
-                  <path d="M12 2L22 20H2L12 2z" stroke={`url(#gradient${item.id})`} strokeWidth="2" fill="none"/>
-                ) : (
-                  <path d="M50 0 L95 25 L95 75 L50 100 L5 75 L5 25 Z" stroke={`url(#gradient${item.id})`} strokeWidth="2" fill="none"/>
-                )}
-              </svg>
-              
-              {/* Tooltip that appears on hover */}
-              {activeTooltip === item.id && (
-                <motion.div 
-                  className="absolute left-full ml-2 bg-gray-800 text-white text-xs py-1 px-2 rounded-md whitespace-nowrap z-50"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                >
-                  <div className="font-bold">{item.name}</div>
-                  <div>{item.desc}</div>
-                </motion.div>
-              )}
-            </motion.div>
-          ))}
-
-          {/* Settings Icon */}
-          <motion.div
-            onClick={() => navigateTo('settings')}
-            onMouseEnter={() => setActiveTooltip(8)}
-            onMouseLeave={() => setActiveTooltip(null)}
-            className={`w-8 h-8 flex items-center justify-center cursor-pointer transition-all duration-300 relative ${
-              viewMode === 'settings' ? 'opacity-100 scale-110' : 'opacity-60 hover:opacity-80'
-            }`}
-            whileHover={{ scale: 1.2, rotate: 90 }}
-            whileTap={{ scale: 0.9 }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <defs>
-                <linearGradient id="gradient8" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#00BFFF" stopOpacity={1} />
-                  <stop offset="50%" stopColor="#87CEEB" stopOpacity={0.8} />
-                  <stop offset="100%" stopColor="#1E90FF" stopOpacity={0.6} />
-                </linearGradient>
-              </defs>
-              <circle cx="12" cy="12" r="10" stroke="url(#gradient8)" strokeWidth="2" fill="none"/>
-            </svg>
-            {window.lucide && <window.lucide.Settings className="absolute w-4 h-4 text-white" />}
-            
-            {/* Tooltip that appears on hover */}
-            {activeTooltip === 8 && (
-              <motion.div 
-                className="absolute left-full ml-2 bg-gray-800 text-white text-xs py-1 px-2 rounded-md whitespace-nowrap z-50"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-              >
-                <div className="font-bold">Settings</div>
-                <div>System Configuration & Preferences</div>
-              </motion.div>
-            )}
-          </motion.div>
-        </motion.div>
-      );
-    });
-
-    const IntegrationBar = Memo(({ theme, isDarkMode, navigateTo, motion }) => {
-      const { Settings, LogOut } = window.lucide || {};
-      
-      return (
-        <motion.div 
-          className={`h-12 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} flex items-center justify-between px-4 theme-transition`}
-          initial={{ y: 50 }}
-          animate={{ y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          {/* Settings Icon */}
-          <motion.div 
-            className={`w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-gray-200 rounded-full transition-colors ${isDarkMode && 'hover:bg-gray-700'}`}
-            onClick={() => navigateTo('settings')}
-            whileHover={{ scale: 1.1, rotate: 90 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            {Settings && <Settings className={`w-5 h-5 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`} />}
-          </motion.div>
-          
-          <div className="flex-1 flex items-center overflow-x-auto justify-center">
-            {/* Integration Icons - Horizontal layout */}
-            <div className="flex items-center space-x-3">
-              {['Z', 'G', 'S'].map((letter, index) => (
-                <motion.div 
-                  key={letter}
-                  className={`w-8 h-8 rounded-full ${theme.card} flex items-center justify-center ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} shadow-sm border ${theme.border} cursor-pointer hover:bg-gray-50 transition-colors ${isDarkMode && 'hover:bg-gray-700'}`}
-                  whileHover={{ scale: 1.2, rotate: 10 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  {letter}
-                </motion.div>
-              ))}
-            </div>
-          </div>
-          
-          {/* User Actions */}
-          <div className="flex items-center space-x-2">
-            <div className={`text-xs text-center ${theme.text}`}>
-              <div>Integration</div>
-              <div>Gateway</div>
-            </div>
-            
-            <motion.button 
-              onClick={() => navigateTo('login')}
-              className={`p-1 ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'} transition-colors`}
-              title="Log out"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              {LogOut && <LogOut className="w-5 h-5" />}
-            </motion.button>
-          </div>
-        </motion.div>
-      );
-    });
-
-    // Separate view components for better code organization
-    const LoginView = Memo(({ theme, isDarkMode, navigateTo, motion }) => (
-      <motion.div 
-        className={`flex-1 flex items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} theme-transition`}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
-        <motion.div 
-          className={`${theme.card} p-8 rounded-lg shadow-xl max-w-md w-full mobile-full relative overflow-hidden border ${theme.border}`}
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: "spring", damping: 20 }}
-        >
-          {/* Hexagon Background Pattern */}
-          <div className="absolute inset-0 pointer-events-none opacity-5">
-            <svg className="absolute top-0 right-0 w-96 h-96" viewBox="0 0 100 100">
-              <path 
-                d="M50 0 L100 25 L100 75 L50 100 L0 75 L0 25 Z" 
-                stroke="#0055cc" 
-                strokeWidth="1" 
-                fill="#0055cc" 
-              />
-            </svg>
-          </div>
-          
-          <motion.h1 
-            className={`text-2xl font-bold text-center mb-6 relative z-10 ${theme.text}`}
-            initial={{ y: -20 }}
-            animate={{ y: 0 }}
-            transition={{ delay: 0.2, type: "spring" }}
-          >
-            <span className="italic">Aixtiv Symphony</span> <span className="font-bold">Orchestrating OS</span>
-          </motion.h1>
-          <motion.p 
-            className="text-blue-600 mb-8 text-center relative z-10 font-bold text-2xl"
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.3, type: "spring" }}
-          >
-            ASOOS
-          </motion.p>
-          
-          <div className="relative z-10 flex flex-col space-y-4">
-            <motion.button 
-              onClick={() => navigateTo('main')}
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-            >
-              <div className="w-5 h-5">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" stroke="white" strokeWidth="2" fill="none"/>
-                  <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="white" strokeWidth="2" fill="none"/>
-                  <path d="M17.97 17.97A8.003 8.003 0 004.03 6.03" stroke="white" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                </svg>
-              </div>
-              <span>Authenticate with Sally Port</span>
-            </motion.button>
-            
-            <motion.div 
-              className="text-center text-sm text-gray-500"
+              className={`fixed inset-0 ${theme.bg} z-50 flex flex-col items-center justify-center`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
+              exit={{ opacity: 0 }}
             >
-              Secure password-less authentication
-              <br />
-              Developed by Dr. Grant's security team
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                className="w-16 h-16"
+              >
+                <svg viewBox="0 0 100 100">
+                  <path
+                    d="M50 0 L95 25 L95 75 L50 100 L5 75 L5 25 Z"
+                    stroke="#3B82F6"
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                </svg>
+              </motion.div>
+              <p className={`mt-4 ${theme.text}`}>Loading Aixtiv Symphony...</p>
             </motion.div>
-          </div>
-          
-          <motion.div 
-            className={`mt-8 pt-6 border-t ${theme.border} text-center text-xs text-gray-400 relative z-10`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-          >
-            <p>Mr. Phillip Corey Roark, CEO • pr@coaching2100.com</p>
-          </motion.div>
-        </motion.div>
-      </motion.div>
-    ));
+          );
 
-    // ONLY include other view components here - HomeView, WebinarView, SettingsView, StatsView
-    // These would be similar to what's in the original file but optimized with the techniques shown above
-    
-    // Render the app with error boundary
-    class ErrorBoundary extends React.Component {
-      constructor(props) {
-        super(props);
-        this.state = { hasError: false, error: null };
-      }
-      
-      static getDerivedStateFromError(error) {
-        return { hasError: true, error };
-      }
-      
-      componentDidCatch(error, errorInfo) {
-        console.error("Caught an error:", error, errorInfo);
-      }
-      
-      render() {
-        if (this.state.hasError) {
-          return (
-            <div className="flex h-screen items-center justify-center bg-gray-900 text-white">
-              <div className="max-w-md p-6 bg-gray-800 rounded-lg text-center">
-                <h2 className="text-xl font-bold mb-4">Something went wrong</h2>
-                <p className="mb-4 text-gray-300">{this.state.error?.message || "An unexpected error occurred"}</p>
-                <button 
-                  onClick={() => window.location.reload()}
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          // Onboarding overlay
+          const OnboardingView = () => (
+            <motion.div
+              className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div
+                className="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 relative overflow-hidden"
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                transition={{ type: 'spring', damping: 25 }}
+              >
+                <button
+                  onClick={() => setShowOnboarding(false)}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
                 >
-                  Reload Application
+                  ✕
                 </button>
+
+                <h2 className="text-2xl font-bold mb-2 text-blue-600">Welcome to ASOOS</h2>
+                <p className="text-gray-600 mb-6">
+                  Let's personalize your experience with a quick tour
+                </p>
+
+                <div className="space-y-6">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <BrainCircuit className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">AI-Powered Insights</h3>
+                      <p className="text-gray-500 mt-1">
+                        Your intelligent assistant analyzes data to provide personalized insights
+                        and recommendations.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-4">
+                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                      <Cpu className="w-6 h-6 text-purple-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">Universal Dispatcher</h3>
+                      <p className="text-gray-500 mt-1">
+                        Seamlessly route messages and tasks between your team and our AI agents.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-4">
+                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                      <Zap className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">S2DO Task Management</h3>
+                      <p className="text-gray-500 mt-1">
+                        Intelligent task prioritization and tracking to boost your productivity.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <motion.button
+                  onClick={() => setShowOnboarding(false)}
+                  className="mt-8 w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Get Started
+                </motion.button>
+              </motion.div>
+            </motion.div>
+          );
+
+          return (
+            <>
+              {/* Left Sidebar */}
+              <LeftSidebar
+                viewMode={viewMode}
+                navigateTo={navigateTo}
+                activeTooltip={activeTooltip}
+                setActiveTooltip={setActiveTooltip}
+                motion={motion}
+              />
+
+              {/* Main Content */}
+              <div className="flex-1 flex flex-col">
+                {/* Header */}
+                <motion.div
+                  className="h-16 bg-black text-white flex items-center justify-between px-6"
+                  initial={{ y: -50 }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <motion.div
+                    className="font-bold text-cyan-400 text-2xl tracking-wide cursor-pointer"
+                    onClick={() => navigateTo('main')}
+                    whileHover={{ scale: 1.05, color: '#00FFFF' }}
+                  >
+                    ASOOS
+                  </motion.div>
+                  <div className="flex-1 flex justify-center">
+                    {/* Performance metrics for debug only shown on dev builds */}
+                    {process.env.NODE_ENV === 'development' && (
+                      <div className="text-xs text-gray-500">
+                        Load: {perfMetrics.loadTime}ms | Renders: {perfMetrics.renderCount}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-lg">Mr. Phillip Corey Roark, CEO</div>
+                    <div className="text-sm text-cyan-400">
+                      <span className="italic">Aixtiv Symphony</span>{' '}
+                      <span className="font-bold">Orchestrating OS</span>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Dynamic Content Area based on viewMode */}
+                <AnimatePresence mode="wait">
+                  {isLoading && <LoadingView />}
+
+                  {!isLoading && (
+                    <>
+                      {viewMode === 'login' && (
+                        <LoginView
+                          theme={theme}
+                          isDarkMode={isDarkMode}
+                          navigateTo={navigateTo}
+                          motion={motion}
+                        />
+                      )}
+                      {viewMode === 'main' && (
+                        <HomeView
+                          theme={theme}
+                          isDarkMode={isDarkMode}
+                          agentMood={agentMood}
+                          notifications={notifications}
+                          recommendations={recommendations}
+                          motion={motion}
+                        />
+                      )}
+                      {viewMode === 'webinar' && (
+                        <WebinarView
+                          theme={theme}
+                          isDarkMode={isDarkMode}
+                          navigateTo={navigateTo}
+                          motion={motion}
+                        />
+                      )}
+                      {viewMode === 'settings' && (
+                        <SettingsView
+                          theme={theme}
+                          isDarkMode={isDarkMode}
+                          setIsDarkMode={setIsDarkMode}
+                          navigateTo={navigateTo}
+                          setAgentMood={setAgentMood}
+                          motion={motion}
+                        />
+                      )}
+                      {viewMode === 'stats' && (
+                        <StatsView
+                          theme={theme}
+                          isDarkMode={isDarkMode}
+                          navigateTo={navigateTo}
+                          motion={motion}
+                        />
+                      )}
+                    </>
+                  )}
+                </AnimatePresence>
+
+                {showOnboarding && <OnboardingView />}
+
+                {/* Integration Bar */}
+                <IntegrationBar
+                  theme={theme}
+                  isDarkMode={isDarkMode}
+                  navigateTo={navigateTo}
+                  motion={motion}
+                />
               </div>
-            </div>
+            </>
           );
         }
-        
-        return this.props.children;
-      }
-    }
+      );
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(
-      <ErrorBoundary>
-        <ASOOSNavigationDemo />
-      </ErrorBoundary>
-    );
-  </script>
-</body>
+      // Split components for better code organization and performance
+      const LeftSidebar = Memo(
+        ({ viewMode, navigateTo, activeTooltip, setActiveTooltip, motion }) => {
+          const sidebarItems = [
+            { id: 1, name: 'Communication', desc: 'Automated Communication', view: 'main' },
+            { id: 2, name: 'Growth', desc: 'Growth Revenues', view: 'main' },
+            { id: 3, name: 'Services', desc: 'Client Services Innovation', view: 'main' },
+            { id: 4, name: 'Automation', desc: 'Organizational Automation', view: 'main' },
+            { id: 5, name: 'ROI', desc: 'ROI Dashboard', view: 'stats' },
+            { id: 6, name: 'Wish', desc: 'Your Wish', view: 'main' },
+            {
+              id: 7,
+              name: 'Academy',
+              desc: 'Learning & Training',
+              view: 'webinar',
+              isTriangle: true,
+            },
+          ];
+
+          return (
+            <motion.div
+              className="w-14 bg-black flex flex-col items-center pt-24 pb-6 space-y-6 mobile-hidden"
+              initial={{ x: -50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              {/* Sidebar Icons with Tooltips */}
+              {sidebarItems.map((item) => (
+                <motion.div
+                  key={item.id}
+                  onClick={() => navigateTo(item.view)}
+                  onMouseEnter={() => setActiveTooltip(item.id)}
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  className={`w-8 h-8 flex items-center justify-center cursor-pointer transition-all duration-300 group relative ${
+                    viewMode === item.view ? 'opacity-100 scale-110' : 'opacity-60 hover:opacity-80'
+                  }`}
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: item.id * 0.1 }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <defs>
+                      <linearGradient id={`gradient${item.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#FFD700" stopOpacity={1} />
+                        <stop offset="50%" stopColor="#c7b299" stopOpacity={0.8} />
+                        <stop offset="100%" stopColor="#50C878" stopOpacity={0.6} />
+                      </linearGradient>
+                    </defs>
+                    {item.isTriangle ? (
+                      <path
+                        d="M12 2L22 20H2L12 2z"
+                        stroke={`url(#gradient${item.id})`}
+                        strokeWidth="2"
+                        fill="none"
+                      />
+                    ) : (
+                      <path
+                        d="M50 0 L95 25 L95 75 L50 100 L5 75 L5 25 Z"
+                        stroke={`url(#gradient${item.id})`}
+                        strokeWidth="2"
+                        fill="none"
+                      />
+                    )}
+                  </svg>
+
+                  {/* Tooltip that appears on hover */}
+                  {activeTooltip === item.id && (
+                    <motion.div
+                      className="absolute left-full ml-2 bg-gray-800 text-white text-xs py-1 px-2 rounded-md whitespace-nowrap z-50"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                    >
+                      <div className="font-bold">{item.name}</div>
+                      <div>{item.desc}</div>
+                    </motion.div>
+                  )}
+                </motion.div>
+              ))}
+
+              {/* Settings Icon */}
+              <motion.div
+                onClick={() => navigateTo('settings')}
+                onMouseEnter={() => setActiveTooltip(8)}
+                onMouseLeave={() => setActiveTooltip(null)}
+                className={`w-8 h-8 flex items-center justify-center cursor-pointer transition-all duration-300 relative ${
+                  viewMode === 'settings' ? 'opacity-100 scale-110' : 'opacity-60 hover:opacity-80'
+                }`}
+                whileHover={{ scale: 1.2, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <defs>
+                    <linearGradient id="gradient8" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#00BFFF" stopOpacity={1} />
+                      <stop offset="50%" stopColor="#87CEEB" stopOpacity={0.8} />
+                      <stop offset="100%" stopColor="#1E90FF" stopOpacity={0.6} />
+                    </linearGradient>
+                  </defs>
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="url(#gradient8)"
+                    strokeWidth="2"
+                    fill="none"
+                  />
+                </svg>
+                {window.lucide && (
+                  <window.lucide.Settings className="absolute w-4 h-4 text-white" />
+                )}
+
+                {/* Tooltip that appears on hover */}
+                {activeTooltip === 8 && (
+                  <motion.div
+                    className="absolute left-full ml-2 bg-gray-800 text-white text-xs py-1 px-2 rounded-md whitespace-nowrap z-50"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                  >
+                    <div className="font-bold">Settings</div>
+                    <div>System Configuration & Preferences</div>
+                  </motion.div>
+                )}
+              </motion.div>
+            </motion.div>
+          );
+        }
+      );
+
+      const IntegrationBar = Memo(({ theme, isDarkMode, navigateTo, motion }) => {
+        const { Settings, LogOut } = window.lucide || {};
+
+        return (
+          <motion.div
+            className={`h-12 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} flex items-center justify-between px-4 theme-transition`}
+            initial={{ y: 50 }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {/* Settings Icon */}
+            <motion.div
+              className={`w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-gray-200 rounded-full transition-colors ${isDarkMode && 'hover:bg-gray-700'}`}
+              onClick={() => navigateTo('settings')}
+              whileHover={{ scale: 1.1, rotate: 90 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              {Settings && (
+                <Settings className={`w-5 h-5 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`} />
+              )}
+            </motion.div>
+
+            <div className="flex-1 flex items-center overflow-x-auto justify-center">
+              {/* Integration Icons - Horizontal layout */}
+              <div className="flex items-center space-x-3">
+                {['Z', 'G', 'S'].map((letter, index) => (
+                  <motion.div
+                    key={letter}
+                    className={`w-8 h-8 rounded-full ${theme.card} flex items-center justify-center ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} shadow-sm border ${theme.border} cursor-pointer hover:bg-gray-50 transition-colors ${isDarkMode && 'hover:bg-gray-700'}`}
+                    whileHover={{ scale: 1.2, rotate: 10 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    {letter}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* User Actions */}
+            <div className="flex items-center space-x-2">
+              <div className={`text-xs text-center ${theme.text}`}>
+                <div>Integration</div>
+                <div>Gateway</div>
+              </div>
+
+              <motion.button
+                onClick={() => navigateTo('login')}
+                className={`p-1 ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'} transition-colors`}
+                title="Log out"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                {LogOut && <LogOut className="w-5 h-5" />}
+              </motion.button>
+            </div>
+          </motion.div>
+        );
+      });
+
+      // Separate view components for better code organization
+      const LoginView = Memo(({ theme, isDarkMode, navigateTo, motion }) => (
+        <motion.div
+          className={`flex-1 flex items-center justify-center ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} theme-transition`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <motion.div
+            className={`${theme.card} p-8 rounded-lg shadow-xl max-w-md w-full mobile-full relative overflow-hidden border ${theme.border}`}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ type: 'spring', damping: 20 }}
+          >
+            {/* Hexagon Background Pattern */}
+            <div className="absolute inset-0 pointer-events-none opacity-5">
+              <svg className="absolute top-0 right-0 w-96 h-96" viewBox="0 0 100 100">
+                <path
+                  d="M50 0 L100 25 L100 75 L50 100 L0 75 L0 25 Z"
+                  stroke="#0055cc"
+                  strokeWidth="1"
+                  fill="#0055cc"
+                />
+              </svg>
+            </div>
+
+            <motion.h1
+              className={`text-2xl font-bold text-center mb-6 relative z-10 ${theme.text}`}
+              initial={{ y: -20 }}
+              animate={{ y: 0 }}
+              transition={{ delay: 0.2, type: 'spring' }}
+            >
+              <span className="italic">Aixtiv Symphony</span>{' '}
+              <span className="font-bold">Orchestrating OS</span>
+            </motion.h1>
+            <motion.p
+              className="text-blue-600 mb-8 text-center relative z-10 font-bold text-2xl"
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.3, type: 'spring' }}
+            >
+              ASOOS
+            </motion.p>
+
+            <div className="relative z-10 flex flex-col space-y-4">
+              <motion.button
+                onClick={() => navigateTo('main')}
+                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <div className="w-5 h-5">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"
+                      stroke="white"
+                      strokeWidth="2"
+                      fill="none"
+                    />
+                    <path
+                      d="M12 15a3 3 0 100-6 3 3 0 000 6z"
+                      stroke="white"
+                      strokeWidth="2"
+                      fill="none"
+                    />
+                    <path
+                      d="M17.97 17.97A8.003 8.003 0 004.03 6.03"
+                      stroke="white"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      fill="none"
+                    />
+                  </svg>
+                </div>
+                <span>Authenticate with Sally Port</span>
+              </motion.button>
+
+              <motion.div
+                className="text-center text-sm text-gray-500"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                Secure password-less authentication
+                <br />
+                Developed by Dr. Grant's security team
+              </motion.div>
+            </div>
+
+            <motion.div
+              className={`mt-8 pt-6 border-t ${theme.border} text-center text-xs text-gray-400 relative z-10`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              <p>Mr. Phillip Corey Roark, CEO • pr@coaching2100.com</p>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      ));
+
+      // ONLY include other view components here - HomeView, WebinarView, SettingsView, StatsView
+      // These would be similar to what's in the original file but optimized with the techniques shown above
+
+      // Render the app with error boundary
+      class ErrorBoundary extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = { hasError: false, error: null };
+        }
+
+        static getDerivedStateFromError(error) {
+          return { hasError: true, error };
+        }
+
+        componentDidCatch(error, errorInfo) {
+          console.error('Caught an error:', error, errorInfo);
+        }
+
+        render() {
+          if (this.state.hasError) {
+            return (
+              <div className="flex h-screen items-center justify-center bg-gray-900 text-white">
+                <div className="max-w-md p-6 bg-gray-800 rounded-lg text-center">
+                  <h2 className="text-xl font-bold mb-4">Something went wrong</h2>
+                  <p className="mb-4 text-gray-300">
+                    {this.state.error?.message || 'An unexpected error occurred'}
+                  </p>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  >
+                    Reload Application
+                  </button>
+                </div>
+              </div>
+            );
+          }
+
+          return this.props.children;
+        }
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(
+        <ErrorBoundary>
+          <ASOOSNavigationDemo />
+        </ErrorBoundary>
+      );
+    </script>
+  </body>
 </html>

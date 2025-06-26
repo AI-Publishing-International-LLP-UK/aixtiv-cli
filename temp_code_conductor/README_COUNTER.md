@@ -22,6 +22,7 @@ The system uses a persistent counter to assign sequential numbers to work effort
 ### Handling Numbers Beyond 9999
 
 When the counter exceeds 9999, the system transitions to a variable-length format without leading zeros:
+
 - 10000, 10001, 10002, ...
 - 12345, 23456, 100000, ...
 
@@ -48,6 +49,7 @@ pattern = r"^(\d+)_"
 Work effort filenames can be formatted in two ways:
 
 1. **Standard Sequential**: `{formatted_number}_{title}.md`
+
    - Examples: `0001_example.md`, `9999_test.md`, `10000_beyond_limit.md`
 
 2. **Date-Prefixed**: `{date}{formatted_number}_{title}.md`

@@ -7,11 +7,13 @@ This is an Aixtiv Symphony integration project created with aixtiv-cli. It provi
 ## Setup
 
 1. Copy `.env.example` to `.env` and update with your configuration:
+
    ```bash
    cp .env.example .env
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
@@ -58,4 +60,3 @@ CLAUDE_API_ENDPOINT=https://api.claude.ai/v1
 ## License
 
 UNLICENSED
-

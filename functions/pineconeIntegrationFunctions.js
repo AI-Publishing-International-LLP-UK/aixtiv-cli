@@ -1,9 +1,9 @@
 /**
  * Pinecone Integration Firebase Cloud Functions
- * 
+ *
  * This module provides Firebase Cloud Functions for Pinecone vector database integration,
  * enabling semantic search across prompts, memories, and agent outputs.
- * 
+ *
  * @module pineconeIntegrationFunctions
  * @author Aixtiv Symphony Team
  * @copyright 2025 AI Publishing International LLP
@@ -31,7 +31,7 @@ const {
   searchPinecone,
   deleteFromPinecone,
   storeMemoryInPinecone,
-  storePromptInPinecone
+  storePromptInPinecone,
 } = require('../src/functions/pineconeIntegration');
 
 /**
@@ -45,30 +45,27 @@ exports.searchMemories = functions.https.onCall(async (data, context) => {
       'Authentication required to search memories'
     );
   }
-  
+
   try {
     const { queryText, filter = {}, topK = 10 } = data;
-    
+
     if (!queryText) {
-      throw new functions.https.HttpsError(
-        'invalid-argument',
-        'Query text is required'
-      );
+      throw new functions.https.HttpsError('invalid-argument', 'Query text is required');
     }
-    
+
     // Add user ID to filter if not specified
     const searchFilter = {
       ...filter,
-      userId: filter.userId || context.auth.uid
+      userId: filter.userId || context.auth.uid,
     };
-    
+
     // Search Pinecone for similar memories
     const results = await searchPinecone('aixtiv-memories', queryText, searchFilter, topK);
-    
+
     return { results };
   } catch (error) {
     console.error('Error searching memories:', error);
-    
+
     throw new functions.https.HttpsError(
       'internal',
       error.message || 'An unknown error occurred',
@@ -88,30 +85,27 @@ exports.searchPrompts = functions.https.onCall(async (data, context) => {
       'Authentication required to search prompts'
     );
   }
-  
+
   try {
     const { queryText, filter = {}, topK = 10 } = data;
-    
+
     if (!queryText) {
-      throw new functions.https.HttpsError(
-        'invalid-argument',
-        'Query text is required'
-      );
+      throw new functions.https.HttpsError('invalid-argument', 'Query text is required');
     }
-    
+
     // Add user ID to filter if not specified
     const searchFilter = {
       ...filter,
-      userId: filter.userId || context.auth.uid
+      userId: filter.userId || context.auth.uid,
     };
-    
+
     // Search Pinecone for similar prompts
     const results = await searchPinecone('aixtiv-prompts', queryText, searchFilter, topK);
-    
+
     return { results };
   } catch (error) {
     console.error('Error searching prompts:', error);
-    
+
     throw new functions.https.HttpsError(
       'internal',
       error.message || 'An unknown error occurred',
@@ -131,37 +125,34 @@ exports.storeMemory = functions.https.onCall(async (data, context) => {
       'Authentication required to store memories'
     );
   }
-  
+
   try {
     const { memory } = data;
-    
+
     if (!memory || !memory.content) {
       throw new functions.https.HttpsError(
         'invalid-argument',
         'Memory object with content is required'
       );
     }
-    
+
     // Add user ID to memory if not specified
     memory.userId = memory.userId || context.auth.uid;
-    
+
     // Generate a unique ID if not provided
     memory.id = memory.id || uuidv4();
-    
+
     // Store the memory in Pinecone
     const success = await storeMemoryInPinecone(memory);
-    
+
     if (!success) {
-      throw new functions.https.HttpsError(
-        'internal',
-        'Failed to store memory in Pinecone'
-      );
+      throw new functions.https.HttpsError('internal', 'Failed to store memory in Pinecone');
     }
-    
+
     return { success: true, memoryId: memory.id };
   } catch (error) {
     console.error('Error storing memory:', error);
-    
+
     throw new functions.https.HttpsError(
       'internal',
       error.message || 'An unknown error occurred',
@@ -181,37 +172,34 @@ exports.storePrompt = functions.https.onCall(async (data, context) => {
       'Authentication required to store prompts'
     );
   }
-  
+
   try {
     const { prompt } = data;
-    
+
     if (!prompt || !prompt.content) {
       throw new functions.https.HttpsError(
         'invalid-argument',
         'Prompt object with content is required'
       );
     }
-    
+
     // Add user ID to prompt if not specified
     prompt.userId = prompt.userId || context.auth.uid;
-    
+
     // Generate a unique ID if not provided
     prompt.id = prompt.id || prompt.promptId || uuidv4();
-    
+
     // Store the prompt in Pinecone
     const success = await storePromptInPinecone(prompt);
-    
+
     if (!success) {
-      throw new functions.https.HttpsError(
-        'internal',
-        'Failed to store prompt in Pinecone'
-      );
+      throw new functions.https.HttpsError('internal', 'Failed to store prompt in Pinecone');
     }
-    
+
     return { success: true, promptId: prompt.id };
   } catch (error) {
     console.error('Error storing prompt:', error);
-    
+
     throw new functions.https.HttpsError(
       'internal',
       error.message || 'An unknown error occurred',
@@ -231,31 +219,28 @@ exports.deleteFromPinecone = functions.https.onCall(async (data, context) => {
       'Admin authentication required to delete from Pinecone'
     );
   }
-  
+
   try {
     const { indexName, ids } = data;
-    
+
     if (!indexName || !ids || !Array.isArray(ids) || ids.length === 0) {
       throw new functions.https.HttpsError(
         'invalid-argument',
         'Index name and array of IDs are required'
       );
     }
-    
+
     // Delete the items from Pinecone
     const success = await deleteFromPinecone(indexName, ids);
-    
+
     if (!success) {
-      throw new functions.https.HttpsError(
-        'internal',
-        'Failed to delete items from Pinecone'
-      );
+      throw new functions.https.HttpsError('internal', 'Failed to delete items from Pinecone');
     }
-    
+
     return { success: true, deletedCount: ids.length };
   } catch (error) {
     console.error('Error deleting from Pinecone:', error);
-    
+
     throw new functions.https.HttpsError(
       'internal',
       error.message || 'An unknown error occurred',
@@ -272,26 +257,26 @@ exports.onChatHistoryCreated = functions.firestore
   .onCreate(async (snapshot, context) => {
     try {
       const memory = snapshot.data();
-      
+
       // Skip if memory doesn't have content
       if (!memory.content) {
         console.log(`Memory ${context.params.memoryId} has no content, skipping Pinecone storage`);
         return null;
       }
-      
+
       // Store the memory in Pinecone
       const success = await storeMemoryInPinecone({
         ...memory,
-        id: context.params.memoryId
+        id: context.params.memoryId,
       });
-      
+
       if (success) {
         console.log(`Memory ${context.params.memoryId} stored in Pinecone`);
-        
+
         // Update the document with Pinecone status
         return snapshot.ref.update({
           pineconeStored: true,
-          pineconeTimestamp: admin.firestore.FieldValue.serverTimestamp()
+          pineconeTimestamp: admin.firestore.FieldValue.serverTimestamp(),
         });
       } else {
         console.error(`Failed to store memory ${context.params.memoryId} in Pinecone`);
@@ -311,13 +296,15 @@ exports.onPromptRunCreated = functions.firestore
   .onCreate(async (snapshot, context) => {
     try {
       const promptRun = snapshot.data();
-      
+
       // Skip if prompt doesn't have content
       if (!promptRun.prompt || !promptRun.prompt.content) {
-        console.log(`Prompt run ${context.params.promptId} has no content, skipping Pinecone storage`);
+        console.log(
+          `Prompt run ${context.params.promptId} has no content, skipping Pinecone storage`
+        );
         return null;
       }
-      
+
       // Store the prompt in Pinecone
       const success = await storePromptInPinecone({
         id: context.params.promptId,
@@ -329,17 +316,17 @@ exports.onPromptRunCreated = functions.firestore
         timestamp: promptRun.createdAt || admin.firestore.FieldValue.serverTimestamp(),
         metadata: {
           ...promptRun.options,
-          status: promptRun.status
-        }
+          status: promptRun.status,
+        },
       });
-      
+
       if (success) {
         console.log(`Prompt run ${context.params.promptId} stored in Pinecone`);
-        
+
         // Update the document with Pinecone status
         return snapshot.ref.update({
           pineconeStored: true,
-          pineconeTimestamp: admin.firestore.FieldValue.serverTimestamp()
+          pineconeTimestamp: admin.firestore.FieldValue.serverTimestamp(),
         });
       } else {
         console.error(`Failed to store prompt run ${context.params.promptId} in Pinecone`);
@@ -359,13 +346,15 @@ exports.ensurePineconeIndexes = functions.pubsub
   .onRun(async (context) => {
     try {
       console.log('Ensuring Pinecone indexes exist');
-      
+
       // Create indexes if they don't exist
       const memoryIndexCreated = await createIndexIfNotExists('aixtiv-memories');
       const promptIndexCreated = await createIndexIfNotExists('aixtiv-prompts');
-      
-      console.log(`Pinecone indexes status: memories=${memoryIndexCreated}, prompts=${promptIndexCreated}`);
-      
+
+      console.log(
+        `Pinecone indexes status: memories=${memoryIndexCreated}, prompts=${promptIndexCreated}`
+      );
+
       return { success: true };
     } catch (error) {
       console.error('Error ensuring Pinecone indexes:', error);

@@ -1,81 +1,27 @@
 {
-  "hosting": {
-    "public": "public",
-    "site": "aipi-global",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-"targets": {
-      "aipi-global": {
-        "source": "public/aipi",
-        "dewey_range": "001-099",
-        "domains": [
-          "aipublishinginternational.com",
-          "aipublishinginternational.co.uk",
-          "aipub.co.uk",
-          "aipillp.co.uk"
-        ]
-      },
-      "social-hub": {
-        "source": "public/social",
-        "domains": ["2100.pub"],
-        "purpose": "Community engagement"
-      },
-      "opus-1": {
-        "source": "public/opus1",
-        "domains": [
-          "aixtiv.world",
-          "aixtiv.live",
-          "asoos.cool",
-          "asoos.live"
-        ],
-        "purpose": "Amplify platform"
-      },
-      "memory-plaza": {
-        "source": "public/memory-plaza",
-        "dewey_range": "700-799",
-        "domains": ["2100.institute", "c2100.co"]
-      },
-      "vision-lake": {
-        "source": "public/vision-lake",
-        "dewey_range": ["100-199", "800-899"],
-        "domains": ["coaching2100.org", "getready2100.com", "drmatch.live"]
-      },
-      "edge-labs": {
-        "source": "public/edge-labs",
-        "dewey_range": "400-409",
-        "domains": ["aixtiv.world", "asoos.live"]
-      },
-      "queen-mint-mark": {
-        "source": "public/queen-mint-mark",
-        "dewey_range": "620-629",
-        "domains": ["2100.foundation", "2100.cool"]
-      }
-    },
-    "headers": [
-      {
-        "source": "**/*.@(jpg|jpeg|gif|png|svg|webp)",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "max-age=31536000"
-          }
-        ]
-      }
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  }
-}
-
-{
   "hosting": [
+    {
+      "target": "aipi-global",
+      "public": "public",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "headers": [
+        {
+          "source": "**/*.@(jpg|jpeg|gif|png|svg|webp)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "max-age=31536000"
+            }
+          ]
+        }
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    },
     {
       "target": "drclaude-live",
       "public": "public",
@@ -107,5 +53,52 @@
   "functions": {
     "source": "functions",
     "runtime": "nodejs22"
+  },
+  "targets": {
+    "aipi-global": {
+      "source": "public/aipi",
+      "dewey_range": "001-099",
+      "domains": [
+        "aipublishinginternational.com",
+        "aipublishinginternational.co.uk",
+        "aipub.co.uk",
+        "aipillp.co.uk"
+      ]
+    },
+    "social-hub": {
+      "source": "public/social",
+      "domains": ["2100.pub"],
+      "purpose": "Community engagement"
+    },
+    "opus-1": {
+      "source": "public/opus1",
+      "domains": [
+        "aixtiv.world",
+        "aixtiv.live",
+        "asoos.cool",
+        "asoos.live"
+      ],
+      "purpose": "Amplify platform"
+    },
+    "memory-plaza": {
+      "source": "public/memory-plaza",
+      "dewey_range": "700-799",
+      "domains": ["2100.institute", "c2100.co"]
+    },
+    "vision-lake": {
+      "source": "public/vision-lake",
+      "dewey_range": ["100-199", "800-899"],
+      "domains": ["coaching2100.org", "getready2100.com", "drmatch.live"]
+    },
+    "edge-labs": {
+      "source": "public/edge-labs",
+      "dewey_range": "400-409",
+      "domains": ["aixtiv.world", "asoos.live"]
+    },
+    "queen-mint-mark": {
+      "source": "public/queen-mint-mark",
+      "dewey_range": "620-629",
+      "domains": ["2100.foundation", "2100.cool"]
+    }
   }
 }

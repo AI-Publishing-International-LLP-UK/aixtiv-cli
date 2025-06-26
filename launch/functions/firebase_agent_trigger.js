@@ -120,8 +120,9 @@ exports.triggerAgent = functions.https.onCall(async (data, context) => {
 /**
  * Firestore trigger for automated agent responses based on chat messages
  */
-exports.onChatMessageCreated = functions.firestore
-  .onDocumentCreated('chats/{chatId}/messages/{messageId}', async (event) => {
+exports.onChatMessageCreated = functions.firestore.onDocumentCreated(
+  'chats/{chatId}/messages/{messageId}',
+  async (event) => {
     try {
       const message = event.data.data();
       const { chatId, messageId } = event.params;
@@ -276,13 +277,15 @@ exports.onChatMessageCreated = functions.firestore
       console.error('Error processing chat message:', error);
       return null;
     }
-  });
+  }
+);
 
 /**
  * Scheduled function to trigger periodic agent actions
  */
-exports.scheduledAgentActions = functions.scheduler
-  .onSchedule('every 30 minutes', async (event) => {
+exports.scheduledAgentActions = functions.scheduler.onSchedule(
+  'every 30 minutes',
+  async (event) => {
     try {
       console.log('Running scheduled agent actions');
 
@@ -389,21 +392,23 @@ exports.scheduledAgentActions = functions.scheduler
       console.error('Error in scheduled agent actions:', error);
       return { error: error.message };
     }
-  });
+  }
+);
 
 /**
  * Firestore trigger to process scheduled agent actions
  */
-exports.processScheduledAgentActions = functions.firestore
-  .onDocumentCreated('scheduled_agent_actions/{actionId}', async (event) => {
+exports.processScheduledAgentActions = functions.firestore.onDocumentCreated(
+  'scheduled_agent_actions/{actionId}',
+  async (event) => {
     try {
       const actionData = event.data.data();
-      
+
       // Skip if already processed
       if (actionData.status !== 'pending') {
         return null;
       }
-      
+
       console.log(
         `Processing scheduled action ${event.params.actionId} for agent ${actionData.agentId}`
       );
@@ -513,7 +518,8 @@ exports.processScheduledAgentActions = functions.firestore
         processedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
     }
-  });
+  }
+);
 
 /**
  * Helper function to get agent configuration

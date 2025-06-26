@@ -120,7 +120,7 @@ async function updateAgentRecords() {
     'dr-grant-sallyport': 'dr-grant-gateway',
     'dr-maria-brand-director': 'dr-maria-brand',
     'dr-maria-support': 'dr-maria-service',
-    'professor-mia-team-leadership': 'queen-mint-mark-maker'
+    'professor-mia-team-leadership': 'queen-mint-mark-maker',
   };
 
   // Define all agents, including renamed ones and new ones
@@ -141,7 +141,7 @@ async function updateAgentRecords() {
     'queen-mint-mark-maker',
     'sir-tower-blockchain',
     'professor-levi-social',
-    'professor-lucinda-social'
+    'professor-lucinda-social',
   ];
 
   const timestamp = new Date().toISOString();
@@ -152,15 +152,16 @@ async function updateAgentRecords() {
   for (const [oldAgentId, newAgentId] of Object.entries(agentRenameMap)) {
     // Query for existing records with the old agent ID
     try {
-      const oldAgentQuery = await firestore.collection('agentActions')
+      const oldAgentQuery = await firestore
+        .collection('agentActions')
         .where('agent_id', '==', oldAgentId)
         .get();
-      
+
       // Delete each record
-      oldAgentQuery.forEach(doc => {
+      oldAgentQuery.forEach((doc) => {
         batch.delete(doc.ref);
       });
-      
+
       console.log(`Marked records for deletion: ${oldAgentId} -> ${newAgentId}`);
     } catch (error) {
       console.error(`Error querying old agent records for ${oldAgentId}:`, error);
@@ -229,4 +230,3 @@ updateAgentRecords()
   .catch((error) => {
     console.error('❌ Error updating agent records:', error);
   });
-

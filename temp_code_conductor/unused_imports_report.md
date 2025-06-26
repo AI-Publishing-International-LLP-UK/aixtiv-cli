@@ -5,7 +5,6 @@
 ## Files by Unused Import Count
 
 | File | Unused Imports |
-|------|---------------|
+| ---- | -------------- |
 
 ## Detailed Report
-

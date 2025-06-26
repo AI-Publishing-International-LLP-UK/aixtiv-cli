@@ -15,5 +15,5 @@ const telemetry = require('../../../lib/telemetry');
 module.exports = {
   s2do,
   approve,
-  verify
+  verify,
 };

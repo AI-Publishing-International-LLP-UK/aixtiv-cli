@@ -1,41 +1,41 @@
 enterpriseAvailability:
-  target: "99.9999%"
+  target: '99.9999%'
   monitors:
-    frequency: "10s"
+    frequency: '10s'
     global: true
-    regions: ["us", "eu", "asia"]
-    
+    regions: ['us', 'eu', 'asia']
+
   autoScaling:
     enabled: true
     predictive: true
     minReplicas: 3
     maxReplicas: 100
-    
+
   failover:
     automatic: true
-    maxLatency: "50ms"
-    strategy: "activeActive"
-    
+    maxLatency: '50ms'
+    strategy: 'activeActive'
+
   loadBalancing:
-    type: "global"
-    algorithm: "leastLatency"
+    type: 'global'
+    algorithm: 'leastLatency'
     healthChecks:
-      interval: "5s"
-      timeout: "3s"
-      
+      interval: '5s'
+      timeout: '3s'
+
   disaster:
     recovery:
-      rpo: "0s"
-      rto: "10s"
+      rpo: '0s'
+      rto: '10s'
     backups:
-      frequency: "1m"
-      retention: "30d"
-      
+      frequency: '1m'
+      retention: '30d'
+
   security:
     ddosProtection: true
     wafEnabled: true
     anomalyDetection: true
-    
+
   reporting:
     realtime: true
     metrics:
@@ -43,5 +43,5 @@ enterpriseAvailability:
       - latency
       - throughput
     alerts:
-      threshold: "99.999%"
-      channels: ["slack", "pagerduty", "email"]
+      threshold: '99.999%'
+      channels: ['slack', 'pagerduty', 'email']

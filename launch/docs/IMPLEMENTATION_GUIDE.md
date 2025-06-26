@@ -1,6 +1,6 @@
 # Elite Enhancement Implementation Guide
 
-This guide provides practical steps for implementing the Elite Enhancements as specified in the 
+This guide provides practical steps for implementing the Elite Enhancements as specified in the
 technical specification document.
 
 ## Getting Started

@@ -35,15 +35,17 @@ const claudeCommands = require('../commands/claude');
 const registerDomainCommands = require('../commands/domain');
 
 // Initialize the program
-program
-  .version('1.0.1')
-  .description('Aixtiv CLI for SallyPort Security Management');
+program.version('1.0.1').description('Aixtiv CLI for SallyPort Security Management');
 
 // Register claude:project:list command
 program
   .command('claude:project:list')
   .description('List projects from the Firestore database')
-  .option('-s, --status <status>', 'Filter by status (active, completed, on-hold, cancelled, all)', 'active')
+  .option(
+    '-s, --status <status>',
+    'Filter by status (active, completed, on-hold, cancelled, all)',
+    'active'
+  )
   .option('-t, --tags <tags>', 'Filter by comma-separated tags')
   .option('-p, --priority <priority>', 'Filter by priority (high, medium, low)')
   .option('-l, --limit <limit>', 'Limit the number of projects returned', '20')
@@ -87,6 +89,9 @@ const claudeAgentDelegate = require('../commands/claude/agent/delegate');
 const claudeAutomationGithub = require('../commands/claude/automation/github');
 const claudeCodeGenerate = require('../commands/claude/code/generate');
 const claudeStatus = require('../commands/claude/status');
+
+// ASOOS commands
+const asoosCommands = require('../commands/asoos');
 
 // Natural Language Processing command
 let nlpCommand;
@@ -329,9 +334,17 @@ if (nlpCommand) {
 // Register domain management commands
 registerDomainCommands(program);
 
+// Register ASOOS commands
+program
+  .command('asoos:deploy')
+  .description('Deploy ASOOS.2100.Cool website')
+  .option('-a, --action <action>', 'Deployment action (sync, deploy, test, backup, rollback)')
+  .option('-v, --verbose', 'Show detailed output')
+  .option('-i, --info', 'Show deployment configuration info')
+  .action(asoosCommands.deploy);
+
 // Register SERPEW commands (temporarily commented out)
 // registerSerpewCommands(program);
 
 // Parse command line arguments
 program.parse(process.argv);
-

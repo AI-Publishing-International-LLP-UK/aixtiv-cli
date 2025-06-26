@@ -1,10 +1,10 @@
 /**
  * Aixtiv CLI Owner-Subscriber V1-V2 Immersive System
  * Firebase Cloud Functions Main Entry Point
- * 
+ *
  * This file exports all Cloud Functions for the Aixtiv CLI Owner-Subscriber system,
  * including Universal Dispatcher, Memory System, and Agent Trigger functions.
- * 
+ *
  * @module functions/index
  * @author Aixtiv Symphony Team
  * @copyright 2025 AI Publishing International LLP
@@ -30,13 +30,13 @@ const pineconeIntegrationFunctions = require('./pineconeIntegrationFunctions');
 // Configuration for functions
 const runtimeOpts = {
   memory: '512MB',
-  timeoutSeconds: 60
+  timeoutSeconds: 60,
 };
 
 // Higher memory configuration for complex operations
 const highMemoryOpts = {
   memory: '1GB',
-  timeoutSeconds: 120
+  timeoutSeconds: 120,
 };
 
 // Export Dr. Claude functions
@@ -69,20 +69,20 @@ exports.processScheduledAgentActions = agentTriggerFunctions.processScheduledAge
 exports.contextStorage = https.onRequest((request, response) => {
   if (request.method === 'GET') {
     logger.info('Context retrieval request', { structuredData: true });
-    
+
     // Return context data
-    response.json({ 
+    response.json({
       context: 'Sample context data',
       timestamp: new Date().toISOString(),
-      status: 'success'
+      status: 'success',
     });
   } else if (request.method === 'POST') {
     logger.info('Context storage request', { structuredData: true });
-    
+
     // Store context data
-    response.json({ 
-      status: 'success', 
-      message: 'Context stored successfully'
+    response.json({
+      status: 'success',
+      message: 'Context stored successfully',
     });
   } else {
     response.status(405).send('Method not allowed');
@@ -92,7 +92,7 @@ exports.contextStorage = https.onRequest((request, response) => {
 // Model metrics endpoint
 exports.modelMetrics = https.onRequest((request, response) => {
   logger.info('Model metrics request', { structuredData: true });
-  
+
   // Return metrics data
   response.json({
     model: 'claude-3-opus-20240229',
@@ -126,8 +126,8 @@ exports.healthCheck = https.onRequest((request, response) => {
       dispatcher: 'operational',
       memory: 'operational',
       agents: 'operational',
-      pinecone: 'operational'
-    }
+      pinecone: 'operational',
+    },
   });
 });
 

@@ -29,20 +29,22 @@ const { handleAutoscaling } = require('../../scripts/autoscale-verify-firebase-d
  */
 async function runAutoscaleVerify(options) {
   const spinner = ora('Starting domain autoscaling verification...').start();
-  
+
   try {
     const results = await handleAutoscaling({
       force: options.force,
       dryRun: options.dryRun,
-      logLevel: options.verbose ? 'verbose' : 'info'
+      logLevel: options.verbose ? 'verbose' : 'info',
     });
-    
+
     if (options.dryRun) {
       spinner.succeed('Domain autoscaling verification simulation completed');
-      console.log(`\n${chalk.cyan('Domains that would be verified:')} ${chalk.white(results.pendingCount)}`);
-      
+      console.log(
+        `\n${chalk.cyan('Domains that would be verified:')} ${chalk.white(results.pendingCount)}`
+      );
+
       if (results.pendingDomains && results.pendingDomains.length > 0) {
-        results.pendingDomains.forEach(domain => {
+        results.pendingDomains.forEach((domain) => {
           console.log(`- ${domain}`);
         });
       }
@@ -50,29 +52,29 @@ async function runAutoscaleVerify(options) {
       spinner.succeed('Domain autoscaling verification completed');
       console.log(`\n${chalk.green('Verified domains:')} ${chalk.white(results.verified.length)}`);
       console.log(`${chalk.red('Failed domains:')} ${chalk.white(results.failed.length)}`);
-      
+
       // Display verified domains if any
       if (results.verified && results.verified.length > 0) {
         console.log(`\n${chalk.green('Successfully verified:')}`);
-        results.verified.forEach(domain => {
+        results.verified.forEach((domain) => {
           console.log(`- ${domain}`);
         });
       }
-      
+
       // Display failed domains if any
       if (results.failed && results.failed.length > 0) {
         console.log(`\n${chalk.red('Failed to verify:')}`);
-        results.failed.forEach(domain => {
+        results.failed.forEach((domain) => {
           console.log(`- ${domain}`);
         });
       }
     }
-    
+
     console.log(`\n${chalk.dim('For detailed logs, see ~/.aixtiv-cli/logs/verification/')}`);
   } catch (error) {
     spinner.fail('Domain autoscaling verification failed');
     console.error(chalk.red(`Error: ${error.message}`));
-    
+
     if (options.verbose && error.stack) {
       console.error(chalk.dim(error.stack));
     }
@@ -92,7 +94,7 @@ function registerDomainAutoscaleCommand(program) {
     .option('-d, --dry-run', 'Simulate verification without making changes')
     .option('-v, --verbose', 'Enable verbose logging')
     .action(runAutoscaleVerify);
-  
+
   return program;
 }
 

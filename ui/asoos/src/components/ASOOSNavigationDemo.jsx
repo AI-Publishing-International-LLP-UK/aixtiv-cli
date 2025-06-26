@@ -1,5 +1,16 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Mic, Send, Volume2, Settings, LogOut, Users, BarChart2, Monitor, Database, Camera } from 'lucide-react';
+import {
+  Mic,
+  Send,
+  Volume2,
+  Settings,
+  LogOut,
+  Users,
+  BarChart2,
+  Monitor,
+  Database,
+  Camera,
+} from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import { AgentContext } from '../context/AgentContext';
 import { ResourceContext } from '../context/ResourceContext';
@@ -11,13 +22,13 @@ const ASOOSNavigationDemo = () => {
   const [activeTooltip, setActiveTooltip] = useState(null);
   const [messageInput, setMessageInput] = useState('');
   const [messages, setMessages] = useState([]);
-  
+
   // Get contexts
   const { user, login, logout, isAuthenticated } = useContext(AuthContext);
   const { agent, agentPersonality, setAgentPersonality } = useContext(AgentContext);
   const { resources, todos } = useContext(ResourceContext);
   const { recordInteraction } = useContext(TelemetryContext);
-  
+
   // Navigation handler
   const navigateTo = (view) => {
     setViewMode(view);
@@ -33,30 +44,33 @@ const ASOOSNavigationDemo = () => {
 
   const handleSendMessage = async () => {
     if (!messageInput.trim()) return;
-    
+
     const userMessage = { text: messageInput, sender: 'user', timestamp: new Date() };
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     recordInteraction('message_sent', { content: messageInput });
     setMessageInput('');
-    
+
     try {
       const response = await agent.processMessage(messageInput);
-      const agentMessage = { 
-        text: response.text, 
-        sender: 'agent', 
+      const agentMessage = {
+        text: response.text,
+        sender: 'agent',
         timestamp: new Date(),
         emotion: response.emotion,
-        tone: response.tone
+        tone: response.tone,
       };
-      setMessages(prev => [...prev, agentMessage]);
+      setMessages((prev) => [...prev, agentMessage]);
     } catch (error) {
       console.error('Error processing message:', error);
-      setMessages(prev => [...prev, { 
-        text: 'Sorry, I encountered an error processing your request.', 
-        sender: 'agent', 
-        timestamp: new Date(),
-        error: true
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: 'Sorry, I encountered an error processing your request.',
+          sender: 'agent',
+          timestamp: new Date(),
+          error: true,
+        },
+      ]);
     }
   };
 
@@ -71,7 +85,7 @@ const ASOOSNavigationDemo = () => {
           { id: 4, name: 'Automation', desc: 'Organizational Automation', view: 'main' },
           { id: 5, name: 'ROI', desc: 'ROI Dashboard', view: 'stats' },
           { id: 6, name: 'Wish', desc: 'Your Wish', view: 'main' },
-          { id: 7, name: 'Academy', desc: 'Learning & Training', view: 'webinar' }
+          { id: 7, name: 'Academy', desc: 'Learning & Training', view: 'webinar' },
         ].map((item) => (
           <button
             key={item.id}
@@ -96,7 +110,7 @@ const ASOOSNavigationDemo = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         <div className="h-16 bg-black text-white flex items-center justify-between px-6">
-          <button 
+          <button
             className="font-bold text-cyan-400 text-2xl tracking-wide cursor-pointer"
             onClick={() => navigateTo('main')}
           >
@@ -108,7 +122,7 @@ const ASOOSNavigationDemo = () => {
         <div className="flex-1">
           {viewMode === 'login' && (
             <div className="flex items-center justify-center h-full">
-              <button 
+              <button
                 onClick={() => login()}
                 className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
               >
@@ -116,27 +130,27 @@ const ASOOSNavigationDemo = () => {
               </button>
             </div>
           )}
-          
+
           {viewMode === 'main' && (
             <div className="p-6">
               <h1>Main Dashboard</h1>
               {/* Add main dashboard content */}
             </div>
           )}
-          
+
           {/* Add other view content here */}
         </div>
 
         {/* Bottom Navigation Bar */}
         <div className="h-12 bg-gray-100 flex items-center justify-between px-4">
-          <button 
+          <button
             onClick={() => navigateTo('settings')}
             className="p-2 hover:bg-gray-200 rounded-full"
           >
             <Settings className="w-5 h-5" />
           </button>
-          
-          <button 
+
+          <button
             onClick={() => {
               logout();
               navigateTo('login');

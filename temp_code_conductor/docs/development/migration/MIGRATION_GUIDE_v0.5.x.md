@@ -7,13 +7,17 @@
 The `WorkEffortManager` implementation has been consolidated into a single core module. This change improves code maintainability and reduces duplication.
 
 #### New Location
+
 The `WorkEffortManager` is now located at:
+
 ```python
 from code_conductor.core.work_effort.manager import WorkEffortManager
 ```
 
 #### Changes Required
+
 1. Update imports in your code:
+
    ```python
    # Old imports (no longer valid)
    from src.code_conductor.work_efforts.scripts.work_effort_manager import WorkEffortManager
@@ -43,6 +47,7 @@ The new implementation maintains backward compatibility with existing work effor
 ## New Features
 
 1. Enhanced error handling for:
+
    - Invalid input data
    - File system edge cases
    - Concurrent operations

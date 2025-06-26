@@ -29,15 +29,15 @@ const deployCommand = new Command('deploy')
     // Check if script exists in current directory
     if (!fs.existsSync(deployScript)) {
       spinner.text = 'Looking for script in other locations...';
-      
+
       // Try to find the script in the current path
       try {
         const { execSync } = require('child_process');
-        const foundScript = execSync('find . -name "deploy-ci-cttt.sh" -type f | head -n 1', { 
-          encoding: 'utf8', 
-          stdio: ['pipe', 'pipe', 'ignore'] 
+        const foundScript = execSync('find . -name "deploy-ci-cttt.sh" -type f | head -n 1', {
+          encoding: 'utf8',
+          stdio: ['pipe', 'pipe', 'ignore'],
         }).trim();
-        
+
         if (foundScript) {
           deployScript = foundScript;
           spinner.succeed(`Found script at: ${deployScript}`);
@@ -64,15 +64,14 @@ const deployCommand = new Command('deploy')
     spinner.start();
 
     try {
-      const deployProcess = spawn(deployScript, [
-        '--config', 
-        options.config,
-        '--project', 
-        options.project
-      ], {
-        stdio: 'inherit',
-        shell: true
-      });
+      const deployProcess = spawn(
+        deployScript,
+        ['--config', options.config, '--project', options.project],
+        {
+          stdio: 'inherit',
+          shell: true,
+        }
+      );
 
       deployProcess.on('error', (error) => {
         spinner.fail('Deployment failed');

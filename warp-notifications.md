@@ -14,6 +14,7 @@ This guide provides step-by-step instructions for resolving notification issues 
 Warp requires two distinct notification settings to be enabled:
 
 1. **macOS System Settings:**
+
    - Navigate to Apple menu (🍎) > System Preferences > Notifications & Focus
    - Find and select "Warp" in the application list
    - Ensure notifications are enabled
@@ -29,10 +30,12 @@ Warp requires two distinct notification settings to be enabled:
 If notifications are still not working after verifying settings:
 
 - **Check application focus:**
+
   - Ensure you are navigated away from Warp when expecting notifications
   - Warp only shows system notifications when it's not the active window
 
 - **Verify Focus settings:**
+
   - Go to Apple menu (🍎) > System Preferences > Notifications & Focus > Focus
   - Make sure "Do Not Disturb" mode is turned off
 
@@ -61,4 +64,3 @@ After trying the above solutions:
 ## Support
 
 If you continue to experience issues with Warp notifications after following these steps, contact Warp support or check the official documentation at https://docs.warp.dev/
-

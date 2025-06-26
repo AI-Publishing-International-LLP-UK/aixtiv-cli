@@ -18,4 +18,3 @@ Improve the counter system for work efforts to correctly handle numerical prefix
 ## Notes
 
 Add notes here as the work progresses.
-

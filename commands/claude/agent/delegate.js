@@ -110,13 +110,13 @@ module.exports = async function delegateProjectToAgent(options) {
             assignee: assignTo,
           });
 
-  // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    command: 'claude:return'
-  });
-  
-  return {
+          // Display debug information
+          debugDisplay({
+            thought: internalThought,
+            command: 'claude:return',
+          });
+
+          return {
             status: 'created',
             project_id: apiResponse.project_id,
             created_at: apiResponse.created_at || new Date().toISOString(),
@@ -166,12 +166,12 @@ module.exports = async function delegateProjectToAgent(options) {
             });
 
             // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    command: 'claude:return'
-  });
-  
-  return {
+            debugDisplay({
+              thought: internalThought,
+              command: 'claude:return',
+            });
+
+            return {
               status: 'created',
               project_id: projectId,
               created_at: new Date().toISOString(),
@@ -255,12 +255,12 @@ module.exports = async function delegateProjectToAgent(options) {
     }
 
     // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    command: 'claude:process.exit'
-  });
-  
-  process.exit(1);
+    debugDisplay({
+      thought: internalThought,
+      command: 'claude:process.exit',
+    });
+
+    process.exit(1);
   }
 };
 
@@ -280,20 +280,17 @@ function getPriorityColor(priority) {
   switch (priority.toLowerCase()) {
     case 'high':
       // Display debug information
-  debugDisplay({
-    thought: internalThought,
-    command: 'claude:return'
-  });
-  
-  return chalk.red('High');
+      debugDisplay({
+        thought: internalThought,
+        command: 'claude:return',
+      });
+
+      return chalk.red('High');
     case 'medium':
-  
-  return chalk.yellow('Medium');
+      return chalk.yellow('Medium');
     case 'low':
-  
-  return chalk.blue('Low');
+      return chalk.blue('Low');
     default:
-  
-  return chalk.green(priority);
+      return chalk.green(priority);
   }
 }

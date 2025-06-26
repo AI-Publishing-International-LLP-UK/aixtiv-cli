@@ -199,7 +199,7 @@ function generateCode(task, language = 'javascript') {
     createGenericFallback(task, normalizedLanguage);
 
   // Return result object
-  
+
   return {
     code: codeTemplate,
     explanation: `This is a local fallback implementation for "${task}" in ${normalizedLanguage}. The Claude API could not be reached, so a basic template was used.`,
@@ -221,8 +221,8 @@ function createGenericFallback(task, language) {
 
   if (language === 'python') {
     // Return Python template
-  
-  return `def ${normalizedTask}_function():
+
+    return `def ${normalizedTask}_function():
     """
     Implementation for: ${task}
     
@@ -237,7 +237,7 @@ function createGenericFallback(task, language) {
   }
 
   // Default to JavaScript
-  
+
   return `/**
  * ${task}
  * @returns {any} Result of the function

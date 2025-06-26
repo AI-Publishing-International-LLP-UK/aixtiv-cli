@@ -2,13 +2,13 @@
 
 /**
  * Firestore Collection Listing Script
- * 
+ *
  * This script initializes the Firebase Admin SDK with a service account key
  * and lists all collections and their contents from Firestore.
- * 
+ *
  * Usage:
  *   node list-collections.js [--collection <collection-name>] [--limit <number>]
- * 
+ *
  * Options:
  *   --collection  List documents only from a specific collection
  *   --limit       Limit the number of documents displayed per collection (default: 10)
@@ -75,17 +75,17 @@ db.settings({
  */
 function formatDocument(doc) {
   const data = doc.data();
-  
+
   // Format timestamps for readability
-  Object.keys(data).forEach(key => {
+  Object.keys(data).forEach((key) => {
     if (data[key] && typeof data[key].toDate === 'function') {
       data[key] = data[key].toDate().toISOString();
     }
   });
-  
+
   return {
     id: doc.id,
-    ...data
+    ...data,
   };
 }
 
@@ -99,7 +99,7 @@ async function listAllCollections() {
 
     // Get all collections
     const collections = await db.listCollections();
-    
+
     if (collections.length === 0) {
       console.log('No collections found in Firestore.');
       process.exit(0);
@@ -137,19 +137,19 @@ async function listCollectionDocuments(collection, collectionName) {
 
     // Get documents with limit
     const snapshot = await collection.limit(limit).get();
-    
+
     if (snapshot.empty) {
       console.log('   No documents found in this collection.');
       return;
     }
 
     let count = 0;
-    
+
     // Display each document
-    snapshot.forEach(doc => {
+    snapshot.forEach((doc) => {
       console.log(`   📄 Document ID: ${doc.id}`);
       console.log('   📝 Data:');
-      
+
       const formattedData = formatDocument(doc);
       // Pretty print document data with indentation
       console.log('   ' + JSON.stringify(formattedData, null, 3).replace(/\n/g, '\n   '));
@@ -159,15 +159,15 @@ async function listCollectionDocuments(collection, collectionName) {
 
     // Get total count of documents in the collection
     const totalCount = (await collection.count().get()).data().count;
-    
+
     console.log(`   Displayed ${count} of ${totalCount} total documents in this collection`);
-    
+
     // Check for subcollections
     for (const doc of snapshot.docs) {
       const subcollections = await doc.ref.listCollections();
       if (subcollections.length > 0) {
         console.log(`   📚 Document ${doc.id} has subcollections:`);
-        subcollections.forEach(subcoll => {
+        subcollections.forEach((subcoll) => {
           console.log(`      - ${subcoll.id}`);
         });
       }
@@ -178,8 +178,7 @@ async function listCollectionDocuments(collection, collectionName) {
 }
 
 // Execute the main function
-listAllCollections().catch(error => {
+listAllCollections().catch((error) => {
   console.error('Error executing script:', error);
   process.exit(1);
 });
-

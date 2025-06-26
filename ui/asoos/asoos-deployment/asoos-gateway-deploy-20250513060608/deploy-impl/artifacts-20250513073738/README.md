@@ -11,11 +11,13 @@ This deployment package includes the SallyPort authentication module for ASOOS G
 ## Deployment Instructions
 
 1. Install dependencies:
+
    ```
    npm install
    ```
 
 2. Set environment variables in .env or use environment:
+
    - NODE_ENV: Environment (production, development)
    - PORT: Server port
    - DOMAIN: Service domain

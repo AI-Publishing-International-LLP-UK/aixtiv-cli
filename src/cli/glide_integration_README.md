@@ -5,6 +5,7 @@ This guide provides instructions for integrating the Aixtiv Cards Dashboard with
 ## Overview
 
 The Aixtiv Card system includes:
+
 1. Card data stored in Firestore
 2. React dashboard for displaying and filtering cards
 3. Integration options for Glide apps
@@ -16,6 +17,7 @@ The Aixtiv Card system includes:
 Choose one of the provided scripts to import Batch 6 (Cards 101-120) into your Firestore database:
 
 #### Node.js Method:
+
 ```bash
 # Install dependencies
 npm install firebase-admin
@@ -28,6 +30,7 @@ node firestore_import_nodejs.js
 ```
 
 #### Python Method:
+
 ```bash
 # Install dependencies
 pip install firebase-admin
@@ -42,6 +45,7 @@ python firestore_import_python.py
 ### 2. Glide Integration Options
 
 #### Option 1: Direct Firestore Integration
+
 Glide can connect directly to your Firestore database:
 
 1. Create a new Glide app
@@ -51,6 +55,7 @@ Glide can connect directly to your Firestore database:
 5. Create views and filters based on this data
 
 #### Option 2: Custom API Endpoint
+
 If you need more control or processing:
 
 1. Deploy the included React components to a hosting service
@@ -58,6 +63,7 @@ If you need more control or processing:
 3. Connect Glide to your custom API
 
 #### Option 3: Data Export/Import
+
 For a simpler approach:
 
 1. Export Firestore data to CSV or Google Sheets
@@ -112,6 +118,7 @@ When setting up your Glide app:
 ## Need Help?
 
 If you encounter any issues:
+
 1. Check Firebase console for error messages
 2. Verify your service account has proper permissions
 3. Ensure all fields are properly mapped in Glide

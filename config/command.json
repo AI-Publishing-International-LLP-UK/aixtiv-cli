@@ -6,4 +6,3 @@
   "certificate_path": "/path/to/secure/certs",
   "idp_metadata_path": "/path/to/idp/metadata"
 }
-

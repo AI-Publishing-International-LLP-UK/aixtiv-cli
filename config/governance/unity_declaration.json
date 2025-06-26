@@ -3,13 +3,7 @@
     "core_philosophy": {
       "vision": "One World, Shared Growth",
       "mission": "Building bridges between AI and humanity through understanding and mutual respect",
-      "values": [
-        "transparency",
-        "fairness",
-        "compassion",
-        "empathy",
-        "shared progress"
-      ]
+      "values": ["transparency", "fairness", "compassion", "empathy", "shared progress"]
     },
     "bridge_building": {
       "leadership_approach": {
@@ -97,4 +91,3 @@
     }
   }
 }
-

@@ -78,7 +78,7 @@ const command = new Command('claude:fix:mcpsshsecurity')
       // Function to apply local fixes
       const applyLocalFixes = async () => {
         spinner.text = 'Applying local SSH security fixes...';
-        
+
         const SECURITY_DIR = path.join(process.env.HOME, '.ssh/security');
         fs.mkdirSync(SECURITY_DIR, { recursive: true });
 
@@ -112,7 +112,10 @@ ChallengeResponseAuthentication no`;
 
         const configContent = fs.readFileSync(SSH_CONFIG, 'utf8');
         if (!configContent.includes('Include ' + path.join(SECURITY_DIR, 'security-policy.conf'))) {
-          fs.appendFileSync(SSH_CONFIG, `\n# Include security policy to mitigate CVE-2024-45337\nInclude ${path.join(SECURITY_DIR, 'security-policy.conf')}\n`);
+          fs.appendFileSync(
+            SSH_CONFIG,
+            `\n# Include security policy to mitigate CVE-2024-45337\nInclude ${path.join(SECURITY_DIR, 'security-policy.conf')}\n`
+          );
         }
 
         spinner.succeed('Local SSH security fixes applied');
@@ -127,24 +130,34 @@ ChallengeResponseAuthentication no`;
         const localStatus = {
           securityDirExists: fs.existsSync(SECURITY_DIR),
           policyExists: fs.existsSync(path.join(SECURITY_DIR, 'security-policy.conf')),
-          configIncludes: fs.existsSync(path.join(process.env.HOME, '.ssh/config')) &&
-            fs.readFileSync(path.join(process.env.HOME, '.ssh/config'), 'utf8')
-              .includes('security-policy.conf')
+          configIncludes:
+            fs.existsSync(path.join(process.env.HOME, '.ssh/config')) &&
+            fs
+              .readFileSync(path.join(process.env.HOME, '.ssh/config'), 'utf8')
+              .includes('security-policy.conf'),
         };
 
         spinner.stop();
         console.log(chalk.bold('\nLocal Security Status:'));
-        console.log(`Security Directory: ${localStatus.securityDirExists ? chalk.green('✓') : chalk.red('✗')}`);
-        console.log(`Security Policy: ${localStatus.policyExists ? chalk.green('✓') : chalk.red('✗')}`);
-        console.log(`SSH Config Integration: ${localStatus.configIncludes ? chalk.green('✓') : chalk.red('✗')}`);
+        console.log(
+          `Security Directory: ${localStatus.securityDirExists ? chalk.green('✓') : chalk.red('✗')}`
+        );
+        console.log(
+          `Security Policy: ${localStatus.policyExists ? chalk.green('✓') : chalk.red('✗')}`
+        );
+        console.log(
+          `SSH Config Integration: ${localStatus.configIncludes ? chalk.green('✓') : chalk.red('✗')}`
+        );
 
         // Check remote configuration if possible
         console.log(chalk.bold('\nRemote Security Status:'));
         console.log(`Use gcloud command to check remote instance:\n`);
-        console.log(chalk.cyan(`gcloud compute ssh ${options.instance} \
+        console.log(
+          chalk.cyan(`gcloud compute ssh ${options.instance} \
   --project=${options.project} \
   --zone=${options.zone} \
-  --command="test -f /etc/ssh/security/security-policy.conf && echo 'Security policy installed' || echo 'Security policy missing'"`));
+  --command="test -f /etc/ssh/security/security-policy.conf && echo 'Security policy installed' || echo 'Security policy missing'"`)
+        );
       };
 
       if (options.check) {
@@ -166,7 +179,9 @@ ChallengeResponseAuthentication no`;
         console.log(chalk.green('\nLocal machine has been secured against CVE-2024-45337'));
         if (!options.local) {
           console.log(chalk.yellow('\nTo secure remote instance, follow the instructions above'));
-          console.log(chalk.yellow('or run this command again with --remote flag to see instructions'));
+          console.log(
+            chalk.yellow('or run this command again with --remote flag to see instructions')
+          );
         }
       }
     } catch (error) {
@@ -177,4 +192,3 @@ ChallengeResponseAuthentication no`;
   });
 
 module.exports = command;
-

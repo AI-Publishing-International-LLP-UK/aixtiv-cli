@@ -1,4 +1,3 @@
-
 // gateway-server.js — Aixtiv Symphony Integration Gateway
 const express = require('express');
 const path = require('path');
@@ -22,7 +21,7 @@ const logger = winston.createLogger({
     winston.format.json()
   ),
   defaultMeta: { service: 'aixtiv-gateway' },
-  transports: [new winston.transports.Console()]
+  transports: [new winston.transports.Console()],
 });
 
 // Middleware
@@ -60,7 +59,7 @@ app.post('/api/dispatch-card', async (req, res) => {
       cardId,
       targetAgent,
       timestamp: new Date().toISOString(),
-      status: 'queued'
+      status: 'queued',
     });
     logger.info('Card dispatch queued', { cardId, targetAgent });
     res.json({ status: 'success', message: 'Dispatched successfully' });
@@ -75,7 +74,7 @@ app.get('/api/status', (req, res) => {
   res.json({
     status: 'running',
     timestamp: new Date().toISOString(),
-    symphony: MCP_CONFIG.symphony || {}
+    symphony: MCP_CONFIG.symphony || {},
   });
 });
 
@@ -85,7 +84,7 @@ app.get('/api/card-cascade-status', (req, res) => {
   res.json({
     cardQueueCount,
     memoryPath: '/memoryc2100bplan',
-    lastUpdate: new Date().toISOString()
+    lastUpdate: new Date().toISOString(),
   });
 });
 
@@ -93,6 +92,6 @@ app.get('/api/card-cascade-status', (req, res) => {
 app.listen(PORT, () => {
   logger.info(`Aixtiv Gateway server running at http://localhost:${PORT}`, {
     port: PORT,
-    domain: MCP_CONFIG.domain
+    domain: MCP_CONFIG.domain,
   });
 });

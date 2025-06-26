@@ -45,93 +45,88 @@ const AGENT_FAMILIES = {
 /**
  * HTTP function to trigger a specific agent
  */
-exports.triggerAgent = onCall({
-  region: 'us-west1',
-  memory: '256MiB'
-}, async (request) => {
-  const { data, auth } = request;
-  
-  // Verify authentication
-  if (!auth) {
-    throw new HttpsError(
-      'unauthenticated',
-      'Authentication required to trigger agents'
-    );
-  }
+exports.triggerAgent = onCall(
+  {
+    region: 'us-west1',
+    memory: '256MiB',
+  },
+  async (request) => {
+    const { data, auth } = request;
 
-  try {
-    const { agentId, prompt, options = {} } = data;
-
-    if (!agentId || !prompt) {
-      throw new HttpsError('invalid-argument', 'Agent ID and prompt are required');
+    // Verify authentication
+    if (!auth) {
+      throw new HttpsError('unauthenticated', 'Authentication required to trigger agents');
     }
 
-    // Get agent configuration
-    const agentConfig = await getAgentConfig(agentId);
-    if (!agentConfig) {
-      throw new HttpsError(
-        'not-found',
-        `Agent ${agentId} not found or not configured`
-      );
-    }
+    try {
+      const { agentId, prompt, options = {} } = data;
 
-    // Prepare trigger context
-    const triggerContext = {
-      userId: auth.uid,
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
-      sessionId: options.sessionId || uuidv4(),
-      promptType: options.promptType || 'user_input',
-      agentFamily: agentConfig.family,
-      agentSpecialization: agentConfig.specialization || 'general',
-    };
-
-    // Log the trigger
-    await db.collection('agent_triggers').add({
-      ...triggerContext,
-      agentId,
-      prompt,
-      options,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
-
-    // Dispatch to the agent
-    const result = await dispatcher.dispatch(
-      {
-        type: 'agent_request',
-        content: prompt,
-        agentId,
-        targetId: options.targetId,
-        metadata: {
-          ...options.metadata,
-          triggerContext,
-        },
-      },
-      {
-        ...options,
-        userId: auth.uid,
+      if (!agentId || !prompt) {
+        throw new HttpsError('invalid-argument', 'Agent ID and prompt are required');
       }
-    );
 
-    return result;
-  } catch (error) {
-    console.error('Error triggering agent:', error);
+      // Get agent configuration
+      const agentConfig = await getAgentConfig(agentId);
+      if (!agentConfig) {
+        throw new HttpsError('not-found', `Agent ${agentId} not found or not configured`);
+      }
 
-    throw new HttpsError(
-      'internal',
-      error.message || 'An unknown error occurred',
-      error
-    );
+      // Prepare trigger context
+      const triggerContext = {
+        userId: auth.uid,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        sessionId: options.sessionId || uuidv4(),
+        promptType: options.promptType || 'user_input',
+        agentFamily: agentConfig.family,
+        agentSpecialization: agentConfig.specialization || 'general',
+      };
+
+      // Log the trigger
+      await db.collection('agent_triggers').add({
+        ...triggerContext,
+        agentId,
+        prompt,
+        options,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+
+      // Dispatch to the agent
+      const result = await dispatcher.dispatch(
+        {
+          type: 'agent_request',
+          content: prompt,
+          agentId,
+          targetId: options.targetId,
+          metadata: {
+            ...options.metadata,
+            triggerContext,
+          },
+        },
+        {
+          ...options,
+          userId: auth.uid,
+        }
+      );
+
+      return result;
+    } catch (error) {
+      console.error('Error triggering agent:', error);
+
+      throw new HttpsError('internal', error.message || 'An unknown error occurred', error);
+    }
   }
-});
+);
 
 /**
  * Firestore trigger for automated agent responses based on chat messages
  */
-exports.onChatMessageCreated = onDocumentCreated({
-  document: 'chats/{chatId}/messages/{messageId}',
-  region: 'us-west1',
-  memory: '256MiB'
-}, async (event) => {
+exports.onChatMessageCreated = onDocumentCreated(
+  {
+    document: 'chats/{chatId}/messages/{messageId}',
+    region: 'us-west1',
+    memory: '256MiB',
+  },
+  async (event) => {
     try {
       const message = event.data.data();
       const { chatId, messageId } = event.params;
@@ -286,16 +281,19 @@ exports.onChatMessageCreated = onDocumentCreated({
       console.error('Error processing chat message:', error);
       return null;
     }
-  });
+  }
+);
 
 /**
  * Scheduled function to trigger periodic agent actions
  */
-exports.scheduledAgentActions = onSchedule({
-  schedule: 'every 30 minutes',
-  region: 'us-west1',
-  memory: '256MiB'
-}, async (event) => {
+exports.scheduledAgentActions = onSchedule(
+  {
+    schedule: 'every 30 minutes',
+    region: 'us-west1',
+    memory: '256MiB',
+  },
+  async (event) => {
     try {
       console.log('Running scheduled agent actions');
 
@@ -402,24 +400,27 @@ exports.scheduledAgentActions = onSchedule({
       console.error('Error in scheduled agent actions:', error);
       return { error: error.message };
     }
-  });
+  }
+);
 
 /**
  * Firestore trigger to process scheduled agent actions
  */
-exports.processScheduledAgentActions = onDocumentCreated({
-  document: 'scheduled_agent_actions/{actionId}',
-  region: 'us-west1',
-  memory: '256MiB'
-}, async (event) => {
+exports.processScheduledAgentActions = onDocumentCreated(
+  {
+    document: 'scheduled_agent_actions/{actionId}',
+    region: 'us-west1',
+    memory: '256MiB',
+  },
+  async (event) => {
     try {
       const actionData = event.data.data();
-      
+
       // Skip if already processed
       if (actionData.status !== 'pending') {
         return null;
       }
-      
+
       console.log(
         `Processing scheduled action ${event.params.actionId} for agent ${actionData.agentId}`
       );
@@ -529,7 +530,8 @@ exports.processScheduledAgentActions = onDocumentCreated({
         processedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
     }
-  });
+  }
+);
 
 /**
  * Helper function to get agent configuration

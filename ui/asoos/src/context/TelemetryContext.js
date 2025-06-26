@@ -8,8 +8,6 @@ export const TelemetryProvider = ({ children }) => {
   };
 
   return (
-    <TelemetryContext.Provider value={{ recordInteraction }}>
-      {children}
-    </TelemetryContext.Provider>
+    <TelemetryContext.Provider value={{ recordInteraction }}>{children}</TelemetryContext.Provider>
   );
 };

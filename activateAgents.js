@@ -11,7 +11,7 @@ async function activateAllAgents() {
   const batch = db.batch();
   let count = 0;
 
-  snapshot.forEach(doc => {
+  snapshot.forEach((doc) => {
     const agentData = doc.data();
     if (agentData.status === 'offline') {
       batch.update(doc.ref, {

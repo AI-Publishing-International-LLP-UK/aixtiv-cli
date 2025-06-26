@@ -3,6 +3,7 @@
 ## Current → New Structure Mapping
 
 ### Core Components
+
 ```
 📂 Current: /src/cli, /bin, /lib
 📂 New: /core/cli
@@ -18,6 +19,7 @@ Reason: All shared utilities in one location
 ```
 
 ### Feature Modules
+
 ```
 📂 Current: /auth, /security, /sallyport
 📂 New: /modules/auth
@@ -33,6 +35,7 @@ Reason: Domain management consolidated
 ```
 
 ### Assets & Resources
+
 ```
 📂 Current: /ui/assets, /public
 📂 New: /assets/cdn
@@ -44,6 +47,7 @@ Reason: Locally required assets
 ```
 
 ### Configuration
+
 ```
 📂 Current: /config, /environments
 📂 New: /config/{prod,dev}
@@ -53,16 +57,19 @@ Reason: Environment-specific configs
 ## Key Features Preserved
 
 ### Authentication Flow
+
 - SallyPort remains the central auth system
 - Multi-level authentication (6.0 to 4.25)
 - Billing state management
 
 ### Domain Management
+
 - Firebase multi-site hosting
 - 200 domain optimization
 - Dewey classification system
 
 ### Agent System
+
 - PCP management
 - Time Presser capabilities
 - Timeliner functions
@@ -70,11 +77,13 @@ Reason: Environment-specific configs
 ## Optimization Benefits
 
 1. Faster Loading
+
    - Lazy loading of non-core features
    - CDN-delivered assets
    - Optimized dependencies
 
 2. Better Organization
+
    - Clear feature boundaries
    - Easier to find code
    - Simpler maintenance
@@ -87,6 +96,7 @@ Reason: Environment-specific configs
 ## Migration Steps
 
 1. Core Migration
+
    ```bash
    # Move CLI core
    mv src/cli/* new-structure/core/cli/
@@ -95,6 +105,7 @@ Reason: Environment-specific configs
    ```
 
 2. Module Migration
+
    ```bash
    # Move auth module
    mv auth/* new-structure/modules/auth/
@@ -103,6 +114,7 @@ Reason: Environment-specific configs
    ```
 
 3. Asset Migration
+
    ```bash
    # Move and optimize assets
    mv ui/assets/* new-structure/assets/cdn/
@@ -119,11 +131,13 @@ Reason: Environment-specific configs
 ## New Features Enabled
 
 1. Easy Feature Addition
+
    ```bash
    mkdir -p new-structure/modules/new-feature/{lib,tests,docs}
    ```
 
 2. Simple Deployment
+
    ```bash
    npm run build:prod  # Builds optimized bundle
    npm run deploy:cdn  # Deploys to CDN
@@ -134,4 +148,3 @@ Reason: Environment-specific configs
    npm run dev  # Starts dev server with hot reload
    npm run test:watch  # Runs tests in watch mode
    ```
-

@@ -161,7 +161,7 @@ program
 // Revoke resource access
 program
   .command('resource:revoke')
-  .description('Revoke an agent\'s access to a resource')
+  .description("Revoke an agent's access to a resource")
   .requiredOption('--principal <email>', 'Principal email')
   .requiredOption('--agent <id>', 'Agent ID')
   .requiredOption('--resource <id>', 'Resource ID')
@@ -188,7 +188,9 @@ program
   .requiredOption('-r, --resource <resource>', 'Resource ID')
   .option('-t, --type <type>', 'Access type (full, readonly, delegated)', 'full')
   .action((options) => {
-    console.log(chalk.yellow('Warning: agent:grant is deprecated. Please use resource:grant instead.'));
+    console.log(
+      chalk.yellow('Warning: agent:grant is deprecated. Please use resource:grant instead.')
+    );
     legacyAgentGrant(options);
   });
 
@@ -199,7 +201,9 @@ program
   .requiredOption('-a, --agent <agent>', 'Agent ID')
   .requiredOption('-r, --resource <resource>', 'Resource ID')
   .action((options) => {
-    console.log(chalk.yellow('Warning: agent:revoke is deprecated. Please use resource:revoke instead.'));
+    console.log(
+      chalk.yellow('Warning: agent:revoke is deprecated. Please use resource:revoke instead.')
+    );
     legacyAgentRevoke(options);
   });
 
@@ -208,19 +212,27 @@ program
   .description('[Legacy] Activate agents (use agent:update instead)')
   .option('-a, --agent <agent>', 'Specific agent to activate (omit to activate all)')
   .action((options) => {
-    console.log(chalk.yellow('Warning: agent:activate is deprecated. Please use agent:update instead.'));
+    console.log(
+      chalk.yellow('Warning: agent:activate is deprecated. Please use agent:update instead.')
+    );
     legacyAgentActivate(options);
   });
 
 // Legacy co-pilot commands
 program
   .command('copilot:link')
-  .description('[Legacy] Link a co-pilot to a principal (use agent:register with type COPILOT instead)')
+  .description(
+    '[Legacy] Link a co-pilot to a principal (use agent:register with type COPILOT instead)'
+  )
   .requiredOption('-e, --email <email>', 'Principal email')
   .requiredOption('-c, --copilot <copilot>', 'Co-pilot email or name')
   .option('-l, --level <level>', 'Trust level (standard, enhanced, executive)', 'standard')
   .action((options) => {
-    console.log(chalk.yellow('Warning: copilot:link is deprecated. Please use agent:register with type COPILOT instead.'));
+    console.log(
+      chalk.yellow(
+        'Warning: copilot:link is deprecated. Please use agent:register with type COPILOT instead.'
+      )
+    );
     legacyCopilotLink(options);
   });
 
@@ -230,17 +242,25 @@ program
   .requiredOption('-e, --email <email>', 'Principal email')
   .requiredOption('-c, --copilot <copilot>', 'Co-pilot email or name')
   .action((options) => {
-    console.log(chalk.yellow('Warning: copilot:unlink is deprecated. Please use agent:update instead.'));
+    console.log(
+      chalk.yellow('Warning: copilot:unlink is deprecated. Please use agent:update instead.')
+    );
     legacyCopilotUnlink(options);
   });
 
 program
   .command('copilot:list')
-  .description('[Legacy] List co-pilots linked to a principal (use agent:list with type COPILOT instead)')
+  .description(
+    '[Legacy] List co-pilots linked to a principal (use agent:list with type COPILOT instead)'
+  )
   .option('-e, --email <email>', 'Principal email (if omitted, lists all relationships)')
   .option('-s, --status <status>', 'Filter by status (active, pending, all)', 'active')
   .action((options) => {
-    console.log(chalk.yellow('Warning: copilot:list is deprecated. Please use agent:list with type COPILOT instead.'));
+    console.log(
+      chalk.yellow(
+        'Warning: copilot:list is deprecated. Please use agent:list with type COPILOT instead.'
+      )
+    );
     legacyCopilotList(options);
   });
 
@@ -251,7 +271,9 @@ program
   .requiredOption('-p, --principal <principal>', 'Principal email')
   .option('-c, --code <code>', 'Cultural Empathy Code')
   .action((options) => {
-    console.log(chalk.yellow('Warning: copilot:verify is deprecated. Please use agent:update instead.'));
+    console.log(
+      chalk.yellow('Warning: copilot:verify is deprecated. Please use agent:update instead.')
+    );
     legacyCopilotVerify(options);
   });
 
@@ -263,19 +285,25 @@ program
   .requiredOption('-r, --resource <resource>', 'Resource ID')
   .option('-t, --type <type>', 'Access type (readonly, delegated, full)', 'readonly')
   .action((options) => {
-    console.log(chalk.yellow('Warning: copilot:grant is deprecated. Please use resource:grant instead.'));
+    console.log(
+      chalk.yellow('Warning: copilot:grant is deprecated. Please use resource:grant instead.')
+    );
     legacyCopilotGrant(options);
   });
 
 program
   .command('copilot:expiration')
-  .description('[Legacy] Set an expiration period for a co-pilot relationship (use agent:update instead)')
+  .description(
+    '[Legacy] Set an expiration period for a co-pilot relationship (use agent:update instead)'
+  )
   .option('-e, --email <email>', 'Principal email')
   .option('-c, --copilot <copilot>', 'Co-pilot email or name')
   .requiredOption('-p, --period <period>', 'Time period value (e.g., 30)')
   .option('-u, --unit <unit>', 'Time unit (minutes, hours, days, weeks, months)', 'days')
   .action((options) => {
-    console.log(chalk.yellow('Warning: copilot:expiration is deprecated. Please use agent:update instead.'));
+    console.log(
+      chalk.yellow('Warning: copilot:expiration is deprecated. Please use agent:update instead.')
+    );
     legacyCopilotExpiration(options);
   });
 
@@ -305,4 +333,3 @@ program
 
 // Parse command line arguments
 program.parse(process.argv);
-

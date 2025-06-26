@@ -17,18 +17,18 @@ const statusCommand = new Command('status')
 
     try {
       let command = `gcloud builds list --project="${options.project}" --limit=${options.limit}`;
-      
+
       if (options.filter) {
         command += ` --filter="${options.filter}"`;
       }
 
       const result = execSync(command, { encoding: 'utf8' });
       spinner.succeed('CI/CD status retrieved');
-      
+
       console.log();
       console.log(chalk.cyan('Recent CI/CD builds:'));
       console.log(result);
-      
+
       // Provide helpful commands
       console.log(chalk.yellow('\nUseful commands:'));
       console.log(chalk.blue(`  aixtiv ci logs             - View CI/CD logs`));
@@ -38,9 +38,13 @@ const statusCommand = new Command('status')
     } catch (error) {
       spinner.fail('Failed to check CI/CD status');
       console.error(chalk.red(`Error: ${error.message}`));
-      
+
       if (error.message.includes('not installed')) {
-        console.log(chalk.yellow('\nGcloud CLI may not be installed or authenticated. Please install and authenticate with:'));
+        console.log(
+          chalk.yellow(
+            '\nGcloud CLI may not be installed or authenticated. Please install and authenticate with:'
+          )
+        );
         console.log(chalk.blue('  1. https://cloud.google.com/sdk/docs/install'));
         console.log(chalk.blue('  2. gcloud auth login'));
         console.log(chalk.blue(`  3. gcloud config set project ${options.project}`));

@@ -313,7 +313,7 @@ const ASOOSInterface = () => {
         // Expert Profiles
         drLucyTitle: 'Dr. Lucy',
         drLucyDesc: "Sees your strategic rhythm. Her Flight Memory system tracks every decision, transforming scattered moments into a coherent trajectory. She's your continuity.",
-        drLucyQuote: '"While you're planning tomorrow, I'm preserving what made today succeed."',
+        drLucyQuote: '"While you\'re planning tomorrow, I\'m preserving what made today succeed."',
         
         drGrantTitle: 'Dr. Grant',
         drGrantDesc: 'Builds your secure perimeter. His cyber-authentication systems ensure that only the right hands touch the right data, with zero compromise.',

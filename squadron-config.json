@@ -1,0 +1,35 @@
+{
+  "visionLake": {
+    "divinityWing": {
+      "leaders": [
+        {"name": "Dr. Lucy RIX", "squadron": "01", "role": "Innovation/R&D", "instances": ["01", "02", "03"]},
+        {"name": "Dr. Grant RIX", "squadron": "02", "role": "Cyber Protection/co-CEO", "instances": ["01", "02", "03"]},
+        {"name": "Dr. Sabina RIX", "squadron": "03", "role": "Head of Sales", "instances": ["01", "02", "03"]},
+        {"name": "Dr. Claude RIX", "squadron": "04", "role": "RIX/QRIX Master", "instances": ["01", "02", "03"]},
+        {"name": "Dr. Maria RIX", "squadron": "05", "role": "CRX/Psychology", "instances": ["01", "02", "03"]},
+        {"name": "Dr. Cypriot RIX", "squadron": "06", "role": "CPC/Hard Skills", "instances": ["01", "02", "03"]},
+        {"name": "Dr. Memoria RIX", "role": "Anthology Leader", "instances": ["01", "02", "03"]},
+        {"name": "Dr. Match RIX", "role": "COO/PR/Marketing", "instances": ["01", "02", "03"]},
+        {"name": "Professor Lee RIX", "role": "Master Librarian/Q4dLenz", "instances": ["01", "02", "03"]},
+        {"name": "Dr. Roark RIX", "role": "Tribrain Research", "instances": ["01", "02", "03"]},
+        {"name": "Dr. Burby RIX", "role": "CFO/Legal/Risk", "instances": ["01", "02", "03"]}
+      ]
+    },
+    "jetPort": {
+      "flightMemorySystem": {
+        "capacity": "16000000",
+        "updateFrequency": "realtime"
+      },
+      "antiGravityPowercraft": {
+        "timelinerA210": "single-pilot-automation",
+        "timepresserA590": "33-RIX-capacity"
+      }
+    },
+    "compassField": {
+      "deweyIndex": {
+        "cards": 99000,
+        "certificationCapacity": 16000000
+      }
+    }
+  }
+}

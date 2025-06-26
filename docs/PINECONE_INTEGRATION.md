@@ -9,16 +9,19 @@ This document provides guidance for the Pinecone vector database integration wit
 The Pinecone integration consists of the following components:
 
 1. **Core Integration Module** (`src/functions/pinecone-integration-updated.js`)
+
    - Handles embedding generation via OpenAI or Vertex AI
    - Manages Pinecone index creation and queries
    - Provides vector storage and retrieval functions
 
 2. **Secret Management** (`src/services/secrets/`)
+
    - Securely accesses API keys from GCP Secret Manager
    - Provides fallback to local configuration files
    - Manages credentials for multiple AI providers
 
 3. **Provider Factory** (`src/services/secrets/provider-factory.js`)
+
    - Creates configured API clients for different providers
    - Supports OpenAI, Anthropic, Pinecone, and Vertex AI
    - Implements embedding generation for different providers
@@ -75,13 +78,13 @@ Dr. Match utilizes Pinecone to:
 const pineconeIntegration = require('../src/functions/pinecone-integration-updated');
 
 await pineconeIntegration.storeMemoryInPinecone({
-  content: "User request about marketing strategy",
-  userId: "user123",
-  sessionId: "session456",
-  copilotId: "dr-match",
-  type: "user_input",
-  category: "marketing",
-  importance: 7
+  content: 'User request about marketing strategy',
+  userId: 'user123',
+  sessionId: 'session456',
+  copilotId: 'dr-match',
+  type: 'user_input',
+  category: 'marketing',
+  importance: 7,
 });
 ```
 
@@ -91,8 +94,8 @@ await pineconeIntegration.storeMemoryInPinecone({
 const pineconeIntegration = require('../src/functions/pinecone-integration-updated');
 
 const results = await pineconeIntegration.searchSimilarMemories(
-  "Strategy for marketing to enterprise customers",
-  { userId: "user123" },
+  'Strategy for marketing to enterprise customers',
+  { userId: 'user123' },
   5
 );
 ```

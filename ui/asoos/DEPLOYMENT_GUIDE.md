@@ -5,6 +5,7 @@ This guide provides comprehensive instructions for deploying the ASOOS (Aixtiv S
 ## Overview
 
 The ASOOS UI is a sophisticated interface built with modern web technologies including:
+
 - React for component-based UI
 - Framer Motion for advanced animations
 - Three.js for 3D effects
@@ -26,6 +27,7 @@ The deployment package (`asoos-gateway-deploy-20250513060608.zip`) contains ever
 ### 1. Prepare Your Web Server
 
 Ensure your web server meets these requirements:
+
 - Node.js v14+ installed
 - HTTPS certificate for asoos.2100.cool domain
 - Outbound access to the Integration Gateway at us-west1-api-for-warp-drive.cloudfunctions.net
@@ -54,7 +56,7 @@ chmod +x start.sh
 server {
     listen 80;
     server_name asoos.2100.cool;
-    
+
     # Redirect HTTP to HTTPS
     return 301 https://$host$request_uri;
 }
@@ -62,16 +64,16 @@ server {
 server {
     listen 443 ssl;
     server_name asoos.2100.cool;
-    
+
     ssl_certificate /path/to/cert.pem;
     ssl_certificate_key /path/to/key.pem;
-    
+
     # Static files
     location / {
         root /path/to/asoos-gateway-deploy-20250513060608/public;
         try_files $uri @nodejs;
     }
-    
+
     # Node.js API proxy
     location @nodejs {
         proxy_pass http://localhost:3002;
@@ -95,19 +97,19 @@ server {
 
 <VirtualHost *:443>
     ServerName asoos.2100.cool
-    
+
     SSLEngine on
     SSLCertificateFile /path/to/cert.pem
     SSLCertificateKeyFile /path/to/key.pem
-    
+
     DocumentRoot /path/to/asoos-gateway-deploy-20250513060608/public
-    
+
     <Directory /path/to/asoos-gateway-deploy-20250513060608/public>
         Options -Indexes +FollowSymLinks
         AllowOverride All
         Require all granted
     </Directory>
-    
+
     ProxyPreserveHost On
     ProxyPass / http://localhost:3002/
     ProxyPassReverse / http://localhost:3002/

@@ -14,7 +14,7 @@ app.get('/api/status', (req, res) => {
   res.json({
     status: 'running',
     message: 'ASOOS UI API is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 

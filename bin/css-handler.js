@@ -2,10 +2,10 @@
 
 /**
  * CSS Handler Script
- * 
+ *
  * This script safely handles CSS content in a shell environment to avoid zsh parse errors.
  * It can read CSS from stdin, a string argument, or a file, and either display it or save it.
- * 
+ *
  * Usage:
  *   - Pipe content: cat style.css | node css-handler.js
  *   - From file: node css-handler.js --file=input.css
@@ -23,11 +23,11 @@ const options = {
   file: null,
   css: null,
   output: null,
-  verbose: false
+  verbose: false,
 };
 
 // Process arguments
-args.forEach(arg => {
+args.forEach((arg) => {
   if (arg.startsWith('--file=')) {
     options.file = arg.substring(7);
   } else if (arg.startsWith('--css=')) {
@@ -68,7 +68,7 @@ function processCss(css) {
   if (options.verbose) {
     console.log('Processing CSS content...');
   }
-  
+
   // Here you could perform additional CSS processing if needed
   return css;
 }
@@ -89,7 +89,7 @@ function outputResult(css) {
     console.log('\nTo use this CSS safely in a shell script:');
     console.log('1. Save it to a file: node css-handler.js [options] --output=file.css');
     console.log('2. Use cat to display: cat file.css');
-    console.log('3. Or use single quotes when needed: echo \'your { css: here; }\'');
+    console.log("3. Or use single quotes when needed: echo 'your { css: here; }'");
   }
 }
 
@@ -118,13 +118,13 @@ async function main() {
       const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
-        terminal: false
+        terminal: false,
       });
 
       for await (const line of rl) {
         cssContent += line + '\n';
       }
-      
+
       if (options.verbose) {
         console.log('Read CSS from stdin');
       }
@@ -142,8 +142,7 @@ async function main() {
 }
 
 // Run the main function
-main().catch(error => {
+main().catch((error) => {
   console.error(`Error: ${error.message}`);
   process.exit(1);
 });
-

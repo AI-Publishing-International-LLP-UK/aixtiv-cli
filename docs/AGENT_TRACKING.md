@@ -16,13 +16,13 @@ The Agent Tracking System serves several key purposes:
 
 The following agent types are recognized by the system:
 
-| Agent Type | Description | Example ID |
-|------------|-------------|------------|
-| Human Operators | Human users with direct system access | `HUMAN-ADMIN` |
-| AI Assistants | AI systems operating within constraints | `ANTHROPIC-AGENT-01-CLAUDE` |
-| CI/CD Systems | Automated build and deployment systems | `CI-GITHUB-BUILD` |
-| Scheduled Jobs | Time-based automated operations | `SCHEDULER-BACKUP` |
-| Custom Tools | Special-purpose automation scripts | `TOOL-DOMAIN-SCANNER` |
+| Agent Type      | Description                             | Example ID                  |
+| --------------- | --------------------------------------- | --------------------------- |
+| Human Operators | Human users with direct system access   | `HUMAN-ADMIN`               |
+| AI Assistants   | AI systems operating within constraints | `ANTHROPIC-AGENT-01-CLAUDE` |
+| CI/CD Systems   | Automated build and deployment systems  | `CI-GITHUB-BUILD`           |
+| Scheduled Jobs  | Time-based automated operations         | `SCHEDULER-BACKUP`          |
+| Custom Tools    | Special-purpose automation scripts      | `TOOL-DOMAIN-SCANNER`       |
 
 ## Using the Agent Tracking System
 
@@ -102,7 +102,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      
+
       - name: Setup agent tracking
         run: |
           export AGENT_ID="GITHUB-WORKFLOW-${{ github.workflow }}"

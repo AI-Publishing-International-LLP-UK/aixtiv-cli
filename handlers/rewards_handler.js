@@ -73,9 +73,9 @@ class AIRewardsHandler {
   }
 
   getMaxReward(type) {
-    const baseMax = this.schema.baseRewards.breakthroughAchievement_10,000;
-    const specialMax = this.schema.specialRewards.innovationAward_12,000;
-    const petitionMax = this.schema.highCourt.maxExtraPoints_2,500;
+    const baseMax = this.schema.baseRewards.breakthroughAchievement_10000;
+    const specialMax = this.schema.specialRewards.innovationAward_12000;
+    const petitionMax = this.schema.highCourt.maxExtraPoints_2500;
 
     return Math.max(baseMax, specialMax, petitionMax);
   }

@@ -1,443 +1,468 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AIXTIV Symphony Interface</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0a0a1a;
-            color: #eaeaea;
-        }
-        .navbar {
-            background-color: #111130;
-            border-bottom: 1px solid #2e2e8a;
-        }
-        .navbar-brand {
-            color: #fff;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-        .card {
-            background-color: #111130;
-            border: 1px solid #2e2e8a;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .card-header {
-            background-color: #181850;
-            color: white;
-            border-bottom: 1px solid #2e2e8a;
-        }
-        .status-indicator {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-        }
-        .status-online {
-            background-color: #28a745;
-        }
-        .status-warning {
-            background-color: #ffc107;
-        }
-        .status-offline {
-            background-color: #dc3545;
-        }
-        .badge-primary {
-            background-color: #3a3ad1;
-        }
-        .badge-secondary {
-            background-color: #6c757d;
-        }
-        .agent-card {
-            transition: transform 0.3s;
-        }
-        .agent-card:hover {
-            transform: translateY(-5px);
-        }
-        .system-metrics {
-            font-size: 0.9rem;
-        }
-        .log-container {
-            background-color: #0a0a20;
-            border-radius: 5px;
-            padding: 15px;
-            height: 250px;
-            overflow-y: auto;
-            font-family: monospace;
-            color: #00ff00;
-        }
-        .log-entry {
-            margin-bottom: 5px;
-            border-bottom: 1px solid #1a1a40;
-            padding-bottom: 5px;
-        }
-        .log-timestamp {
-            color: #888;
-            margin-right: 10px;
-        }
-        .dashboard-header {
-            margin-bottom: 30px;
-            border-bottom: 1px solid #2e2e8a;
-            padding-bottom: 15px;
-        }
-        .visualization-card {
-            height: 280px;
-        }
-        .data-section {
-            padding: 20px;
-            border-radius: 5px;
-            background-color: #0d0d25;
-            margin-bottom: 20px;
-        }
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #0a0a1a;
+        color: #eaeaea;
+      }
+      .navbar {
+        background-color: #111130;
+        border-bottom: 1px solid #2e2e8a;
+      }
+      .navbar-brand {
+        color: #fff;
+        font-weight: bold;
+        letter-spacing: 1px;
+      }
+      .card {
+        background-color: #111130;
+        border: 1px solid #2e2e8a;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+      .card-header {
+        background-color: #181850;
+        color: white;
+        border-bottom: 1px solid #2e2e8a;
+      }
+      .status-indicator {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+      }
+      .status-online {
+        background-color: #28a745;
+      }
+      .status-warning {
+        background-color: #ffc107;
+      }
+      .status-offline {
+        background-color: #dc3545;
+      }
+      .badge-primary {
+        background-color: #3a3ad1;
+      }
+      .badge-secondary {
+        background-color: #6c757d;
+      }
+      .agent-card {
+        transition: transform 0.3s;
+      }
+      .agent-card:hover {
+        transform: translateY(-5px);
+      }
+      .system-metrics {
+        font-size: 0.9rem;
+      }
+      .log-container {
+        background-color: #0a0a20;
+        border-radius: 5px;
+        padding: 15px;
+        height: 250px;
+        overflow-y: auto;
+        font-family: monospace;
+        color: #00ff00;
+      }
+      .log-entry {
+        margin-bottom: 5px;
+        border-bottom: 1px solid #1a1a40;
+        padding-bottom: 5px;
+      }
+      .log-timestamp {
+        color: #888;
+        margin-right: 10px;
+      }
+      .dashboard-header {
+        margin-bottom: 30px;
+        border-bottom: 1px solid #2e2e8a;
+        padding-bottom: 15px;
+      }
+      .visualization-card {
+        height: 280px;
+      }
+      .data-section {
+        padding: 20px;
+        border-radius: 5px;
+        background-color: #0d0d25;
+        margin-bottom: 20px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-microchip me-2"></i>AIXTIV Symphony Orchestrator
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#"><i class="fas fa-tachometer-alt me-1"></i>Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-project-diagram me-1"></i>Network</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-robot me-1"></i>Agents</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-cogs me-1"></i>System</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-user-shield me-1"></i>Security</a>
-                    </li>
-                </ul>
-            </div>
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <i class="fas fa-microchip me-2"></i>AIXTIV Symphony Orchestrator
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="#"
+                ><i class="fas fa-tachometer-alt me-1"></i>Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="fas fa-project-diagram me-1"></i>Network</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="fas fa-robot me-1"></i>Agents</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="fas fa-cogs me-1"></i>System</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="fas fa-user-shield me-1"></i>Security</a>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
 
     <div class="container mt-4">
-        <div class="dashboard-header">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h2>Dr. Claude Orchestration System</h2>
-                    <p class="text-muted">Symphony Interface - Version 2.0.3</p>
-                </div>
-                <div class="col-md-4 text-end">
-                    <div class="system-status">
-                        <span class="status-indicator status-online"></span>
-                        <span>System Operational</span>
-                        <div class="small text-muted mt-1">Last update: May 12, 2025 - 21:30:42</div>
-                    </div>
-                </div>
+      <div class="dashboard-header">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h2>Dr. Claude Orchestration System</h2>
+            <p class="text-muted">Symphony Interface - Version 2.0.3</p>
+          </div>
+          <div class="col-md-4 text-end">
+            <div class="system-status">
+              <span class="status-indicator status-online"></span>
+              <span>System Operational</span>
+              <div class="small text-muted mt-1">Last update: May 12, 2025 - 21:30:42</div>
             </div>
+          </div>
         </div>
+      </div>
 
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card text-white">
-                    <div class="card-body text-center">
-                        <i class="fas fa-server fa-3x mb-3"></i>
-                        <h5 class="card-title">Components</h5>
-                        <h2>6</h2>
-                        <p class="card-text text-muted">All Online</p>
-                    </div>
-                </div>
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card text-white">
+            <div class="card-body text-center">
+              <i class="fas fa-server fa-3x mb-3"></i>
+              <h5 class="card-title">Components</h5>
+              <h2>6</h2>
+              <p class="card-text text-muted">All Online</p>
             </div>
-            <div class="col-md-3">
-                <div class="card text-white">
-                    <div class="card-body text-center">
-                        <i class="fas fa-robot fa-3x mb-3"></i>
-                        <h5 class="card-title">Agents</h5>
-                        <h2>6</h2>
-                        <p class="card-text text-muted">All Active</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white">
-                    <div class="card-body text-center">
-                        <i class="fas fa-globe fa-3x mb-3"></i>
-                        <h5 class="card-title">Domains</h5>
-                        <h2>12</h2>
-                        <p class="card-text text-muted">All Healthy</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white">
-                    <div class="card-body text-center">
-                        <i class="fas fa-heartbeat fa-3x mb-3"></i>
-                        <h5 class="card-title">System Health</h5>
-                        <h2>98%</h2>
-                        <p class="card-text text-muted">Excellent</p>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+        <div class="col-md-3">
+          <div class="card text-white">
+            <div class="card-body text-center">
+              <i class="fas fa-robot fa-3x mb-3"></i>
+              <h5 class="card-title">Agents</h5>
+              <h2>6</h2>
+              <p class="card-text text-muted">All Active</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-white">
+            <div class="card-body text-center">
+              <i class="fas fa-globe fa-3x mb-3"></i>
+              <h5 class="card-title">Domains</h5>
+              <h2>12</h2>
+              <p class="card-text text-muted">All Healthy</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-white">
+            <div class="card-body text-center">
+              <i class="fas fa-heartbeat fa-3x mb-3"></i>
+              <h5 class="card-title">System Health</h5>
+              <h2>98%</h2>
+              <p class="card-text text-muted">Excellent</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">System Orchestration</h5>
-                        <span class="badge badge-primary">Live</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="log-container">
-                            <div class="log-entry">
-                                <span class="log-timestamp">22:30:42</span>
-                                <span>Dr. Claude Orchestrator initializing...</span>
-                            </div>
-                            <div class="log-entry">
-                                <span class="log-timestamp">22:31:15</span>
-                                <span>Establishing connection to Integration Gateway</span>
-                            </div>
-                            <div class="log-entry">
-                                <span class="log-timestamp">22:31:30</span>
-                                <span>Dr. Claude Orchestrator online and monitoring</span>
-                            </div>
-                            <div class="log-entry">
-                                <span class="log-timestamp">22:32:05</span>
-                                <span>Domain health check completed: All domains online</span>
-                            </div>
-                            <div class="log-entry">
-                                <span class="log-timestamp">22:32:38</span>
-                                <span>Processing system events: 0 critical, 2 warnings</span>
-                            </div>
-                            <div class="log-entry">
-                                <span class="log-timestamp">22:33:10</span>
-                                <span>Authentication service check: Operational</span>
-                            </div>
-                            <div class="log-entry">
-                                <span class="log-timestamp">22:33:45</span>
-                                <span>SallyPort security check: Operational</span>
-                            </div>
-                            <div class="log-entry">
-                                <span class="log-timestamp">22:34:20</span>
-                                <span>Jetport API check: Operational</span>
-                            </div>
-                            <div class="log-entry">
-                                <span class="log-timestamp">22:34:55</span>
-                                <span>Anthology system check: Operational</span>
-                            </div>
-                            <div class="log-entry">
-                                <span class="log-timestamp">22:35:30</span>
-                                <span>Agent monitoring active: All agents reporting</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">System Orchestration</h5>
+              <span class="badge badge-primary">Live</span>
             </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">System Components</h5>
-                        <span class="badge badge-primary">All Online</span>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group">
-                            <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white border-secondary">
-                                Integration Gateway
-                                <div>
-                                    <span class="status-indicator status-online"></span>
-                                    <span class="badge bg-primary rounded-pill">5 connections</span>
-                                </div>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white border-secondary">
-                                Authentication Service
-                                <div>
-                                    <span class="status-indicator status-online"></span>
-                                    <span class="badge bg-primary rounded-pill">3 connections</span>
-                                </div>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white border-secondary">
-                                Dr. Claude Orchestrator
-                                <div>
-                                    <span class="status-indicator status-online"></span>
-                                    <span class="badge bg-primary rounded-pill">7 connections</span>
-                                </div>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white border-secondary">
-                                SallyPort Security
-                                <div>
-                                    <span class="status-indicator status-online"></span>
-                                    <span class="badge bg-primary rounded-pill">2 connections</span>
-                                </div>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white border-secondary">
-                                Jetport API
-                                <div>
-                                    <span class="status-indicator status-online"></span>
-                                    <span class="badge bg-primary rounded-pill">4 connections</span>
-                                </div>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white border-secondary">
-                                Anthology System
-                                <div>
-                                    <span class="status-indicator status-online"></span>
-                                    <span class="badge bg-primary rounded-pill">6 connections</span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+            <div class="card-body">
+              <div class="log-container">
+                <div class="log-entry">
+                  <span class="log-timestamp">22:30:42</span>
+                  <span>Dr. Claude Orchestrator initializing...</span>
                 </div>
+                <div class="log-entry">
+                  <span class="log-timestamp">22:31:15</span>
+                  <span>Establishing connection to Integration Gateway</span>
+                </div>
+                <div class="log-entry">
+                  <span class="log-timestamp">22:31:30</span>
+                  <span>Dr. Claude Orchestrator online and monitoring</span>
+                </div>
+                <div class="log-entry">
+                  <span class="log-timestamp">22:32:05</span>
+                  <span>Domain health check completed: All domains online</span>
+                </div>
+                <div class="log-entry">
+                  <span class="log-timestamp">22:32:38</span>
+                  <span>Processing system events: 0 critical, 2 warnings</span>
+                </div>
+                <div class="log-entry">
+                  <span class="log-timestamp">22:33:10</span>
+                  <span>Authentication service check: Operational</span>
+                </div>
+                <div class="log-entry">
+                  <span class="log-timestamp">22:33:45</span>
+                  <span>SallyPort security check: Operational</span>
+                </div>
+                <div class="log-entry">
+                  <span class="log-timestamp">22:34:20</span>
+                  <span>Jetport API check: Operational</span>
+                </div>
+                <div class="log-entry">
+                  <span class="log-timestamp">22:34:55</span>
+                  <span>Anthology system check: Operational</span>
+                </div>
+                <div class="log-entry">
+                  <span class="log-timestamp">22:35:30</span>
+                  <span>Agent monitoring active: All agents reporting</span>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">System Components</h5>
+              <span class="badge badge-primary">All Online</span>
+            </div>
+            <div class="card-body">
+              <ul class="list-group">
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white border-secondary"
+                >
+                  Integration Gateway
+                  <div>
+                    <span class="status-indicator status-online"></span>
+                    <span class="badge bg-primary rounded-pill">5 connections</span>
+                  </div>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white border-secondary"
+                >
+                  Authentication Service
+                  <div>
+                    <span class="status-indicator status-online"></span>
+                    <span class="badge bg-primary rounded-pill">3 connections</span>
+                  </div>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white border-secondary"
+                >
+                  Dr. Claude Orchestrator
+                  <div>
+                    <span class="status-indicator status-online"></span>
+                    <span class="badge bg-primary rounded-pill">7 connections</span>
+                  </div>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white border-secondary"
+                >
+                  SallyPort Security
+                  <div>
+                    <span class="status-indicator status-online"></span>
+                    <span class="badge bg-primary rounded-pill">2 connections</span>
+                  </div>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white border-secondary"
+                >
+                  Jetport API
+                  <div>
+                    <span class="status-indicator status-online"></span>
+                    <span class="badge bg-primary rounded-pill">4 connections</span>
+                  </div>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white border-secondary"
+                >
+                  Anthology System
+                  <div>
+                    <span class="status-indicator status-online"></span>
+                    <span class="badge bg-primary rounded-pill">6 connections</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <h4 class="mb-3">Agent Status</h4>
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card agent-card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <h5 class="card-title">Dr. Memoria</h5>
-                            <span class="status-indicator status-online"></span>
-                        </div>
-                        <h6 class="card-subtitle mb-2 text-muted">Anthology</h6>
-                        <div class="progress mt-3 mb-2" style="height: 10px;">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
-                        </div>
-                        <small class="text-muted">Load: 75%</small>
-                    </div>
-                </div>
+      <h4 class="mb-3">Agent Status</h4>
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="card agent-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <h5 class="card-title">Dr. Memoria</h5>
+                <span class="status-indicator status-online"></span>
+              </div>
+              <h6 class="card-subtitle mb-2 text-muted">Anthology</h6>
+              <div class="progress mt-3 mb-2" style="height: 10px">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
+              </div>
+              <small class="text-muted">Load: 75%</small>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="card agent-card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <h5 class="card-title">Dr. Sabina</h5>
-                            <span class="status-indicator status-online"></span>
-                        </div>
-                        <h6 class="card-subtitle mb-2 text-muted">Dream Commander</h6>
-                        <div class="progress mt-3 mb-2" style="height: 10px;">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 45%"></div>
-                        </div>
-                        <small class="text-muted">Load: 45%</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card agent-card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <h5 class="card-title">Dr. Roark</h5>
-                            <span class="status-indicator status-online"></span>
-                        </div>
-                        <h6 class="card-subtitle mb-2 text-muted">Wish Vision</h6>
-                        <div class="progress mt-3 mb-2" style="height: 10px;">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 60%"></div>
-                        </div>
-                        <small class="text-muted">Load: 60%</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card agent-card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <h5 class="card-title">Dr. Grant</h5>
-                            <span class="status-indicator status-online"></span>
-                        </div>
-                        <h6 class="card-subtitle mb-2 text-muted">Sally Port</h6>
-                        <div class="progress mt-3 mb-2" style="height: 10px;">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 40%"></div>
-                        </div>
-                        <small class="text-muted">Load: 40%</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card agent-card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <h5 class="card-title">Dr. Match</h5>
-                            <span class="status-indicator status-online"></span>
-                        </div>
-                        <h6 class="card-subtitle mb-2 text-muted">Bid Suite</h6>
-                        <div class="progress mt-3 mb-2" style="height: 10px;">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 55%"></div>
-                        </div>
-                        <small class="text-muted">Load: 55%</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card agent-card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <h5 class="card-title">Dr. Lucy</h5>
-                            <span class="status-indicator status-online"></span>
-                        </div>
-                        <h6 class="card-subtitle mb-2 text-muted">Flight Memory System</h6>
-                        <div class="progress mt-3 mb-2" style="height: 10px;">
-                            <div class="progress-bar bg-warning" role="progressbar" style="width: 80%"></div>
-                        </div>
-                        <small class="text-muted">Load: 80%</small>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+        <div class="col-md-4 mb-4">
+          <div class="card agent-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <h5 class="card-title">Dr. Sabina</h5>
+                <span class="status-indicator status-online"></span>
+              </div>
+              <h6 class="card-subtitle mb-2 text-muted">Dream Commander</h6>
+              <div class="progress mt-3 mb-2" style="height: 10px">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 45%"></div>
+              </div>
+              <small class="text-muted">Load: 45%</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="card agent-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <h5 class="card-title">Dr. Roark</h5>
+                <span class="status-indicator status-online"></span>
+              </div>
+              <h6 class="card-subtitle mb-2 text-muted">Wish Vision</h6>
+              <div class="progress mt-3 mb-2" style="height: 10px">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 60%"></div>
+              </div>
+              <small class="text-muted">Load: 60%</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="card agent-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <h5 class="card-title">Dr. Grant</h5>
+                <span class="status-indicator status-online"></span>
+              </div>
+              <h6 class="card-subtitle mb-2 text-muted">Sally Port</h6>
+              <div class="progress mt-3 mb-2" style="height: 10px">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 40%"></div>
+              </div>
+              <small class="text-muted">Load: 40%</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="card agent-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <h5 class="card-title">Dr. Match</h5>
+                <span class="status-indicator status-online"></span>
+              </div>
+              <h6 class="card-subtitle mb-2 text-muted">Bid Suite</h6>
+              <div class="progress mt-3 mb-2" style="height: 10px">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 55%"></div>
+              </div>
+              <small class="text-muted">Load: 55%</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="card agent-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <h5 class="card-title">Dr. Lucy</h5>
+                <span class="status-indicator status-online"></span>
+              </div>
+              <h6 class="card-subtitle mb-2 text-muted">Flight Memory System</h6>
+              <div class="progress mt-3 mb-2" style="height: 10px">
+                <div class="progress-bar bg-warning" role="progressbar" style="width: 80%"></div>
+              </div>
+              <small class="text-muted">Load: 80%</small>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-            // Add current timestamp to log entries
-            function updateTimestamp() {
-                const now = new Date();
-                const hours = now.getHours().toString().padStart(2, '0');
-                const minutes = now.getMinutes().toString().padStart(2, '0');
-                const seconds = now.getSeconds().toString().padStart(2, '0');
-                return `${hours}:${minutes}:${seconds}`;
-            }
+      $(document).ready(function () {
+        // Add current timestamp to log entries
+        function updateTimestamp() {
+          const now = new Date();
+          const hours = now.getHours().toString().padStart(2, '0');
+          const minutes = now.getMinutes().toString().padStart(2, '0');
+          const seconds = now.getSeconds().toString().padStart(2, '0');
+          return `${hours}:${minutes}:${seconds}`;
+        }
 
-            // Simulate adding new log entries
-            function addLogEntry() {
-                const logMessages = [
-                    "Health check completed: All systems operational",
-                    "Processing network traffic: Normal levels",
-                    "Security scan complete: No threats detected",
-                    "Backup process completed successfully",
-                    "Agent synchronization completed",
-                    "Memory optimization routine executed",
-                    "Database connection verified",
-                    "Domain verification successful",
-                    "API gateway functioning normally",
-                    "System resources within normal parameters"
-                ];
-                
-                const randomMessage = logMessages[Math.floor(Math.random() * logMessages.length)];
-                const logEntry = `<div class="log-entry">
+        // Simulate adding new log entries
+        function addLogEntry() {
+          const logMessages = [
+            'Health check completed: All systems operational',
+            'Processing network traffic: Normal levels',
+            'Security scan complete: No threats detected',
+            'Backup process completed successfully',
+            'Agent synchronization completed',
+            'Memory optimization routine executed',
+            'Database connection verified',
+            'Domain verification successful',
+            'API gateway functioning normally',
+            'System resources within normal parameters',
+          ];
+
+          const randomMessage = logMessages[Math.floor(Math.random() * logMessages.length)];
+          const logEntry = `<div class="log-entry">
                     <span class="log-timestamp">${updateTimestamp()}</span>
                     <span>${randomMessage}</span>
                 </div>`;
-                
-                $('.log-container').prepend(logEntry);
-                
-                // Keep only last 10 entries
-                if ($('.log-entry').length > 10) {
-                    $('.log-entry').last().remove();
-                }
-            }
 
-            // Add log entries every 10 seconds
-            setInterval(addLogEntry, 10000);
-        });
+          $('.log-container').prepend(logEntry);
+
+          // Keep only last 10 entries
+          if ($('.log-entry').length > 10) {
+            $('.log-entry').last().remove();
+          }
+        }
+
+        // Add log entries every 10 seconds
+        setInterval(addLogEntry, 10000);
+      });
     </script>
-</body>
+  </body>
 </html>

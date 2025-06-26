@@ -29,7 +29,7 @@ function parseOptions(options) {
     agent: options.agent || process.env.AIXTIV_AGENT_ID,
     resource: options.resource,
     // Allow additional options to pass through
-    ...options
+    ...options,
   };
 }
 
@@ -55,6 +55,5 @@ async function withSpinner(message, fn, ...args) {
 module.exports = {
   displayResult,
   parseOptions,
-  withSpinner
+  withSpinner,
 };
-

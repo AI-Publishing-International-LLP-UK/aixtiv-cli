@@ -11,12 +11,14 @@ This document outlines the integration plan for connecting Dr. Memoria, Dr. Matc
 **Purpose:** Knowledge management and memory retrieval for professional networks
 
 **Core Capabilities:**
+
 - Professional network memory indexing
 - Content archival and retrieval
 - Historical interaction tracking
 - Professional relationship mapping
 
 **Data Flow to Pinecone:**
+
 - Professional connection data → Embeddings → Pinecone `memoria-linkedin-connections` index
 - Content interactions → Embeddings → Pinecone `memoria-linkedin-content` index
 - Historical exchanges → Embeddings → Pinecone `memoria-linkedin-interactions` index
@@ -26,12 +28,14 @@ This document outlines the integration plan for connecting Dr. Memoria, Dr. Matc
 **Purpose:** Intelligent matching of professionals, opportunities and content
 
 **Core Capabilities:**
+
 - Professional skills and interest matching
 - Project and opportunity alignment
 - Content recommendation
 - Strategic connection suggestions
 
 **Data Flow to Pinecone:**
+
 - Professional profiles → Embeddings → Pinecone `match-linkedin-profiles` index
 - Skills and expertise vectors → Pinecone `match-linkedin-skills` index
 - Project opportunities → Embeddings → Pinecone `match-linkedin-opportunities` index
@@ -41,12 +45,14 @@ This document outlines the integration plan for connecting Dr. Memoria, Dr. Matc
 **Purpose:** Automated PR, content marketing, and GitHub integration
 
 **Core Capabilities:**
+
 - Automated content publishing to LinkedIn
 - GitHub code repository insights
 - PR material generation
 - Content performance tracking
 
 **Data Flow to Pinecone:**
+
 - GitHub repository data → Embeddings → Pinecone `lucy-github-repos` index
 - Generated PR content → Embeddings → Pinecone `lucy-pr-content` index
 - Content performance metrics → Embeddings → Pinecone `lucy-content-performance` index
@@ -58,12 +64,14 @@ This document outlines the integration plan for connecting Dr. Memoria, Dr. Matc
 **Purpose:** Software development support and code generation
 
 **Core Capabilities:**
+
 - Code snippet generation
 - Repository analysis
 - Documentation creation
 - Code review and enhancement
 
 **Data Flow to Pinecone:**
+
 - Code patterns → Embeddings → Pinecone `claude-code-patterns` index
 - Documentation content → Embeddings → Pinecone `claude-documentation` index
 - Repository structure insights → Embeddings → Pinecone `claude-repo-insights` index
@@ -73,12 +81,14 @@ This document outlines the integration plan for connecting Dr. Memoria, Dr. Matc
 **Purpose:** Workflow automation and process orchestration
 
 **Core Capabilities:**
+
 - Workflow template creation
 - Process automation
 - Integration orchestration
 - Action sequencing
 
 **Data Flow to Pinecone:**
+
 - Workflow templates → Embeddings → Pinecone `claude-workflow-templates` index
 - Process definitions → Embeddings → Pinecone `claude-process-definitions` index
 - Automation scripts → Embeddings → Pinecone `claude-automation-scripts` index
@@ -88,12 +98,14 @@ This document outlines the integration plan for connecting Dr. Memoria, Dr. Matc
 **Purpose:** Context management and protocol enforcement
 
 **Core Capabilities:**
+
 - Context switching management
 - Protocol enforcement
 - Model instruction standardization
 - Knowledge boundary management
 
 **Data Flow to Pinecone:**
+
 - Context definitions → Embeddings → Pinecone `claude-context-definitions` index
 - Protocol templates → Embeddings → Pinecone `claude-protocol-templates` index
 - Instruction patterns → Embeddings → Pinecone `claude-instruction-patterns` index
@@ -128,21 +140,25 @@ Aixtiv CLI will serve as the central orchestration layer for all agent interacti
 All agent interactions will follow consistent data flow patterns:
 
 1. **Collection Phase:**
+
    - Raw data is gathered from source systems (LinkedIn, GitHub)
    - Initial structuring and normalization
    - Metadata attachment
 
 2. **Processing Phase:**
+
    - Agent-specific processing
    - Enrichment with contextual information
    - Transformation for embedding preparation
 
 3. **Embedding Phase:**
+
    - Text content converted to vector embeddings
    - Identity mapping to vector space
    - Metadata association with vectors
 
 4. **Storage Phase:**
+
    - Structured storage in Firestore
    - Vector storage in Pinecone
    - Cross-reference maintenance
@@ -178,11 +194,13 @@ All agents contribute to and query from a unified vector space in Pinecone:
 ### Phase 1: Foundation (Weeks 1-2)
 
 1. **OAuth2 Service Enhancement:**
+
    - Add LinkedIn application registrations
    - Implement token management for all agents
    - Configure GitHub OAuth integration
 
 2. **Pinecone Infrastructure:**
+
    - Create all required indexes
    - Implement embedding generation service
    - Set up vector namespace management
@@ -195,11 +213,13 @@ All agents contribute to and query from a unified vector space in Pinecone:
 ### Phase 2: Agent Implementation (Weeks 3-6)
 
 1. **Dr. Memoria LinkedIn App:**
+
    - Implement LinkedIn data collection
    - Create memory indexing pipelines
    - Develop relationship graph generation
 
 2. **Dr. Match LinkedIn App:**
+
    - Build profile analysis system
    - Implement matching algorithms
    - Create recommendation engines
@@ -212,11 +232,13 @@ All agents contribute to and query from a unified vector space in Pinecone:
 ### Phase 3: Claude Models Integration (Weeks 7-9)
 
 1. **Claude Code Generator:**
+
    - Implement code pattern indexing
    - Create repository analysis tools
    - Build code generation interfaces
 
 2. **Claude Automation:**
+
    - Develop workflow template system
    - Implement process automation framework
    - Create integration orchestration tools
@@ -229,11 +251,13 @@ All agents contribute to and query from a unified vector space in Pinecone:
 ### Phase 4: Unified System (Weeks 10-12)
 
 1. **Cross-Agent Integration:**
+
    - Implement agent collaboration protocols
    - Create shared context management
    - Develop unified query interface
 
 2. **Unified Vector Space:**
+
    - Optimize vector namespace management
    - Implement cross-index search
    - Create vector space maintenance tools
@@ -332,16 +356,19 @@ aixtiv search:github <query>                # Search GitHub knowledge
 ## Security Considerations
 
 1. **Data Access Control:**
+
    - Fine-grained access controls for all Firestore collections
    - Vector namespace isolation in Pinecone
    - Agent-specific credential management
 
 2. **Token Security:**
+
    - Secure storage of OAuth tokens in GCP Secret Manager
    - Regular token rotation
    - Token access audit logging
 
 3. **Vector Data Privacy:**
+
    - Metadata scrubbing for sensitive information
    - Vector access controls
    - Data retention policies
@@ -354,11 +381,13 @@ aixtiv search:github <query>                # Search GitHub knowledge
 ## Monitoring and Observability
 
 1. **Operational Monitoring:**
+
    - Agent health checks
    - OAuth token validity monitoring
    - Pinecone index performance metrics
 
 2. **Data Flow Monitoring:**
+
    - Collection phase metrics
    - Embedding generation performance
    - Query performance tracking

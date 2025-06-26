@@ -50,12 +50,7 @@
           "cdn_configuration": true
         },
         "firestore": {
-          "collections": [
-            "brand_assets",
-            "corporate_docs",
-            "legal_entities",
-            "social_content"
-          ]
+          "collections": ["brand_assets", "corporate_docs", "legal_entities", "social_content"]
         }
       },
       "deployment_rules": {
@@ -74,4 +69,3 @@
     "semantic_clustering": true
   }
 }
-

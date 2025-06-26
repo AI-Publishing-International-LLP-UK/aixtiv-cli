@@ -5,12 +5,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Automatically refines prompt parameters based on output quality feedback.",
     "agent_benefit": "Improves model output quality over time with minimal human intervention.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "Dr. Grant",
     "status": "converted",
     "blog_title": "Self-Tuning Prompts: AI That Learns How To Ask",
@@ -22,12 +17,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Integrates text, image, and audio inputs within single agent workflow.",
     "agent_benefit": "Enables richer understanding of complex, multi-format information.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "QBLucy",
     "status": "converted",
     "blog_title": "Beyond Text: AI That Sees and Hears Context",
@@ -39,12 +29,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Balances information density and processing requirements for AI systems.",
     "agent_benefit": "Prevents performance degradation in complex reasoning tasks.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "Professor Lee",
     "status": "converted",
     "blog_title": "Mental Economy: Optimizing AI Cognitive Resources",
@@ -56,12 +41,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Provides structured approaches for agents to resolve ethical conflicts.",
     "agent_benefit": "Improves consistency and transparency in value-sensitive decisions.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "Dr. Burby",
     "status": "converted",
     "blog_title": "Moral Machines: AI's Approach to Ethical Challenges",
@@ -73,12 +53,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Structures adversarial interactions between agents to explore complex issues.",
     "agent_benefit": "Reduces blind spots and uncovers non-obvious considerations.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "Dr. Sabina",
     "status": "converted",
     "blog_title": "AI Team Debates: Multiple Perspectives for Better Decisions",
@@ -90,12 +65,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Creates domain-specific AI personalities with targeted knowledge profiles.",
     "agent_benefit": "Delivers specialized expertise without broader model retraining.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "Dr. Match",
     "status": "converted",
     "blog_title": "Digital Domain Experts: Creating AI Specialists",
@@ -107,12 +77,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Adjusts agent communication style and references for cultural relevance.",
     "agent_benefit": "Improves engagement and reduces miscommunication across audiences.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "Professor Lee",
     "status": "converted",
     "blog_title": "Culturally Fluent AI: Speaking the Language of Context",
@@ -124,12 +89,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Intelligently queries and integrates external knowledge sources in real-time.",
     "agent_benefit": "Extends agent capabilities without context window limitations.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "QBLucy",
     "status": "converted",
     "blog_title": "Outside the Box: AI That Knows When to Research",
@@ -141,12 +101,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Implements feedback loops for ongoing agent improvement from interactions.",
     "agent_benefit": "Creates self-improving systems from operational experience.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "Dr. Grant",
     "status": "converted",
     "blog_title": "Ever-Better AI: Systems That Learn While They Work",
@@ -158,12 +113,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Transforms complex data into actionable business insights automatically.",
     "agent_benefit": "Accelerates data-to-decision pipeline in business intelligence.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "Dr. Sabina",
     "status": "converted",
     "blog_title": "From Data to Decisions: Automated Business Insights",
@@ -175,12 +125,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Simulates execution of proposed strategies to identify potential issues.",
     "agent_benefit": "Reduces implementation risk through virtual scenario testing.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "Dr. Burby",
     "status": "converted",
     "blog_title": "Fail Virtually, Succeed Actually: AI Strategy Testing",
@@ -192,12 +137,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Structures long-term user interaction history for relevant recall.",
     "agent_benefit": "Enables truly personalized experiences over extended relationships.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "QBLucy",
     "status": "converted",
     "blog_title": "AI That Truly Remembers You: Relationship Memory Systems",
@@ -209,12 +149,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Creates compelling vision and mission narratives from business objectives.",
     "agent_benefit": "Improves stakeholder alignment and emotional engagement.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "Dr. Match",
     "status": "converted",
     "blog_title": "Stories That Steer: AI-Crafted Strategic Narratives",
@@ -226,12 +161,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Maintains consistent tone, style and character across all interactions.",
     "agent_benefit": "Builds stronger brand associations and user trust.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "Dr. Sabina",
     "status": "converted",
     "blog_title": "Always Themselves: The Art of AI Character Consistency",
@@ -243,12 +173,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Systematically challenges conventional thinking and group consensus.",
     "agent_benefit": "Prevents groupthink and identifies overlooked risks and opportunities.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "Professor Lee",
     "status": "converted",
     "blog_title": "The Devil's Advocate: AI That Challenges Assumptions",
@@ -260,12 +185,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Scans content, code, and processes for regulatory and policy alignment.",
     "agent_benefit": "Reduces compliance risk and audit preparation time.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "Dr. Burby",
     "status": "converted",
     "blog_title": "Stay Compliant: AI-Powered Regulation Adherence",
@@ -277,12 +197,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Tracks and cites sources that influence AI outputs and recommendations.",
     "agent_benefit": "Improves transparency and intellectual property compliance.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "Dr. Grant",
     "status": "converted",
     "blog_title": "Knowing Where It Learned: AI Attribution Systems",
@@ -294,12 +209,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Enables collaborative problem-solving through visual thinking spaces.",
     "agent_benefit": "Bridges communication gaps between users and AI systems.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "Dr. Match",
     "status": "converted",
     "blog_title": "Thinking Together Visually: Interactive AI Reasoning",
@@ -311,12 +221,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Detects and adapts to emotional states for appropriate engagement.",
     "agent_benefit": "Improves user experience in sensitive or high-stress interactions.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "QBLucy",
     "status": "converted",
     "blog_title": "AI With EQ: Emotionally Intelligent Response Systems",
@@ -328,12 +233,7 @@
     "category": "Prompt Frameworks > Strategic Execution",
     "use_case": "Identifies meaningful patterns across disparate data types and sources.",
     "agent_benefit": "Discovers non-obvious relationships and emergent opportunities.",
-    "tags": [
-      "prompt",
-      "agentic",
-      "automation",
-      "strategy"
-    ],
+    "tags": ["prompt", "agentic", "automation", "strategy"],
     "assigned_agent": "Professor Lee",
     "status": "converted",
     "blog_title": "Connecting the Dots: AI Pattern Recognition Across Domains",

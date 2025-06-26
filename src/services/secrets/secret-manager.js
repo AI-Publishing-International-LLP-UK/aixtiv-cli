@@ -1,9 +1,9 @@
 /**
  * Secret Manager Integration for Aixtiv Symphony
- * 
+ *
  * Provides unified access to API keys and credentials from GCP Secret Manager
  * with support for multiple AI providers and integration points.
- * 
+ *
  * (c) 2025 Copyright AI Publishing International LLP All Rights Reserved.
  * Developed with assistance from the Pilots of Vision Lake and
  * Claude Code Generator. This is Human Driven and 100% Human Project
@@ -21,33 +21,33 @@ const DEFAULT_PROJECT_ID = 'api-for-warp-drive';
 const SECRET_NAMES = {
   // OpenAI secrets
   openai: ['dr-lucy-openai-key', 'openai-api-key'],
-  
+
   // Anthropic/Claude secrets
   anthropic: ['new-admin-anthropic', 'lucy-claude-01', 'anthropic-admin'],
-  
+
   // Pinecone secrets
   pinecone: ['pineconeconnect'],
-  
+
   // Langchain secrets
   langchain: ['langchain03_api_for_warp_drive', 'langchain02', 'langchain'],
-  
+
   // Google AI/Vertex AI secrets
   vertexai: ['gemini_api_project_key'],
-  
+
   // GitHub integration
   github: [
-    'dr-lucy-automation-01-git', 
-    'github-oauth-warp-drive', 
+    'dr-lucy-automation-01-git',
+    'github-oauth-warp-drive',
     'GITHUB_TOKEN',
-    'github-personal-access-token'
+    'github-personal-access-token',
   ],
-  
+
   // Sallyport integration
   sallyport: ['SALLYPORT_AUTH_TOKEN'],
-  
+
   // Integration secrets
   integration: ['INTEGRATION_TOKEN', 'integration-config'],
-  
+
   // Specific agent secrets
   agents: {
     'dr-lucia': ['dr-lucy', 'dr-lucy-auto-key'],
@@ -58,8 +58,8 @@ const SECRET_NAMES = {
     'dr-burby': ['dr-burby'],
     'dr-cypriot': ['dr-cypriot'],
     'mr-roark': ['mr-roark', 'mr-roark-openai-key'],
-    'professor-lee': ['professor-lee']
-  }
+    'professor-lee': ['professor-lee'],
+  },
 };
 
 // Cache for secrets to reduce API calls
@@ -82,11 +82,11 @@ class SecretManager {
    */
   async initialize() {
     if (this.initialized) return;
-    
+
     try {
       // Initialize GCP Secret Manager client
       this.client = new SecretManagerServiceClient();
-      
+
       // Try to load local fallback credentials
       const credentialsPath = path.resolve(process.cwd(), 'config/openai-api-credentials.json');
       if (fs.existsSync(credentialsPath)) {
@@ -96,7 +96,7 @@ class SecretManager {
     } catch (error) {
       console.warn('Failed to initialize Secret Manager:', error.message);
     }
-    
+
     this.initialized = true;
   }
 
@@ -107,7 +107,7 @@ class SecretManager {
    */
   async getSecret(secretName) {
     await this.initialize();
-    
+
     // Check cache first
     if (secretsCache.has(secretName)) {
       const { value, timestamp } = secretsCache.get(secretName);
@@ -116,32 +116,32 @@ class SecretManager {
       }
       secretsCache.delete(secretName);
     }
-    
+
     try {
       if (!this.client) {
         throw new Error('GCP Secret Manager client not initialized');
       }
-      
+
       // Access secret from GCP Secret Manager
       const name = `projects/${this.projectId}/secrets/${secretName}/versions/latest`;
       const [version] = await this.client.accessSecretVersion({ name });
       const secretValue = version.payload.data.toString();
-      
+
       // Cache the secret
       secretsCache.set(secretName, {
         value: secretValue,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-      
+
       return secretValue;
     } catch (error) {
       console.error(`Error retrieving secret ${secretName}:`, error.message);
-      
+
       // Try fallback credentials if available
       if (this.fallbackCredentials && this.fallbackCredentials[secretName]) {
         return this.fallbackCredentials[secretName];
       }
-      
+
       throw error;
     }
   }
@@ -160,7 +160,7 @@ class SecretManager {
         console.log(`Secret ${secretName} not available, trying next option`);
       }
     }
-    
+
     // If we reach here, no secrets worked
     console.warn(`No secrets found among options: ${secretNames.join(', ')}`);
     return '';
@@ -176,7 +176,7 @@ class SecretManager {
     if (!secretNames) {
       throw new Error(`Unknown provider: ${provider}`);
     }
-    
+
     return this.trySecrets(secretNames);
   }
 
@@ -238,7 +238,7 @@ class SecretManager {
     if (!agentSecrets) {
       throw new Error(`Unknown agent: ${agentName}`);
     }
-    
+
     return this.trySecrets(agentSecrets);
   }
 
@@ -254,7 +254,7 @@ class SecretManager {
       if (this.fallbackCredentials && this.fallbackCredentials.pinecone_environment) {
         return this.fallbackCredentials.pinecone_environment;
       }
-      
+
       // Return default
       return 'us-west1-gcp';
     }
@@ -282,7 +282,7 @@ class SecretManager {
   async getAllAgentCredentials() {
     const result = {};
     const agents = Object.keys(SECRET_NAMES.agents);
-    
+
     for (const agent of agents) {
       try {
         result[agent] = await this.getAgentKey(agent);
@@ -291,7 +291,7 @@ class SecretManager {
         result[agent] = '';
       }
     }
-    
+
     return result;
   }
 }

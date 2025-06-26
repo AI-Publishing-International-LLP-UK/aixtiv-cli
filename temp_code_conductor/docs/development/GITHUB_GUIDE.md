@@ -9,6 +9,7 @@ GitHub has a file size limit of 100MB. Files larger than this limit will be reje
 To prevent large log files from being committed to GitHub, we have implemented the following protections:
 
 1. The `.gitignore` file includes:
+
    - `test_reports/` - Excludes all test report directories
    - `*.log` - Excludes all log files anywhere in the project
 
@@ -21,11 +22,13 @@ To avoid issues with large files:
 1. **Never commit log files** - They should be automatically excluded by `.gitignore`
 
 2. **Never commit large binary files** - If you need to share large files, consider:
+
    - Using Git LFS (Large File Storage) for files that need to be versioned
    - Storing them externally (e.g., cloud storage, artifact repositories)
    - Adding them to `.gitignore`
 
 3. **Before pushing, check for large files**:
+
    ```bash
    # Find files larger than 50MB
    find . -type f -size +50M -not -path "*/\.*" -not -path "*/test_reports/*"
@@ -41,11 +44,13 @@ To avoid issues with large files:
 If your push is rejected due to large files:
 
 1. Run the cleanup script:
+
    ```bash
    ./cleanup_large_files.sh
    ```
 
 2. Commit the changes to `.gitignore` if needed:
+
    ```bash
    git add .gitignore
    git commit -m "Update .gitignore to exclude large files"

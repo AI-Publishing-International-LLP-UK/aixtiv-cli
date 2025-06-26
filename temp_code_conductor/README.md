@@ -52,11 +52,13 @@ For the optimal Code Conductor experience, we recommend using it with:
 ### Setup Process
 
 1. **Open your project in Obsidian**:
+
    - Open Obsidian and select "Open folder as vault"
    - Navigate to your project directory and select it
    - This allows you to visualize work efforts and their connections
 
 2. **Open your project in Cursor**:
+
    - Launch Cursor and open your project folder
    - Install Code Conductor:
      ```bash
@@ -68,9 +70,10 @@ For the optimal Code Conductor experience, we recommend using it with:
      ```
 
 3. **Working with both tools**:
+
    - Use Cursor for coding and AI assistance
    - Use Obsidian for viewing, navigating, and editing the work effort documentation
-   - The _AI-Setup folder will contain all your work efforts and documentation
+   - The \_AI-Setup folder will contain all your work efforts and documentation
 
 4. **Configure Obsidian to use your Code Conductor directory**
    - Open Obsidian and create a new vault pointing to your Code Conductor project directory
@@ -104,6 +107,7 @@ Work efforts can be stored in different locations:
 - Custom directories can also contain work efforts, which will be found by the indexing system
 
 Within these directories, work efforts are organized by status:
+
 - `/active/` - Currently in-progress work efforts
 - `/completed/` - Finished work efforts
 - `/archived/` - Historical or inactive work efforts
@@ -113,11 +117,13 @@ Within these directories, work efforts are organized by status:
 Code Conductor supports multiple naming conventions for work efforts:
 
 1. **Sequential Numbering (Recommended)**: `0001_my_work_effort.md`
+
    - Simple, clean, and easy to reference
    - Automatically increments based on existing files
    - Use `--sequential` flag with `cc-new`
 
 2. **Timestamp-based**: `202503170001_my_work_effort.md`
+
    - Default behavior
    - Includes date and time information
    - Good for chronological organization
@@ -209,6 +215,7 @@ source ~/.zshrc  # or source ~/.bash_profile
 ### Work Effort Indexing
 
 New comprehensive work effort indexing system:
+
 - Scans the entire project for work efforts regardless of their location
 - Identifies work efforts in both `work_efforts` and `_AI-Setup` directories
 - Creates a structured JSON index for easy tracking and referencing
@@ -229,6 +236,7 @@ python src/code_conductor/scripts/index_work_efforts.py --format json
 ### Sequential Work Effort Numbering
 
 Work efforts now support sequential numbering for better organization:
+
 - Automatic sequential numbering (e.g., 0001, 0002, 0003)
 - Graceful transition to 5+ digits when needed (9999 → 10000)
 - Option to use date-prefixed numbering (e.g., 202304250001)
@@ -249,6 +257,7 @@ code-conductor work --no-sequential-numbering
 ### Automated Workflow Runner
 
 The new Workflow Runner automates the entire Code Conductor development process:
+
 - Step-by-step guidance through the 8 phases of feature development
 - Automatic script generation with proper structure and testing
 - Document validation to ensure complete documentation
@@ -260,6 +269,7 @@ The new Workflow Runner automates the entire Code Conductor development process:
 ### Work Effort Status Management
 
 Work efforts now support complete lifecycle management:
+
 - Move work efforts between active, completed, and archived states
 - Automatic file organization based on status
 - Programmatic and interactive status changes
@@ -270,6 +280,7 @@ Work efforts now support complete lifecycle management:
 ### Work Effort Context Retrieval
 
 The new retrieve_work_effort.py script provides comprehensive context for AI assistants:
+
 - Find work efforts by name, status, date, or recency
 - Display related work efforts and associated scripts
 - Recursive exploration of linked work efforts
@@ -280,6 +291,7 @@ The new retrieve_work_effort.py script provides comprehensive context for AI ass
 ### Folder-Based Work Efforts
 
 Work efforts now create dedicated folders instead of single files, allowing you to:
+
 - Store related files alongside your work effort tracking
 - Better organize project documents and resources
 - Keep implementation files with planning documents

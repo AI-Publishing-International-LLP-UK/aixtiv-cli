@@ -24,16 +24,16 @@ cttCommand
   .action(async (cmdOptions) => {
     const options = { ...cttCommand.opts(), ...cmdOptions };
     const spinner = ora('Preparing to run tests...').start();
-    
+
     try {
       // Check if tests directory exists
       if (fs.existsSync('./tests')) {
         spinner.text = 'Finding test configurations...';
-        
+
         if (options.config) {
           // Run specific test configuration
           spinner.text = `Running tests with configuration: ${options.config}`;
-          
+
           // Here we'd normally execute the tests
           // For mock implementation, we'll just show a success message
           spinner.succeed('Tests completed successfully');
@@ -46,16 +46,20 @@ cttCommand
         } else {
           // List available test configurations
           spinner.succeed('Available test configurations found');
-          
+
           try {
             const testFiles = execSync(
-              'find ./tests -name "*.json" -o -name "*.js" | grep -v "node_modules"', 
+              'find ./tests -name "*.json" -o -name "*.js" | grep -v "node_modules"',
               { encoding: 'utf8' }
             );
-            
+
             console.log(chalk.cyan('\nAvailable Test Configurations:'));
             console.log(testFiles);
-            console.log(chalk.yellow('\nUse \'aixtiv ci ctt test --config [CONFIG_FILE]\' to run a specific test configuration'));
+            console.log(
+              chalk.yellow(
+                "\nUse 'aixtiv ci ctt test --config [CONFIG_FILE]' to run a specific test configuration"
+              )
+            );
           } catch (error) {
             console.log(chalk.yellow('\nNo test configuration files found.'));
             console.log(chalk.blue('You can create test configurations in the ./tests directory.'));
@@ -64,7 +68,11 @@ cttCommand
       } else {
         spinner.warn('No tests directory found');
         console.log(chalk.yellow('The tests directory was not found in the current location.'));
-        console.log(chalk.blue('Create a ./tests directory with your test configurations to use this feature.'));
+        console.log(
+          chalk.blue(
+            'Create a ./tests directory with your test configurations to use this feature.'
+          )
+        );
       }
     } catch (error) {
       spinner.fail('Failed to run tests');
@@ -81,30 +89,50 @@ cttCommand
   .action(async (cmdOptions) => {
     const options = { ...cttCommand.opts(), ...cmdOptions };
     const spinner = ora('Managing telemetry data...').start();
-    
+
     try {
       // Check if telemetry configuration exists
       if (fs.existsSync('./config/telemetry')) {
         spinner.succeed('Telemetry configurations found');
-        
+
         const telemetryFiles = fs.readdirSync('./config/telemetry');
-        
+
         console.log(chalk.cyan('\nAvailable Telemetry Configurations:'));
-        telemetryFiles.forEach(file => {
+        telemetryFiles.forEach((file) => {
           console.log(`- ${file}`);
         });
-        
+
         if (options.view) {
           console.log(chalk.cyan(`\nTelemetry ${options.view} view for ${options.period}:`));
-          
+
           // Mock telemetry data
           const mockData = [
-            { timestamp: '2025-05-26T10:12:33Z', event: 'build_success', duration: 127.4, status: 'ok' },
-            { timestamp: '2025-05-26T08:45:17Z', event: 'test_complete', duration: 62.1, status: 'warning' },
-            { timestamp: '2025-05-25T14:22:09Z', event: 'deployment', duration: 184.7, status: 'ok' },
-            { timestamp: '2025-05-25T09:37:51Z', event: 'build_start', duration: 0, status: 'info' }
+            {
+              timestamp: '2025-05-26T10:12:33Z',
+              event: 'build_success',
+              duration: 127.4,
+              status: 'ok',
+            },
+            {
+              timestamp: '2025-05-26T08:45:17Z',
+              event: 'test_complete',
+              duration: 62.1,
+              status: 'warning',
+            },
+            {
+              timestamp: '2025-05-25T14:22:09Z',
+              event: 'deployment',
+              duration: 184.7,
+              status: 'ok',
+            },
+            {
+              timestamp: '2025-05-25T09:37:51Z',
+              event: 'build_start',
+              duration: 0,
+              status: 'info',
+            },
           ];
-          
+
           console.table(mockData);
         } else {
           console.log(chalk.yellow('\nUse --view option to view telemetry data:'));
@@ -113,7 +141,9 @@ cttCommand
         }
       } else {
         spinner.warn('No telemetry configuration directory found');
-        console.log(chalk.yellow('The telemetry configuration directory was not found at ./config/telemetry'));
+        console.log(
+          chalk.yellow('The telemetry configuration directory was not found at ./config/telemetry')
+        );
         console.log(chalk.blue('You need to set up telemetry collection first.'));
       }
     } catch (error) {
@@ -129,9 +159,12 @@ cttCommand
   .action(async (cmdOptions) => {
     const options = { ...cttCommand.opts(), ...cmdOptions };
     const spinner = ora('Checking CTTT status...').start();
-    
+
     try {
-      const result = execSync(`gcloud scheduler jobs list --project="${options.project}" | grep symphony`, { encoding: 'utf8' });
+      const result = execSync(
+        `gcloud scheduler jobs list --project="${options.project}" | grep symphony`,
+        { encoding: 'utf8' }
+      );
       spinner.succeed('CTTT status retrieved');
       console.log();
       console.log(chalk.cyan('CTTT Scheduled Jobs:'));
@@ -153,7 +186,7 @@ cttCommand
   .description('View CTTT logs')
   .action(async () => {
     const spinner = ora('Viewing CTTT logs...').start();
-    
+
     try {
       if (fs.existsSync('./logs')) {
         const result = execSync('ls -la ./logs | grep test', { encoding: 'utf8' });
@@ -162,10 +195,16 @@ cttCommand
         console.log(chalk.cyan('CTTT Log Files:'));
         console.log(result);
         console.log();
-        console.log(chalk.blue('Use \'aixtiv ci logs --cat [LOGFILE] --path ./logs\' to view a specific log file'));
+        console.log(
+          chalk.blue(
+            "Use 'aixtiv ci logs --cat [LOGFILE] --path ./logs' to view a specific log file"
+          )
+        );
       } else {
         spinner.warn('No logs directory found');
-        console.log(chalk.yellow('The logs directory was not found. Try running a CTTT operation first.'));
+        console.log(
+          chalk.yellow('The logs directory was not found. Try running a CTTT operation first.')
+        );
       }
     } catch (error) {
       if (error.status === 1 && error.stderr.toString().includes('grep')) {

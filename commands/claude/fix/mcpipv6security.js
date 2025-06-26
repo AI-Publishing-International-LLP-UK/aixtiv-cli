@@ -16,21 +16,22 @@ const command = new Command('claude:fix:mcpipv6security')
       if (options.check) {
         // Check if instance is vulnerable
         spinner.text = 'Checking IPv4-mapped IPv6 vulnerability status...';
-        
-        const checkScript = 'if ip -6 addr show | grep -q "::ffff:"; then ' +
+
+        const checkScript =
+          'if ip -6 addr show | grep -q "::ffff:"; then ' +
           'echo "VULNERABLE: IPv4-mapped IPv6 addresses found"; ' +
           'exit 1; ' +
           'else ' +
           'echo "SECURE: No IPv4-mapped IPv6 addresses found"; ' +
           'exit 0; ' +
-          'fi'
+          'fi';
 
         try {
           execSync(`gcloud compute ssh ${options.instance} \
             --project=${options.project} \
             --zone=${options.zone} \
             --command="${checkScript}"`).toString();
-          
+
           spinner.succeed('Instance is secure against IPv4-mapped IPv6 vulnerability');
         } catch (error) {
           spinner.fail('Instance is vulnerable to IPv4-mapped IPv6 vulnerability');
@@ -83,4 +84,3 @@ const command = new Command('claude:fix:mcpipv6security')
   });
 
 module.exports = command;
-

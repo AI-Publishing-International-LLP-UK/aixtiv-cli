@@ -1,10 +1,10 @@
 /**
  * Domain Management Command Module for Aixtiv CLI
- * 
+ *
  * This enterprise-grade module integrates domain management functionality into the Aixtiv CLI,
  * providing commands for listing, importing, verifying domains, managing SSL certificates,
  * and cleaning domain cache.
- * 
+ *
  * @module domain
  * @author AI Publishing International LLP
  * @copyright 2025 AI Publishing International LLP
@@ -24,23 +24,27 @@ const execAsync = util.promisify(require('child_process').exec);
 const CONFIG = {
   // Directory and file paths
   CACHE_DIR: path.join(process.env.HOME || process.env.USERPROFILE, '.aixtiv-cli'),
-  CACHE_FILE: path.join(process.env.HOME || process.env.USERPROFILE, '.aixtiv-cli', 'domain-cache.json'),
+  CACHE_FILE: path.join(
+    process.env.HOME || process.env.USERPROFILE,
+    '.aixtiv-cli',
+    'domain-cache.json'
+  ),
   SCRIPTS_DIR: path.join(__dirname, '../../scripts'),
   TEMP_DIR: path.join(process.env.HOME || process.env.USERPROFILE, '.aixtiv-cli', 'temp'),
-  
+
   // Default values
   DEFAULT_DOMAIN_TYPE: 'brand',
   DEFAULT_FIREBASE_PROJECT: 'api-for-warp-drive',
-  
+
   // Script names
   SCRIPTS: {
     BULK_IMPORT: 'bulk-domain-import.sh',
     SSL_CHECK: 'domain-ssl-check.sh',
     SSL_PROVISION: 'batch-ssl-provision.sh',
     VERIFY_OWNERSHIP: 'verify-domain-ownership.js',
-    CLEAN_CACHE: 'clean-domain-cache.sh'
+    CLEAN_CACHE: 'clean-domain-cache.sh',
   },
-  
+
   // Command names for logging
   COMMANDS: {
     LIST: 'domain:list',
@@ -48,8 +52,8 @@ const CONFIG = {
     VERIFY: 'domain:verify',
     SSL_CHECK: 'domain:ssl-check',
     SSL_PROVISION: 'domain:provision-ssl',
-    CLEAN_CACHE: 'domain:clean-cache'
-  }
+    CLEAN_CACHE: 'domain:clean-cache',
+  },
 };
 
 // ANSI color codes for terminal output
@@ -63,7 +67,7 @@ const COLORS = {
   cyan: '\x1b[36m',
   white: '\x1b[37m',
   bold: '\x1b[1m',
-  dim: '\x1b[2m'
+  dim: '\x1b[2m',
 };
 
 // Create necessary directories
@@ -85,7 +89,7 @@ const logger = {
   info: (message) => {
     console.log(`${COLORS.blue}${message}${COLORS.reset}`);
   },
-  
+
   /**
    * Log a success message
    * @param {string} message - The message to log
@@ -93,7 +97,7 @@ const logger = {
   success: (message) => {
     console.log(`${COLORS.green}${message}${COLORS.reset}`);
   },
-  
+
   /**
    * Log a warning message
    * @param {string} message - The message to log
@@ -101,7 +105,7 @@ const logger = {
   warn: (message) => {
     console.log(`${COLORS.yellow}${message}${COLORS.reset}`);
   },
-  
+
   /**
    * Log an error message
    * @param {string} message - The message to log
@@ -109,7 +113,7 @@ const logger = {
   error: (message) => {
     console.error(`${COLORS.red}${message}${COLORS.reset}`);
   },
-  
+
   /**
    * Log a section header
    * @param {string} title - The section title
@@ -117,7 +121,7 @@ const logger = {
   section: (title) => {
     console.log(`\n${COLORS.magenta}=== ${title} ===${COLORS.reset}`);
   },
-  
+
   /**
    * Log a command that will be executed
    * @param {string} command - The command being executed
@@ -125,7 +129,7 @@ const logger = {
   command: (command) => {
     console.log(`${COLORS.cyan}Running: ${command}${COLORS.reset}\n`);
   },
-  
+
   /**
    * Log a parameter value
    * @param {string} name - Parameter name
@@ -133,7 +137,7 @@ const logger = {
    */
   param: (name, value) => {
     console.log(`${COLORS.cyan}${name}: ${COLORS.white}${value}${COLORS.reset}`);
-  }
+  },
 };
 
 /**
@@ -154,7 +158,7 @@ const utils = {
       return false;
     }
   },
-  
+
   /**
    * Check if the domain cache exists
    * @returns {boolean} - True if cache exists, false otherwise
@@ -162,7 +166,7 @@ const utils = {
   cacheExists: () => {
     return fs.existsSync(CONFIG.CACHE_FILE);
   },
-  
+
   /**
    * Get the full path to a script
    * @param {string} scriptName - Name of the script
@@ -171,7 +175,7 @@ const utils = {
   getScriptPath: (scriptName) => {
     return path.join(CONFIG.SCRIPTS_DIR, scriptName);
   },
-  
+
   /**
    * Execute a shell command
    * @param {string} command - Command to execute
@@ -182,22 +186,22 @@ const utils = {
     if (!silent) {
       logger.command(command);
     }
-    
+
     try {
-      const { stdout, stderr } = await execAsync(command, { 
+      const { stdout, stderr } = await execAsync(command, {
         shell: true,
-        maxBuffer: 10 * 1024 * 1024 // 10MB buffer for large outputs
+        maxBuffer: 10 * 1024 * 1024, // 10MB buffer for large outputs
       });
-      
+
       if (!silent && stdout) {
         console.log(stdout);
       }
-      
+
       if (!silent && stderr) {
         logger.warn('Warnings/Errors:');
         console.error(stderr);
       }
-      
+
       return { stdout, stderr };
     } catch (error) {
       if (!silent) {
@@ -208,7 +212,7 @@ const utils = {
       throw error;
     }
   },
-  
+
   /**
    * Extract the base domain from a domain name
    * @param {string} domain - Domain name (e.g., "subdomain.example.com")
@@ -217,7 +221,7 @@ const utils = {
   getBaseDomain: (domain) => {
     // Handle special cases like co.uk, com.mx, etc.
     const specialTlds = ['co.uk', 'com.mx', 'com.au', 'co.nz', 'org.uk', 'net.au'];
-    
+
     for (const specialTld of specialTlds) {
       if (domain.endsWith('.' + specialTld)) {
         const parts = domain.split('.');
@@ -227,7 +231,7 @@ const utils = {
         return domain;
       }
     }
-    
+
     // Standard case
     const parts = domain.split('.');
     if (parts.length > 2) {
@@ -235,7 +239,7 @@ const utils = {
     }
     return domain;
   },
-  
+
   /**
    * Group domains by family
    * @param {Array<Object>} domains - List of domain objects
@@ -243,8 +247,8 @@ const utils = {
    */
   groupByFamily: (domains) => {
     const families = {};
-    
-    domains.forEach(domain => {
+
+    domains.forEach((domain) => {
       const match = domain.name.match(/([^.]+)\.[^.]+$/);
       if (match) {
         const family = match[1];
@@ -254,9 +258,9 @@ const utils = {
         families[family].push(domain);
       }
     });
-    
+
     return families;
-  }
+  },
 };
 
 /**
@@ -272,7 +276,7 @@ const commands = {
    */
   list: async (options = {}) => {
     logger.section('Domain List');
-    
+
     try {
       // Check if cache exists
       if (!utils.cacheExists()) {
@@ -280,57 +284,62 @@ const commands = {
         logger.info('Run "aixtiv domain:import" to import domains first.');
         return;
       }
-      
+
       // Read cache
       const cacheData = JSON.parse(fs.readFileSync(CONFIG.CACHE_FILE, 'utf8'));
       const domains = cacheData.domains || [];
-      
+
       if (domains.length === 0) {
         logger.warn('No domains found in cache.');
         return;
       }
-      
+
       // Apply filters if provided
       let filteredDomains = domains;
-      
+
       if (options.type) {
-        filteredDomains = filteredDomains.filter(domain => 
-          domain.type && domain.type.toLowerCase() === options.type.toLowerCase()
+        filteredDomains = filteredDomains.filter(
+          (domain) => domain.type && domain.type.toLowerCase() === options.type.toLowerCase()
         );
       }
-      
+
       if (options.search) {
         const searchTerm = options.search.toLowerCase();
-        filteredDomains = filteredDomains.filter(domain => 
+        filteredDomains = filteredDomains.filter((domain) =>
           domain.name.toLowerCase().includes(searchTerm)
         );
       }
-      
+
       // Group domains by family if requested
       if (options.family) {
         const families = utils.groupByFamily(filteredDomains);
-        
+
         // Display domains grouped by family
-        logger.info(`Found ${filteredDomains.length} domains in ${Object.keys(families).length} families\n`);
-        
-        Object.keys(families).sort().forEach(family => {
-          console.log(`${COLORS.magenta}${family} (${families[family].length})${COLORS.reset}`);
-          families[family].forEach(domain => {
-            console.log(`  ${domain.name}`);
+        logger.info(
+          `Found ${filteredDomains.length} domains in ${Object.keys(families).length} families\n`
+        );
+
+        Object.keys(families)
+          .sort()
+          .forEach((family) => {
+            console.log(`${COLORS.magenta}${family} (${families[family].length})${COLORS.reset}`);
+            families[family].forEach((domain) => {
+              console.log(`  ${domain.name}`);
+            });
+            console.log('');
           });
-          console.log('');
-        });
       } else {
         // Display domains as a simple list
         logger.info(`Found ${filteredDomains.length} domains\n`);
-        
-        filteredDomains.forEach(domain => {
+
+        filteredDomains.forEach((domain) => {
           console.log(`${domain.name} (${domain.type || 'unknown type'})`);
         });
       }
-      
-      console.log(`\n${COLORS.blue}Last Updated: ${cacheData.lastUpdated || 'Unknown'}${COLORS.reset}`);
-      
+
+      console.log(
+        `\n${COLORS.blue}Last Updated: ${cacheData.lastUpdated || 'Unknown'}${COLORS.reset}`
+      );
     } catch (error) {
       logger.error(`Error listing domains: ${error.message}`);
       if (error.stack) {
@@ -338,7 +347,7 @@ const commands = {
       }
     }
   },
-  
+
   /**
    * Import domains from a file
    * @param {string} file - Path to the domains file
@@ -349,42 +358,42 @@ const commands = {
    */
   import: async (file, options = {}) => {
     logger.section('Domain Import');
-    
+
     try {
       if (!file) {
         logger.error('Error: Domain file is required');
         logger.info('Usage: aixtiv domain:import <file> [options]');
         return;
       }
-      
+
       const domainType = options.type || CONFIG.DEFAULT_DOMAIN_TYPE;
       const firebaseProject = options.project || CONFIG.DEFAULT_FIREBASE_PROJECT;
       const provisionSsl = options.ssl ? 'true' : 'false';
-      
+
       logger.param('File', file);
       logger.param('Type', domainType);
       logger.param('Project', firebaseProject);
       logger.param('Provision SSL', provisionSsl);
       console.log('');
-      
+
       // Run the bulk-domain-import.sh script
       const scriptPath = utils.getScriptPath(CONFIG.SCRIPTS.BULK_IMPORT);
-      
+
       if (!fs.existsSync(scriptPath)) {
         logger.error(`Script not found: ${scriptPath}`);
         return;
       }
-      
+
       // Make the script executable
       if (!utils.makeExecutable(scriptPath)) {
         return;
       }
-      
+
       // Run the script
       try {
         const command = `"${scriptPath}" "${file}" "${domainType}" "${firebaseProject}" "${provisionSsl}"`;
         await utils.executeCommand(command);
-        
+
         logger.success('Domains imported successfully');
       } catch (error) {
         logger.error(`Error importing domains: ${error.message}`);
@@ -396,7 +405,7 @@ const commands = {
       }
     }
   },
-  
+
   /**
    * Verify domain ownership against GoDaddy
    * @param {string} godaddyFile - Path to the GoDaddy domains file
@@ -404,29 +413,29 @@ const commands = {
    */
   verify: async (godaddyFile, options = {}) => {
     logger.section('Domain Ownership Verification');
-    
+
     try {
       if (!godaddyFile) {
         logger.error('Error: GoDaddy domains file is required');
         logger.info('Usage: aixtiv domain:verify <godaddy-domains-file> [options]');
         return;
       }
-      
+
       logger.param('GoDaddy File', godaddyFile);
       console.log('');
-      
+
       const scriptPath = utils.getScriptPath(CONFIG.SCRIPTS.VERIFY_OWNERSHIP);
-      
+
       if (!fs.existsSync(scriptPath)) {
         logger.error(`Script not found: ${scriptPath}`);
         return;
       }
-      
+
       // Make the script executable
       if (!utils.makeExecutable(scriptPath)) {
         return;
       }
-      
+
       // Run the script
       try {
         const command = `node "${scriptPath}" "${godaddyFile}"`;
@@ -442,7 +451,7 @@ const commands = {
       }
     }
   },
-  
+
   /**
    * Check SSL certificates for domains
    * @param {Object} options - Command options
@@ -452,20 +461,20 @@ const commands = {
    */
   checkSsl: async (options = {}) => {
     logger.section('SSL Certificate Check');
-    
+
     try {
       const scriptPath = utils.getScriptPath(CONFIG.SCRIPTS.SSL_CHECK);
-      
+
       if (!fs.existsSync(scriptPath)) {
         logger.error(`Script not found: ${scriptPath}`);
         return;
       }
-      
+
       // Make the script executable
       if (!utils.makeExecutable(scriptPath)) {
         return;
       }
-      
+
       // Build arguments
       let args = '';
       if (options.debug) {
@@ -477,7 +486,7 @@ const commands = {
       if (options.domain) {
         args += ` "${options.domain}"`;
       }
-      
+
       // Run the script
       try {
         const command = `"${scriptPath}"${args}`;
@@ -493,7 +502,7 @@ const commands = {
       }
     }
   },
-  
+
   /**
    * Provision SSL certificates for domains
    * @param {string} file - Path to the domains file
@@ -504,42 +513,42 @@ const commands = {
    */
   provisionSsl: async (file, options = {}) => {
     logger.section('SSL Certificate Provisioning');
-    
+
     try {
       if (!file) {
         logger.error('Error: Domain file is required');
         logger.info('Usage: aixtiv domain:provision-ssl <file> [options]');
         return;
       }
-      
+
       const provisionType = options.type || 'firebase';
       const projectId = options.project || CONFIG.DEFAULT_FIREBASE_PROJECT;
       const dryRun = options.dryRun ? 'true' : 'false';
-      
+
       logger.param('File', file);
       logger.param('Type', provisionType);
       logger.param('Project', projectId);
       logger.param('Dry Run', dryRun);
       console.log('');
-      
+
       // Run the batch-ssl-provision.sh script
       const scriptPath = utils.getScriptPath(CONFIG.SCRIPTS.SSL_PROVISION);
-      
+
       if (!fs.existsSync(scriptPath)) {
         logger.error(`Script not found: ${scriptPath}`);
         return;
       }
-      
+
       // Make the script executable
       if (!utils.makeExecutable(scriptPath)) {
         return;
       }
-      
+
       // Run the script
       try {
         const command = `"${scriptPath}" "${file}" "${provisionType}" "${projectId}" "${dryRun}"`;
         await utils.executeCommand(command);
-        
+
         logger.success('SSL certificates provisioned successfully');
       } catch (error) {
         logger.error(`Error provisioning SSL certificates: ${error.message}`);
@@ -551,7 +560,7 @@ const commands = {
       }
     }
   },
-  
+
   /**
    * Clean domain cache by verifying against GoDaddy domains
    * @param {string} godaddyFile - Path to the GoDaddy domains file
@@ -559,34 +568,34 @@ const commands = {
    */
   cleanCache: async (godaddyFile, options = {}) => {
     logger.section('Domain Cache Cleanup');
-    
+
     try {
       if (!godaddyFile) {
         logger.error('Error: GoDaddy domains file is required');
         logger.info('Usage: aixtiv domain:clean-cache <godaddy-domains-file> [options]');
         return;
       }
-      
+
       logger.param('GoDaddy File', godaddyFile);
       console.log('');
-      
+
       const scriptPath = utils.getScriptPath(CONFIG.SCRIPTS.CLEAN_CACHE);
-      
+
       if (!fs.existsSync(scriptPath)) {
         logger.error(`Script not found: ${scriptPath}`);
         return;
       }
-      
+
       // Make the script executable
       if (!utils.makeExecutable(scriptPath)) {
         return;
       }
-      
+
       // Run the script
       try {
         const command = `"${scriptPath}" "${godaddyFile}"`;
         await utils.executeCommand(command);
-        
+
         logger.success('Domain cache cleaned successfully');
       } catch (error) {
         logger.error(`Error cleaning domain cache: ${error.message}`);
@@ -597,7 +606,7 @@ const commands = {
         console.error(COLORS.dim, error.stack, COLORS.reset);
       }
     }
-  }
+  },
 };
 
 /**
@@ -606,7 +615,7 @@ const commands = {
  */
 function registerDomainCommands(program) {
   logger.info('Registering domain management commands...');
-  
+
   // Domain list command
   program
     .command('domain:list')
@@ -615,7 +624,7 @@ function registerDomainCommands(program) {
     .option('-s, --search <search>', 'Search term for domain names')
     .option('-f, --family', 'Group domains by family')
     .action(commands.list);
-  
+
   // Domain import command
   program
     .command('domain:import <file>')
@@ -624,13 +633,13 @@ function registerDomainCommands(program) {
     .option('-p, --project <project>', 'Firebase project ID', CONFIG.DEFAULT_FIREBASE_PROJECT)
     .option('-s, --ssl', 'Provision SSL certificates after import')
     .action(commands.import);
-  
+
   // Domain verify command
   program
     .command('domain:verify <godaddy-file>')
     .description('Verify domain ownership against GoDaddy domains')
     .action(commands.verify);
-  
+
   // Domain SSL check command
   program
     .command('domain:ssl-check')
@@ -639,7 +648,7 @@ function registerDomainCommands(program) {
     .option('-d, --domain <domain>', 'Check specific domain')
     .option('--debug', 'Show debug information')
     .action(commands.checkSsl);
-  
+
   // Domain SSL provision command
   program
     .command('domain:provision-ssl <file>')
@@ -648,7 +657,7 @@ function registerDomainCommands(program) {
     .option('-p, --project <project>', 'Project ID', CONFIG.DEFAULT_FIREBASE_PROJECT)
     .option('--dry-run', 'Perform a dry run without executing actions')
     .action(commands.provisionSsl);
-  
+
   // Domain cache cleanup command
   program
     .command('domain:clean-cache <godaddy-file>')

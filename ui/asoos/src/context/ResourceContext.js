@@ -7,8 +7,6 @@ export const ResourceProvider = ({ children }) => {
   const [todos, setTodos] = useState([]);
 
   return (
-    <ResourceContext.Provider value={{ resources, todos }}>
-      {children}
-    </ResourceContext.Provider>
+    <ResourceContext.Provider value={{ resources, todos }}>{children}</ResourceContext.Provider>
   );
 };

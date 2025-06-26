@@ -20,11 +20,7 @@
   "status": "ready",
   "team_compatible": true,
   "requires_authentication": false,
-  "default_permissions": [
-    "verify",
-    "authenticate",
-    "generate"
-  ],
+  "default_permissions": ["verify", "authenticate", "generate"],
   "metadata": {
     "region": "us-west1",
     "security_level": "zero-trust",
@@ -68,10 +64,6 @@
   "firebase_integration": {
     "enabled": true,
     "token_endpoint": "/auth/firebase/token",
-    "custom_claims": [
-      "ceUuid",
-      "serpew",
-      "verified"
-    ]
+    "custom_claims": ["ceUuid", "serpew", "verified"]
   }
 }

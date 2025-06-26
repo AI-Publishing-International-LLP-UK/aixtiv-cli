@@ -10,7 +10,7 @@ admin.initializeApp({
   credential: serviceAccount
     ? admin.credential.cert(serviceAccount)
     : admin.credential.applicationDefault(),
-  projectId: 'api-for-warp-drive'
+  projectId: 'api-for-warp-drive',
 });
 
 const app = express();
@@ -31,4 +31,3 @@ app.get('/health', async (req, res) => {
 app.listen(port, () => {
   console.log(`Gateway service listening on port ${port}`);
 });
-

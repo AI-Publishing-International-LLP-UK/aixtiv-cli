@@ -2,7 +2,7 @@
 
 /**
  * Aixtiv CLI Debug Wrapper
- * 
+ *
  * This script provides a debugging wrapper around the standard Aixtiv CLI
  * that shows both internal thought processes and execution results.
  */
@@ -21,13 +21,13 @@ console.log(chalk.yellow('─'.repeat(50)));
 
 // Run the original command with a prefix to show its output is the actual result
 const child = spawn('node', [originalCommand, ...args], {
-  stdio: ['inherit', 'pipe', 'pipe']
+  stdio: ['inherit', 'pipe', 'pipe'],
 });
 
 // Display stdout with a prefix
 child.stdout.on('data', (data) => {
   const output = data.toString();
-  
+
   // Split the output into thought and result sections if the pattern is detected
   if (output.includes('INTERNAL REASONING') && output.includes('EXECUTION RESULT')) {
     // Output already has our debug formatting, just pass it through

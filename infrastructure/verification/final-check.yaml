@@ -1,18 +1,18 @@
 verification:
   globalChecks:
-    regions: ["us", "eu", "asia"]
-    interval: "1s"
-    timeout: "3s"
-  
+    regions: ['us', 'eu', 'asia']
+    interval: '1s'
+    timeout: '3s'
+
   performance:
-    targetLatency: "50ms"
-    targetThroughput: "10000rps"
+    targetLatency: '50ms'
+    targetThroughput: '10000rps'
     loadTest: true
-    
+
   security:
     sslVerification: true
     penetrationTest: true
-    
+
   monitoring:
     dataCollection: true
     alerting: true

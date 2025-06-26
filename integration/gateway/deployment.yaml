@@ -22,10 +22,9 @@ spec:
               mountPath: /data
           env:
             - name: GOOGLE_APPLICATION_CREDENTIALS
-              value: "/var/secrets/google/key.json"
+              value: '/var/secrets/google/key.json'
       volumes:
         - name: gateway-data
           persistentVolumeClaim:
             claimName: gateway-data
       serviceAccountName: aixtiv-gateway-agent
-

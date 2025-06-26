@@ -2,17 +2,17 @@
 
 /**
  * Aixtiv Agent Activation Script
- * 
+ *
  * This script activates one or more agents in the Aixtiv system by updating
  * their status from offline to online in the Firestore database.
- * 
+ *
  * Usage:
  *   - Standalone: node activate-agents.js [agentId]
  *   - Via CLI: aixtiv agent:activate [--agent=agentId]
- * 
+ *
  * Parameters:
  *   - agentId: Optional. ID of a specific agent to activate. If omitted, all agents will be activated.
- * 
+ *
  * The script updates the following agent fields:
  *   - status: Set to "online"
  *   - workload: Set to "0%"
@@ -69,25 +69,25 @@ function initializeFirebase() {
  */
 async function activateAgent(db, agentId) {
   const spinner = ora(`Activating agent: ${chalk.cyan(agentId)}`).start();
-  
+
   try {
     // Check if agent exists
     const agentRef = db.collection('agents').doc(agentId);
     const agentDoc = await agentRef.get();
-    
+
     if (!agentDoc.exists) {
       spinner.fail(`Agent ${chalk.yellow(agentId)} not found.`);
       return { success: false, agentId, error: 'Agent not found' };
     }
-    
+
     const agentData = agentDoc.data();
-    
+
     // Skip if agent is already online
     if (agentData.status === 'online') {
       spinner.info(`Agent ${chalk.green(agentId)} is already online.`);
       return { success: true, agentId, status: 'already_online' };
     }
-    
+
     // Update agent status
     await agentRef.update({
       status: 'online',
@@ -95,7 +95,7 @@ async function activateAgent(db, agentId) {
       activeTasks: 0,
       lastActive: new Date().toISOString(),
     });
-    
+
     // Record activation in agent actions
     await db.collection('agentActions').add({
       agent_id: agentId,
@@ -106,7 +106,7 @@ async function activateAgent(db, agentId) {
       workload: 0,
       active_tasks: 0,
     });
-    
+
     spinner.succeed(`Agent ${chalk.green(agentId)} activated successfully.`);
     return { success: true, agentId, status: 'activated' };
   } catch (error) {
@@ -122,33 +122,33 @@ async function activateAgent(db, agentId) {
  */
 async function activateAllAgents(db) {
   const spinner = ora('Retrieving agent list...').start();
-  
+
   try {
     // Get all agents from Firestore
     const agentsRef = db.collection('agents');
     const snapshot = await agentsRef.get();
-    
+
     if (snapshot.empty) {
       spinner.info('No agents found in the database. Falling back to default agent list.');
       spinner.stop();
-      
+
       // If no agents found, use default list
       return activateDefaultAgents(db);
     }
-    
+
     spinner.succeed(`Found ${chalk.cyan(snapshot.size)} agents.`);
-    
+
     // Create a batch to update multiple documents
     const batch = db.batch();
     const timestamp = new Date().toISOString();
     const results = { success: true, activated: 0, skipped: 0, failed: 0, agents: [] };
-    
+
     // Process each agent
     spinner.start('Activating agents...');
-    snapshot.forEach(doc => {
+    snapshot.forEach((doc) => {
       const agentData = doc.data();
       const agentId = doc.id;
-      
+
       // Only update offline agents
       if (agentData.status === 'offline') {
         batch.update(doc.ref, {
@@ -157,7 +157,7 @@ async function activateAllAgents(db) {
           activeTasks: 0,
           lastActive: timestamp,
         });
-        
+
         // Add to agent actions collection
         const actionRef = db.collection('agentActions').doc();
         batch.set(actionRef, {
@@ -169,7 +169,7 @@ async function activateAllAgents(db) {
           workload: 0,
           active_tasks: 0,
         });
-        
+
         results.activated++;
         results.agents.push({ id: agentId, status: 'activated' });
       } else {
@@ -177,15 +177,17 @@ async function activateAllAgents(db) {
         results.agents.push({ id: agentId, status: 'already_online' });
       }
     });
-    
+
     // Commit the batch if there are updates
     if (results.activated > 0) {
       await batch.commit();
-      spinner.succeed(`Activated ${chalk.green(results.activated)} agents. Skipped ${results.skipped} agents that were already online.`);
+      spinner.succeed(
+        `Activated ${chalk.green(results.activated)} agents. Skipped ${results.skipped} agents that were already online.`
+      );
     } else {
       spinner.info('All agents are already online. No activation needed.');
     }
-    
+
     return results;
   } catch (error) {
     spinner.fail(`Failed to activate agents: ${error.message}`);
@@ -200,13 +202,13 @@ async function activateAllAgents(db) {
  */
 async function activateDefaultAgents(db) {
   console.log(`Activating ${chalk.cyan(DEFAULT_AGENTS.length)} default agents:`);
-  
+
   const results = { success: true, activated: 0, failed: 0, agents: [] };
-  
+
   // Process each default agent
   for (const agentId of DEFAULT_AGENTS) {
     const result = await activateAgent(db, agentId);
-    
+
     if (result.success && result.status === 'activated') {
       results.activated++;
     } else if (result.success && result.status === 'already_online') {
@@ -214,15 +216,15 @@ async function activateDefaultAgents(db) {
     } else {
       results.failed++;
     }
-    
+
     results.agents.push(result);
   }
-  
+
   // Update overall success status
   if (results.failed > 0 && results.activated === 0) {
     results.success = false;
   }
-  
+
   return results;
 }
 
@@ -234,13 +236,13 @@ async function main() {
     // Get agent ID from command line args if provided
     const args = process.argv.slice(2);
     const agentId = args[0];
-    
+
     // Initialize Firebase and get Firestore instance
     const db = initializeFirebase();
-    
+
     // Activate agent(s)
     let result;
-    
+
     if (agentId) {
       console.log(`Activating specific agent: ${chalk.cyan(agentId)}`);
       result = await activateAgent(db, agentId);
@@ -248,10 +250,10 @@ async function main() {
       console.log('Activating all agents...');
       result = await activateAllAgents(db);
     }
-    
+
     // Display summary
     console.log('\n' + chalk.bold.underline('Activation Summary:'));
-    
+
     if (result.success) {
       if (agentId) {
         if (result.status === 'activated') {
@@ -262,7 +264,9 @@ async function main() {
       } else {
         console.log(chalk.green(`✓ Successfully activated ${result.activated} agents.`));
         if (result.skipped > 0) {
-          console.log(chalk.yellow(`ℹ Skipped ${result.skipped} agents that were already online.`));
+          console.log(
+            chalk.yellow(`ℹ Skipped ${result.skipped} agents that were already online.`)
+          );
         }
         if (result.failed > 0) {
           console.log(chalk.red(`✗ Failed to activate ${result.failed} agents.`));
@@ -271,10 +275,10 @@ async function main() {
     } else {
       console.log(chalk.red(`✗ Activation failed: ${result.error}`));
     }
-    
+
     console.log('\n' + chalk.bold('Next Steps:'));
     console.log(`Check agent status: ${chalk.yellow('aixtiv claude:status')}`);
-    
+
     return result;
   } catch (error) {
     console.error(chalk.red('\nError:'), error.message);
@@ -284,7 +288,7 @@ async function main() {
 
 // Execute script if run directly
 if (require.main === module) {
-  main().catch(error => {
+  main().catch((error) => {
     console.error(chalk.red('Fatal error:'), error);
     process.exit(1);
   });
@@ -297,4 +301,3 @@ if (require.main === module) {
     DEFAULT_AGENTS,
   };
 }
-

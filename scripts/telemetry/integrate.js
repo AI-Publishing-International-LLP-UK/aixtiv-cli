@@ -2,11 +2,11 @@
 
 /**
  * Telemetry Integration Script
- * 
+ *
  * This script helps integrate telemetry into the Aixtiv CLI by:
  * 1. Modifying the main bin/aixtiv.js file to initialize telemetry
  * 2. Adding a telemetry wrapper for all commands
- * 
+ *
  * Usage: node scripts/telemetry/integrate.js
  */
 
@@ -16,7 +16,7 @@ const readline = require('readline');
 
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
 // Paths for files we need to modify
@@ -112,8 +112,10 @@ function backupFile(filePath) {
  * @returns {boolean} True if telemetry is already integrated
  */
 function isTelemetryAlreadyIntegrated(fileContent) {
-  return fileContent.includes('require(\'../lib/telemetry\')') || 
-         fileContent.includes('require("../lib/telemetry")');
+  return (
+    fileContent.includes("require('../lib/telemetry')") ||
+    fileContent.includes('require("../lib/telemetry")')
+  );
 }
 
 /**
@@ -125,7 +127,7 @@ function addTelemetryInit(fileContent) {
   // Find a suitable position after the imports but before main code
   const lines = fileContent.split('\n');
   let insertPosition = 0;
-  
+
   // Look for dotenv config as a good insertion point
   for (let i = 0; i < lines.length; i++) {
     if (lines[i].includes('dotenv') && lines[i].includes('config')) {
@@ -133,7 +135,7 @@ function addTelemetryInit(fileContent) {
       break;
     }
   }
-  
+
   // If we didn't find dotenv, look for the end of the imports
   if (insertPosition === 0) {
     for (let i = 0; i < lines.length; i++) {
@@ -145,24 +147,23 @@ function addTelemetryInit(fileContent) {
       }
     }
   }
-  
+
   // Insert the telemetry initialization
   lines.splice(insertPosition, 0, TELEMETRY_INIT_CODE);
-  
+
   // Find a good place to insert the wrapper function
   // Looking for a spot after command imports but before program definition
   let wrapperPosition = insertPosition + 10; // Skip past the telemetry init
-  
+
   for (let i = wrapperPosition; i < lines.length; i++) {
-    if (lines[i].includes('program.version(') || 
-        lines[i].includes('program.command(')) {
+    if (lines[i].includes('program.version(') || lines[i].includes('program.command(')) {
       wrapperPosition = i;
       break;
     }
   }
-  
+
   lines.splice(wrapperPosition, 0, TELEMETRY_WRAPPER_CODE);
-  
+
   return lines.join('\n');
 }
 
@@ -174,20 +175,21 @@ function addTelemetryInit(fileContent) {
 function wrapCommandHandlers(fileContent) {
   // Replace all .action(...) calls with .action(withTelemetry(...))
   const pattern = /\.action\(([^)]+)\)/g;
-  
+
   return fileContent.replace(pattern, (match, handler) => {
     // Skip if already wrapped
     if (handler.includes('withTelemetry(')) {
       return match;
     }
-    
+
     // Extract command name from nearest .command() call
     const commandPattern = /\.command\('([^']+)'\)|\.command\("([^"]+)"\)/;
     const beforeMatch = fileContent.substring(0, fileContent.indexOf(match));
-    const lastCommandLine = beforeMatch.split('\n').reverse().find(line => 
-      line.includes('.command(')
-    );
-    
+    const lastCommandLine = beforeMatch
+      .split('\n')
+      .reverse()
+      .find((line) => line.includes('.command('));
+
     let commandName = 'unknown';
     if (lastCommandLine) {
       const commandMatch = lastCommandLine.match(commandPattern);
@@ -195,7 +197,7 @@ function wrapCommandHandlers(fileContent) {
         commandName = commandMatch[1] || commandMatch[2];
       }
     }
-    
+
     return `.action(withTelemetry('${commandName}', ${handler}))`;
   });
 }
@@ -205,56 +207,58 @@ function wrapCommandHandlers(fileContent) {
  */
 async function integrateTelementry() {
   console.log('Starting telemetry integration...');
-  
+
   // Check if main CLI file exists
   if (!fs.existsSync(MAIN_CLI_PATH)) {
     console.error(`Main CLI file not found at ${MAIN_CLI_PATH}`);
     process.exit(1);
   }
-  
+
   // Read the main CLI file
   const fileContent = fs.readFileSync(MAIN_CLI_PATH, 'utf8');
-  
+
   // Check if telemetry is already integrated
   if (isTelemetryAlreadyIntegrated(fileContent)) {
     console.log('Telemetry appears to be already integrated. Do you want to continue? (y/n)');
-    
-    const answer = await new Promise(resolve => {
+
+    const answer = await new Promise((resolve) => {
       rl.question('Continue? (y/n): ', resolve);
     });
-    
+
     if (answer.toLowerCase() !== 'y') {
       console.log('Integration cancelled');
       rl.close();
       return;
     }
   }
-  
+
   // Backup the main CLI file
   backupFile(MAIN_CLI_PATH);
-  
+
   // Add telemetry initialization
   let updatedContent = addTelemetryInit(fileContent);
-  
+
   // Wrap command handlers with telemetry
   updatedContent = wrapCommandHandlers(updatedContent);
-  
+
   // Write the updated content
   fs.writeFileSync(MAIN_CLI_PATH, updatedContent);
-  
+
   console.log(`\nTelemetry integration complete!`);
   console.log(`\nMain CLI file updated at: ${MAIN_CLI_PATH}`);
   console.log(`Backup saved at: ${BACKUP_CLI_PATH}`);
   console.log(`\nNext steps:`);
   console.log(`1. Test the integration by running a command, e.g., 'bin/aixtiv.js --version'`);
   console.log(`2. Add specific telemetry calls for knowledge access in your command files`);
-  console.log(`3. If any issues arise, restore from the backup: 'cp ${BACKUP_CLI_PATH} ${MAIN_CLI_PATH}'`);
-  
+  console.log(
+    `3. If any issues arise, restore from the backup: 'cp ${BACKUP_CLI_PATH} ${MAIN_CLI_PATH}'`
+  );
+
   rl.close();
 }
 
 // Run the integration
-integrateTelementry().catch(error => {
+integrateTelementry().catch((error) => {
   console.error('Error during integration:', error);
   rl.close();
   process.exit(1);

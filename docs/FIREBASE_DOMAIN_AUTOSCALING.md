@@ -1,4 +1,5 @@
 # Dr. Claude Orchestrator
+
 # Firebase Domain Autoscaling in Aixtiv Symphony
 
 This document describes the Firebase Domain Autoscaling integration for the Aixtiv CLI, which automates the verification and management of domains during autoscaling events.
@@ -54,6 +55,7 @@ aixtiv domain:autoscale-verify [options]
 ```
 
 Options:
+
 - `--force`: Force verification of all domains
 - `--dry-run`: Perform a dry run without making changes
 - `--verbose`: Enable verbose logging
@@ -61,15 +63,17 @@ Options:
 ### Programmatic Usage
 
 ```javascript
-const { handleAutoscaling } = require('/Users/as/asoos/aixtiv-cli/scripts/autoscale-verify-firebase-domains');
+const {
+  handleAutoscaling,
+} = require('/Users/as/asoos/aixtiv-cli/scripts/autoscale-verify-firebase-domains');
 
 async function runAutoscaling() {
   const options = {
     force: false,
     dryRun: false,
-    logLevel: 'info'
+    logLevel: 'info',
   };
-  
+
   const results = await handleAutoscaling(options);
   console.log(`Verified: ${results.verified.length}, Failed: ${results.failed.length}`);
 }
@@ -81,17 +85,17 @@ runAutoscaling();
 
 The script maps domain types to specific Firebase projects as follows:
 
-| Domain Type | Firebase Project       |
-|-------------|------------------------|
-| character   | api-for-warp-drive     |
-| command     | api-for-warp-drive     |
-| wing        | api-for-warp-drive     |
-| squadron    | api-for-warp-drive     |
-| brand       | coaching2100-com       |
-| aixtiv      | aixtiv-symphony        |
-| learning    | academy2100-com        |
-| commerce    | giftshop2100-com       |
-| governance  | api-for-warp-drive     |
+| Domain Type | Firebase Project   |
+| ----------- | ------------------ |
+| character   | api-for-warp-drive |
+| command     | api-for-warp-drive |
+| wing        | api-for-warp-drive |
+| squadron    | api-for-warp-drive |
+| brand       | coaching2100-com   |
+| aixtiv      | aixtiv-symphony    |
+| learning    | academy2100-com    |
+| commerce    | giftshop2100-com   |
+| governance  | api-for-warp-drive |
 
 The default project (used if a domain type is not in the mapping) is `api-for-warp-drive`.
 
@@ -126,9 +130,9 @@ For Kubernetes-based autoscaling, you can add it as a post-scale hook:
 ```yaml
 spec:
   containers:
-  - name: domain-verifier
-    image: node:16
-    command: ["node", "/scripts/autoscale-verify-firebase-domains.js"]
+    - name: domain-verifier
+      image: node:16
+      command: ['node', '/scripts/autoscale-verify-firebase-domains.js']
 ```
 
 ## Troubleshooting
@@ -136,11 +140,13 @@ spec:
 ### Common Issues
 
 1. **Verification Timeout**: If domains fail to verify within the retry period, check:
+
    - DNS propagation status
    - Correct DNS record format
    - Firebase project permissions
 
 2. **Firebase CLI Authentication**: Ensure Firebase CLI is authenticated:
+
    ```bash
    firebase login
    ```
@@ -166,10 +172,10 @@ The script's behavior can be configured by modifying the `CONFIG` object in the 
 const CONFIG = {
   // Maximum retry attempts for domain verification
   MAX_RETRIES: 3,
-  
+
   // Delay between verification attempts (in milliseconds)
   RETRY_DELAY: 10000, // 10 seconds
-  
+
   // Maximum time to wait for domain verification (in milliseconds)
   VERIFICATION_TIMEOUT: 300000, // 5 minutes
 };

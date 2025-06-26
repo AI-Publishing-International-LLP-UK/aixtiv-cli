@@ -1,11 +1,11 @@
 ---
-title: "Comprehensive Work Effort Usage Documentation"
-status: "completed"
-priority: "medium"
-assignee: "Unassigned"
-created: "2025-03-17 14:37"
-last_updated: "2025-03-17 14:37"
-due_date: "None"
+title: 'Comprehensive Work Effort Usage Documentation'
+status: 'completed'
+priority: 'medium'
+assignee: 'Unassigned'
+created: '2025-03-17 14:37'
+last_updated: '2025-03-17 14:37'
+due_date: 'None'
 ---
 
 # Comprehensive Work Effort Usage Documentation
@@ -19,19 +19,22 @@ This work effort details the implementation of comprehensive documentation for t
 We've updated the following key files with comprehensive documentation:
 
 1. **README.md**
+
    - Added a new "How to Use Work Efforts Properly" section
    - Documented work effort creation, organization, and naming conventions
    - Explained the indexing and discovery system
    - Listed best practices for optimal usage
 
-2. **_AI-Setup/AI-setup-instructions.md**
+2. **\_AI-Setup/AI-setup-instructions.md**
+
    - Added a dedicated section for AI assistants
    - Detailed the work effort architecture and directory structure
    - Outlined AI assistant responsibilities regarding work efforts
    - Provided examples of common work effort operations
    - Listed best practices specifically for AI assistants
 
-3. **work_efforts/devlog.md** and **_AI-Setup/work_efforts/devlog.md**
+3. **work_efforts/devlog.md** and **\_AI-Setup/work_efforts/devlog.md**
+
    - Added a comprehensive entry about proper work effort usage
    - Documented key components of the work effort system
    - Listed best practices guidelines
@@ -45,16 +48,19 @@ We've updated the following key files with comprehensive documentation:
 ## Key Features Documented
 
 1. **Work Effort Directory Structure**
+
    - Primary location: `/work_efforts/` with status subdirectories
    - Secondary location: `/_AI-Setup/work_efforts/` for system-level efforts
    - Custom locations for flexible organization
 
 2. **Naming Conventions**
+
    - Sequential numbering (0001_feature_name.md)
    - Timestamp-based naming (202503170001_feature_name.md)
    - Custom/free-form naming for flexibility
 
 3. **Indexing System**
+
    - Project-wide work effort discovery with `cc-index`
    - Multiple search modes (standard, thorough)
    - Content and filename-based filtering

@@ -33,11 +33,11 @@ This feature adds a comprehensive indexing system for work efforts that can scan
 
 1. **Project-Wide Discovery** - Recursively finds all work efforts, regardless of where they're stored
 2. **Comprehensive Pattern Matching** - Identifies work efforts through multiple methods:
-   - Standard naming patterns (0001_, 202303170001_, etc.)
+   - Standard naming patterns (0001*, 202303170001*, etc.)
    - Work effort keywords in filenames (work_effort, task, feature, etc.)
    - Directory structure hints (work_efforts folder, active/completed, etc.)
    - Content-based detection with frontmatter and markdown analysis
-3. **Smart Directory Recognition** - Understands diverse folder structures beyond just "work_efforts" and "_AI-Setup"
+3. **Smart Directory Recognition** - Understands diverse folder structures beyond just "work_efforts" and "\_AI-Setup"
 4. **Status Detection** - Extracts status from both content and directory structure
 5. **Rich Output Options** - Tabular or JSON output formats with extensive filtering options
 6. **Detailed Summary Statistics** - Provides comprehensive statistics about work effort distribution
@@ -96,8 +96,9 @@ cc-index --no-save
 ## Testing
 
 The enhanced work effort indexing feature has been thoroughly tested with the following results:
+
 - Successfully indexed 222 work efforts across the entire project
-- Found work efforts in various locations including standard work_efforts directories, _AI-Setup, and multiple demo directories
+- Found work efforts in various locations including standard work_efforts directories, \_AI-Setup, and multiple demo directories
 - Correctly identified all work effort formats (sequential, timestamps, date-based, etc.)
 - Successfully extracted and normalized metadata from diverse sources
 - Generated a complete JSON representation of all work efforts with their metadata
@@ -107,6 +108,7 @@ The enhanced work effort indexing feature has been thoroughly tested with the fo
 ## Performance
 
 The indexing process is quick and efficient:
+
 - Recursively scanned the entire project directory structure
 - Applied multiple pattern matching strategies in a single pass
 - Generated a comprehensive JSON index file (31KB) containing all work efforts

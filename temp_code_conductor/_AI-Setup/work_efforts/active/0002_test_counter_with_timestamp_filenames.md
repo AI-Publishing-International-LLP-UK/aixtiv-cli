@@ -18,4 +18,3 @@ Create test files with timestamps to verify the counter doesn't misidentify them
 ## Notes
 
 Add notes here as the work progresses.
-

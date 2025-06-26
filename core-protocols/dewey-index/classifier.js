@@ -1,20 +1,20 @@
 /**
  * DI:DC (Dewey Digital Index Cards) - Classifier
- * 
+ *
  * This module implements the classification system for the DI:DC system,
  * which categorizes content according to a taxonomic hierarchy.
  */
 
-const admin = require("firebase-admin");
+const admin = require('firebase-admin');
 
 // Get Firestore instance
 let db;
 try {
   db = admin.firestore();
 } catch (e) {
-  const serviceAccount = require("../../../../integration-gateway/integrations/google-drive/service-account.json");
+  const serviceAccount = require('../../../../integration-gateway/integrations/google-drive/service-account.json');
   const app = admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+    credential: admin.credential.cert(serviceAccount),
   });
   db = admin.firestore();
 }
@@ -27,46 +27,46 @@ try {
 async function classifyContent(content) {
   // This is a simplified implementation
   // In a real system, this would use NLP or AI to determine categories and tags
-  
+
   // Example classification based on simple keyword matching
   const categories = [];
   const tags = [];
-  
-  const text = content.content || "";
+
+  const text = content.content || '';
   const metadata = content.metadata || {};
-  
+
   // Check for keywords in the content
-  if (text.toLowerCase().includes("project")) {
-    categories.push("Projects");
+  if (text.toLowerCase().includes('project')) {
+    categories.push('Projects');
   }
-  
-  if (text.toLowerCase().includes("agent")) {
-    categories.push("Agents");
+
+  if (text.toLowerCase().includes('agent')) {
+    categories.push('Agents');
   }
-  
-  if (text.toLowerCase().includes("training")) {
-    categories.push("Training");
+
+  if (text.toLowerCase().includes('training')) {
+    categories.push('Training');
   }
-  
+
   // Add tags based on metadata
   if (metadata.author) {
     tags.push(`author:${metadata.author}`);
   }
-  
+
   if (metadata.createdDate) {
     const date = new Date(metadata.createdDate);
     tags.push(`year:${date.getFullYear()}`);
   }
-  
+
   // If no categories were found, use a default category
   if (categories.length === 0) {
-    categories.push("Uncategorized");
+    categories.push('Uncategorized');
   }
-  
+
   return {
     categories,
     tags,
-    classifiedAt: admin.firestore.FieldValue.serverTimestamp()
+    classifiedAt: admin.firestore.FieldValue.serverTimestamp(),
   };
 }
 
@@ -78,28 +78,27 @@ async function classifyContent(content) {
  */
 async function storeClassification(contentId, classification) {
   try {
-    const classificationRef = await db.collection("dewey_classifications").add({
+    const classificationRef = await db.collection('dewey_classifications').add({
       contentId,
       categories: classification.categories,
       tags: classification.tags,
-      classifiedAt: classification.classifiedAt
+      classifiedAt: classification.classifiedAt,
     });
-    
+
     // Update the content record with the classification ID
-    await db.collection("dewey_indexed_content").doc(contentId).update({
+    await db.collection('dewey_indexed_content').doc(contentId).update({
       classificationId: classificationRef.id,
-      classifiedAt: classification.classifiedAt
+      classifiedAt: classification.classifiedAt,
     });
-    
+
     return classificationRef.id;
   } catch (error) {
-    console.error("Error storing classification:", error);
+    console.error('Error storing classification:', error);
     throw error;
   }
 }
 
 module.exports = {
   classifyContent,
-  storeClassification
+  storeClassification,
 };
-

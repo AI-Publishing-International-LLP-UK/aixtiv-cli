@@ -39,8 +39,7 @@
     "timeToResolution": "15 minutes",
     "accuracyScore": 0.95,
     "completenessScore": 1.0,
-    "preventionScore": 0.90,
+    "preventionScore": 0.9,
     "blockchainVerified": true
   }
 }
-

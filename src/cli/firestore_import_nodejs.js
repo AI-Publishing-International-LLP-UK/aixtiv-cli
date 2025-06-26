@@ -1,13 +1,13 @@
 /**
  * Aixtiv CLI - Firestore Batch 6 Import Script (Node.js)
- * 
+ *
  * This script imports Batch 6 (Cards 101-120) into Firestore.
- * 
+ *
  * Prerequisites:
  * 1. Firebase Admin SDK installed: npm install firebase-admin
  * 2. Service account credentials JSON file
  * 3. Proper permissions to write to Firestore
- * 
+ *
  * Usage:
  * 1. Set the GOOGLE_APPLICATION_CREDENTIALS environment variable to point to your service account file
  * 2. Run with: node firestore_import_nodejs.js
@@ -37,20 +37,20 @@ async function importBatch6() {
     const cardsCollection = db.collection('aixtiv_cards');
 
     // Add each card to the batch
-    batchData.forEach(card => {
+    batchData.forEach((card) => {
       // Create a document reference with the card_id
       const docRef = cardsCollection.doc(card.card_id);
-      
+
       // Add server timestamp
       const cardWithTimestamp = {
         ...card,
         imported_at: admin.firestore.FieldValue.serverTimestamp(),
-        batch_number: 6
+        batch_number: 6,
       };
-      
+
       // Set the document data
       batch.set(docRef, cardWithTimestamp);
-      
+
       console.log(`Added card ${card.card_id} - ${card.title} to batch`);
     });
 
@@ -64,11 +64,10 @@ async function importBatch6() {
       cards_count: batchData.length,
       import_date: admin.firestore.FieldValue.serverTimestamp(),
       status: 'imported',
-      cards_range: 'AIX.CASCADE.101-AIX.CASCADE.120'
+      cards_range: 'AIX.CASCADE.101-AIX.CASCADE.120',
     });
-    
-    console.log('Batch record created');
 
+    console.log('Batch record created');
   } catch (error) {
     console.error('Error importing Batch 6:', error);
   } finally {

@@ -2,23 +2,23 @@
 
 /**
  * Agent Reconciliation Script
- * 
+ *
  * This script analyzes agent data from three sources:
  * 1. auth:verify - Authentication system
  * 2. resource:scan - Resource allocation system
  * 3. config/agent-cards/ - Agent configuration files
- * 
+ *
  * It identifies inconsistencies such as:
  * - Missing agent cards
  * - Naming inconsistencies
  * - Inactive/unused agents
  * - Misconfigured agents
- * 
+ *
  * The script can generate reports and optionally fix issues.
- * 
+ *
  * Usage:
  *   node scripts/reconciliation/agent-reconcile.js [options]
- * 
+ *
  * Options:
  *   --fix             Automatically fix issues
  *   --report-only     Generate report without fixing
@@ -57,9 +57,9 @@ const CONFIG = {
       orchestration_endpoint: 'https://api.aixtiv.com/symphony/opus/orchestration',
       creator: 'Agent Reconciliation Script',
       created_at: new Date().toISOString(),
-      last_updated: new Date().toISOString()
-    }
-  }
+      last_updated: new Date().toISOString(),
+    },
+  },
 };
 
 // Create output directory if it doesn't exist
@@ -73,7 +73,7 @@ const options = {
   fix: args.includes('--fix'),
   reportOnly: args.includes('--report-only'),
   verbose: args.includes('--verbose'),
-  output: args.includes('--output') ? args[args.indexOf('--output') + 1] : null
+  output: args.includes('--output') ? args[args.indexOf('--output') + 1] : null,
 };
 
 // Utility functions
@@ -82,7 +82,7 @@ function log(message, type = 'info') {
     info: chalk.blue('INFO'),
     warning: chalk.yellow('WARNING'),
     error: chalk.red('ERROR'),
-    success: chalk.green('SUCCESS')
+    success: chalk.green('SUCCESS'),
   }[type];
 
   console.log(`${prefix}: ${message}`);
@@ -91,10 +91,10 @@ function log(message, type = 'info') {
 function executeCommand(command, options = {}) {
   const { timeout = 30000 } = options; // Default timeout: 30 seconds
   try {
-    return execSync(command, { 
+    return execSync(command, {
       encoding: 'utf8',
       timeout: timeout,
-      maxBuffer: 10 * 1024 * 1024 // 10MB buffer for large outputs
+      maxBuffer: 10 * 1024 * 1024, // 10MB buffer for large outputs
     });
   } catch (error) {
     if (error.signal === 'SIGTERM') {
@@ -110,157 +110,176 @@ function executeCommand(command, options = {}) {
 function standardizeAgentId(id) {
   // Remove email format if present (e.g., 'lucy@drlucy.live' -> 'lucy')
   let standardId = id.includes('@') ? id.split('@')[0] : id;
-  
+
   // Add 'dr-' prefix if it's a doctor but missing the prefix
-  const doctorNames = ['lucy', 'grant', 'memoria', 'match', 'claude', 'sabina', 'roark', 'maria', 'cypriot', 'burby'];
+  const doctorNames = [
+    'lucy',
+    'grant',
+    'memoria',
+    'match',
+    'claude',
+    'sabina',
+    'roark',
+    'maria',
+    'cypriot',
+    'burby',
+  ];
   if (doctorNames.includes(standardId) && !standardId.startsWith('dr-')) {
     standardId = `dr-${standardId}`;
   }
-  
+
   // Convert to lowercase
   standardId = standardId.toLowerCase();
-  
+
   // Replace underscores with hyphens
   standardId = standardId.replace(/_/g, '-');
-  
+
   return standardId;
 }
 
 // Data retrieval functions
 async function getAuthVerifyAgents() {
   log('Fetching agents from auth:verify...');
-  
+
   // Hardcoded agent list as a fallback in case the command fails
   const knownAgents = [
-    'lucy@drlucy', '00015', '001', 'dr-claude-orchestrator', 
-    'dr-lucy-flight-memory', 'professor-lee-q4d-trainer', 
-    'dr-grant-cybersecurity', 'qblucy', 'dr-memoria-anthology', 
-    'dr-grant-sallyport', 'QBLucy', 'SirHand'
+    'lucy@drlucy',
+    '00015',
+    '001',
+    'dr-claude-orchestrator',
+    'dr-lucy-flight-memory',
+    'professor-lee-q4d-trainer',
+    'dr-grant-cybersecurity',
+    'qblucy',
+    'dr-memoria-anthology',
+    'dr-grant-sallyport',
+    'QBLucy',
+    'SirHand',
   ];
-  
+
   // Try to get the output with a 15-second timeout
   const output = executeCommand(`${CONFIG.cliCommand} auth:verify`, { timeout: 15000 });
-  
+
   if (!output) {
     log('Failed to get auth:verify output, using known agent list', 'warning');
-    return knownAgents.map(id => ({
+    return knownAgents.map((id) => ({
       id,
       source: 'auth:verify (fallback)',
-      standardId: standardizeAgentId(id)
+      standardId: standardizeAgentId(id),
     }));
   }
-  
+
   // Extract agent IDs from output using a more robust approach
   // Try multiple patterns to account for different formats
   let agentIds = [];
-  
+
   // Pattern 1: Standard format with "Agent IDs:" prefix
   const agentListMatch = output.match(/Agent IDs:\s*(.*?)(?:\n|$)/);
-  
+
   if (agentListMatch && agentListMatch[1]) {
-    agentIds = agentListMatch[1].split(', ').map(id => id.trim());
+    agentIds = agentListMatch[1].split(', ').map((id) => id.trim());
   } else {
     // Pattern 2: Look for a specific section that might contain agent IDs
     const agentSection = output.match(/Agents:\s*(\d+)\s*\n(.*?)(?:\n\n|\n[^\n]|$)/s);
     if (agentSection && agentSection[2]) {
       // Try to extract agent IDs from the lines following "Agents: N"
       const potentialAgentLine = agentSection[2].trim();
-      agentIds = potentialAgentLine.split(/[,\s]+/).filter(id => id && id.length > 0);
+      agentIds = potentialAgentLine.split(/[,\s]+/).filter((id) => id && id.length > 0);
     }
   }
-  
+
   // If we still couldn't find agents, use the fallback list
   if (agentIds.length === 0) {
     log('Could not parse agents from output, using known agent list', 'warning');
     log('Output snippet:', 'info');
     log(output.substring(0, 500) + (output.length > 500 ? '...' : ''), 'info');
-    
-    return knownAgents.map(id => ({
+
+    return knownAgents.map((id) => ({
       id,
       source: 'auth:verify (fallback)',
-      standardId: standardizeAgentId(id)
+      standardId: standardizeAgentId(id),
     }));
   }
-  
+
   log(`Found ${agentIds.length} agents from auth:verify`);
-  
-  return agentIds.map(id => ({
+
+  return agentIds.map((id) => ({
     id,
     source: 'auth:verify',
-    standardId: standardizeAgentId(id)
+    standardId: standardizeAgentId(id),
   }));
 }
 
 async function getResourceScanAgents() {
   log('Fetching agents from resource:scan...');
   const output = executeCommand(`${CONFIG.cliCommand} resource:scan`);
-  
+
   if (!output) {
     return [];
   }
-  
+
   // Extract all unique agent IDs from resource assignments
   const lines = output.split('\n');
   const agentSet = new Set();
-  
+
   // Extract from table rows
   for (const line of lines) {
     // Skip lines that don't look like table data
     if (!line.includes('│')) continue;
-    
+
     // Try to extract agent IDs from the "Authorized Agents" column
     const parts = line.split('│');
     if (parts.length >= 4) {
       const agentsPart = parts[3].trim();
       // Split multiple agents in the same field
       if (agentsPart) {
-        const ids = agentsPart.split(',').map(id => id.trim());
-        ids.forEach(id => {
+        const ids = agentsPart.split(',').map((id) => id.trim());
+        ids.forEach((id) => {
           if (id && id !== 'Authorized Agents') agentSet.add(id);
         });
       }
     }
   }
-  
+
   const agentIds = Array.from(agentSet);
   log(`Found ${agentIds.length} unique agents from resource:scan`);
-  
-  return agentIds.map(id => ({
+
+  return agentIds.map((id) => ({
     id,
     source: 'resource:scan',
-    standardId: standardizeAgentId(id)
+    standardId: standardizeAgentId(id),
   }));
 }
 
 async function getAgentCardFiles() {
   log(`Checking agent cards in ${CONFIG.agentCardsDir}...`);
-  
+
   try {
     const files = await readdir(CONFIG.agentCardsDir);
-    const jsonFiles = files.filter(file => file.endsWith('.json'));
-    
+    const jsonFiles = files.filter((file) => file.endsWith('.json'));
+
     log(`Found ${jsonFiles.length} agent card files`);
-    
+
     const agentCards = [];
     for (const file of jsonFiles) {
       const filePath = path.join(CONFIG.agentCardsDir, file);
       try {
         const content = await readFile(filePath, 'utf8');
         const data = JSON.parse(content);
-        
+
         agentCards.push({
           id: data.id || path.basename(file, '.json'),
           filename: file,
           path: filePath,
           data,
           source: 'agent-cards',
-          standardId: standardizeAgentId(data.id || path.basename(file, '.json'))
+          standardId: standardizeAgentId(data.id || path.basename(file, '.json')),
         });
       } catch (error) {
         log(`Error reading agent card ${file}: ${error.message}`, 'error');
       }
     }
-    
+
     return agentCards;
   } catch (error) {
     log(`Error reading agent cards directory: ${error.message}`, 'error');
@@ -271,7 +290,7 @@ async function getAgentCardFiles() {
 // Analysis functions
 function findInconsistencies(authAgents, resourceAgents, agentCards) {
   const allAgents = new Map();
-  
+
   // Add all agents to the map with their sources
   function addToMap(agent, source) {
     const key = agent.standardId;
@@ -280,7 +299,7 @@ function findInconsistencies(authAgents, resourceAgents, agentCards) {
         standardId: key,
         originalIds: [agent.id],
         sources: [source],
-        cardData: null
+        cardData: null,
       });
     } else {
       const existing = allAgents.get(key);
@@ -292,20 +311,20 @@ function findInconsistencies(authAgents, resourceAgents, agentCards) {
       }
     }
   }
-  
+
   // Process all sources
-  authAgents.forEach(agent => addToMap(agent, 'auth:verify'));
-  resourceAgents.forEach(agent => addToMap(agent, 'resource:scan'));
-  
+  authAgents.forEach((agent) => addToMap(agent, 'auth:verify'));
+  resourceAgents.forEach((agent) => addToMap(agent, 'resource:scan'));
+
   // Process agent cards differently to include card data
-  agentCards.forEach(card => {
+  agentCards.forEach((card) => {
     const key = card.standardId;
     if (!allAgents.has(key)) {
       allAgents.set(key, {
         standardId: key,
         originalIds: [card.id],
         sources: ['agent-cards'],
-        cardData: card
+        cardData: card,
       });
     } else {
       const existing = allAgents.get(key);
@@ -318,43 +337,47 @@ function findInconsistencies(authAgents, resourceAgents, agentCards) {
       existing.cardData = card;
     }
   });
-  
+
   // Identify inconsistencies
   const inconsistencies = {
     missingCards: [],
     multipleIds: [],
     unusedCards: [],
-    namingIssues: []
+    namingIssues: [],
   };
-  
+
   for (const [key, agent] of allAgents.entries()) {
     // Missing cards: agent exists in auth or resources but has no card
-    if ((agent.sources.includes('auth:verify') || agent.sources.includes('resource:scan')) && 
-        !agent.sources.includes('agent-cards')) {
+    if (
+      (agent.sources.includes('auth:verify') || agent.sources.includes('resource:scan')) &&
+      !agent.sources.includes('agent-cards')
+    ) {
       inconsistencies.missingCards.push(agent);
     }
-    
+
     // Unused cards: agent has a card but is not in auth or resources
-    if (agent.sources.includes('agent-cards') && 
-        !agent.sources.includes('auth:verify') && 
-        !agent.sources.includes('resource:scan')) {
+    if (
+      agent.sources.includes('agent-cards') &&
+      !agent.sources.includes('auth:verify') &&
+      !agent.sources.includes('resource:scan')
+    ) {
       inconsistencies.unusedCards.push(agent);
     }
-    
+
     // Multiple IDs: agent has more than one ID format
     if (agent.originalIds.length > 1) {
       inconsistencies.multipleIds.push(agent);
     }
-    
+
     // Naming issues: original ID doesn't match standardized format
-    if (agent.originalIds.some(id => standardizeAgentId(id) !== id)) {
+    if (agent.originalIds.some((id) => standardizeAgentId(id) !== id)) {
       inconsistencies.namingIssues.push(agent);
     }
   }
-  
+
   return {
     allAgents: Array.from(allAgents.values()),
-    inconsistencies
+    inconsistencies,
   };
 }
 
@@ -363,12 +386,12 @@ async function createMissingAgentCard(agent) {
   const standardId = agent.standardId;
   const filename = `${standardId.replace(/-/g, '_')}.json`;
   const filePath = path.join(CONFIG.agentCardsDir, filename);
-  
+
   // Create agent card data based on template
   const cardData = { ...CONFIG.defaultAgentTemplate };
   cardData.id = standardId;
   cardData.name = agent.originalIds[0].replace(/^dr-/, 'Dr. ').replace(/-/g, ' ');
-  
+
   // Try to infer capabilities
   if (standardId.includes('lucy')) {
     cardData.capabilities = ['Flight memory system', 'Agent coordination', 'Task tracking'];
@@ -386,7 +409,7 @@ async function createMissingAgentCard(agent) {
     cardData.capabilities = ['Task automation', 'Workflow management'];
     cardData.description = 'Agent System';
   }
-  
+
   try {
     await writeFile(filePath, JSON.stringify(cardData, null, 2), 'utf8');
     log(`Created agent card for ${standardId} at ${filePath}`, 'success');
@@ -400,15 +423,19 @@ async function createMissingAgentCard(agent) {
 // Main function
 async function main() {
   log('Starting agent reconciliation...');
-  
+
   // Fetch data from all sources
   const authAgents = await getAuthVerifyAgents();
   const resourceAgents = await getResourceScanAgents();
   const agentCards = await getAgentCardFiles();
-  
+
   // Analyze inconsistencies
-  const { allAgents, inconsistencies } = findInconsistencies(authAgents, resourceAgents, agentCards);
-  
+  const { allAgents, inconsistencies } = findInconsistencies(
+    authAgents,
+    resourceAgents,
+    agentCards
+  );
+
   // Generate report
   const report = {
     timestamp: new Date().toISOString(),
@@ -420,12 +447,12 @@ async function main() {
       missingCards: inconsistencies.missingCards.length,
       unusedCards: inconsistencies.unusedCards.length,
       multipleIds: inconsistencies.multipleIds.length,
-      namingIssues: inconsistencies.namingIssues.length
+      namingIssues: inconsistencies.namingIssues.length,
     },
     inconsistencies,
-    allAgents
+    allAgents,
   };
-  
+
   // Print report
   console.log('\n========= AGENT RECONCILIATION REPORT =========\n');
   console.log(chalk.bold('SUMMARY:'));
@@ -438,38 +465,40 @@ async function main() {
   console.log(`Unused agent cards: ${report.summary.unusedCards}`);
   console.log(`Multiple IDs for same agent: ${report.summary.multipleIds}`);
   console.log(`Naming convention issues: ${report.summary.namingIssues}`);
-  
+
   // Detailed report of inconsistencies
   if (options.verbose) {
     if (inconsistencies.missingCards.length > 0) {
       console.log(chalk.yellow('\nMISSING AGENT CARDS:'));
-      inconsistencies.missingCards.forEach(agent => {
+      inconsistencies.missingCards.forEach((agent) => {
         console.log(`  - ${agent.standardId} (Original IDs: ${agent.originalIds.join(', ')})`);
       });
     }
-    
+
     if (inconsistencies.unusedCards.length > 0) {
       console.log(chalk.yellow('\nUNUSED AGENT CARDS:'));
-      inconsistencies.unusedCards.forEach(agent => {
-        console.log(`  - ${agent.standardId} (File: ${agent.cardData ? agent.cardData.filename : 'unknown'})`);
+      inconsistencies.unusedCards.forEach((agent) => {
+        console.log(
+          `  - ${agent.standardId} (File: ${agent.cardData ? agent.cardData.filename : 'unknown'})`
+        );
       });
     }
-    
+
     if (inconsistencies.multipleIds.length > 0) {
       console.log(chalk.yellow('\nMULTIPLE IDs:'));
-      inconsistencies.multipleIds.forEach(agent => {
+      inconsistencies.multipleIds.forEach((agent) => {
         console.log(`  - ${agent.standardId} (Original IDs: ${agent.originalIds.join(', ')})`);
       });
     }
-    
+
     if (inconsistencies.namingIssues.length > 0) {
       console.log(chalk.yellow('\nNAMING ISSUES:'));
-      inconsistencies.namingIssues.forEach(agent => {
+      inconsistencies.namingIssues.forEach((agent) => {
         console.log(`  - ${agent.standardId} (Original IDs: ${agent.originalIds.join(', ')})`);
       });
     }
   }
-  
+
   // Save report to file if requested
   if (options.output) {
     const outputPath = path.join(CONFIG.outputDir, options.output);
@@ -480,23 +509,25 @@ async function main() {
       log(`Error saving report: ${error.message}`, 'error');
     }
   }
-  
+
   // Apply fixes if requested
   if (options.fix) {
     console.log(chalk.blue('\n========= APPLYING FIXES =========\n'));
-    
+
     // Fix missing agent cards
     if (inconsistencies.missingCards.length > 0) {
       log(`Creating ${inconsistencies.missingCards.length} missing agent cards...`);
-      
+
       for (const agent of inconsistencies.missingCards) {
         await createMissingAgentCard(agent);
       }
     }
-    
+
     // Fix naming inconsistencies (optionally)
     if (inconsistencies.namingIssues.length > 0) {
-      log(`Found ${inconsistencies.namingIssues.length} agents with naming issues. These require manual fixes.`);
+      log(
+        `Found ${inconsistencies.namingIssues.length} agents with naming issues. These require manual fixes.`
+      );
       log('Please use the following naming conventions:');
       log('1. Use hyphens instead of underscores for word separation');
       log('2. Use lowercase for all agent IDs');
@@ -506,22 +537,22 @@ async function main() {
   } else if (!options.reportOnly) {
     // Prompt for fix if not in report-only mode
     console.log(chalk.blue('\nRecommended actions:'));
-    
+
     if (inconsistencies.missingCards.length > 0) {
       console.log(`- Create ${inconsistencies.missingCards.length} missing agent cards`);
     }
-    
+
     if (inconsistencies.unusedCards.length > 0) {
       console.log(`- Review ${inconsistencies.unusedCards.length} unused agent cards`);
     }
-    
+
     if (inconsistencies.multipleIds.length > 0 || inconsistencies.namingIssues.length > 0) {
       console.log('- Standardize agent naming conventions');
     }
-    
+
     console.log(chalk.blue('\nTo apply fixes, run with --fix flag'));
   }
-  
+
   return report;
 }
 
@@ -539,7 +570,7 @@ async function activateUnusedAgent(agent) {
     log(`Cannot activate ${agent.standardId}: No card data available`, 'error');
     return false;
   }
-  
+
   log(`Would activate agent ${agent.standardId}`, 'info');
   // Uncomment to actually run the activation command:
   // executeCommand(`${CONFIG.cliCommand} agent:activate --agent ${agent.standardId}`);
@@ -547,8 +578,7 @@ async function activateUnusedAgent(agent) {
 }
 
 // Run the script
-main().catch(error => {
+main().catch((error) => {
   console.error('Error running agent reconciliation script:', error);
   process.exit(1);
 });
-

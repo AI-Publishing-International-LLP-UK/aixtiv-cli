@@ -10,19 +10,19 @@ const telemetry = require('../utils/telemetry');
 async function memoryCommand(options) {
   // Record knowledge access for telemetry
   telemetry.recordKnowledgeAccess('memory');
-  
+
   const { action, type, query, data = '{}' } = parseOptions(options);
-  
+
   // Validate action parameter
   if (!action || !['store', 'query'].includes(action)) {
     console.error(chalk.red('Error: Valid action is required'));
     console.log(`Use ${chalk.cyan('--action <store|query>')} to specify an action`);
     process.exit(1);
   }
-  
+
   try {
     let result;
-    
+
     // Handle different actions
     if (action === 'store') {
       // Validate type for store action
@@ -31,7 +31,7 @@ async function memoryCommand(options) {
         console.log(`Use ${chalk.cyan('--type <type>')} to specify a memory type`);
         process.exit(1);
       }
-      
+
       // Parse data if provided as a string
       let parsedData;
       try {
@@ -40,7 +40,7 @@ async function memoryCommand(options) {
         console.error(chalk.red('Error: Invalid JSON in memory data'));
         process.exit(1);
       }
-      
+
       // Execute store operation with spinner
       result = await withSpinner(
         `Storing ${chalk.yellow(type)} memory in Flight Memory System`,
@@ -48,7 +48,7 @@ async function memoryCommand(options) {
         type,
         parsedData
       );
-      
+
       // Display additional information if successful
       if (result.success) {
         console.log(chalk.bold('Memory Details:'));
@@ -66,18 +66,14 @@ async function memoryCommand(options) {
         console.error(chalk.red('Error: Invalid JSON in query parameter'));
         process.exit(1);
       }
-      
+
       // Execute query operation with spinner
-      result = await withSpinner(
-        `Querying Flight Memory System`,
-        queryMemory,
-        parsedQuery
-      );
-      
+      result = await withSpinner(`Querying Flight Memory System`, queryMemory, parsedQuery);
+
       // Display additional information if successful
       if (result.success && result.results) {
         console.log(chalk.bold(`Found ${result.results.length} memories:`));
-        
+
         if (result.results.length > 0) {
           result.results.forEach((memory, index) => {
             console.log(chalk.cyan(`\nMemory #${index + 1}:`));
@@ -91,7 +87,7 @@ async function memoryCommand(options) {
         }
       }
     }
-    
+
     // Display result
     displayResult(result);
   } catch (error) {
@@ -102,4 +98,3 @@ async function memoryCommand(options) {
 }
 
 module.exports = memoryCommand;
-

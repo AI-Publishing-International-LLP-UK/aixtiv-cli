@@ -13,6 +13,7 @@ This directory contains structured documentation for tracking tasks, features, a
 ## Usage
 
 Create a new work effort:
+
 ```bash
 code-conductor work
 # or
@@ -20,6 +21,7 @@ cc-work-e
 ```
 
 List existing work efforts:
+
 ```bash
 code-conductor list
 ```

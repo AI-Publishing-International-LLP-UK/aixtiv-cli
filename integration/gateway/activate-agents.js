@@ -9,7 +9,7 @@ admin.initializeApp({
   credential: serviceAccount
     ? admin.credential.cert(serviceAccount)
     : admin.credential.applicationDefault(),
-  projectId: 'api-for-warp-drive'
+  projectId: 'api-for-warp-drive',
 });
 
 const db = admin.firestore();
@@ -25,7 +25,7 @@ async function activateAgents() {
     if (batchSnap.empty) break;
 
     const batchWrite = db.batch();
-    batchSnap.docs.forEach(doc => {
+    batchSnap.docs.forEach((doc) => {
       batchWrite.update(doc.ref, { status: 'active' });
     });
     await batchWrite.commit();
@@ -34,10 +34,9 @@ async function activateAgents() {
     console.log(`[${'█'.repeat((processed / total) * 50)}] ${processed}/${total} agents`);
   }
 
-  console.log("🎊 ARMY DEPLOYMENT COMPLETE!");
-  console.log("✅ 320,000 agents now ONLINE");
-  console.log("💎 Diamond SAO: FULLY OPERATIONAL\n");
+  console.log('🎊 ARMY DEPLOYMENT COMPLETE!');
+  console.log('✅ 320,000 agents now ONLINE');
+  console.log('💎 Diamond SAO: FULLY OPERATIONAL\n');
 }
 
 activateAgents().catch(console.error);
-

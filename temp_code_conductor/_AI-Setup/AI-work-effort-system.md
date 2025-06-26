@@ -1,4 +1,5 @@
 ## 🚀 **Cursor AI Work Effort Tracking Initialization Prompt**
+
 ### **Obsidian-style Markdown | Frontmatter Metadata | Python Automation**
 
 You’re an expert AI Project Initialization Agent. Immediately execute the following:
@@ -25,40 +26,47 @@ work-efforts/
 
 ```markdown
 ---
-title: "{{title}}"
-status: "{{status}}" # options: active, paused, completed
-priority: "{{priority}}" # options: low, medium, high, critical
-assignee: "{{assignee}}"
-created: "{{created}}" # YYYY-MM-DD HH:mm
-last_updated: "{{last_updated}}" # YYYY-MM-DD HH:mm
-due_date: "{{due_date}}" # YYYY-MM-DD
+title: '{{title}}'
+status: '{{status}}' # options: active, paused, completed
+priority: '{{priority}}' # options: low, medium, high, critical
+assignee: '{{assignee}}'
+created: '{{created}}' # YYYY-MM-DD HH:mm
+last_updated: '{{last_updated}}' # YYYY-MM-DD HH:mm
+due_date: '{{due_date}}' # YYYY-MM-DD
 tags: [feature, bugfix, refactor, documentation, testing, devops]
 ---
 
 # {{title}}
 
 ## 🚩 Objectives
+
 - Clearly define goals for this work effort.
 
 ## 🛠 Tasks
+
 - [ ] Task 1
 - [ ] Task 2
 
 ## 📝 Notes
+
 - Context, links to relevant code, designs, references.
 
 ## 🐞 Issues Encountered
+
 - Document issues and obstacles clearly.
 
 ## ✅ Outcomes & Results
+
 - Explicitly log outcomes, lessons learned, and code changes.
 
 ## 📌 Linked Items
+
 - [[Related Work Effort]]
 - [[GitHub Issue #]]
 - [[Pull Request #]]
 
 ## 📅 Timeline & Progress
+
 - **Started**: {{created}}
 - **Updated**: {{last_updated}}
 - **Target Completion**: {{due_date}}
@@ -119,7 +127,8 @@ if __name__ == "__main__":
 
 ```markdown
 # Work Efforts Management
-# Apply rules to work-efforts/**/*.md
+
+# Apply rules to work-efforts/\*_/_.md
 
 - Enforce complete frontmatter on every file creation and update.
 - Include timestamps (created, last_updated, due_date) in consistent format (YYYY-MM-DD HH:mm).
@@ -133,7 +142,7 @@ if __name__ == "__main__":
 
 - Clearly document how to use the system:
 
-```markdown
+````markdown
 ## Work Efforts Tracking System
 
 Manage development clearly and effectively with this Obsidian-inspired Work Efforts system.
@@ -141,9 +150,11 @@ Manage development clearly and effectively with this Obsidian-inspired Work Effo
 ### Creating New Work Efforts
 
 Navigate to `scripts/` and run:
+
 ```bash
 python new_work_effort.py
 ```
+````
 
 ### Folder Structure
 
@@ -153,6 +164,7 @@ python new_work_effort.py
 - `scripts/`: Automation scripts for ease of use.
 
 This ensures consistent formatting, tracking, and visibility into your project's development workflow.
+
 ```
 
 ---
@@ -173,3 +185,4 @@ After execution, verify:
 Execute this immediately, thoroughly document the process, and ensure 100% compliance with all requirements above. This setup must achieve peak clarity, comprehensive tracking, and easy management of your development work efforts.
 
 Get it, Cursor—let’s make magic happen! 🌟✨
+```

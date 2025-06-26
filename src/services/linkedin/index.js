@@ -1,9 +1,9 @@
 /**
  * LinkedIn Integration Service
- * 
+ *
  * Provides integration with LinkedIn API for profile access, company pages,
  * and posts, with Firestore data synchronization.
- * 
+ *
  * (c) 2025 Copyright AI Publishing International LLP All Rights Reserved.
  * Developed with assistance from the Pilots of Vision Lake and
  * Claude Code Generator. This is Human Driven and 100% Human Project
@@ -31,30 +31,30 @@ class LinkedInService {
     this.db = null;
     this.initialized = false;
   }
-  
+
   /**
    * Initialize the LinkedIn service
    */
   async initialize() {
     if (this.initialized) return;
-    
+
     try {
       // Initialize Firestore if not already initialized
       if (!admin.apps.length) {
         admin.initializeApp();
       }
       this.db = admin.firestore();
-      
+
       // Configure LinkedIn OAuth2 provider if not already configured
       await this._configureLinkedInProvider();
-      
+
       this.initialized = true;
     } catch (error) {
       console.error('Failed to initialize LinkedIn service:', error.message);
       throw error;
     }
   }
-  
+
   /**
    * Configure LinkedIn as an OAuth2 provider
    * @private
@@ -70,16 +70,16 @@ class LinkedInService {
           'r_emailaddress',
           'w_member_social',
           'r_organization_social',
-          'rw_organization_admin'
+          'rw_organization_admin',
         ],
-        tokenRefreshThreshold: 3600 // 1 hour
+        tokenRefreshThreshold: 3600, // 1 hour
       });
     } catch (error) {
       console.error('Failed to configure LinkedIn OAuth2 provider:', error.message);
       throw error;
     }
   }
-  
+
   /**
    * Get LinkedIn authorization URL
    * @param {string} redirectUri - Redirect URI
@@ -89,7 +89,7 @@ class LinkedInService {
    */
   async getAuthorizationUrl(redirectUri, state, additionalScopes = []) {
     await this.initialize();
-    
+
     return oauth2Service.getAuthorizationUrl(
       LINKEDIN_PROVIDER,
       redirectUri,
@@ -97,7 +97,7 @@ class LinkedInService {
       additionalScopes
     );
   }
-  
+
   /**
    * Handle OAuth2 callback for LinkedIn
    * @param {string} code - Authorization code
@@ -107,26 +107,22 @@ class LinkedInService {
    */
   async handleOAuthCallback(code, redirectUri, userId) {
     await this.initialize();
-    
+
     // Exchange code for tokens
-    const tokens = await oauth2Service.exchangeCodeForTokens(
-      LINKEDIN_PROVIDER,
-      code,
-      redirectUri
-    );
-    
+    const tokens = await oauth2Service.exchangeCodeForTokens(LINKEDIN_PROVIDER, code, redirectUri);
+
     // Store tokens
     await oauth2Service.storeUserTokens(userId, LINKEDIN_PROVIDER, tokens);
-    
+
     // Get user profile
     const profile = await this.getUserProfile(userId);
-    
+
     // Store profile in Firestore
     await this.storeUserProfile(userId, profile);
-    
+
     return profile;
   }
-  
+
   /**
    * Store LinkedIn user profile in Firestore
    * @param {string} userId - User ID
@@ -135,27 +131,36 @@ class LinkedInService {
    */
   async storeUserProfile(userId, profile) {
     await this.initialize();
-    
+
     // Store in Firestore
-    await this.db.collection('linkedin_profiles').doc(userId).set({
-      userId,
-      linkedInId: profile.id,
-      firstName: profile.firstName,
-      lastName: profile.lastName,
-      email: profile.email,
-      profilePicture: profile.profilePicture,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      connectionCount: profile.connectionCount || 0
-    }, { merge: true });
-    
+    await this.db
+      .collection('linkedin_profiles')
+      .doc(userId)
+      .set(
+        {
+          userId,
+          linkedInId: profile.id,
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          email: profile.email,
+          profilePicture: profile.profilePicture,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          connectionCount: profile.connectionCount || 0,
+        },
+        { merge: true }
+      );
+
     // Update user document with LinkedIn data
-    await this.db.collection('users').doc(userId).set({
-      linkedInConnected: true,
-      linkedInId: profile.id,
-      linkedInProfileUpdatedAt: admin.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
+    await this.db.collection('users').doc(userId).set(
+      {
+        linkedInConnected: true,
+        linkedInId: profile.id,
+        linkedInProfileUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
   }
-  
+
   /**
    * Get LinkedIn user profile
    * @param {string} userId - User ID
@@ -163,65 +168,74 @@ class LinkedInService {
    */
   async getUserProfile(userId) {
     await this.initialize();
-    
+
     // Get access token
     const accessToken = await oauth2Service.getUserAccessToken(userId, LINKEDIN_PROVIDER);
-    
+
     // Get basic profile
     const profileResponse = await axios.get(`${LINKEDIN_API_URL}/me`, {
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
-        'X-Restli-Protocol-Version': '2.0.0'
-      }
+        'X-Restli-Protocol-Version': '2.0.0',
+      },
     });
-    
+
     // Get email address
-    const emailResponse = await axios.get(`${LINKEDIN_API_URL}/emailAddress?q=members&projection=(elements*(handle~))`, {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-        'X-Restli-Protocol-Version': '2.0.0'
+    const emailResponse = await axios.get(
+      `${LINKEDIN_API_URL}/emailAddress?q=members&projection=(elements*(handle~))`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'X-Restli-Protocol-Version': '2.0.0',
+        },
       }
-    });
-    
+    );
+
     // Get profile picture
-    const pictureResponse = await axios.get(`${LINKEDIN_API_URL}/me?projection=(id,profilePicture(displayImage~:playableStreams))`, {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-        'X-Restli-Protocol-Version': '2.0.0'
+    const pictureResponse = await axios.get(
+      `${LINKEDIN_API_URL}/me?projection=(id,profilePicture(displayImage~:playableStreams))`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'X-Restli-Protocol-Version': '2.0.0',
+        },
       }
-    });
-    
+    );
+
     // Extract profile data
     const profile = {
       id: profileResponse.data.id,
       firstName: profileResponse.data.localizedFirstName,
       lastName: profileResponse.data.localizedLastName,
       email: emailResponse.data.elements[0]['handle~'].emailAddress,
-      profilePicture: null
+      profilePicture: null,
     };
-    
+
     // Extract profile picture URL (if available)
-    if (pictureResponse.data.profilePicture && 
-        pictureResponse.data.profilePicture['displayImage~'] &&
-        pictureResponse.data.profilePicture['displayImage~'].elements &&
-        pictureResponse.data.profilePicture['displayImage~'].elements.length > 0) {
+    if (
+      pictureResponse.data.profilePicture &&
+      pictureResponse.data.profilePicture['displayImage~'] &&
+      pictureResponse.data.profilePicture['displayImage~'].elements &&
+      pictureResponse.data.profilePicture['displayImage~'].elements.length > 0
+    ) {
       // Get the largest image
       const elements = pictureResponse.data.profilePicture['displayImage~'].elements;
       const largestImage = elements.reduce((prev, current) => {
-        return (prev.data['com.linkedin.digitalmedia.mediaartifact.StillImage'].storageSize.width > 
-                current.data['com.linkedin.digitalmedia.mediaartifact.StillImage'].storageSize.width) 
-               ? prev : current;
+        return prev.data['com.linkedin.digitalmedia.mediaartifact.StillImage'].storageSize.width >
+          current.data['com.linkedin.digitalmedia.mediaartifact.StillImage'].storageSize.width
+          ? prev
+          : current;
       });
-      
+
       profile.profilePicture = largestImage.identifiers[0].identifier;
     }
-    
+
     return profile;
   }
-  
+
   /**
    * Fetch all LinkedIn profiles from Firestore
    * @param {number} limit - Maximum number of profiles to fetch
@@ -229,20 +243,21 @@ class LinkedInService {
    */
   async getAllProfiles(limit = 100) {
     await this.initialize();
-    
-    const profilesSnapshot = await this.db.collection('linkedin_profiles')
+
+    const profilesSnapshot = await this.db
+      .collection('linkedin_profiles')
       .orderBy('updatedAt', 'desc')
       .limit(limit)
       .get();
-    
+
     const profiles = [];
-    profilesSnapshot.forEach(doc => {
+    profilesSnapshot.forEach((doc) => {
       profiles.push(doc.data());
     });
-    
+
     return profiles;
   }
-  
+
   /**
    * Share content on LinkedIn
    * @param {string} userId - User ID
@@ -256,63 +271,65 @@ class LinkedInService {
    */
   async shareContent(userId, content) {
     await this.initialize();
-    
+
     // Get access token
     const accessToken = await oauth2Service.getUserAccessToken(userId, LINKEDIN_PROVIDER);
-    
+
     // Get user's LinkedIn ID
     const profileDoc = await this.db.collection('linkedin_profiles').doc(userId).get();
     if (!profileDoc.exists) {
       throw new Error(`LinkedIn profile not found for user ${userId}`);
     }
     const linkedInId = profileDoc.data().linkedInId;
-    
+
     // Build share content
     const shareData = {
       owner: `urn:li:person:${linkedInId}`,
       subject: content.title || '',
       text: {
-        text: content.text
-      }
+        text: content.text,
+      },
     };
-    
+
     // Add link if provided
     if (content.linkUrl) {
       shareData.content = {
         contentEntities: [
           {
             entityLocation: content.linkUrl,
-            thumbnails: content.imageUrl ? [
-              {
-                resolvedUrl: content.imageUrl
-              }
-            ] : undefined
-          }
+            thumbnails: content.imageUrl
+              ? [
+                  {
+                    resolvedUrl: content.imageUrl,
+                  },
+                ]
+              : undefined,
+          },
         ],
         title: content.title || '',
-        description: content.linkDescription || ''
+        description: content.linkDescription || '',
       };
     }
-    
+
     // Post to LinkedIn
     const response = await axios.post(`${LINKEDIN_API_URL}/shares`, shareData, {
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
-        'X-Restli-Protocol-Version': '2.0.0'
-      }
+        'X-Restli-Protocol-Version': '2.0.0',
+      },
     });
-    
+
     // Store share data in Firestore
     const postId = response.data.id;
     await this.storeShareData(userId, postId, content);
-    
+
     return {
       id: postId,
-      ...response.data
+      ...response.data,
     };
   }
-  
+
   /**
    * Store LinkedIn share data in Firestore
    * @param {string} userId - User ID
@@ -322,23 +339,22 @@ class LinkedInService {
    */
   async storeShareData(userId, postId, content) {
     await this.initialize();
-    
+
     await this.db.collection('linkedin_posts').doc(postId).set({
       userId,
       postId,
       content,
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
-    
+
     // Also add to user's posts subcollection
-    await this.db.collection('linkedin_profiles').doc(userId)
-      .collection('posts').doc(postId).set({
-        postId,
-        content,
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
-      });
+    await this.db.collection('linkedin_profiles').doc(userId).collection('posts').doc(postId).set({
+      postId,
+      content,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
   }
-  
+
   /**
    * Get recent posts for a user
    * @param {string} userId - User ID
@@ -347,22 +363,23 @@ class LinkedInService {
    */
   async getUserPosts(userId, limit = 20) {
     await this.initialize();
-    
-    const postsSnapshot = await this.db.collection('linkedin_profiles')
+
+    const postsSnapshot = await this.db
+      .collection('linkedin_profiles')
       .doc(userId)
       .collection('posts')
       .orderBy('createdAt', 'desc')
       .limit(limit)
       .get();
-    
+
     const posts = [];
-    postsSnapshot.forEach(doc => {
+    postsSnapshot.forEach((doc) => {
       posts.push(doc.data());
     });
-    
+
     return posts;
   }
-  
+
   /**
    * List organizations (company pages) a user has access to
    * @param {string} userId - User ID
@@ -370,57 +387,60 @@ class LinkedInService {
    */
   async listOrganizations(userId) {
     await this.initialize();
-    
+
     // Get access token
     const accessToken = await oauth2Service.getUserAccessToken(userId, LINKEDIN_PROVIDER);
-    
+
     // Get user's LinkedIn ID
     const profileDoc = await this.db.collection('linkedin_profiles').doc(userId).get();
     if (!profileDoc.exists) {
       throw new Error(`LinkedIn profile not found for user ${userId}`);
     }
     const linkedInId = profileDoc.data().linkedInId;
-    
+
     // Get organizations
-    const response = await axios.get(`${LINKEDIN_API_URL}/organizationAcls?q=roleAssignee&roleAssignee=urn%3Ali%3Aperson%3A${linkedInId}`, {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-        'X-Restli-Protocol-Version': '2.0.0'
+    const response = await axios.get(
+      `${LINKEDIN_API_URL}/organizationAcls?q=roleAssignee&roleAssignee=urn%3Ali%3Aperson%3A${linkedInId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'X-Restli-Protocol-Version': '2.0.0',
+        },
       }
-    });
-    
+    );
+
     // Extract organization data
     const organizations = [];
     if (response.data.elements && response.data.elements.length > 0) {
       for (const element of response.data.elements) {
         const orgId = element.organization.split(':').pop();
-        
+
         // Get organization details
         const orgResponse = await axios.get(`${LINKEDIN_API_URL}/organizations/${orgId}`, {
           headers: {
-            'Authorization': `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
-            'X-Restli-Protocol-Version': '2.0.0'
-          }
+            'X-Restli-Protocol-Version': '2.0.0',
+          },
         });
-        
+
         organizations.push({
           id: orgId,
           name: orgResponse.data.localizedName,
           role: element.role,
           state: element.state,
-          logoUrl: orgResponse.data.logoUrl || null
+          logoUrl: orgResponse.data.logoUrl || null,
         });
       }
     }
-    
+
     // Store organizations in Firestore
     await this.storeUserOrganizations(userId, organizations);
-    
+
     return organizations;
   }
-  
+
   /**
    * Store user's LinkedIn organizations in Firestore
    * @param {string} userId - User ID
@@ -429,36 +449,41 @@ class LinkedInService {
    */
   async storeUserOrganizations(userId, organizations) {
     await this.initialize();
-    
+
     // Create a batch to update all organization documents
     const batch = this.db.batch();
-    
+
     // Update user's organizations collection
     for (const org of organizations) {
-      const orgRef = this.db.collection('linkedin_profiles')
+      const orgRef = this.db
+        .collection('linkedin_profiles')
         .doc(userId)
         .collection('organizations')
         .doc(org.id);
-      
+
       batch.set(orgRef, {
         ...org,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
-      
+
       // Also update global organizations collection
       const globalOrgRef = this.db.collection('linkedin_organizations').doc(org.id);
-      batch.set(globalOrgRef, {
-        id: org.id,
-        name: org.name,
-        logoUrl: org.logoUrl,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
-      }, { merge: true });
+      batch.set(
+        globalOrgRef,
+        {
+          id: org.id,
+          name: org.name,
+          logoUrl: org.logoUrl,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      );
     }
-    
+
     // Commit the batch
     await batch.commit();
   }
-  
+
   /**
    * Share content on a company page
    * @param {string} userId - User ID
@@ -473,56 +498,58 @@ class LinkedInService {
    */
   async shareToCompanyPage(userId, organizationId, content) {
     await this.initialize();
-    
+
     // Get access token
     const accessToken = await oauth2Service.getUserAccessToken(userId, LINKEDIN_PROVIDER);
-    
+
     // Build share content
     const shareData = {
       owner: `urn:li:organization:${organizationId}`,
       subject: content.title || '',
       text: {
-        text: content.text
-      }
+        text: content.text,
+      },
     };
-    
+
     // Add link if provided
     if (content.linkUrl) {
       shareData.content = {
         contentEntities: [
           {
             entityLocation: content.linkUrl,
-            thumbnails: content.imageUrl ? [
-              {
-                resolvedUrl: content.imageUrl
-              }
-            ] : undefined
-          }
+            thumbnails: content.imageUrl
+              ? [
+                  {
+                    resolvedUrl: content.imageUrl,
+                  },
+                ]
+              : undefined,
+          },
         ],
         title: content.title || '',
-        description: content.linkDescription || ''
+        description: content.linkDescription || '',
       };
     }
-    
+
     // Post to LinkedIn
     const response = await axios.post(`${LINKEDIN_API_URL}/shares`, shareData, {
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
-        'X-Restli-Protocol-Version': '2.0.0'
-      }
+        'X-Restli-Protocol-Version': '2.0.0',
+      },
     });
-    
+
     // Store share data in Firestore
     const postId = response.data.id;
     await this.storeOrganizationShareData(userId, organizationId, postId, content);
-    
+
     return {
       id: postId,
-      ...response.data
+      ...response.data,
     };
   }
-  
+
   /**
    * Store organization share data in Firestore
    * @param {string} userId - User ID
@@ -533,26 +560,30 @@ class LinkedInService {
    */
   async storeOrganizationShareData(userId, organizationId, postId, content) {
     await this.initialize();
-    
+
     await this.db.collection('linkedin_posts').doc(postId).set({
       userId,
       organizationId,
       postId,
       content,
       type: 'organization',
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
-    
+
     // Also add to organization's posts subcollection
-    await this.db.collection('linkedin_organizations').doc(organizationId)
-      .collection('posts').doc(postId).set({
+    await this.db
+      .collection('linkedin_organizations')
+      .doc(organizationId)
+      .collection('posts')
+      .doc(postId)
+      .set({
         userId,
         postId,
         content,
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
       });
   }
-  
+
   /**
    * Create a scheduled LinkedIn post for future publishing
    * @param {string} userId - User ID
@@ -563,13 +594,13 @@ class LinkedInService {
    */
   async schedulePost(userId, content, scheduledTime, organizationId = null) {
     await this.initialize();
-    
+
     // Validate scheduled time (must be in the future)
     const now = new Date();
     if (scheduledTime <= now) {
       throw new Error('Scheduled time must be in the future');
     }
-    
+
     // Create a scheduled post document
     const scheduledPostRef = this.db.collection('linkedin_scheduled_posts').doc();
     await scheduledPostRef.set({
@@ -578,12 +609,12 @@ class LinkedInService {
       content,
       scheduledTime: admin.firestore.Timestamp.fromDate(scheduledTime),
       status: 'scheduled',
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
-    
+
     return scheduledPostRef.id;
   }
-  
+
   /**
    * Synchronize Firestore data with LinkedIn
    * @param {string} userId - User ID
@@ -591,21 +622,21 @@ class LinkedInService {
    */
   async synchronizeData(userId) {
     await this.initialize();
-    
+
     // Get user profile
     const profile = await this.getUserProfile(userId);
     await this.storeUserProfile(userId, profile);
-    
+
     // Get organizations
     const organizations = await this.listOrganizations(userId);
-    
+
     return {
       profile,
       organizations,
-      syncTime: new Date()
+      syncTime: new Date(),
     };
   }
-  
+
   /**
    * Revoke LinkedIn access for a user
    * @param {string} userId - User ID
@@ -613,14 +644,14 @@ class LinkedInService {
    */
   async revokeAccess(userId) {
     await this.initialize();
-    
+
     // Revoke OAuth2 tokens
     await oauth2Service.revokeUserTokens(userId, LINKEDIN_PROVIDER);
-    
+
     // Update user document
     await this.db.collection('users').doc(userId).update({
       linkedInConnected: false,
-      linkedInRevokedAt: admin.firestore.FieldValue.serverTimestamp()
+      linkedInRevokedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
   }
 }

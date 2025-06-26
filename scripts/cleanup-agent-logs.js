@@ -34,17 +34,18 @@ function cleanupDirectory(directory, filePattern) {
     console.log(`Directory ${directory} does not exist, skipping.`);
     return 0;
   }
-  
+
   let deletedCount = 0;
-  const files = fs.readdirSync(directory)
-    .filter(f => filePattern.test(f))
-    .map(f => ({
+  const files = fs
+    .readdirSync(directory)
+    .filter((f) => filePattern.test(f))
+    .map((f) => ({
       name: f,
       path: path.join(directory, f),
-      date: extractDateFromFilename(f)
+      date: extractDateFromFilename(f),
     }))
-    .filter(f => f.date && f.date < cutoffDate);
-  
+    .filter((f) => f.date && f.date < cutoffDate);
+
   for (const file of files) {
     if (dryRun) {
       console.log(`Would delete: ${file.path}`);
@@ -58,7 +59,7 @@ function cleanupDirectory(directory, filePattern) {
       }
     }
   }
-  
+
   return deletedCount;
 }
 
@@ -74,18 +75,20 @@ function extractDateFromFilename(filename) {
 // Main function
 function main() {
   console.log(`Cleaning up agent logs older than ${daysToKeep} days...`);
-  
+
   if (dryRun) {
     console.log('Dry run mode: no files will be deleted');
   }
-  
+
   // Cleanup log files
   const logFilesDeleted = cleanupDirectory(LOG_DIR, /agent-actions-.*\.log/);
-  
+
   // Cleanup report files
   const reportFilesDeleted = cleanupDirectory(REPORT_DIR, /agent-summary-.*\.txt/);
-  
-  console.log(`Cleanup complete: ${logFilesDeleted} log files and ${reportFilesDeleted} report files removed.`);
+
+  console.log(
+    `Cleanup complete: ${logFilesDeleted} log files and ${reportFilesDeleted} report files removed.`
+  );
 }
 
 main();

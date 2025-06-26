@@ -17,7 +17,7 @@ const { debugDisplay } = require('../../../lib/debug-display');
 module.exports = async function verifyWorkflow(options) {
   // Record knowledge access for telemetry
   telemetry.recordKnowledgeAccess('blockchain');
-  
+
   // Capture internal reasoning
   const internalThought = `Processing S2DO workflow blockchain verification with parameters: ${JSON.stringify(options)}`;
 
@@ -32,18 +32,18 @@ module.exports = async function verifyWorkflow(options) {
         if (!workflow) {
           throw new Error('Workflow ID is required');
         }
-        
+
         // Get the workflow with blockchain verification
-        const verificationResult = await s2do.getWorkflow(workflow, { 
+        const verificationResult = await s2do.getWorkflow(workflow, {
           verifyBlockchain: true,
           includeAuditTrail: true,
-          includeDetails: detailed === true
+          includeDetails: detailed === true,
         });
 
         // Log the verification
         await logAgentAction('s2do_workflow_verification', {
           workflow_id: workflow,
-          verification_result: verificationResult.blockchainVerification?.verified || false
+          verification_result: verificationResult.blockchainVerification?.verified || false,
         });
 
         return {
@@ -53,11 +53,12 @@ module.exports = async function verifyWorkflow(options) {
           type: verificationResult.type,
           blockchain_verification: {
             verified: verificationResult.blockchainVerification?.verified || false,
-            timestamp: verificationResult.blockchainVerification?.timestamp || new Date().toISOString()
+            timestamp:
+              verificationResult.blockchainVerification?.timestamp || new Date().toISOString(),
           },
           certificate_id: verificationResult.certificateId,
           audit_trail: verificationResult.auditTrail || [],
-          details: detailed === true ? verificationResult : null
+          details: detailed === true ? verificationResult : null,
         };
       }
     );
@@ -65,8 +66,8 @@ module.exports = async function verifyWorkflow(options) {
     // Display result
     displayResult({
       success: result.blockchain_verification.verified,
-      message: result.blockchain_verification.verified 
-        ? `Workflow successfully verified on blockchain` 
+      message: result.blockchain_verification.verified
+        ? `Workflow successfully verified on blockchain`
         : `Workflow blockchain verification failed`,
       details: result,
     });
@@ -76,17 +77,23 @@ module.exports = async function verifyWorkflow(options) {
       console.log(`Workflow ID: ${chalk.cyan(result.workflow_id)}`);
       console.log(`Name: ${chalk.yellow(result.name)}`);
       console.log(`Type: ${chalk.blue(result.type)}`);
-      console.log(`Blockchain Verified: ${result.blockchain_verification.verified ? chalk.green('Yes') : chalk.red('No')}`);
-      console.log(`Verification Timestamp: ${chalk.yellow(result.blockchain_verification.timestamp)}`);
-      
+      console.log(
+        `Blockchain Verified: ${result.blockchain_verification.verified ? chalk.green('Yes') : chalk.red('No')}`
+      );
+      console.log(
+        `Verification Timestamp: ${chalk.yellow(result.blockchain_verification.timestamp)}`
+      );
+
       if (result.certificate_id) {
         console.log(`Certificate ID: ${chalk.magenta(result.certificate_id)}`);
       }
-      
+
       if (result.audit_trail && result.audit_trail.length > 0) {
         console.log(chalk.bold('\nAudit Trail:'));
         result.audit_trail.forEach((entry, index) => {
-          console.log(`${index + 1}. ${chalk.cyan(entry.action)} by ${chalk.yellow(entry.userId)} at ${chalk.blue(entry.timestamp)}`);
+          console.log(
+            `${index + 1}. ${chalk.cyan(entry.action)} by ${chalk.yellow(entry.userId)} at ${chalk.blue(entry.timestamp)}`
+          );
         });
       }
 
@@ -95,27 +102,31 @@ module.exports = async function verifyWorkflow(options) {
         console.log(`Status: ${chalk.yellow(result.details.status || 'Unknown')}`);
         console.log(`Created: ${chalk.blue(result.details.createdAt || 'Unknown')}`);
         console.log(`Last Updated: ${chalk.blue(result.details.updatedAt || 'Unknown')}`);
-        
+
         if (result.details.steps && result.details.steps.length > 0) {
           console.log(chalk.bold('\nWorkflow Steps:'));
           result.details.steps.forEach((step, index) => {
-            console.log(`${index + 1}. ${step.name} (${chalk.yellow(step.id)}): ${getStatusColor(step.status)}`);
+            console.log(
+              `${index + 1}. ${step.name} (${chalk.yellow(step.id)}): ${getStatusColor(step.status)}`
+            );
           });
         }
       }
 
       console.log(chalk.bold('\nBlockchain Governance:'));
-      console.log(`This workflow is ${result.blockchain_verification.verified ? chalk.green('verified') : chalk.red('not verified')} on the blockchain.`);
+      console.log(
+        `This workflow is ${result.blockchain_verification.verified ? chalk.green('verified') : chalk.red('not verified')} on the blockchain.`
+      );
       console.log(`All workflow actions are permanently recorded and tamper-proof.`);
     }
   } catch (error) {
     console.error(chalk.red('\nWorkflow verification failed:'), error.message);
-    
+
     // Display debug information
     debugDisplay({
       thought: internalThought,
       error: error.message,
-      command: 'claude:governance:verify'
+      command: 'claude:governance:verify',
     });
 
     process.exit(1);

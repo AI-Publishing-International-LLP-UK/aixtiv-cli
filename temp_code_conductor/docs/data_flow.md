@@ -46,12 +46,12 @@
 
 ## Sources of Truth in the System
 
-| Component | Role | Source Priority |
-|-----------|------|-----------------|
-| **Central Index** (.code_conductor/work_index.json) | PRIMARY source of truth | 1 (Highest) |
-| **File System** (work_efforts/) | Canonical data storage, verification reference | 2 |
-| **In-Memory Cache** (WorkEffortManager) | Runtime state for active processes | 3 |
-| **Counter System** (work_efforts/counter.json) | Sequential numbering state | Independent |
+| Component                                           | Role                                           | Source Priority |
+| --------------------------------------------------- | ---------------------------------------------- | --------------- |
+| **Central Index** (.code_conductor/work_index.json) | PRIMARY source of truth                        | 1 (Highest)     |
+| **File System** (work_efforts/)                     | Canonical data storage, verification reference | 2               |
+| **In-Memory Cache** (WorkEffortManager)             | Runtime state for active processes             | 3               |
+| **Counter System** (work_efforts/counter.json)      | Sequential numbering state                     | Independent     |
 
 ## Data Flow During Key Operations
 

@@ -27,11 +27,13 @@ Our optimization uses five key strategies:
 The `.dockerignore` file carefully excludes unnecessary files from the Docker build context:
 
 - **Excluded development artifacts:**
+
   - `node_modules/` (will be freshly installed)
   - Debug logs, test files, and coverage reports
   - Version control and CI files
 
 - **Excluded large directories:**
+
   - Archive files and backups
   - Development-only directories
   - Large test data files
@@ -46,12 +48,14 @@ The `.dockerignore` file carefully excludes unnecessary files from the Docker bu
 The Dockerfile uses a two-stage build approach:
 
 - **Builder Stage:**
+
   - Uses Alpine-based Node.js image for minimal size
   - Implements PNPM instead of NPM (more efficient package management)
   - Selectively copies only the necessary source files
   - Prepares the application for production
 
 - **Runtime Stage:**
+
   - Clean Alpine-based Node.js image
   - Copies only required files from the builder stage
   - Implements cleanup steps to further reduce image size
@@ -67,13 +71,16 @@ The Dockerfile uses a two-stage build approach:
 This script selectively copies only the most critical scripts needed for runtime operation:
 
 - **Security Scripts:**
+
   - `verify-keys.js` - Essential for security verification
 
 - **Telemetry Scripts:**
+
   - `toggle-telemetry.js` - For managing telemetry settings
   - `add-knowledge-tracking.js` - For telemetry integration
 
 - **Domain Management Scripts:**
+
   - `verify-domain-ownership.js` - For domain verification
   - `domain/fixup-domains.js` - For domain maintenance
   - `domain/remove-domains.js` - For domain cleanup
@@ -85,12 +92,12 @@ This ensures that only necessary scripts are included in the final image.
 
 ## Expected Results
 
-| Metric | Before | After | Reduction |
-|--------|--------|-------|-----------|
-| Image Size | 1.4GiB | <300MB | >75% |
-| Build Context | Large | Minimal | >80% |
-| Layer Count | Many | Optimized | ~30% |
-| Deployment Time | Slow | Fast | >50% |
+| Metric          | Before | After     | Reduction |
+| --------------- | ------ | --------- | --------- |
+| Image Size      | 1.4GiB | <300MB    | >75%      |
+| Build Context   | Large  | Minimal   | >80%      |
+| Layer Count     | Many   | Optimized | ~30%      |
+| Deployment Time | Slow   | Fast      | >50%      |
 
 ## Verification and Testing
 
@@ -131,14 +138,17 @@ To verify the optimization:
 ## Implementation Steps
 
 1. **Preparation:**
+
    - Back up your current Dockerfile
    - Run `./prepare-essential-scripts.sh` to prepare essential scripts
 
 2. **Build and Test Locally:**
+
    - Build image with `docker build -t aixtiv-cli:optimized .`
    - Verify size and functionality
 
 3. **Update CI/CD Pipeline:**
+
    - Update your Cloud Build configuration
    - Add the following build args:
 
@@ -152,6 +162,7 @@ To verify the optimization:
      ```
 
 4. **Deployment:**
+
    - Push the optimized image to your container registry
    - Update your Kubernetes or Cloud Run configuration
    - Verify deployment and functionality

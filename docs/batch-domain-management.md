@@ -25,6 +25,7 @@ The `bulk-domain-import.sh` script imports a list of domains from a text file in
 ```
 
 Parameters:
+
 1. `domains_file`: Path to file containing domains (one per line)
 2. `domain_type`: Domain type (default: brand)
 3. `firebase_project`: Firebase project ID (default: aixtiv-symphony)
@@ -43,6 +44,7 @@ The `batch-ssl-provision.sh` script provisions SSL certificates for multiple dom
 ```
 
 Parameters:
+
 1. `domains_file`: Path to file containing domains (one per line)
 2. `provision_type`: 'firebase' or 'gcp' (default: firebase)
 3. `project_id`: Firebase or GCP project ID (default: aixtiv-symphony)

@@ -6,26 +6,26 @@ module.exports = {
   mode: 'production',
   entry: {
     // Core entries
-    'core': './core/cli/index.js',
-    
+    core: './core/cli/index.js',
+
     // Feature modules (lazy loaded)
-    'auth': './modules/auth/index.js',
-    'billing': './modules/billing/index.js',
-    'domains': './modules/domains/index.js',
-    
+    auth: './modules/auth/index.js',
+    billing: './modules/billing/index.js',
+    domains: './modules/domains/index.js',
+
     // PCP and agent systems
-    'pcp': './modules/pcp/index.js',
-    'timePresser': './modules/time-presser/index.js',
-    'timeliner': './modules/timeliner/index.js'
+    pcp: './modules/pcp/index.js',
+    timePresser: './modules/time-presser/index.js',
+    timeliner: './modules/timeliner/index.js',
   },
-  
+
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].[contenthash].js',
     chunkFilename: '[name].[contenthash].chunk.js',
-    publicPath: '/'
+    publicPath: '/',
   },
-  
+
   optimization: {
     minimize: true,
     minimizer: [new TerserPlugin()],
@@ -44,7 +44,7 @@ module.exports = {
       },
     },
   },
-  
+
   module: {
     rules: [
       {
@@ -54,18 +54,17 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env'],
-            plugins: ['@babel/plugin-syntax-dynamic-import']
-          }
-        }
-      }
-    ]
+            plugins: ['@babel/plugin-syntax-dynamic-import'],
+          },
+        },
+      },
+    ],
   },
-  
+
   plugins: [
     new BundleAnalyzerPlugin({
       analyzerMode: 'static',
       openAnalyzer: false,
-    })
-  ]
+    }),
+  ],
 };
-

@@ -1,9 +1,9 @@
 /**
  * Copilot Demo Component
- * 
+ *
  * Showcases the FullWindowWhiteSpaceCopilot component in action with
  * controls to toggle between different modes and settings.
- * 
+ *
  * (c) 2025 Copyright AI Publishing International LLP All Rights Reserved.
  * Developed with assistance from the Pilots of Vision Lake.
  */
@@ -17,25 +17,25 @@ const CopilotDemo = () => {
   const [isVIP, setIsVIP] = useState(false);
   const [messages, setMessages] = useState([]);
   const [customStyles, setCustomStyles] = useState({});
-  
+
   // Toggle copilot visibility
   const toggleCopilot = () => {
     setShowCopilot(!showCopilot);
   };
-  
+
   // Toggle VIP status
   const toggleVIP = () => {
     setIsVIP(!isVIP);
   };
-  
+
   // Handle messages from copilot
   const handleMessage = (message) => {
     setMessages([message, ...messages]);
   };
-  
+
   // Apply white label styling
   const applyWhiteLabel = (theme) => {
-    switch(theme) {
+    switch (theme) {
       case 'coaching2100':
         setCustomStyles({
           container: {
@@ -49,10 +49,10 @@ const CopilotDemo = () => {
           responseText: {
             color: '#2c3e50',
             fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-          }
+          },
         });
         break;
-        
+
       case 'anthology':
         setCustomStyles({
           container: {
@@ -66,10 +66,10 @@ const CopilotDemo = () => {
           responseText: {
             color: '#333333',
             fontFamily: '"Georgia", serif',
-          }
+          },
         });
         break;
-        
+
       case 'vision-lake':
         setCustomStyles({
           container: {
@@ -83,70 +83,50 @@ const CopilotDemo = () => {
           responseText: {
             color: '#1a365d',
             fontFamily: '"Inter", sans-serif',
-          }
+          },
         });
         break;
-        
+
       default:
         // Default white space style
         setCustomStyles({});
     }
   };
-  
+
   // Render the demo
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>ASOOS Copilot Demo</h1>
-      
+
       <div style={styles.controls}>
-        <button 
-          style={styles.button} 
-          onClick={toggleCopilot}
-        >
+        <button style={styles.button} onClick={toggleCopilot}>
           {showCopilot ? 'Hide Copilot' : 'Show Copilot'}
         </button>
-        
+
         <div style={styles.vipToggle}>
           <label style={styles.label}>
-            <input 
-              type="checkbox" 
-              checked={isVIP} 
-              onChange={toggleVIP}
-              style={styles.checkbox}
-            />
+            <input type="checkbox" checked={isVIP} onChange={toggleVIP} style={styles.checkbox} />
             VIP Mode (Alt+0 to toggle emotion controls)
           </label>
         </div>
-        
+
         <div style={styles.styleSwitcher}>
           <p style={styles.label}>White Label Themes:</p>
-          <button 
-            style={styles.styleButton} 
-            onClick={() => applyWhiteLabel('default')}
-          >
+          <button style={styles.styleButton} onClick={() => applyWhiteLabel('default')}>
             Default
           </button>
-          <button 
-            style={styles.styleButton} 
-            onClick={() => applyWhiteLabel('coaching2100')}
-          >
+          <button style={styles.styleButton} onClick={() => applyWhiteLabel('coaching2100')}>
             COACHING2100
           </button>
-          <button 
-            style={styles.styleButton} 
-            onClick={() => applyWhiteLabel('anthology')}
-          >
+          <button style={styles.styleButton} onClick={() => applyWhiteLabel('anthology')}>
             Anthology
           </button>
-          <button 
-            style={styles.styleButton} 
-            onClick={() => applyWhiteLabel('vision-lake')}
-          >
+          <button style={styles.styleButton} onClick={() => applyWhiteLabel('vision-lake')}>
             Vision Lake
           </button>
         </div>
       </div>
-      
+
       <div style={styles.instructions}>
         <h2>Instructions:</h2>
         <ul>
@@ -157,7 +137,7 @@ const CopilotDemo = () => {
           <li>Use Alt+1 through Alt+5 to quickly switch emotions (VIP only)</li>
         </ul>
       </div>
-      
+
       <div style={styles.messageLog}>
         <h2>Message Log:</h2>
         {messages.length === 0 ? (
@@ -170,7 +150,9 @@ const CopilotDemo = () => {
                   <span style={styles.emotionBadge}>
                     {msg.emotion} ({msg.intensity})
                   </span>
-                  <span style={styles.timestamp}>{new Date(msg.timestamp).toLocaleTimeString()}</span>
+                  <span style={styles.timestamp}>
+                    {new Date(msg.timestamp).toLocaleTimeString()}
+                  </span>
                 </div>
                 <div style={styles.messageInput}>You: {msg.input}</div>
                 <div style={styles.messageResponse}>Copilot: {msg.response}</div>
@@ -179,9 +161,9 @@ const CopilotDemo = () => {
           </ul>
         )}
       </div>
-      
+
       {showCopilot && (
-        <FullWindowWhiteSpaceCopilot 
+        <FullWindowWhiteSpaceCopilot
           vipStatus={isVIP}
           onMessage={handleMessage}
           customStyles={customStyles}

@@ -18,7 +18,7 @@ cdiCommand
   .description('Set up Continuous Deployment Integration')
   .action(async (options) => {
     const spinner = ora('Setting up Continuous Deployment Integration...').start();
-    
+
     try {
       // Check if the integration script exists
       if (fs.existsSync('./cicd-cttt-symphony-integration.js')) {
@@ -28,8 +28,16 @@ cdiCommand
         console.log(result);
       } else {
         spinner.fail('Integration script not found');
-        console.log(chalk.yellow('The script cicd-cttt-symphony-integration.js was not found in the current directory.'));
-        console.log(chalk.yellow('Please make sure you are in the correct directory or the script is available.'));
+        console.log(
+          chalk.yellow(
+            'The script cicd-cttt-symphony-integration.js was not found in the current directory.'
+          )
+        );
+        console.log(
+          chalk.yellow(
+            'Please make sure you are in the correct directory or the script is available.'
+          )
+        );
       }
     } catch (error) {
       spinner.fail('CDI setup failed');
@@ -44,9 +52,12 @@ cdiCommand
   .action(async (cmdOptions) => {
     const options = { ...cdiCommand.opts(), ...cmdOptions };
     const spinner = ora('Checking CDI status...').start();
-    
+
     try {
-      const result = execSync(`gcloud builds list --project="${options.project}" --filter="tags=cdi" --limit=5`, { encoding: 'utf8' });
+      const result = execSync(
+        `gcloud builds list --project="${options.project}" --filter="tags=cdi" --limit=5`,
+        { encoding: 'utf8' }
+      );
       spinner.succeed('CDI status retrieved');
       console.log();
       console.log(chalk.cyan('CDI Builds:'));
@@ -63,7 +74,7 @@ cdiCommand
   .description('View CDI logs')
   .action(async () => {
     const spinner = ora('Viewing CDI logs...').start();
-    
+
     try {
       if (fs.existsSync('./logs')) {
         const result = execSync('ls -la ./logs | grep cttt', { encoding: 'utf8' });
@@ -72,10 +83,16 @@ cdiCommand
         console.log(chalk.cyan('CDI Log Files:'));
         console.log(result);
         console.log();
-        console.log(chalk.blue("Use 'aixtiv ci logs --cat [LOGFILE] --path ./logs' to view a specific log file"));
+        console.log(
+          chalk.blue(
+            "Use 'aixtiv ci logs --cat [LOGFILE] --path ./logs' to view a specific log file"
+          )
+        );
       } else {
         spinner.warn('No logs directory found');
-        console.log(chalk.yellow('The logs directory was not found. Try running a CDI operation first.'));
+        console.log(
+          chalk.yellow('The logs directory was not found. Try running a CDI operation first.')
+        );
       }
     } catch (error) {
       if (error.status === 1 && error.stderr.toString().includes('grep')) {
@@ -94,7 +111,7 @@ cdiCommand
   .description('Configure CDI settings')
   .action(async () => {
     const spinner = ora('Configuring CDI...').start();
-    
+
     try {
       if (fs.existsSync('./cloud-build/triggers/main-trigger.yaml')) {
         const configContent = fs.readFileSync('./cloud-build/triggers/main-trigger.yaml', 'utf8');
@@ -104,11 +121,18 @@ cdiCommand
         console.log(configContent);
       } else {
         spinner.warn('Configuration file not found');
-        console.log(chalk.yellow('The CDI configuration file was not found at ./cloud-build/triggers/main-trigger.yaml'));
-        
+        console.log(
+          chalk.yellow(
+            'The CDI configuration file was not found at ./cloud-build/triggers/main-trigger.yaml'
+          )
+        );
+
         // Try to find configuration files in alternative locations
         try {
-          const result = execSync('find . -name "*trigger*.yaml" -o -name "*ci*.yaml" | grep -v node_modules', { encoding: 'utf8' });
+          const result = execSync(
+            'find . -name "*trigger*.yaml" -o -name "*ci*.yaml" | grep -v node_modules',
+            { encoding: 'utf8' }
+          );
           if (result.trim()) {
             console.log(chalk.blue('\nPossible configuration files found:'));
             console.log(result);

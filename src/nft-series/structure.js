@@ -6,38 +6,37 @@ const NFTSeriesStructure = {
       properties: {
         master_rights: true,
         transferable: false,
-        smart_contract: 'permanent_aipi_ownership'
+        smart_contract: 'permanent_aipi_ownership',
       },
       validators: {
         minting: 'Queen Mint Mark',
-        tracking: 'Tower Blockchain'
-      }
+        tracking: 'Tower Blockchain',
+      },
     },
     number_series: {
       prefix: '1-',
       distribution: {
         owners: {
           rights: 'working_implementation',
-          transferable: true
+          transferable: true,
         },
         agents: {
           rights: 'execution_rights',
-          transferable: false
-        }
+          transferable: false,
+        },
       },
       tracking: {
         ownership: 'Diamond SAO',
-        transactions: 'Tower Blockchain'
-      }
-    }
+        transactions: 'Tower Blockchain',
+      },
+    },
   },
 
   smart_contracts: {
     creation: 'Queen Mint Mark',
     validation: 'Tower Blockchain',
-    execution: 'Diamond SAO'
-  }
+    execution: 'Diamond SAO',
+  },
 };
 
 module.exports = NFTSeriesStructure;
-

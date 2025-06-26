@@ -1,19 +1,19 @@
 /**
  * Unified agent command module
- * 
+ *
  * This module provides a consolidated interface for managing all agent types,
  * including regular agents, RIX, QRIX, and co-pilots, using the unified schema.
  */
 
-const { 
-  createAgent, 
-  getAgent, 
-  listAgents, 
+const {
+  createAgent,
+  getAgent,
+  listAgents,
   updateAgent,
   extendAgent,
   migrateAgents,
   SQUADRONS,
-  AGENT_TYPES
+  AGENT_TYPES,
 } = require('../../lib/agent-schema');
 const { displayResult, parseOptions, withSpinner } = require('../../lib/utils');
 const chalk = require('chalk');
@@ -52,7 +52,7 @@ async function registerAgent(options) {
       actions,
       lifecycles,
       sectors,
-      collaborator
+      collaborator,
     } = parseOptions(options);
 
     // Validate required parameters
@@ -81,10 +81,10 @@ async function registerAgent(options) {
     }
 
     // Parse array parameters
-    const parsedRoles = roles ? roles.split(',').map(r => r.trim()) : [];
-    const parsedActions = actions ? actions.split(',').map(a => a.trim()) : [];
-    const parsedLifecycles = lifecycles ? lifecycles.split(',').map(l => l.trim()) : [];
-    const parsedSectors = sectors ? sectors.split(',').map(s => s.trim()) : [];
+    const parsedRoles = roles ? roles.split(',').map((r) => r.trim()) : [];
+    const parsedActions = actions ? actions.split(',').map((a) => a.trim()) : [];
+    const parsedLifecycles = lifecycles ? lifecycles.split(',').map((l) => l.trim()) : [];
+    const parsedSectors = sectors ? sectors.split(',').map((s) => s.trim()) : [];
 
     // Create agent
     const result = await withSpinner(
@@ -100,7 +100,7 @@ async function registerAgent(options) {
         actions: parsedActions,
         lifecycles: parsedLifecycles,
         sectors: parsedSectors,
-        humanCollaborator: collaborator
+        humanCollaborator: collaborator,
       }
     );
 
@@ -122,12 +122,12 @@ async function registerAgent(options) {
 function displayAgentCard(agent) {
   // Format the agent ID with background color
   const squadronColor = {
-    'S01': chalk.bgRed.white,
-    'S02': chalk.bgBlue.white,
-    'S03': chalk.bgGreen.black,
-    'S04': chalk.bgYellow.black,
-    'S05': chalk.bgMagenta.white,
-    'S06': chalk.bgCyan.black
+    S01: chalk.bgRed.white,
+    S02: chalk.bgBlue.white,
+    S03: chalk.bgGreen.black,
+    S04: chalk.bgYellow.black,
+    S05: chalk.bgMagenta.white,
+    S06: chalk.bgCyan.black,
   };
 
   const colorFn = squadronColor[agent.squadron] || chalk.bgWhite.black;
@@ -135,12 +135,12 @@ function displayAgentCard(agent) {
 
   // Format the agent type with color
   const typeColor = {
-    'BASE': chalk.white,
-    'RIX': chalk.yellow,
-    'QRIX': chalk.magenta,
-    'COPILOT': chalk.cyan
+    BASE: chalk.white,
+    RIX: chalk.yellow,
+    QRIX: chalk.magenta,
+    COPILOT: chalk.cyan,
   };
-  
+
   const typeColorFn = typeColor[agent.type] || chalk.white;
   const formattedType = typeColorFn(agent.type);
 
@@ -151,7 +151,7 @@ function displayAgentCard(agent) {
     ['Name', chalk.bold(agent.name)],
     ['Squadron', `${agent.squadron} (${SQUADRONS[agent.squadron].name})`],
     ['Type', formattedType],
-    ['Description', agent.description || '']
+    ['Description', agent.description || ''],
   ];
 
   // Add roles if available
@@ -171,9 +171,10 @@ function displayAgentCard(agent) {
 
   // Add creation date
   if (agent.createdAt) {
-    const createdAt = agent.createdAt instanceof Date 
-      ? agent.createdAt.toLocaleString() 
-      : new Date(agent.createdAt).toLocaleString();
+    const createdAt =
+      agent.createdAt instanceof Date
+        ? agent.createdAt.toLocaleString()
+        : new Date(agent.createdAt).toLocaleString();
     tableData.push(['Created', createdAt]);
   }
 
@@ -185,7 +186,10 @@ function displayAgentCard(agent) {
       ['Co-Pilot Details', 'Value'],
       ['Trust Level', agent.attributes.copilot.level],
       ['Verified', agent.attributes.copilot.verified ? 'Yes' : 'No'],
-      ['Cultural Empathy', agent.attributes.copilot.culturalEmpathyVerified ? 'Verified' : 'Not Verified']
+      [
+        'Cultural Empathy',
+        agent.attributes.copilot.culturalEmpathyVerified ? 'Verified' : 'Not Verified',
+      ],
     ];
 
     if (agent.attributes.copilot.expiresAt) {
@@ -199,7 +203,7 @@ function displayAgentCard(agent) {
     const qrixData = [
       ['QRIX Details', 'Value'],
       ['Activation Status', agent.attributes.qrix.activationStatus],
-      ['Core Nodes', agent.attributes.qrix.coreNodes?.join(', ') || 'None']
+      ['Core Nodes', agent.attributes.qrix.coreNodes?.join(', ') || 'None'],
     ];
 
     if (agent.attributes.qrix.components && agent.attributes.qrix.components.length > 0) {
@@ -225,11 +229,7 @@ async function getAgentInfo(options) {
       return;
     }
 
-    const result = await withSpinner(
-      `Retrieving agent ${id}`,
-      getAgent,
-      id
-    );
+    const result = await withSpinner(`Retrieving agent ${id}`, getAgent, id);
 
     if (result.success) {
       displayAgentCard(result.agent);
@@ -248,23 +248,17 @@ async function listAgentsCmd(options) {
   telemetry.recordKnowledgeAccess('agent');
 
   try {
-    const { 
-      squadron, 
-      type, 
-      collaborator,
-      active = true,
-      capabilities
-    } = parseOptions(options);
+    const { squadron, type, collaborator, active = true, capabilities } = parseOptions(options);
 
     // Parse capabilities if provided
-    const parsedCapabilities = capabilities ? capabilities.split(',').map(c => c.trim()) : [];
+    const parsedCapabilities = capabilities ? capabilities.split(',').map((c) => c.trim()) : [];
 
     // Build filters
     const filters = {
       squadron,
       type,
       humanCollaborator: collaborator,
-      active: active === 'false' ? false : Boolean(active)
+      active: active === 'false' ? false : Boolean(active),
     };
 
     if (parsedCapabilities.length > 0) {
@@ -272,11 +266,7 @@ async function listAgentsCmd(options) {
     }
 
     // Get filtered agents
-    const agents = await withSpinner(
-      'Retrieving agents',
-      listAgents,
-      filters
-    );
+    const agents = await withSpinner('Retrieving agents', listAgents, filters);
 
     if (agents.length === 0) {
       console.log(chalk.yellow('No agents found matching the specified criteria'));
@@ -287,9 +277,7 @@ async function listAgentsCmd(options) {
     console.log(chalk.green(`\n✓ Found ${agents.length} agents\n`));
 
     // Create summary table
-    const tableData = [
-      ['ID', 'Name', 'Type', 'Squadron', 'Status', 'Human Collaborator']
-    ];
+    const tableData = [['ID', 'Name', 'Type', 'Squadron', 'Status', 'Human Collaborator']];
 
     for (const agent of agents) {
       tableData.push([
@@ -298,7 +286,7 @@ async function listAgentsCmd(options) {
         agent.type,
         agent.squadron,
         agent.active ? 'Active' : 'Inactive',
-        agent.humanCollaborator || 'None'
+        agent.humanCollaborator || 'None',
       ]);
     }
 
@@ -325,7 +313,7 @@ async function updateAgentCmd(options) {
       lifecycles,
       sectors,
       collaborator,
-      active
+      active,
     } = parseOptions(options);
 
     if (!id) {
@@ -353,22 +341,17 @@ async function updateAgentCmd(options) {
     }
 
     // Parse array parameters
-    if (roles) updates.roles = roles.split(',').map(r => r.trim());
-    if (actions) updates.actions = actions.split(',').map(a => a.trim());
-    if (lifecycles) updates.lifecycles = lifecycles.split(',').map(l => l.trim());
-    if (sectors) updates.sectors = sectors.split(',').map(s => s.trim());
+    if (roles) updates.roles = roles.split(',').map((r) => r.trim());
+    if (actions) updates.actions = actions.split(',').map((a) => a.trim());
+    if (lifecycles) updates.lifecycles = lifecycles.split(',').map((l) => l.trim());
+    if (sectors) updates.sectors = sectors.split(',').map((s) => s.trim());
 
     // Update agent
-    const result = await withSpinner(
-      `Updating agent ${id}`,
-      updateAgent,
-      id,
-      updates
-    );
+    const result = await withSpinner(`Updating agent ${id}`, updateAgent, id, updates);
 
     if (result.success) {
       console.log(chalk.green(`\n✓ ${result.message}\n`));
-      
+
       // Retrieve updated agent
       const updatedAgent = await getAgent(id);
       if (updatedAgent.success) {
@@ -389,15 +372,8 @@ async function extendAgentCmd(options) {
   telemetry.recordKnowledgeAccess('agent');
 
   try {
-    const {
-      id,
-      newType,
-      capabilities,
-      specialties,
-      components,
-      coreNodes,
-      level
-    } = parseOptions(options);
+    const { id, newType, capabilities, specialties, components, coreNodes, level } =
+      parseOptions(options);
 
     if (!id) {
       displayResult('Error: Agent ID is required (--id)', 'error');
@@ -416,27 +392,22 @@ async function extendAgentCmd(options) {
 
     // Build extension object
     const extension = {};
-    
+
     if (newType) extension.newType = newType;
-    
+
     // Parse array parameters
-    if (capabilities) extension.capabilities = capabilities.split(',').map(c => c.trim());
-    if (specialties) extension.specialties = specialties.split(',').map(s => s.trim());
-    if (components) extension.components = components.split(',').map(c => c.trim());
-    if (coreNodes) extension.coreNodes = coreNodes.split(',').map(n => n.trim());
+    if (capabilities) extension.capabilities = capabilities.split(',').map((c) => c.trim());
+    if (specialties) extension.specialties = specialties.split(',').map((s) => s.trim());
+    if (components) extension.components = components.split(',').map((c) => c.trim());
+    if (coreNodes) extension.coreNodes = coreNodes.split(',').map((n) => n.trim());
     if (level) extension.level = level;
 
     // Extend agent
-    const result = await withSpinner(
-      `Extending agent ${id}`,
-      extendAgent,
-      id,
-      extension
-    );
+    const result = await withSpinner(`Extending agent ${id}`, extendAgent, id, extension);
 
     if (result.success) {
       console.log(chalk.green(`\n✓ ${result.message}\n`));
-      
+
       // Retrieve updated agent
       const updatedAgent = await getAgent(id);
       if (updatedAgent.success) {
@@ -457,32 +428,33 @@ async function migrateAgentsCmd() {
   telemetry.recordKnowledgeAccess('agent');
 
   try {
-    console.log(chalk.yellow('\n⚠️ This will migrate existing agents, co-pilots, and QRIX to the unified schema'));
+    console.log(
+      chalk.yellow(
+        '\n⚠️ This will migrate existing agents, co-pilots, and QRIX to the unified schema'
+      )
+    );
     console.log(chalk.yellow('   This operation cannot be undone\n'));
 
     // Ask for confirmation
     const readline = require('readline').createInterface({
       input: process.stdin,
-      output: process.stdout
+      output: process.stdout,
     });
 
     readline.question('Are you sure you want to proceed? (yes/no): ', async (answer) => {
       readline.close();
-      
+
       if (answer.toLowerCase() !== 'yes') {
         console.log(chalk.yellow('\nMigration cancelled'));
         return;
       }
 
       // Perform migration
-      const result = await withSpinner(
-        'Migrating agents to unified schema',
-        migrateAgents
-      );
+      const result = await withSpinner('Migrating agents to unified schema', migrateAgents);
 
       if (result.success) {
         const { results } = result;
-        
+
         console.log(chalk.green(`\n✓ Migration completed successfully\n`));
         console.log(chalk.bold('Migration Summary:'));
         console.log(`Agents migrated: ${chalk.cyan(results.migrated.agents)}`);
@@ -493,7 +465,9 @@ async function migrateAgentsCmd() {
         if (results.errors.length > 0) {
           console.log(chalk.yellow('\nThe following errors occurred during migration:'));
           for (const error of results.errors) {
-            console.log(`- ${error.type} ${error.originalId || error.originalEmail}: ${error.error}`);
+            console.log(
+              `- ${error.type} ${error.originalId || error.originalEmail}: ${error.error}`
+            );
           }
         }
       } else {
@@ -511,6 +485,5 @@ module.exports = {
   list: listAgentsCmd,
   update: updateAgentCmd,
   extend: extendAgentCmd,
-  migrate: migrateAgentsCmd
+  migrate: migrateAgentsCmd,
 };
-

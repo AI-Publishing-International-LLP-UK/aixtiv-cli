@@ -18,6 +18,7 @@ This is the production-ready version of Aixtiv CLI with Elite Enhancements.
 ## Launch Instructions
 
 1. Set the environment variables:
+
    ```
    export FIREBASE_PROJECT_ID=your-project-id
    ```
@@ -30,6 +31,7 @@ This is the production-ready version of Aixtiv CLI with Elite Enhancements.
 ## Testing
 
 Run tests before deployment:
+
 ```
 npm test
 npm run test:speaker-recognition

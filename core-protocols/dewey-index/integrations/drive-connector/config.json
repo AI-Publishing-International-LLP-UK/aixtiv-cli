@@ -1,4 +1,3 @@
-
 {
   "name": "drive-connector",
   "description": "Google Drive connector for DI:DC (Dewey Digital Index Cards)",
@@ -12,4 +11,3 @@
   },
   "enabled": true
 }
-

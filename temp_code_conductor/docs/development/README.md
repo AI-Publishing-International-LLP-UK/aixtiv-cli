@@ -37,11 +37,13 @@ code_conductor/
 ## ⚙️ Development Guidelines
 
 1. Use relative imports within the package:
+
    ```python
    from src.code_conductor.utils import helper_function
    ```
 
 2. Add proper validation for all user inputs:
+
    ```python
    from src.code_conductor.utils.validation import validate_title
 
@@ -49,6 +51,7 @@ code_conductor/
    ```
 
 3. Handle edge cases explicitly:
+
    - Empty values
    - None values
    - Extremely long values

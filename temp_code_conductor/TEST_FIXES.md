@@ -16,11 +16,13 @@ def __init__(self,
 ```
 
 Change calls from:
+
 ```python
 manager = WorkEffortManager(work_efforts_root=test_dir)
 ```
 
 To:
+
 ```python
 manager = WorkEffortManager(project_dir=test_dir)
 ```
@@ -47,11 +49,13 @@ def filter_work_efforts(self,
 ```
 
 Change calls from:
+
 ```python
 filtered_efforts = manager.filter_work_efforts(content_contains=keyword)
 ```
 
 To:
+
 ```python
 filtered_efforts = manager.filter_work_efforts(title_contains=keyword)
 ```

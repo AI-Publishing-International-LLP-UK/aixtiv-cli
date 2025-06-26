@@ -13,10 +13,12 @@ This guide explains how to set up and use Code Conductor with Obsidian and Curso
 ### Step 1: Install Required Software
 
 1. **Install Obsidian**
+
    - Download from [obsidian.md](https://obsidian.md/)
    - Install according to your operating system instructions
 
 2. **Install Cursor**
+
    - Download from [cursor.sh](https://cursor.sh/)
    - Install according to your operating system instructions
 
@@ -27,6 +29,7 @@ This guide explains how to set up and use Code Conductor with Obsidian and Curso
 ### Step 2: Configure Your Project
 
 1. **Set up your project with Code Conductor**
+
    ```bash
    # Navigate to your project directory
    cd /path/to/your/project
@@ -36,6 +39,7 @@ This guide explains how to set up and use Code Conductor with Obsidian and Curso
    ```
 
 2. **Open your project in Obsidian**
+
    - Launch Obsidian
    - Click "Open folder as vault"
    - Navigate to and select your project directory
@@ -50,6 +54,7 @@ This guide explains how to set up and use Code Conductor with Obsidian and Curso
 Once your environment is set up:
 
 1. **Use Cursor for:**
+
    - Coding and development
    - Running Code Conductor commands
    - AI-assisted programming

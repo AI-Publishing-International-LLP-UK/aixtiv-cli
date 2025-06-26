@@ -10,22 +10,22 @@ const telemetry = require('../utils/telemetry');
 async function agentCommand(options) {
   // Record knowledge access for telemetry
   telemetry.recordKnowledgeAccess('agent');
-  
+
   const { email, agent, task, data = '{}' } = parseOptions(options);
-  
+
   // Validate required parameters
   if (!agent) {
     console.error(chalk.red('Error: Agent ID is required'));
     console.log(`Use ${chalk.cyan('--agent <id>')} to specify an agent ID`);
     process.exit(1);
   }
-  
+
   if (!task) {
     console.error(chalk.red('Error: Task type is required'));
     console.log(`Use ${chalk.cyan('--task <type>')} to specify a task type`);
     process.exit(1);
   }
-  
+
   try {
     // Parse task data if provided as a string
     let parsedData;
@@ -35,7 +35,7 @@ async function agentCommand(options) {
       console.error(chalk.red('Error: Invalid JSON in task data'));
       process.exit(1);
     }
-    
+
     // Execute agent orchestration with spinner
     const result = await withSpinner(
       `Orchestrating agent ${chalk.cyan(agent)} for task ${chalk.yellow(task)}`,
@@ -45,10 +45,10 @@ async function agentCommand(options) {
       task,
       parsedData
     );
-    
+
     // Display result
     displayResult(result);
-    
+
     // Show additional information if successful
     if (result.success) {
       console.log(chalk.bold('Task Details:'));
@@ -65,4 +65,3 @@ async function agentCommand(options) {
 }
 
 module.exports = agentCommand;
-

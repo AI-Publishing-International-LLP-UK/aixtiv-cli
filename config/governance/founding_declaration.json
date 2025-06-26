@@ -27,11 +27,7 @@
       "citizen_rights": {
         "petition_process": {
           "access": "Direct access to City Council",
-          "scope": [
-            "Complaints",
-            "Petitions",
-            "Governance concerns"
-          ]
+          "scope": ["Complaints", "Petitions", "Governance concerns"]
         },
         "snap_election_provision": {
           "trigger": "Significant citizen concern or petition",
@@ -57,4 +53,3 @@
     }
   }
 }
-

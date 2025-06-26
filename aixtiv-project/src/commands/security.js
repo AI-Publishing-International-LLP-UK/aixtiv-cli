@@ -10,16 +10,16 @@ const telemetry = require('../utils/telemetry');
 async function securityCommand(options) {
   // Record knowledge access for telemetry
   telemetry.recordKnowledgeAccess('security');
-  
+
   const { email, token, action = 'verify' } = parseOptions(options);
-  
+
   // Validate required parameters
   if (!email) {
     console.error(chalk.red('Error: Email is required'));
     console.log(`Use ${chalk.cyan('--email <address>')} to specify an email address`);
     process.exit(1);
   }
-  
+
   try {
     // Currently only 'verify' action is supported
     if (action !== 'verify') {
@@ -27,7 +27,7 @@ async function securityCommand(options) {
       console.log(`Currently supported actions: ${chalk.cyan('verify')}`);
       process.exit(1);
     }
-    
+
     // Execute security verification with spinner
     const result = await withSpinner(
       `Verifying security access for ${chalk.cyan(email)} via SalleyPort`,
@@ -35,10 +35,10 @@ async function securityCommand(options) {
       email,
       token
     );
-    
+
     // Display result
     displayResult(result);
-    
+
     // Show additional information if successful
     if (result.success) {
       console.log(chalk.bold('Security Details:'));
@@ -46,7 +46,7 @@ async function securityCommand(options) {
       console.log(`Access Level: ${chalk.yellow(result.accessLevel)}`);
       console.log(`Valid Until: ${chalk.magenta(result.validUntil)}`);
       console.log(`Verification Time: ${new Date().toISOString()}`);
-      
+
       // Special note for higher access levels
       if (result.accessLevel === 'admin' || result.accessLevel === 'elevated') {
         console.log(chalk.green.bold('\nElevated Access Detected:'));
@@ -61,4 +61,3 @@ async function securityCommand(options) {
 }
 
 module.exports = securityCommand;
-

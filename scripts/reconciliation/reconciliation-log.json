@@ -23,11 +23,7 @@
           "team_compatible": true,
           "requires_authentication": true,
           "authentication_provider": "SallyPort",
-          "default_permissions": [
-            "create",
-            "read",
-            "process"
-          ],
+          "default_permissions": ["create", "read", "process"],
           "metadata": {
             "region": "us-west1",
             "zone": "us-west1-b",
@@ -105,11 +101,7 @@
           "team_compatible": true,
           "requires_authentication": true,
           "authentication_provider": "SallyPort",
-          "default_permissions": [
-            "create",
-            "read",
-            "process"
-          ],
+          "default_permissions": ["create", "read", "process"],
           "metadata": {
             "region": "us-west1",
             "zone": "us-west1-b",
@@ -188,11 +180,7 @@
           "team_compatible": true,
           "requires_authentication": true,
           "authentication_provider": "SallyPort",
-          "default_permissions": [
-            "create",
-            "analyze",
-            "certify"
-          ],
+          "default_permissions": ["create", "analyze", "certify"],
           "metadata": {
             "region": "us-west1",
             "zone": "us-west1-b",
@@ -258,11 +246,7 @@
           "team_compatible": true,
           "requires_authentication": true,
           "authentication_provider": "SallyPort",
-          "default_permissions": [
-            "create",
-            "analyze",
-            "certify"
-          ],
+          "default_permissions": ["create", "analyze", "certify"],
           "metadata": {
             "region": "us-west1",
             "zone": "us-west1-b",
@@ -329,11 +313,7 @@
           "status": "ready",
           "team_compatible": true,
           "requires_authentication": false,
-          "default_permissions": [
-            "verify",
-            "authenticate",
-            "generate"
-          ],
+          "default_permissions": ["verify", "authenticate", "generate"],
           "metadata": {
             "region": "us-west1",
             "security_level": "zero-trust",
@@ -377,11 +357,7 @@
           "firebase_integration": {
             "enabled": true,
             "token_endpoint": "/auth/firebase/token",
-            "custom_claims": [
-              "ceUuid",
-              "serpew",
-              "verified"
-            ]
+            "custom_claims": ["ceUuid", "serpew", "verified"]
           }
         },
         "after": {
@@ -406,11 +382,7 @@
           "status": "ready",
           "team_compatible": true,
           "requires_authentication": false,
-          "default_permissions": [
-            "verify",
-            "authenticate",
-            "generate"
-          ],
+          "default_permissions": ["verify", "authenticate", "generate"],
           "metadata": {
             "region": "us-west1",
             "security_level": "zero-trust",
@@ -454,11 +426,7 @@
           "firebase_integration": {
             "enabled": true,
             "token_endpoint": "/auth/firebase/token",
-            "custom_claims": [
-              "ceUuid",
-              "serpew",
-              "verified"
-            ]
+            "custom_claims": ["ceUuid", "serpew", "verified"]
           }
         }
       }
@@ -488,11 +456,7 @@
         "team_compatible": true,
         "requires_authentication": true,
         "authentication_provider": "SallyPort",
-        "default_permissions": [
-          "create",
-          "read",
-          "process"
-        ],
+        "default_permissions": ["create", "read", "process"],
         "metadata": {
           "region": "us-west1",
           "zone": "us-west1-b",
@@ -553,11 +517,7 @@
         "team_compatible": true,
         "requires_authentication": true,
         "authentication_provider": "SallyPort",
-        "default_permissions": [
-          "create",
-          "read",
-          "process"
-        ],
+        "default_permissions": ["create", "read", "process"],
         "metadata": {
           "region": "us-west1",
           "zone": "us-west1-b",
@@ -618,11 +578,7 @@
         "team_compatible": true,
         "requires_authentication": true,
         "authentication_provider": "SallyPort",
-        "default_permissions": [
-          "create",
-          "read",
-          "process"
-        ],
+        "default_permissions": ["create", "read", "process"],
         "metadata": {
           "region": "us-west1",
           "zone": "us-west1-b",
@@ -683,11 +639,7 @@
         "team_compatible": true,
         "requires_authentication": true,
         "authentication_provider": "SallyPort",
-        "default_permissions": [
-          "create",
-          "read",
-          "process"
-        ],
+        "default_permissions": ["create", "read", "process"],
         "metadata": {
           "region": "us-west1",
           "zone": "us-west1-b",
@@ -748,11 +700,7 @@
         "team_compatible": true,
         "requires_authentication": true,
         "authentication_provider": "SallyPort",
-        "default_permissions": [
-          "create",
-          "read",
-          "process"
-        ],
+        "default_permissions": ["create", "read", "process"],
         "metadata": {
           "region": "us-west1",
           "zone": "us-west1-b",
@@ -813,11 +761,7 @@
         "team_compatible": true,
         "requires_authentication": true,
         "authentication_provider": "SallyPort",
-        "default_permissions": [
-          "create",
-          "read",
-          "process"
-        ],
+        "default_permissions": ["create", "read", "process"],
         "metadata": {
           "region": "us-west1",
           "zone": "us-west1-b",
@@ -878,11 +822,7 @@
         "team_compatible": true,
         "requires_authentication": true,
         "authentication_provider": "SallyPort",
-        "default_permissions": [
-          "create",
-          "read",
-          "process"
-        ],
+        "default_permissions": ["create", "read", "process"],
         "metadata": {
           "region": "us-west1",
           "zone": "us-west1-b",
@@ -943,11 +883,7 @@
         "team_compatible": true,
         "requires_authentication": true,
         "authentication_provider": "SallyPort",
-        "default_permissions": [
-          "create",
-          "read",
-          "process"
-        ],
+        "default_permissions": ["create", "read", "process"],
         "metadata": {
           "region": "us-west1",
           "zone": "us-west1-b",
@@ -1008,11 +944,7 @@
         "team_compatible": true,
         "requires_authentication": true,
         "authentication_provider": "SallyPort",
-        "default_permissions": [
-          "create",
-          "read",
-          "process"
-        ],
+        "default_permissions": ["create", "read", "process"],
         "metadata": {
           "region": "us-west1",
           "zone": "us-west1-b",
@@ -1073,11 +1005,7 @@
         "team_compatible": true,
         "requires_authentication": true,
         "authentication_provider": "SallyPort",
-        "default_permissions": [
-          "create",
-          "read",
-          "process"
-        ],
+        "default_permissions": ["create", "read", "process"],
         "metadata": {
           "region": "us-west1",
           "zone": "us-west1-b",
@@ -1138,11 +1066,7 @@
         "team_compatible": true,
         "requires_authentication": true,
         "authentication_provider": "SallyPort",
-        "default_permissions": [
-          "create",
-          "read",
-          "process"
-        ],
+        "default_permissions": ["create", "read", "process"],
         "metadata": {
           "region": "us-west1",
           "zone": "us-west1-b",
