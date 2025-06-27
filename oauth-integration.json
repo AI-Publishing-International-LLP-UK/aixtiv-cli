@@ -1,0 +1,12 @@
+{
+  "gateway": "/Users/as/asoos/integration-gateway",
+  "project": "api-for-warp-drive",
+  "domain": "drclaude.live",
+  "contact": "pr@coaching2100.com",
+  "multiTenant": true,
+  "secrets": {
+    "gcp": true,
+    "hubspot": true,
+    "workloadIdentity": true
+  }
+}
