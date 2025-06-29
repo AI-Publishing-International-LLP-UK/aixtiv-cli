@@ -1,7 +1,7 @@
 /**
- * Google Drive Connector for DI:DC (Dewey Digital Index Cards)
+ * Google Drive Connector for DIDC (Dewey Digital Index Cards)
  *
- * This module connects Google Drive with the DI:DC system,
+ * This module connects Google Drive with the DIDC system,
  * allowing Drive files to be indexed, classified, and mounted at /ddiCardMount.
  */
 
@@ -22,7 +22,7 @@ try {
 const db = admin.firestore();
 
 /**
- * Indexes a Drive file in the DI:DC system
+ * Indexes a Drive file in the DIDC system
  * @param {Object} fileData - The file data from Google Drive
  * @returns {Promise<string>} - The ID of the indexed document
  */
@@ -63,7 +63,7 @@ async function indexDriveFile(fileData) {
 }
 
 /**
- * Classifies an indexed document according to the DI:DC system
+ * Classifies an indexed document according to the DIDC system
  * @param {string} indexedContentId - The ID of the indexed content
  * @returns {Promise<string>} - The ID of the classification record
  */

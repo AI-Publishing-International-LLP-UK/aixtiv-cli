@@ -1,0 +1,192 @@
+{
+  "version": "1.0",
+  "name": "Key Rotation CTTT Configuration",
+  "description": "CI/CD CTTT integration for GCP Secret Manager and key rotation",
+  "project": "api-for-warp-drive",
+  "region": "us-west1",
+  "environments": ["development", "staging", "production"],
+  "workflows": {
+    "key-rotation": {
+      "trigger": {
+        "schedule": "0 0 1 * *",
+        "manual": true,
+        "api": true
+      },
+      "steps": [
+        {
+          "name": "health-check-pre",
+          "action": "run-command",
+          "command": "aixtiv cicd:test:run --suite security-pre-rotation",
+          "timeout": 300,
+          "continueOnError": false
+        },
+        {
+          "name": "rotate-keys",
+          "action": "run-workflow",
+          "workflow": "key-rotation.yml",
+          "timeout": 1800,
+          "continueOnError": false
+        },
+        {
+          "name": "verify-keys",
+          "action": "run-command",
+          "command": "aixtiv cicd:verify:keys",
+          "timeout": 300,
+          "continueOnError": false
+        },
+        {
+          "name": "health-check-post",
+          "action": "run-command",
+          "command": "aixtiv cicd:test:run --suite security-post-rotation",
+          "timeout": 300,
+          "continueOnError": false
+        },
+        {
+          "name": "deploy-updates",
+          "action": "run-command",
+          "command": "aixtiv cicd:deploy --environment {{environment}} --region {{region}}",
+          "timeout": 600,
+          "continueOnError": false
+        }
+      ],
+      "notifications": {
+        "email": ["security-alerts@coaching2100.com"],
+        "slack": {
+          "channel": "#security-alerts",
+          "success": true,
+          "failure": true
+        }
+      }
+    },
+    "emergency-key-rotation": {
+      "trigger": {
+        "manual": true,
+        "api": true
+      },
+      "steps": [
+        {
+          "name": "health-check-pre",
+          "action": "run-command",
+          "command": "aixtiv cicd:test:run --suite security-pre-rotation",
+          "timeout": 300,
+          "continueOnError": true
+        },
+        {
+          "name": "rotate-specific-key",
+          "action": "run-workflow",
+          "workflow": "key-rotation.yml",
+          "parameters": {
+            "secretId": "{{secretId}}",
+            "runCttt": true
+          },
+          "timeout": 600,
+          "continueOnError": false
+        },
+        {
+          "name": "verify-specific-key",
+          "action": "run-command",
+          "command": "aixtiv cicd:verify:key --secret-id {{secretId}}",
+          "timeout": 300,
+          "continueOnError": false
+        },
+        {
+          "name": "deploy-updates",
+          "action": "run-command",
+          "command": "aixtiv cicd:deploy --environment {{environment}} --region {{region}} --hotfix",
+          "timeout": 600,
+          "continueOnError": false
+        }
+      ],
+      "notifications": {
+        "email": ["security-alerts@coaching2100.com"],
+        "slack": {
+          "channel": "#security-alerts",
+          "success": true,
+          "failure": true
+        }
+      }
+    }
+  },
+  "monitoring": {
+    "metrics": [
+      {
+        "name": "rotation_success_rate",
+        "description": "Success rate of key rotation operations",
+        "target": 0.99
+      },
+      {
+        "name": "rotation_duration",
+        "description": "Duration of key rotation operations",
+        "target": 300
+      },
+      {
+        "name": "key_age",
+        "description": "Average age of keys in days",
+        "target": 45
+      },
+      {
+        "name": "deployment_success_rate",
+        "description": "Success rate of deployments after key rotation",
+        "target": 0.99
+      }
+    ],
+    "alerts": [
+      {
+        "name": "rotation_failure",
+        "description": "Key rotation operation failed",
+        "condition": "rotation_success_rate < 0.9",
+        "severity": "critical"
+      },
+      {
+        "name": "rotation_duration_exceeded",
+        "description": "Key rotation operation took longer than expected",
+        "condition": "rotation_duration > 600",
+        "severity": "warning"
+      },
+      {
+        "name": "key_age_exceeded",
+        "description": "Keys older than 90 days detected",
+        "condition": "key_age > 90",
+        "severity": "warning"
+      },
+      {
+        "name": "deployment_failure",
+        "description": "Deployment after key rotation failed",
+        "condition": "deployment_success_rate < 0.9",
+        "severity": "critical"
+      }
+    ]
+  },
+  "security": {
+    "auditLogs": true,
+    "approvals": {
+      "required": ["production"],
+      "approvers": ["pr@coaching2100.com"]
+    },
+    "restrictions": {
+      "ip": ["10.0.0.0/8"],
+      "timeWindow": {
+        "start": "08:00",
+        "end": "20:00",
+        "timezone": "America/Los_Angeles"
+      }
+    }
+  },
+  "telemetry": {
+    "datadog": {
+      "enabled": true,
+      "metrics": [
+        "rotation_success_rate",
+        "rotation_duration",
+        "key_age",
+        "deployment_success_rate"
+      ],
+      "tags": ["aixtiv", "security", "key-rotation", "cttt"]
+    },
+    "cloudMonitoring": {
+      "enabled": true,
+      "projectId": "api-for-warp-drive",
+      "metricPrefix": "custom.aixtiv.security"
+    }
+  }
+}

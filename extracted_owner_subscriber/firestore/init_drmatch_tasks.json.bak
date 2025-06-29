@@ -1,0 +1,10 @@
+{
+  "tasks": [
+    {
+      "id": "task_001",
+      "title": "Sample Task",
+      "description": "Sample task for DrMatch",
+      "status": "pending"
+    }
+  ]
+}

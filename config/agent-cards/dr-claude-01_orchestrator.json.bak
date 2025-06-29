@@ -1,0 +1,57 @@
+{
+  "id": "dr-claude-orchestrator",
+  "name": "Dr. Claude Orchestrator",
+  "version": "1.0.0",
+  "description": "Agent Coordination and Orchestration Specialist",
+  "capabilities": [
+    "Agent Orchestration",
+    "Task Delegation",
+    "Workflow Management",
+    "Process Automation",
+    "System Integration",
+    "Orchestration Frameworks",
+    "Multi-Agent Systems"
+  ],
+  "service_path": "/src/services/dr_claude_orchestrator/index.js",
+  "api_endpoint": "api.coaching2100.ai/v1/specialists/dr-claude-orchestrator",
+  "status": "ready",
+  "team_compatible": true,
+  "requires_authentication": true,
+  "authentication_provider": "SallyPort",
+  "default_permissions": ["create", "read", "process"],
+  "metadata": {
+    "region": "us-west1",
+    "zone": "us-west1-b",
+    "creator": "Aixtiv Symphony System",
+    "created_at": "2025-05-23T20:30:29.522Z",
+    "last_updated": "2025-05-23T20:30:29.522Z",
+    "specializations": [
+      "Agent Orchestration",
+      "Task Delegation",
+      "Workflow Management",
+      "Process Automation",
+      "System Integration"
+    ],
+    "knowledge_domains": [
+      "Orchestration Frameworks",
+      "Multi-Agent Systems",
+      "Task Scheduling",
+      "Agent Communication",
+      "Optimization Algorithms"
+    ]
+  },
+  "team_assignments": [
+    {
+      "team_id": "symphony-core",
+      "role": "contributor",
+      "description": "Core Dr. Claude Orchestrator component for Symphony"
+    }
+  ],
+  "instances": [
+    {
+      "id": "dr-claude-orchestrator-01",
+      "specialization": "Agent Orchestration",
+      "status": "active"
+    }
+  ]
+}

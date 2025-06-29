@@ -1,0 +1,219 @@
+name: SSL Certificate Automation
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight
+  workflow_dispatch: # Allow manual triggering
+
+env:
+  FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+  GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+  DEFAULT_PROJECT: api-for-warp-drive
+
+jobs:
+  ssl-check:
+    name: Check SSL Certificates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run SSL certificate check
+        run: |
+          chmod +x ./scripts/domain-ssl-check.sh
+          ./scripts/domain-ssl-check.sh
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          EMAIL_RECIPIENT: ${{ secrets.SSL_ALERT_EMAIL }}
+
+  firebase-ssl-provisioning:
+    name: Provision SSL Certificates (Firebase)
+    runs-on: ubuntu-latest
+    needs: ssl-check
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm install -g firebase-tools
+
+      - name: Login to Firebase
+        run: firebase login:ci --token "$FIREBASE_TOKEN"
+
+      - name: List domains from AIXTIV CLI
+        id: domains
+        run: |
+          # Export domains from AIXTIV CLI to JSON
+          node -e "const fs = require('fs'); \
+                  const path = require('path'); \
+                  const cachePath = path.join(process.env.HOME, '.aixtiv-cli', 'domain-cache.json'); \
+                  if (fs.existsSync(cachePath)) { \
+                    const cache = JSON.parse(fs.readFileSync(cachePath, 'utf8')); \
+                    const domains = cache.domains.filter(d => d.status !== 'expired'); \
+                    console.log(JSON.stringify(domains)); \
+                  } else { \
+                    console.log('[]'); \
+                  }" > domains.json
+
+          echo "domains_json=$(cat domains.json)" >> $GITHUB_ENV
+
+      - name: Provision Firebase SSL Certificates
+        run: |
+          # Parse domains.json and provision SSL certificates
+          cat domains.json | jq -c '.[]' | while read -r domain; do
+            name=$(echo $domain | jq -r '.name')
+            project=$(echo $domain | jq -r '.firebaseProject')
+            
+            # Set default project if project is empty
+            if [ "$project" = "null" ] || [ "$project" = "" ]; then
+              project="$DEFAULT_PROJECT"
+              echo "Using default project: $project for domain $name"
+            fi
+
+            echo "Provisioning SSL certificate for $name in project $project"
+            
+            # Handle special character domains
+            if [[ "$name" != "$(echo "$name" | LC_ALL=C.UTF-8 tr -cd '[:print:]')" ]]; then
+              # Domain has non-ASCII characters, convert to ASCII
+              original_name="$name"
+              # Remove accents and special characters, then replace dots with dashes
+              site_name=$(echo "$name" | iconv -f UTF-8 -t ASCII//TRANSLIT | sed 's/[^a-zA-Z0-9\.]//g' | sed 's/\./-/g')
+              echo "WARNING: Domain $original_name contains non-ASCII characters"
+              echo "Converting to ASCII-compatible site ID: $site_name"
+            else
+              # Normal ASCII domain, just replace dots with dashes
+              site_name=$(echo "$name" | sed 's/\./-/g')
+            fi
+            
+            # Create Firebase hosting site if it doesn't exist
+            firebase hosting:sites:list --project $project | grep -q "$site_name" || \
+              firebase hosting:sites:create $site_name --project $project
+              
+              # Add domain to Firebase hosting
+              firebase hosting:channel:deploy production --site $site_name --project $project
+              firebase hosting:domain:add $name --site $site_name --project $project || echo "Domain already added or verification needed"
+            fi
+          done
+
+  gcp-ssl-provisioning:
+    name: Provision SSL Certificates (GCP)
+    runs-on: ubuntu-latest
+    needs: ssl-check
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+
+      - name: List domains from AIXTIV CLI
+        id: domains
+        run: |
+          # Export domains from AIXTIV CLI to JSON
+          node -e "const fs = require('fs'); \
+                  const path = require('path'); \
+                  const cachePath = path.join(process.env.HOME, '.aixtiv-cli', 'domain-cache.json'); \
+                  if (fs.existsSync(cachePath)) { \
+                    const cache = JSON.parse(fs.readFileSync(cachePath, 'utf8')); \
+                    const domains = cache.domains.filter(d => d.status !== 'expired' && d.type !== 'firebase-only'); \
+                    console.log(JSON.stringify(domains)); \
+                  } else { \
+                    console.log('[]'); \
+                  }" > domains.json
+
+          echo "domains_json=$(cat domains.json)" >> $GITHUB_ENV
+
+      - name: Provision GCP Managed SSL Certificates
+        run: |
+          # Parse domains.json and provision SSL certificates
+          cat domains.json | jq -c '.[]' | while read -r domain; do
+            name=$(echo $domain | jq -r '.name')
+            domain_slug=$(echo $name | sed 's/\./-/g')
+            
+            echo "Provisioning GCP managed SSL certificate for $name"
+            
+            # Check if certificate already exists
+            if ! gcloud compute ssl-certificates describe "$domain_slug-ssl" --global 2>/dev/null; then
+              # Create a new managed certificate
+              gcloud compute ssl-certificates create "$domain_slug-ssl" \
+                --domains="$name" \
+                --global
+              
+              echo "Created new SSL certificate for $name"
+            else
+              echo "SSL certificate for $name already exists"
+            fi
+          done
+
+  notify-results:
+    name: Notify SSL Certificate Status
+    runs-on: ubuntu-latest
+    needs: [firebase-ssl-provisioning, gcp-ssl-provisioning]
+    if: always()
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run certificate summary script
+        id: cert_summary
+        run: |
+          # Generate a summary of certificate statuses
+          echo "Generating SSL certificate summary..."
+
+          # Count certificates by status
+          node -e "const fs = require('fs'); \
+                  const path = require('path'); \
+                  const cachePath = path.join(process.env.HOME, '.aixtiv-cli', 'domain-cache.json'); \
+                  if (fs.existsSync(cachePath)) { \
+                    const cache = JSON.parse(fs.readFileSync(cachePath, 'utf8')); \
+                    const domains = cache.domains || []; \
+                    const total = domains.length; \
+                    const expiring = domains.filter(d => d.sslStatus === 'expiring').length; \
+                    const expired = domains.filter(d => d.sslStatus === 'expired').length; \
+                    const valid = domains.filter(d => d.sslStatus === 'valid').length; \
+                    const missing = domains.filter(d => d.sslStatus === 'missing').length; \
+                    const summary = { total, valid, expiring, expired, missing }; \
+                    console.log('CERT_SUMMARY=' + JSON.stringify(summary)); \
+                  } else { \
+                    console.log('CERT_SUMMARY={}'); \
+                  }" > summary.txt
+
+          cat summary.txt >> $GITHUB_ENV
+
+      - name: Notify Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,workflow
+          text: |
+            SSL Certificate Automation completed
+
+            Certificate Summary:
+            - Total Domains: ${{ fromJSON(env.CERT_SUMMARY).total || 0 }}
+            - Valid Certificates: ${{ fromJSON(env.CERT_SUMMARY).valid || 0 }}
+            - Expiring Soon: ${{ fromJSON(env.CERT_SUMMARY).expiring || 0 }}
+            - Expired: ${{ fromJSON(env.CERT_SUMMARY).expired || 0 }}
+            - Missing: ${{ fromJSON(env.CERT_SUMMARY).missing || 0 }}
+
+            Default Project: ${{ env.DEFAULT_PROJECT }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}

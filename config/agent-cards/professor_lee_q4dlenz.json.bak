@@ -1,0 +1,66 @@
+{
+  "id": "professor-lee-q4d-trainer",
+  "name": "Professor Lee Q4D Trainer",
+  "version": "1.0.1",
+  "description": "Contextual Understanding and Training Specialist",
+  "capabilities": [
+    "Contextual Training",
+    "Knowledge Integration",
+    "Concept Mapping",
+    "Learning Systems",
+    "Educational Technology",
+    "Educational Theory",
+    "Cognitive Science",
+    "Training module creation and management",
+    "Advanced learning pattern analysis",
+    "Blockchain-based certification validation"
+  ],
+  "service_path": "/src/services/q4dlenz/index.js",
+  "api_endpoint": "api.coaching2100.ai/v1/specialists/professor-lee-q4d-trainer",
+  "status": "ready",
+  "team_compatible": true,
+  "requires_authentication": true,
+  "authentication_provider": "SallyPort",
+  "default_permissions": ["create", "analyze", "certify"],
+  "metadata": {
+    "region": "us-west1",
+    "zone": "us-west1-b",
+    "dimensionality": "4d",
+    "learning_curve": "adaptive",
+    "feedback_loop": true,
+    "creator": "Phillip Corey Roark",
+    "created_at": "2025-02-20T00:00:00Z",
+    "last_updated": "2025-05-23T20:30:29.523Z",
+    "specializations": [
+      "Contextual Training",
+      "Knowledge Integration",
+      "Concept Mapping",
+      "Learning Systems",
+      "Educational Technology"
+    ],
+    "knowledge_domains": [
+      "Educational Theory",
+      "Cognitive Science",
+      "Knowledge Management",
+      "Training Systems",
+      "Educational Psychology"
+    ]
+  },
+  "team_assignments": [
+    {
+      "team_id": "education-team",
+      "role": "primary",
+      "description": "Primary learning system for all educational content analysis"
+    },
+    {
+      "team_id": "symphony-core",
+      "role": "contributor",
+      "description": "Learning component provider for Symphony"
+    }
+  ],
+  "blockchain_integration": {
+    "enabled": true,
+    "provider": "Certification Ledger",
+    "validation_endpoint": "/training/certifications/{id}/validate"
+  }
+}

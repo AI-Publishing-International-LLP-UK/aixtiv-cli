@@ -1,0 +1,31 @@
+steps:
+  # Print the substitution variables
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'echo-variables'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Deployment Name: ${_DEPLOYMENT_NAME}"
+        echo "Region: ${_REGION}"
+        echo "Project ID: ${PROJECT_ID}"
+
+  # Initialize build environment
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'initialize'
+    args:
+      - 'config'
+      - 'set'
+      - 'project'
+      - '${PROJECT_ID}'
+
+timeout: '7200s'
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'N1_HIGHCPU_8'
+
+substitutions:
+  _DEPLOYMENT_NAME: 'generative-ai-document-summarization'
+  _REGION: 'us-west1-b'
+
+serviceAccount: 'projects/api-for-warp-drive/serviceAccounts/DrLucyAutomation@api-for-warp-drive.iam.gserviceaccount.com'

@@ -1,0 +1,57 @@
+{
+  "id": "dr-grant-cybersecurity",
+  "name": "Dr. Grant Cybersecurity",
+  "version": "1.0.0",
+  "description": "Cybersecurity and Digital Protection Specialist",
+  "capabilities": [
+    "Cyber Threat Analysis",
+    "Security Architecture",
+    "Risk Assessment",
+    "Digital Forensics",
+    "Security Compliance",
+    "Network Security",
+    "Data Protection"
+  ],
+  "service_path": "/src/services/dr_grant_cybersecurity/index.js",
+  "api_endpoint": "api.coaching2100.ai/v1/specialists/dr-grant-cybersecurity",
+  "status": "ready",
+  "team_compatible": true,
+  "requires_authentication": true,
+  "authentication_provider": "SallyPort",
+  "default_permissions": ["create", "read", "process"],
+  "metadata": {
+    "region": "us-west1",
+    "zone": "us-west1-b",
+    "creator": "Aixtiv Symphony System",
+    "created_at": "2025-05-23T20:30:29.523Z",
+    "last_updated": "2025-05-23T20:30:29.523Z",
+    "specializations": [
+      "Cyber Threat Analysis",
+      "Security Architecture",
+      "Risk Assessment",
+      "Digital Forensics",
+      "Security Compliance"
+    ],
+    "knowledge_domains": [
+      "Network Security",
+      "Data Protection",
+      "Identity Management",
+      "Threat Intelligence",
+      "Security Governance"
+    ]
+  },
+  "team_assignments": [
+    {
+      "team_id": "symphony-core",
+      "role": "contributor",
+      "description": "Core Dr. Grant Cybersecurity component for Symphony"
+    }
+  ],
+  "instances": [
+    {
+      "id": "dr-grant-cybersecurity-01",
+      "specialization": "Cyber Threat Analysis",
+      "status": "active"
+    }
+  ]
+}

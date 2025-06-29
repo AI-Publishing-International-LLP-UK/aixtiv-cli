@@ -1,0 +1,67 @@
+{
+  "version": "1.0",
+  "project": "api-for-warp-drive",
+  "region": "us-west1",
+  "managed_by": "aixtiv-cli",
+  "rotation_schedules": [
+    {
+      "type": "service-account-key",
+      "secretId": "aixtiv-sa-key-firebase",
+      "serviceAccountEmail": "firebase-admin@api-for-warp-drive.iam.gserviceaccount.com",
+      "interval": "90d",
+      "keyType": "json",
+      "deleteOldKey": true,
+      "description": "Firebase Admin SDK service account key"
+    },
+    {
+      "type": "service-account-key",
+      "secretId": "aixtiv-sa-key-secret-manager",
+      "serviceAccountEmail": "secret-manager@api-for-warp-drive.iam.gserviceaccount.com",
+      "interval": "60d",
+      "keyType": "json",
+      "deleteOldKey": true,
+      "description": "Secret Manager service account key"
+    },
+    {
+      "type": "api-key",
+      "secretId": "aixtiv-anthropic-api-key",
+      "apiKeyName": "anthropic-api-key",
+      "interval": "30d",
+      "description": "Anthropic API key for Claude integration"
+    },
+    {
+      "type": "api-key",
+      "secretId": "aixtiv-pinecone-api-key",
+      "apiKeyName": "pinecone-api-key",
+      "interval": "45d",
+      "description": "Pinecone API key for vector database integration"
+    },
+    {
+      "type": "api-key",
+      "secretId": "aixtiv-openai-api-key",
+      "apiKeyName": "openai-api-key",
+      "interval": "30d",
+      "description": "OpenAI API key for fallback generation"
+    },
+    {
+      "type": "service-account-key",
+      "secretId": "aixtiv-sa-key-monitoring",
+      "serviceAccountEmail": "monitoring@api-for-warp-drive.iam.gserviceaccount.com",
+      "interval": "120d",
+      "keyType": "json",
+      "deleteOldKey": true,
+      "description": "Monitoring service account key"
+    }
+  ],
+  "notification_settings": {
+    "email": "security-alerts@coaching2100.com",
+    "slack_webhook": "https://hooks.slack.com/services/XXXXX/YYYYY/ZZZZZ",
+    "notify_on_rotation": true,
+    "notify_on_failure": true
+  },
+  "audit_settings": {
+    "log_path": "/var/log/aixtiv/secret-audit.log",
+    "log_retention_days": 90,
+    "detailed_logging": true
+  }
+}

@@ -1,0 +1,16 @@
+description: Scheduled verification for Emotion Tuning System
+name: emotion-tuning-scheduled-verification
+filename: cloudbuild-ci-cttt-emotion-tuning.yaml
+github:
+  owner: AI-Publishing-International-LLP-UK
+  name: AIXTIV-SYMPHONY
+  branch: ^main$
+substitutions:
+  _FIREBASE_TOKEN: ${_FIREBASE_TOKEN}
+  _ENVIRONMENT: production
+  _SCHEDULED_RUN: 'true'
+tags:
+  - emotion-tuning
+  - scheduled
+  - symphony
+  - phase-ii

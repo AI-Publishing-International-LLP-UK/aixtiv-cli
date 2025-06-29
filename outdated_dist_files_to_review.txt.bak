@@ -1,0 +1,17 @@
+-rw-r--r--@ 1 as  staff  4015655 May  6 18:59 dist/aixtiv-cli-1.0.2.tar.gz
+-rw-r--r--@ 1 as  staff  4092215 May  6 18:59 dist/aixtiv-cli-1.0.2.zip
+
+dist/aixtiv-cli-1.0.2:
+total 40
+drwxr-xr-x@ 12 as  staff   384 May  6 18:59 .
+drwxr-xr-x@ 16 as  staff   512 May 12 21:01 ..
+-rw-r--r--@  1 as  staff   621 May  6 18:59 .env
+-rw-r--r--@  1 as  staff   132 May  6 18:59 .npmignore
+drwxr-xr-x@  8 as  staff   256 May  6 18:59 bin
+drwxr-xr-x@ 12 as  staff   384 May  6 18:59 commands
+drwxr-xr-x@ 10 as  staff   320 May  6 18:59 lib
+drwxr-xr-x@  3 as  staff    96 May  6 18:59 logs
+-rw-r--r--@  1 as  staff  1240 May  6 18:59 package.json
+-rw-r--r--@  1 as  staff  7789 May  6 18:59 README.md
+drwxr-xr-x@  9 as  staff   288 May  6 18:59 scripts
+drwxr-xr-x@ 14 as  staff   448 May  6 18:59 telemetry

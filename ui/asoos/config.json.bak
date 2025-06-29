@@ -1,0 +1,17 @@
+{
+  "domain": "asoos.2100.cool",
+  "mcp_server": {
+    "region": "us-west1",
+    "project": "api-for-warp-drive",
+    "endpoint": "/api/claude-automation"
+  },
+  "symphony_integration": {
+    "mode": "zero-drift",
+    "alwaysOn": true,
+    "bondedAgent": true
+  },
+  "deployment": {
+    "target": "gcp-us-west1",
+    "service": "asoos-ui"
+  }
+}

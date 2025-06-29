@@ -1,0 +1,57 @@
+{
+  "id": "dr-memoria",
+  "name": "Dr. Memoria",
+  "version": "1.0.0",
+  "description": "COO Operations",
+  "capabilities": [
+    "Operations Management",
+    "Process Optimization",
+    "Supply Chain",
+    "Quality Control",
+    "Organizational Efficiency",
+    "Operational Excellence",
+    "Business Process Management"
+  ],
+  "service_path": "/src/services/dr_memoria/index.js",
+  "api_endpoint": "api.coaching2100.ai/v1/specialists/dr-memoria",
+  "status": "ready",
+  "team_compatible": true,
+  "requires_authentication": true,
+  "authentication_provider": "SallyPort",
+  "default_permissions": ["create", "read", "process"],
+  "metadata": {
+    "region": "us-west1",
+    "zone": "us-west1-b",
+    "creator": "Aixtiv Symphony System",
+    "created_at": "2025-05-23T20:30:29.521Z",
+    "last_updated": "2025-05-23T20:30:29.521Z",
+    "specializations": [
+      "Operations Management",
+      "Process Optimization",
+      "Supply Chain",
+      "Quality Control",
+      "Organizational Efficiency"
+    ],
+    "knowledge_domains": [
+      "Operational Excellence",
+      "Business Process Management",
+      "Resource Optimization",
+      "Performance Metrics",
+      "Change Management"
+    ]
+  },
+  "team_assignments": [
+    {
+      "team_id": "symphony-core",
+      "role": "contributor",
+      "description": "Core Dr. Memoria component for Symphony"
+    }
+  ],
+  "instances": [
+    {
+      "id": "dr-memoria-01",
+      "specialization": "Operations Management",
+      "status": "active"
+    }
+  ]
+}

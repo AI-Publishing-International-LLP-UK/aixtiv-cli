@@ -1,0 +1,319 @@
+steps:
+  # Initialize with Authentication and Project Setup
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'initialize'
+    args:
+      - 'config'
+      - 'set'
+      - 'project'
+      - 'api-for-warp-drive'
+
+  # Clone Repository
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'clone'
+    args: ['clone', 'https://github.com/Coaching2100/api-for-warp-drive.git', '.']
+
+  # Setup Agent Tracking for Domain Autoscale Pipeline
+  - name: 'gcr.io/cloud-builders/bash'
+    id: 'agent-tracking-setup'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        chmod +x scripts/setup-agent-tracking.sh
+        ./scripts/setup-agent-tracking.sh
+        export AGENT_ID="COACHING2100_DOMAIN_AUTOSCALE"
+        export ORGANIZATION="Coaching2100"
+        source bin/agent-tracking.sh
+        log_agent_action "domain_autoscale_pipeline_start" "Starting domain autoscale pipeline execution for Coaching2100 organization"
+
+  # Install Dependencies
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'install-npm'
+    args: ['install']
+    
+  # Install Python Dependencies
+  - name: 'gcr.io/cloud-builders/python'
+    id: 'install-python'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        pip install -r requirements.txt
+
+  # Configure GoDaddy API Credentials
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'configure-godaddy'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "godaddy_config_start" "Configuring GoDaddy API credentials"
+        
+        # Get credentials from Secret Manager
+        mkdir -p ~/.aixtiv
+        gcloud secrets versions access latest --secret=godaddy-api-credentials > ~/.aixtiv/godaddy-api-key.json
+        chmod 600 ~/.aixtiv/godaddy-api-key.json
+        
+        log_agent_action "godaddy_config_complete" "GoDaddy API credentials configured"
+
+  # Configure Firebase
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'configure-firebase'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "firebase_config_start" "Configuring Firebase"
+        
+        # Install Firebase CLI
+        npm install -g firebase-tools
+        
+        # Authenticate with Firebase using service account
+        firebase use api-for-warp-drive --token "$(gcloud auth print-access-token)"
+        
+        log_agent_action "firebase_config_complete" "Firebase configured"
+
+  # Run Domain Autoscale Job
+  - name: 'gcr.io/cloud-builders/python'
+    id: 'domain-autoscale'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "domain_autoscale_execution_start" "Starting domain autoscale execution"
+
+        # Run the domain autoscale integration
+        python automation/domain-autoscale-integration.py \
+          --project-id "api-for-warp-drive" \
+          --agent-id "$AGENT_ID" \
+          --phase "${_PHASE:-full}" \
+          ${_DRY_RUN:-false} && echo "--dry-run" || echo ""
+
+        log_agent_action "domain_autoscale_execution_complete" "Completed domain autoscale execution"
+
+  # Verify Zero Drift in Domain Assignments
+  - name: 'gcr.io/cloud-builders/bash'
+    id: 'zero-drift-verification'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "zero_drift_verification_start" "Starting zero-drift verification for Coaching2100 domains"
+
+        # Make the script executable
+        chmod +x scripts/verify-zero-drift.sh
+
+        # Run zero-drift verification
+        if ./scripts/verify-zero-drift.sh; then
+          log_agent_action "zero_drift_verification_complete" "Zero-drift verification successful - No drift detected"
+        else
+          log_agent_action "zero_drift_verification_failed" "Zero-drift verification failed - Drift detected"
+          echo "WARNING: Domain drift detected! Domain assignments do not match expected configuration."
+          echo "Please review the verification report in reports/domain-autoscale/ directory."
+
+          # Don't fail the build, but log the issue
+          log_agent_action "domain_autoscale_warning" "Domain drift detected but continuing pipeline"
+        fi
+
+  # Generate Domain Autoscale Report
+  - name: 'gcr.io/cloud-builders/python'
+    id: 'generate-report'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "report_generation_start" "Starting report generation"
+        
+        # Find the latest results file
+        LATEST_RESULT=$(ls -t reports/domain-autoscale/autoscale-results-*.json | head -1)
+        
+        # Generate HTML report
+        python -c "
+import json
+import sys
+import os
+from datetime import datetime
+
+# Load results
+with open('$LATEST_RESULT', 'r') as f:
+    results = json.load(f)
+
+# Generate HTML report
+html = f'''
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Domain Autoscale Report</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; line-height: 1.6; }}
+        .container {{ max-width: 1000px; margin: 0 auto; }}
+        h1 {{ color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px; }}
+        .success {{ color: green; }}
+        .failure {{ color: red; }}
+        .summary {{ background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0; }}
+        table {{ width: 100%; border-collapse: collapse; margin: 20px 0; }}
+        th, td {{ padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }}
+        th {{ background: #f5f5f5; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <h1>Domain Autoscale Report</h1>
+        
+        <div class='summary'>
+            <h2>Summary</h2>
+            <p><strong>Status:</strong> <span class='{'success' if results.get('success', False) else 'failure'}'>
+                {'SUCCESS' if results.get('success', False) else 'FAILURE'}</span></p>
+            <p><strong>Date:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+            <p><strong>Domains Fetched:</strong> {results.get('domains_fetched', 0)}</p>
+            <p><strong>Families Identified:</strong> {results.get('families_identified', 0)}</p>
+            <p><strong>Domains Categorized:</strong> {results.get('domains_categorized', 0)}</p>
+            <p><strong>Domains Assigned:</strong> {results.get('domains_assigned', 0)}</p>
+            <p><strong>Domains Verified:</strong> {results.get('domains_verified', 0)}</p>
+        </div>
+'''
+
+# Add domain family section
+if results.get('domain_families', {}):
+    html += f'''
+        <div class='families'>
+            <h2>Domain Families</h2>
+            <table>
+                <tr>
+                    <th>Family Name</th>
+                    <th>Domain Count</th>
+                    <th>Target Project</th>
+                </tr>
+    '''
+    
+    for family, data in results.get('domain_families', {}).items():
+        html += f'''
+                <tr>
+                    <td>{family}</td>
+                    <td>{data.get('count', 0)}</td>
+                    <td>{data.get('project', 'Unknown')}</td>
+                </tr>
+        '''
+        
+    html += '''
+            </table>
+        </div>
+    '''
+
+# Add error section if there are errors
+if results.get('errors', []):
+    html += f'''
+        <div class='errors'>
+            <h2>Errors</h2>
+            <ul>
+    '''
+    for error in results.get('errors', []):
+        html += f'<li>{error}</li>\n'
+    html += '''
+            </ul>
+        </div>
+    '''
+
+# Close the HTML
+html += '''
+    </div>
+</body>
+</html>
+'''
+
+# Write the report to file
+with open('reports/domain-autoscale/latest-report.html', 'w') as f:
+    f.write(html)
+
+print('Domain Autoscale Report generated successfully')
+        "
+        
+        log_agent_action "report_generation_complete" "Completed report generation"
+
+  # Upload Reports to Cloud Storage
+  - name: 'gcr.io/cloud-builders/gsutil'
+    id: 'upload-reports'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "reports_upload_start" "Starting reports upload"
+
+        # Create timestamp for report folder
+        TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+        
+        # Create a folder for reports
+        gsutil cp -r reports/domain-autoscale/* gs://api-for-warp-drive-artifacts/domain-autoscale/$TIMESTAMP/
+        
+        # Also copy the latest report to a stable location
+        gsutil cp reports/domain-autoscale/latest-report.html gs://api-for-warp-drive-artifacts/domain-autoscale/latest/report.html
+        
+        log_agent_action "reports_upload_complete" "Completed reports upload"
+
+  # Create Firestore Record
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'firestore-record'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "record_creation_start" "Creating domain autoscale record"
+        
+        # Find the latest results file
+        LATEST_RESULT=$(ls -t reports/domain-autoscale/autoscale-results-*.json | head -1)
+        
+        # Get success status from results
+        SUCCESS=$(python -c "
+import json
+with open('$LATEST_RESULT', 'r') as f:
+    print('SUCCESS' if json.load(f).get('success', False) else 'FAILED')
+        ")
+        
+        # Create Firestore document with workflow results
+        gcloud firestore documents create \
+          projects/api-for-warp-drive/databases/(default)/documents/domain-autoscale-runs/$(date +%Y%m%d%H%M%S) \
+          --fields="status=$SUCCESS,timestamp=$(date +%s),agent=$AGENT_ID,phase=${_PHASE:-full},dry_run=${_DRY_RUN:-false}"
+        
+        log_agent_action "record_creation_complete" "Domain autoscale record created"
+
+  # Notify Completion
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'notify-completion'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "pipeline_complete" "Domain Autoscale pipeline completed successfully"
+
+        echo "🚀 Domain Autoscale Pipeline completed successfully!"
+        echo "✅ Phase: ${_PHASE:-full}"
+        echo "✅ Dry Run: ${_DRY_RUN:-false}"
+        echo "✅ Reports available at: gs://api-for-warp-drive-artifacts/domain-autoscale/latest/report.html"
+        echo "✅ Agent tracking logs: Available in BigQuery"
+
+timeout: '1800s' # 30 minutes
+options:
+  machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
+  env:
+    - 'AGENT_ID=DOMAIN_AUTOSCALE_AUTOMATION'
+
+artifacts:
+  objects:
+    location: 'gs://api-for-warp-drive-artifacts/domain-autoscale/$BUILD_ID/'
+    paths: ['reports/domain-autoscale/**/*']
+
+substitutions:
+  _PHASE: 'full'  # Options: full, fetch, categorize, assign, verify
+  _DRY_RUN: 'false'
+
+serviceAccount: 'drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com'

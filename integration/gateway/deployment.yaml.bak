@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: integration-gateway
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: integration-gateway
+  template:
+    metadata:
+      labels:
+        app: integration-gateway
+    spec:
+      containers:
+        - name: integration-gateway
+          image: gcr.io/api-for-warp-drive/integration-gateway-js@sha256:c5b3a138650a5f3846fd9c23732a5455752bed539b49f11aeab7522c0802d472
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: gateway-data
+              mountPath: /data
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: '/var/secrets/google/key.json'
+      volumes:
+        - name: gateway-data
+          persistentVolumeClaim:
+            claimName: gateway-data
+      serviceAccountName: aixtiv-gateway-agent

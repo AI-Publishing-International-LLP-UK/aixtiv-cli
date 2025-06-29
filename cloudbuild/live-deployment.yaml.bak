@@ -1,0 +1,80 @@
+steps:
+  # Initialize environment
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'init'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Setting up environment for ${_DEPLOYMENT_NAME}"
+        gcloud config set project ${PROJECT_ID}
+        gcloud config set compute/region ${_REGION}
+
+  # Build application image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/${PROJECT_ID}/${_DEPLOYMENT_NAME}:${_VERSION}'
+      - '.'
+
+  # Push to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push'
+    args:
+      - 'push'
+      - 'gcr.io/${PROJECT_ID}/${_DEPLOYMENT_NAME}:${_VERSION}'
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'deploy'
+    args:
+      - 'run'
+      - 'deploy'
+      - '${_DEPLOYMENT_NAME}'
+      - '--image'
+      - 'gcr.io/${PROJECT_ID}/${_DEPLOYMENT_NAME}:${_VERSION}'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+
+  # Verify deployment
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'verify'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Verifying deployment..."
+        gcloud run services describe ${_DEPLOYMENT_NAME} \
+          --region=${_REGION} \
+          --format="get(status.url)"
+
+images:
+  - 'gcr.io/${PROJECT_ID}/${_DEPLOYMENT_NAME}:${_VERSION}'
+
+substitutions:
+  _DEPLOYMENT_NAME: 'generative-ai-document-summarization'
+  _REGION: 'us-west1'
+  _VERSION: 'v1.0.0'
+  _ENV: 'production'
+  _BUCKET_NAME: '859242575175-us-west1-blueprint-config'
+
+options:
+  machineType: 'N1_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
+  env:
+    - 'DEPLOYMENT_ENV=${_ENV}'
+    - 'PROJECT_ID=${PROJECT_ID}'
+    - 'REGION=${_REGION}'
+
+tags:
+  - '${_DEPLOYMENT_NAME}'
+  - '${_ENV}'
+  - '${_REGION}'
+
+timeout: '1800s'
+serviceAccount: 'goog-sc-generative-ai-docu-147@api-for-warp-drive.iam.gserviceaccount.com'

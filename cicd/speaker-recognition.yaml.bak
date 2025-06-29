@@ -1,0 +1,103 @@
+# Speaker Recognition CI/CD Configuration
+# Integration with CTTT (Continuous Testing, Training, and Tuning) Pipeline
+# Regions: us-west1, us-west1-b
+
+steps:
+  # Build and test the speaker recognition module
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'install-dependencies'
+    args: ['install']
+    timeout: '300s'
+
+  # Run unit tests for speaker recognition
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'run-unit-tests'
+    args: ['run', 'test', '--', '-t', 'speaker-recognition']
+    timeout: '180s'
+    waitFor: ['install-dependencies']
+
+  # Run integration tests with mocked voice samples
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'run-integration-tests'
+    args: ['run', 'test:integration', '--', '-t', 'speaker-recognition']
+    timeout: '300s'
+    waitFor: ['run-unit-tests']
+
+  # Build and package the CLI with speaker recognition
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'build-package'
+    args: ['run', 'build']
+    timeout: '300s'
+    waitFor: ['run-integration-tests']
+
+  # Deploy to staging environment in us-west1
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'deploy-staging-us-west1'
+    args:
+      - 'functions'
+      - 'deploy'
+      - 'speaker-recognition-service'
+      - '--runtime=nodejs16'
+      - '--trigger-http'
+      - '--region=us-west1'
+      - '--source=./functions'
+      - '--entry-point=speakerRecognition'
+    waitFor: ['build-package']
+
+  # Deploy to staging environment in us-west1-b
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'deploy-staging-us-west1-b'
+    args:
+      - 'functions'
+      - 'deploy'
+      - 'speaker-recognition-service'
+      - '--runtime=nodejs16'
+      - '--trigger-http'
+      - '--region=us-west1-b'
+      - '--source=./functions'
+      - '--entry-point=speakerRecognition'
+    waitFor: ['build-package']
+
+  # Run monitoring setup for speaker recognition service
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'setup-monitoring'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud monitoring dashboards create --config-from-file=monitoring/speaker-recognition-dashboard.json
+        gcloud monitoring channels create --description="Speaker Recognition Alerts" --type=email --channel-labels=email_address=support@coaching2100.com
+    waitFor: ['deploy-staging-us-west1', 'deploy-staging-us-west1-b']
+
+  # Setup automated training pipeline for voice recognition models
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'setup-training-pipeline'
+    args:
+      - 'ai-platform'
+      - 'jobs'
+      - 'submit'
+      - 'training'
+      - 'speaker-recognition-training-${_TIMESTAMP}'
+      - '--region=us-west1'
+      - '--master-image-uri=gcr.io/api-for-warp-drive/speaker-training:latest'
+      - '--config=training/speaker-recognition-config.yaml'
+    waitFor: ['setup-monitoring']
+
+substitutions:
+  _TIMESTAMP: '${BUILD_ID}'
+  _ENV: 'staging'
+
+timeout: '1200s'
+options:
+  machineType: 'N1_HIGHCPU_8'
+  diskSizeGb: '100'
+  dynamic_substitutions: true
+
+artifacts:
+  objects:
+    location: 'gs://api-for-warp-drive-artifacts/speaker-recognition/${_ENV}/${_TIMESTAMP}/'
+    paths:
+      - 'dist/*.tar.gz'
+      - 'dist/*.zip'
+      - 'test-reports/*.xml'
+      - 'coverage/**/*'

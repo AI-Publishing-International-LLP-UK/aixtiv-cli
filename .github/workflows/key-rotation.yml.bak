@@ -1,0 +1,206 @@
+name: API Key Rotation - CI/CD CTTT Integrated
+
+# Schedule rotation to run every 30 days
+on:
+  schedule:
+    # Run at midnight UTC on the 1st of every month
+    - cron: '0 0 1 * *'
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      dryRun:
+        description: 'Dry run (no actual rotation)'
+        type: boolean
+        default: false
+      secretId:
+        description: 'Specific secret ID to rotate (leave blank for scheduled rotation)'
+        type: string
+        required: false
+      runCttt:
+        description: 'Run CI/CD CTTT pipeline after rotation'
+        type: boolean
+        default: true
+  # Integration with CTTT pipeline
+  repository_dispatch:
+    types: [cttt-security-scan]
+
+jobs:
+  rotate-keys:
+    name: Rotate API and Service Account Keys
+    runs-on: ubuntu-latest
+    environment: production
+
+    # Only run on organization repos
+    if: github.repository_owner == 'AI-Publishing-International-LLP-UK'
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Authenticate with Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
+          token_format: 'access_token'
+          create_credentials_file: true
+
+      - name: Run Automated Key Rotation
+        env:
+          PROJECT_ID: api-for-warp-drive
+          REGION: us-west1
+          DRY_RUN: ${{ github.event.inputs.dryRun == 'true' }}
+        run: |
+          SECRETS_FILE="config/rotation-schedule.json"
+
+          # Check if specific secret provided through workflow input
+          if [ -n "${{ github.event.inputs.secretId }}" ]; then
+            echo "Running rotation for specific secret: ${{ github.event.inputs.secretId }}"
+            
+            # Get the secret type from schedule
+            SECRET_TYPE=$(jq -r '.rotation_schedules[] | select(.secretId == "${{ github.event.inputs.secretId }}") | .type' "$SECRETS_FILE")
+            
+            if [ "$SECRET_TYPE" == "service-account-key" ]; then
+              SA_EMAIL=$(jq -r '.rotation_schedules[] | select(.secretId == "${{ github.event.inputs.secretId }}") | .serviceAccountEmail' "$SECRETS_FILE")
+              DRY_RUN_FLAG=""
+              if [ "$DRY_RUN" = "true" ]; then
+                DRY_RUN_FLAG="--dryRun"
+              fi
+              
+              echo "Rotating service account key: $SA_EMAIL"
+              npm run cli -- claude:secrets -a rotate-sa-key -i ${{ github.event.inputs.secretId }} -p $PROJECT_ID -s $SA_EMAIL $DRY_RUN_FLAG
+            elif [ "$SECRET_TYPE" == "api-key" ]; then
+              API_KEY_NAME=$(jq -r '.rotation_schedules[] | select(.secretId == "${{ github.event.inputs.secretId }}") | .apiKeyName' "$SECRETS_FILE")
+              DRY_RUN_FLAG=""
+              if [ "$DRY_RUN" = "true" ]; then
+                DRY_RUN_FLAG="--dryRun"
+              fi
+              
+              echo "Rotating API key: $API_KEY_NAME"
+              npm run cli -- claude:secrets -a rotate-api-key -i ${{ github.event.inputs.secretId }} -p $PROJECT_ID -k $API_KEY_NAME $DRY_RUN_FLAG
+            else
+              echo "Unknown secret type or secret not found in rotation schedule"
+              exit 1
+            fi
+          else
+            # Execute scheduled rotation
+            echo "Running scheduled key rotation based on $SECRETS_FILE"
+            
+            if [ ! -f "$SECRETS_FILE" ]; then
+              echo "Rotation schedule file not found. Please create one first."
+              exit 1
+            fi
+            
+            # Service account keys first
+            jq -c '.rotation_schedules[] | select(.type == "service-account-key")' "$SECRETS_FILE" | while read -r item; do
+              SECRET_ID=$(echo $item | jq -r '.secretId')
+              SA_EMAIL=$(echo $item | jq -r '.serviceAccountEmail')
+              INTERVAL=$(echo $item | jq -r '.interval')
+              
+              # Extract days from interval (e.g., "90d" -> 90)
+              DAYS=$(echo $INTERVAL | sed 's/[^0-9]*//g')
+              
+              DRY_RUN_FLAG=""
+              if [ "$DRY_RUN" = "true" ]; then
+                DRY_RUN_FLAG="--dryRun"
+              fi
+              
+              echo "Rotating service account key: $SA_EMAIL (interval: $INTERVAL)"
+              npm run cli -- claude:secrets -a rotate-sa-key -i $SECRET_ID -p $PROJECT_ID -s $SA_EMAIL --maxKeyAge $DAYS $DRY_RUN_FLAG
+              
+              # Small delay between operations
+              sleep 2
+            done
+            
+            # Then API keys
+            jq -c '.rotation_schedules[] | select(.type == "api-key")' "$SECRETS_FILE" | while read -r item; do
+              SECRET_ID=$(echo $item | jq -r '.secretId')
+              API_KEY_NAME=$(echo $item | jq -r '.apiKeyName')
+              INTERVAL=$(echo $item | jq -r '.interval')
+              
+              # Extract days from interval (e.g., "30d" -> 30)
+              DAYS=$(echo $INTERVAL | sed 's/[^0-9]*//g')
+              
+              DRY_RUN_FLAG=""
+              if [ "$DRY_RUN" = "true" ]; then
+                DRY_RUN_FLAG="--dryRun"
+              fi
+              
+              echo "Rotating API key: $API_KEY_NAME (interval: $INTERVAL)"
+              npm run cli -- claude:secrets -a rotate-api-key -i $SECRET_ID -p $PROJECT_ID -k $API_KEY_NAME --maxKeyAge $DAYS $DRY_RUN_FLAG
+              
+              # Small delay between operations
+              sleep 2
+            done
+          fi
+
+      - name: Send Notification
+        if: ${{ !github.event.inputs.dryRun || github.event.inputs.dryRun == 'false' }}
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.REPO_DISPATCH_TOKEN }}
+          event-type: keys-rotated
+          client-payload: '{"repository": "${{ github.repository }}", "runId": "${{ github.run_id }}", "workflow": "${{ github.workflow }}"}'
+
+  # Trigger CI/CD CTTT Pipeline after rotation
+  trigger-cttt:
+    name: Trigger CI/CD CTTT Pipeline
+    needs: rotate-keys
+    runs-on: ubuntu-latest
+    if: ${{ (github.event_name == 'schedule' || github.event_name == 'repository_dispatch') || (github.event_name == 'workflow_dispatch' && (github.event.inputs.runCttt == '' || github.event.inputs.runCttt == 'true')) }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Authenticate with Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
+
+      - name: Run CTTT Health Checks
+        run: |
+          echo "Running CTTT Health Checks after key rotation"
+          npm run cli -- cicd:test:run --suite security
+
+      - name: Verify API Keys
+        run: |
+          echo "Verifying API keys are functioning correctly"
+          npm run cli -- cicd:verify:keys
+
+      - name: Deploy Updates
+        if: success()
+        run: |
+          echo "Deploying with updated credentials"
+          npm run cli -- cicd:deploy --environment production --region us-west1
+
+      - name: Send CTTT Status
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.REPO_DISPATCH_TOKEN }}
+          event-type: cttt-security-complete
+          client-payload: '{"repository": "${{ github.repository }}", "status": "${{ job.status }}", "runId": "${{ github.run_id }}"}'

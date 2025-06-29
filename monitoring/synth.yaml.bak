@@ -1,0 +1,11 @@
+labels:
+  synth-monitor: true
+config:
+  interval: 5m
+  regions: ['us-central1']
+  endpoints:
+    - name: gitlab-ee
+      url: ${GITLAB_URL}
+      assertions:
+        - type: statusCode
+          equals: 200

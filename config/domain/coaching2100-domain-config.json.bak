@@ -1,0 +1,52 @@
+{
+  "organization": "Coaching2100",
+  "organizationDisplayName": "Coaching 2100",
+  "domainAccountId": "coaching2100",
+  "defaultFirebaseProject": "api-for-warp-drive",
+  "serviceAccount": "drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com",
+  "domainFamilies": {
+    "character": {
+      "pattern": "^(dr|professor|mr|mrs|ms|coach)",
+      "project": "anthology-ai",
+      "description": "Character domains for Coaching 2100 agents"
+    },
+    "aixtiv": {
+      "pattern": "^(aixtiv|symphony)",
+      "project": "api-for-warp-drive",
+      "description": "Aixtiv platform domains"
+    },
+    "learning": {
+      "pattern": "^(learn|tutor|course|class|training)",
+      "project": "learning-pathway",
+      "description": "Learning and educational domains"
+    },
+    "brand": {
+      "pattern": "^(coaching2100|c2100|anthology)",
+      "project": "brand-site",
+      "description": "Coaching 2100 brand domains"
+    },
+    "flight": {
+      "pattern": "^(flight|fly|pilot|aviation)",
+      "project": "flight-school",
+      "description": "Flight school domains"
+    },
+    "default": {
+      "pattern": ".*",
+      "project": "api-for-warp-drive",
+      "description": "Default domain family for unmatched domains"
+    }
+  },
+  "domainsFile": "domains/coaching2100-domains.txt",
+  "cacheLifetime": 86400,
+  "apiRateLimit": 60,
+  "dnsSettings": {
+    "defaultTTL": 3600,
+    "aRecords": ["151.101.1.195", "151.101.65.195"],
+    "cnameValue": "coaching2100.github.io"
+  },
+  "verificationSettings": {
+    "retryAttempts": 3,
+    "verificationTimeout": 300,
+    "dnsCheckInterval": 60
+  }
+}

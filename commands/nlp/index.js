@@ -108,17 +108,24 @@ async function startInteractiveMode() {
 
   console.log(chalk.cyan('\nNatural Language Interface - Interactive Mode'));
   console.log(chalk.dim('Type "exit" or "quit" to leave interactive mode'));
-  console.log(chalk.dim('Type "help" for assistance\n'));
+  console.log(chalk.dim('Type "help" for assistance'));
+  console.log(chalk.dim('Type "chain" to enter CI/CD/CT-T chaining mode\n'));
 
   const sessionId = uuidv4();
   let keepGoing = true;
+  let chainMode = false;
+  let commandChain = [];
 
   while (keepGoing) {
+    const promptMessage = chainMode 
+      ? chalk.yellow(`Chain[${commandChain.length}]>`) 
+      : chalk.green('Aixtiv>');
+    
     const { input } = await inquirer.prompt([
       {
         type: 'input',
         name: 'input',
-        message: chalk.green('Aixtiv>'),
+        message: promptMessage,
         validate: (value) => value.trim() !== '' || 'Please enter a command',
       },
     ]);
@@ -127,6 +134,47 @@ async function startInteractiveMode() {
     if (['exit', 'quit'].includes(input.toLowerCase().trim())) {
       keepGoing = false;
       console.log(chalk.yellow('Exiting NLP mode. Goodbye!'));
+      continue;
+    }
+
+    // Check for chain mode commands
+    if (input.toLowerCase().trim() === 'chain') {
+      chainMode = true;
+      commandChain = [];
+      console.log(chalk.cyan('🔗 Entering CI/CD/CT-T Chain Mode'));
+      console.log(chalk.dim('Add commands one by one. Type "execute" to run the chain, "clear" to reset, or "exit" to leave chain mode.'));
+      continue;
+    }
+
+    if (chainMode) {
+      if (input.toLowerCase().trim() === 'execute') {
+        if (commandChain.length === 0) {
+          console.log(chalk.yellow('⚠️ No commands in chain. Add commands first.'));
+          continue;
+        }
+        await executeCommandChain(commandChain, sessionId);
+        commandChain = [];
+        chainMode = false;
+        console.log(chalk.cyan('Chain execution complete. Returning to normal mode.'));
+        continue;
+      }
+      
+      if (input.toLowerCase().trim() === 'clear') {
+        commandChain = [];
+        console.log(chalk.yellow('🗑️ Command chain cleared.'));
+        continue;
+      }
+      
+      if (input.toLowerCase().trim() === 'exit') {
+        chainMode = false;
+        commandChain = [];
+        console.log(chalk.cyan('Exiting chain mode. Returning to normal mode.'));
+        continue;
+      }
+      
+      // Add command to chain
+      commandChain.push(input);
+      console.log(chalk.green(`✅ Added to chain: "${input}" (${commandChain.length} commands total)`));
       continue;
     }
 
@@ -186,6 +234,70 @@ async function startInteractiveMode() {
 }
 
 /**
+ * Execute a chain of commands in CI/CD/CT-T mode
+ */
+async function executeCommandChain(commandChain, sessionId) {
+  console.log(chalk.cyan(`\n🚀 Executing command chain (${commandChain.length} commands):`));
+  
+  for (let i = 0; i < commandChain.length; i++) {
+    const command = commandChain[i];
+    console.log(chalk.blue(`\n[${i + 1}/${commandChain.length}] Processing: "${command}"`));
+    
+    const spinner = ora(`Executing step ${i + 1}...`).start();
+    
+    try {
+      const result = nlpProcessor.processNaturalLanguage(command, { sessionId });
+      
+      if (result.success) {
+        spinner.succeed(`Step ${i + 1} completed successfully`);
+        console.log(formatResult(result));
+      } else {
+        spinner.fail(`Step ${i + 1} failed`);
+        console.log(formatResult(result));
+        
+        const { continueChain } = await inquirer.prompt([
+          {
+            type: 'confirm',
+            name: 'continueChain',
+            message: 'Command failed. Continue with remaining commands?',
+            default: false,
+          },
+        ]);
+        
+        if (!continueChain) {
+          console.log(chalk.yellow('⏹️ Chain execution stopped.'));
+          break;
+        }
+      }
+    } catch (error) {
+      spinner.fail(`Step ${i + 1} error`);
+      console.error(chalk.red(`Error: ${error.message}`));
+      
+      const { continueChain } = await inquirer.prompt([
+        {
+          type: 'confirm',
+          name: 'continueChain',
+          message: 'Error occurred. Continue with remaining commands?',
+          default: false,
+        },
+      ]);
+      
+      if (!continueChain) {
+        console.log(chalk.yellow('⏹️ Chain execution stopped.'));
+        break;
+      }
+    }
+    
+    // Add delay between commands to prevent overwhelming the system
+    if (i < commandChain.length - 1) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+  }
+  
+  console.log(chalk.green('\n✅ Command chain execution finished!'));
+}
+
+/**
  * Display help information
  */
 function displayHelp() {
@@ -193,6 +305,12 @@ function displayHelp() {
   console.log(
     chalk.dim('Instead of using command flags and options, you can use natural language\n')
   );
+  
+  console.log(chalk.yellow('🔗 CI/CD/CT-T Chain Mode:'));
+  console.log(chalk.dim('  chain          - Enter chain mode for sequential command execution'));
+  console.log(chalk.dim('  execute        - Run all commands in the chain'));
+  console.log(chalk.dim('  clear          - Clear the current chain'));
+  console.log(chalk.dim('  exit           - Exit chain mode\n'));
 
   const table = new Table({
     head: [chalk.cyan('Example Phrases'), chalk.cyan('Equivalent Command')],

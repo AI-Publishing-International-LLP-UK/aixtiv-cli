@@ -1,0 +1,22 @@
+description: Trigger for Emotion Tuning System CI/CD
+name: emotion-tuning-cicd-trigger
+filename: cloudbuild-ci-cttt-emotion-tuning.yaml
+github:
+  owner: AI-Publishing-International-LLP-UK
+  name: AIXTIV-SYMPHONY
+  push:
+    branch: ^main$
+includedFiles:
+  - src/services/emotion-tuning/**
+  - commands/copilot/emotion.js
+  - bin/aixtiv.js
+  - test/emotion-tuning-test.js
+  - src/services/speech/**
+substitutions:
+  _FIREBASE_TOKEN: ${_FIREBASE_TOKEN}
+  _ENVIRONMENT: production
+tags:
+  - emotion-tuning
+  - cicd
+  - symphony
+  - phase-ii

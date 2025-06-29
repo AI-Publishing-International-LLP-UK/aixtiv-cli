@@ -1,0 +1,4 @@
+project_id: api-for-warp-drive
+region: us-west1-a
+registry: c2100lab.azurecr.io
+container: monitoring-service:1.0.0

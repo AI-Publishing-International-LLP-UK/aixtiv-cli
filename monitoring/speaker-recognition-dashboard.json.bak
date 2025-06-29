@@ -1,0 +1,245 @@
+{
+  "displayName": "Speaker Recognition System Dashboard",
+  "mosaicLayout": {
+    "columns": 12,
+    "tiles": [
+      {
+        "height": 4,
+        "width": 6,
+        "widget": {
+          "title": "Speech Recognition API Calls",
+          "xyChart": {
+            "chartOptions": {
+              "mode": "COLOR"
+            },
+            "dataSets": [
+              {
+                "minAlignmentPeriod": "60s",
+                "plotType": "LINE",
+                "targetAxis": "Y1",
+                "timeSeriesQuery": {
+                  "timeSeriesFilter": {
+                    "aggregation": {
+                      "alignmentPeriod": "60s",
+                      "perSeriesAligner": "ALIGN_RATE"
+                    },
+                    "filter": "metric.type=\"custom.googleapis.com/speech/recognition_requests\" resource.type=\"global\""
+                  }
+                }
+              }
+            ],
+            "timeshiftDuration": "0s",
+            "yAxis": {
+              "label": "API Calls per minute",
+              "scale": "LINEAR"
+            }
+          }
+        },
+        "x": 0,
+        "y": 0
+      },
+      {
+        "height": 4,
+        "width": 6,
+        "widget": {
+          "title": "Speaker Recognition API Latency",
+          "xyChart": {
+            "chartOptions": {
+              "mode": "COLOR"
+            },
+            "dataSets": [
+              {
+                "minAlignmentPeriod": "60s",
+                "plotType": "LINE",
+                "targetAxis": "Y1",
+                "timeSeriesQuery": {
+                  "timeSeriesFilter": {
+                    "aggregation": {
+                      "alignmentPeriod": "60s",
+                      "perSeriesAligner": "ALIGN_PERCENTILE_99"
+                    },
+                    "filter": "metric.type=\"custom.googleapis.com/speech/recognition_latency\" resource.type=\"global\""
+                  }
+                }
+              }
+            ],
+            "timeshiftDuration": "0s",
+            "yAxis": {
+              "label": "99th percentile latency (ms)",
+              "scale": "LINEAR"
+            }
+          }
+        },
+        "x": 6,
+        "y": 0
+      },
+      {
+        "height": 4,
+        "width": 6,
+        "widget": {
+          "title": "Speaker Verification Success Rate",
+          "xyChart": {
+            "chartOptions": {
+              "mode": "COLOR"
+            },
+            "dataSets": [
+              {
+                "minAlignmentPeriod": "60s",
+                "plotType": "LINE",
+                "targetAxis": "Y1",
+                "timeSeriesQuery": {
+                  "timeSeriesFilter": {
+                    "aggregation": {
+                      "alignmentPeriod": "3600s",
+                      "perSeriesAligner": "ALIGN_MEAN"
+                    },
+                    "filter": "metric.type=\"custom.googleapis.com/speech/verification_success_rate\" resource.type=\"global\""
+                  }
+                }
+              }
+            ],
+            "timeshiftDuration": "0s",
+            "yAxis": {
+              "label": "Success Rate (%)",
+              "scale": "LINEAR"
+            }
+          }
+        },
+        "x": 0,
+        "y": 4
+      },
+      {
+        "height": 4,
+        "width": 6,
+        "widget": {
+          "title": "Speaker Identification Accuracy",
+          "xyChart": {
+            "chartOptions": {
+              "mode": "COLOR"
+            },
+            "dataSets": [
+              {
+                "minAlignmentPeriod": "60s",
+                "plotType": "LINE",
+                "targetAxis": "Y1",
+                "timeSeriesQuery": {
+                  "timeSeriesFilter": {
+                    "aggregation": {
+                      "alignmentPeriod": "3600s",
+                      "perSeriesAligner": "ALIGN_MEAN"
+                    },
+                    "filter": "metric.type=\"custom.googleapis.com/speech/identification_accuracy\" resource.type=\"global\""
+                  }
+                }
+              }
+            ],
+            "timeshiftDuration": "0s",
+            "yAxis": {
+              "label": "Accuracy (%)",
+              "scale": "LINEAR"
+            }
+          }
+        },
+        "x": 6,
+        "y": 4
+      },
+      {
+        "height": 4,
+        "width": 6,
+        "widget": {
+          "title": "Speaker Enrollment Completions",
+          "pieChart": {
+            "chartOptions": {
+              "mode": "COLOR"
+            },
+            "dataSets": [
+              {
+                "minAlignmentPeriod": "86400s",
+                "plotType": "PIE",
+                "targetAxis": "Y1",
+                "timeSeriesQuery": {
+                  "timeSeriesFilter": {
+                    "aggregation": {
+                      "alignmentPeriod": "86400s",
+                      "perSeriesAligner": "ALIGN_SUM"
+                    },
+                    "filter": "metric.type=\"custom.googleapis.com/speech/enrollment_completions\" resource.type=\"global\"",
+                    "secondaryAggregation": {
+                      "alignmentPeriod": "86400s",
+                      "perSeriesAligner": "ALIGN_SUM"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "x": 0,
+        "y": 8
+      },
+      {
+        "height": 4,
+        "width": 6,
+        "widget": {
+          "title": "API Error Rates",
+          "xyChart": {
+            "chartOptions": {
+              "mode": "COLOR"
+            },
+            "dataSets": [
+              {
+                "minAlignmentPeriod": "60s",
+                "plotType": "LINE",
+                "targetAxis": "Y1",
+                "timeSeriesQuery": {
+                  "timeSeriesFilter": {
+                    "aggregation": {
+                      "alignmentPeriod": "60s",
+                      "perSeriesAligner": "ALIGN_RATE"
+                    },
+                    "filter": "metric.type=\"custom.googleapis.com/speech/api_errors\" resource.type=\"global\""
+                  }
+                }
+              }
+            ],
+            "timeshiftDuration": "0s",
+            "yAxis": {
+              "label": "Error rate (%)",
+              "scale": "LINEAR"
+            }
+          }
+        },
+        "x": 6,
+        "y": 8
+      },
+      {
+        "height": 2,
+        "width": 12,
+        "widget": {
+          "scorecard": {
+            "gaugeView": {
+              "lowerBound": 0,
+              "upperBound": 100
+            },
+            "timeSeriesQuery": {
+              "timeSeriesFilter": {
+                "aggregation": {
+                  "alignmentPeriod": "86400s",
+                  "perSeriesAligner": "ALIGN_MEAN"
+                },
+                "filter": "metric.type=\"custom.googleapis.com/speech/system_health\" resource.type=\"global\"",
+                "secondaryAggregation": {
+                  "alignmentPeriod": "86400s",
+                  "perSeriesAligner": "ALIGN_MEAN"
+                }
+              }
+            }
+          },
+          "title": "Speaker Recognition System Health Score"
+        },
+        "x": 0,
+        "y": 12
+      }
+    ]
+  }
+}

@@ -1,4 +1,4 @@
-# Implementation Plan: DI:DC (Dewey Digital Index Cards) Solution & Agent Training/Tracking Framework
+# Implementation Plan: DIDC (Dewey Digital Index Cards) Solution & Agent Training/Tracking Framework
 
 ## Overview
 

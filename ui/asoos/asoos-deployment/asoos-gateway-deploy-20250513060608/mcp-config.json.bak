@@ -1,0 +1,18 @@
+{
+  "domain": "asoos.2100.cool",
+  "gateway": {
+    "endpoint": "https://us-west1-api-for-warp-drive.cloudfunctions.net/integration-gateway",
+    "serviceId": "asoos-ui",
+    "clientId": "asoos-2100-cool"
+  },
+  "claude": {
+    "modelProvider": "anthropic",
+    "modelName": "claude-3-5-sonnet",
+    "maxTokens": 4096
+  },
+  "symphony": {
+    "mode": "zero-drift",
+    "alwaysOn": true,
+    "bondedAgent": true
+  }
+}
