@@ -1,0 +1,39 @@
+{
+  "name": "@aixtiv/claude-api",
+  "version": "1.0.0",
+  "description": "Claude API service module for RIX, CRX, and Co-Pilot agents",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --experimental-modules index.js",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "claude",
+    "anthropic",
+    "ai",
+    "api",
+    "rix",
+    "crx",
+    "copilot",
+    "aixtiv"
+  ],
+  "author": "Aixtiv Symphony",
+  "license": "PROPRIETARY",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.3",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "winston": "^3.11.0",
+    "node-cache": "^5.1.2",
+    "ratelimit": "^1.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=22.0.0 <25.0.0"
+  }
+}
