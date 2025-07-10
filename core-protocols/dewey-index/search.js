@@ -1,7 +1,7 @@
 /**
- * DI:DC (Dewey Digital Index Cards) - Search
+ * DIDC (Dewey Digital Index Cards) - Search
  *
- * This module implements the semantic search capabilities for the DI:DC system.
+ * This module implements the semantic search capabilities for the DIDC system.
  */
 
 const admin = require('firebase-admin');
@@ -19,7 +19,7 @@ try {
 }
 
 /**
- * Searches for content in the DI:DC system
+ * Searches for content in the DIDC system
  * @param {Object} query - The search parameters
  * @returns {Promise<Array>} - The search results
  */

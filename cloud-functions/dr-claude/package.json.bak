@@ -1,0 +1,21 @@
+{
+  "name": "dr-claude-function",
+  "version": "1.0.0",
+  "description": "Dr. Claude agent orchestration cloud function for Aixtiv Symphony",
+  "main": "index.js",
+  "scripts": {
+    "start": "functions-framework --target=drClaude",
+    "deploy": "gcloud functions deploy dr-claude --gen2 --runtime=nodejs18 --region=us-west1 --source=. --entry-point=drClaude --trigger-http --allow-unauthenticated"
+  },
+  "dependencies": {
+    "@google-cloud/firestore": "^7.11.0",
+    "@google-cloud/functions-framework": "^3.1.0",
+    "@google-cloud/logging": "^11.2.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "uuid": "^9.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

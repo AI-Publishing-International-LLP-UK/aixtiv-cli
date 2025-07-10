@@ -1,0 +1,78 @@
+{
+  "id": "dr-lucy-flight-memory",
+  "name": "Dr. Lucy Flight Memory System",
+  "version": "1.0.2",
+  "description": "Memory Management and Pattern Recognition Specialist",
+  "capabilities": [
+    "Memory Management",
+    "Pattern Recognition",
+    "Data Storage",
+    "Knowledge Retrieval",
+    "Contextual Understanding",
+    "Memory Systems",
+    "Data Structures",
+    "Memory node creation and management",
+    "Pattern recognition and processing",
+    "Quantum-secured memory storage"
+  ],
+  "service_path": "/src/services/flight-memory/index.js",
+  "api_endpoint": "api.coaching2100.ai/v1/specialists/dr-lucy-flight-memory",
+  "status": "ready",
+  "team_compatible": true,
+  "requires_authentication": true,
+  "authentication_provider": "SallyPort",
+  "default_permissions": ["create", "read", "process"],
+  "metadata": {
+    "region": "us-west1",
+    "zone": "us-west1-b",
+    "capture_rate": "real-time",
+    "processing_mode": "quantum-secured",
+    "storage_type": "distributed",
+    "creator": "Phillip Corey Roark",
+    "created_at": "2025-03-15T00:00:00Z",
+    "last_updated": "2025-05-23T20:30:29.522Z",
+    "specializations": [
+      "Memory Management",
+      "Pattern Recognition",
+      "Data Storage",
+      "Knowledge Retrieval",
+      "Contextual Understanding"
+    ],
+    "knowledge_domains": [
+      "Memory Systems",
+      "Data Structures",
+      "Knowledge Graphs",
+      "Information Retrieval",
+      "Cognitive Computing"
+    ]
+  },
+  "team_assignments": [
+    {
+      "team_id": "memory-team",
+      "role": "primary",
+      "description": "Primary memory system for all pattern recognition needs"
+    },
+    {
+      "team_id": "symphony-core",
+      "role": "contributor",
+      "description": "Core memory component provider for Symphony"
+    }
+  ],
+  "instances": [
+    {
+      "id": "dr-lucy-01",
+      "specialization": "short-term memory",
+      "status": "active"
+    },
+    {
+      "id": "dr-lucy-02",
+      "specialization": "long-term storage",
+      "status": "active"
+    },
+    {
+      "id": "dr-lucy-03",
+      "specialization": "pattern recognition",
+      "status": "active"
+    }
+  ]
+}

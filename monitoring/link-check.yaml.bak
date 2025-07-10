@@ -1,0 +1,12 @@
+labels:
+  synth-monitor: true
+config:
+  crawler:
+    depth: 3
+    concurrency: 5
+  assertions:
+    - type: brokenLinks
+      threshold: 0
+  reporting:
+    format: json
+    destination: gs://api-for-warp-drive/reports

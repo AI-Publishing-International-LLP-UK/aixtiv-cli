@@ -1,0 +1,14 @@
+# Backend Service Configurations
+services:
+  - name: gsmrsvd-rzpa7sugpfgdc5rx7tnx4r-j2ded8mh
+    protocol: HTTP
+    network: default
+    health_check:
+      port: 8080
+      path: /health
+  - name: gsmrsvd-rzpa7sugpfgdc5rx7tnx4r-9x48x7w0
+    protocol: HTTP
+    network: default
+    health_check:
+      port: 8080
+      path: /health

@@ -1,0 +1,4 @@
+{
+  "placeholder": "claude-init-seed.json",
+  "description": "This file will contain Claude initialization seed data"
+}

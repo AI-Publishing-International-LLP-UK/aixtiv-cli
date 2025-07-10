@@ -1,0 +1,43 @@
+# Backend Service Verification
+Service: lb-ip-2100-cool-backend
+Status: ACTIVE
+enableCdn: true
+timeoutSec: 60
+sessionAffinity: CLIENT_IP
+connectionDraining: 60s
+healthCheck: tcp-443-health-check
+
+# Health Check Status
+Name: tcp-443-health-check
+Type: TCP
+Port: 443
+checkIntervalSec: 5
+timeoutSec: 5
+unhealthyThreshold: 2
+healthyThreshold: 2
+
+# DNS Records
+A     2100.cool.              300     ${ANTHOLOGY_LB_IP}
+A     staging.2100.cool.      300     ${STAGING_LB_IP}
+CNAME www.2100.cool.          300     2100.cool.
+CNAME claude.2100.cool.       300     anthology-ai-publishing.c2100-pr.com.
+
+# Security Policy
+Name: anthology-security
+Rules:
+- priority: 1000 (allow)
+- priority: 2000 (deny)
+- priority: 3000 (throttle)
+
+# SSL Certificate
+Name: sc2100cool
+Type: MANAGED
+Domains: 2100.cool, *.2100.cool
+Status: ACTIVE
+
+# Frontend Configuration
+IPProtocol: HTTPS
+Target: anthology-lb
+networkTier: PREMIUM
+Certificate: sc2100cool
+SSLPolicy: gcp-default

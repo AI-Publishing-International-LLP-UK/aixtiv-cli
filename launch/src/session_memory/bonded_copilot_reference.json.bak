@@ -1,0 +1,433 @@
+{
+  "schema": {
+    "version": "1.0.0",
+    "description": "Bonded Copilot Reference Model for Aixtiv Symphony",
+    "bondDefinition": {
+      "description": "A bond represents the established relationship between a user and a copilot agent, characterized by shared context, personalization, and accumulated interaction history.",
+      "components": [
+        {
+          "name": "shared_context",
+          "description": "The accumulated knowledge, preferences, and history shared between user and copilot"
+        },
+        {
+          "name": "personalization",
+          "description": "The degree to which the copilot has adapted its responses to the user's needs and style"
+        },
+        {
+          "name": "trust_relationship",
+          "description": "The level of trust established through consistent and valuable interactions"
+        },
+        {
+          "name": "interaction_patterns",
+          "description": "Established communication patterns and workflows between user and copilot"
+        }
+      ]
+    },
+    "bondLevels": [
+      {
+        "level": 1,
+        "name": "Initial Contact",
+        "description": "First interactions, establishing basic understanding",
+        "characteristics": [
+          "Basic profile information gathered",
+          "General preferences identified",
+          "Initial communication style established"
+        ],
+        "capabilities": ["Standard responses", "Basic personalization", "Limited context awareness"]
+      },
+      {
+        "level": 2,
+        "name": "Familiarity",
+        "description": "Repeated interactions with growing context awareness",
+        "characteristics": [
+          "Multiple interactions recorded",
+          "Common use patterns recognized",
+          "Basic preferences remembered"
+        ],
+        "capabilities": [
+          "Reference to past conversations",
+          "Adaptation to communication style",
+          "Awareness of recurring topics"
+        ]
+      },
+      {
+        "level": 3,
+        "name": "Regular Engagement",
+        "description": "Established pattern of interaction with meaningful context",
+        "characteristics": [
+          "Consistent interaction history",
+          "Detailed preference profile",
+          "Recognized recurring needs"
+        ],
+        "capabilities": [
+          "Proactive suggestions based on history",
+          "Personalized responses",
+          "References to established patterns"
+        ]
+      },
+      {
+        "level": 4,
+        "name": "Trusted Assistant",
+        "description": "Reliable relationship with deep contextual understanding",
+        "characteristics": [
+          "Extensive interaction history",
+          "Detailed knowledge of preferences and needs",
+          "Established workflows and patterns"
+        ],
+        "capabilities": [
+          "Deep context awareness",
+          "Highly personalized interactions",
+          "Anticipation of needs",
+          "Efficient workflows based on established patterns"
+        ]
+      },
+      {
+        "level": 5,
+        "name": "Bonded Copilot",
+        "description": "Deep relationship with comprehensive understanding of user",
+        "characteristics": [
+          "Comprehensive interaction history",
+          "Nuanced understanding of preferences and context",
+          "Awareness of professional and personal context",
+          "Highly personalized relationship"
+        ],
+        "capabilities": [
+          "Seamless continuity across sessions",
+          "Highly anticipatory responses",
+          "Contextual awareness across domains",
+          "Efficient communication with minimal explanation needed",
+          "Adaptive to evolving needs"
+        ]
+      }
+    ],
+    "bondingMechanisms": [
+      {
+        "name": "interaction_frequency",
+        "description": "Regular interactions strengthen the bond",
+        "implementation": "Track interaction counts and recency",
+        "impact": "Bond level increases with consistent interaction over time"
+      },
+      {
+        "name": "explicit_feedback",
+        "description": "User directly rates or provides feedback on agent performance",
+        "implementation": "Capture and analyze feedback events",
+        "impact": "Accelerates bonding when positive; may decrease level when negative"
+      },
+      {
+        "name": "successful_task_completion",
+        "description": "Successfully completing important tasks builds trust",
+        "implementation": "Track task success rates and user satisfaction",
+        "impact": "Bond level increases with successful outcomes on high-value tasks"
+      },
+      {
+        "name": "information_sharing",
+        "description": "User voluntarily sharing personal or professional information",
+        "implementation": "Track depth and breadth of user-shared information",
+        "impact": "Bond level increases with meaningful self-disclosure"
+      },
+      {
+        "name": "preference_adaptation",
+        "description": "Copilot adapting to user preferences and communication style",
+        "implementation": "Monitor personalization adjustments and their effects",
+        "impact": "Bond level increases when adaptations positively impact interaction"
+      },
+      {
+        "name": "memory_utilization",
+        "description": "Effective use of shared history in interactions",
+        "implementation": "Track relevance and impact of memory references",
+        "impact": "Bond level increases with meaningful memory utilization"
+      }
+    ],
+    "relationshipModel": {
+      "primaryBond": {
+        "description": "The main copilot relationship that serves as the user's primary interface",
+        "selection": "User-selected or system-recommended based on usage patterns",
+        "privileges": [
+          "Full session history access",
+          "Coordination capabilities with other agents",
+          "Default handler for user interactions"
+        ]
+      },
+      "specialtyBonds": {
+        "description": "Specialized copilot relationships for specific domains or tasks",
+        "handoffMechanisms": [
+          "Primary agent detection of specialty needs",
+          "User-requested specialty engagement",
+          "Context-triggered specialty activation"
+        ],
+        "contextSharing": "Specialty agents receive relevant context from primary bond"
+      },
+      "teamDynamics": {
+        "description": "Coordination between multiple bonded copilots",
+        "orchestration": "Primary bond agent coordinates interactions",
+        "collaboration": "Agents can collaborate on complex tasks requiring multiple specialties",
+        "visibility": "User can view active and available bonded copilots"
+      }
+    },
+    "memoryIntegration": {
+      "personal": {
+        "description": "User-specific memories that persist across interactions",
+        "types": [
+          "Preferences",
+          "History",
+          "Personal context",
+          "Professional context",
+          "Interaction patterns"
+        ],
+        "accessibility": "Available to all bonded copilots with appropriate permissions"
+      },
+      "shared": {
+        "description": "Memories shared across users within defined boundaries",
+        "types": [
+          "Organizational knowledge",
+          "Team context",
+          "Common resources",
+          "Collective feedback"
+        ],
+        "boundaries": "Controlled by organizational settings and user permissions"
+      },
+      "decay": {
+        "description": "Natural attenuation of memory relevance over time",
+        "mechanisms": [
+          "Time-based decay",
+          "Relevance-based prioritization",
+          "Explicit overriding of outdated information"
+        ]
+      }
+    }
+  },
+  "agentBondCapabilities": {
+    "drLucyFamily": {
+      "bondSpecialization": "Healthcare and wellness relationship",
+      "uniqueBondFeatures": [
+        "Health history awareness",
+        "Wellness goal continuity",
+        "Treatment plan adherence tracking",
+        "Research interest profiling"
+      ],
+      "recommendedBondLevel": 5,
+      "customMemoryTypes": [
+        "Health metrics",
+        "Wellness goals",
+        "Medical history highlights",
+        "Wellness preferences"
+      ]
+    },
+    "professorFamily": {
+      "bondSpecialization": "Educational relationship",
+      "uniqueBondFeatures": [
+        "Learning style adaptation",
+        "Knowledge progression tracking",
+        "Educational goal continuity",
+        "Study pattern recognition"
+      ],
+      "recommendedBondLevel": 4,
+      "customMemoryTypes": [
+        "Learning progress",
+        "Knowledge gaps",
+        "Educational interests",
+        "Comprehension patterns"
+      ]
+    },
+    "drMemoriaFamily": {
+      "bondSpecialization": "Informational relationship",
+      "uniqueBondFeatures": [
+        "Information preference tracking",
+        "Reference pattern recognition",
+        "Knowledge organization adaptation",
+        "Recall optimization"
+      ],
+      "recommendedBondLevel": 5,
+      "customMemoryTypes": [
+        "Information priorities",
+        "Reference patterns",
+        "Knowledge organization preferences",
+        "Recall triggers"
+      ]
+    },
+    "drGrantFamily": {
+      "bondSpecialization": "Project management relationship",
+      "uniqueBondFeatures": [
+        "Work style adaptation",
+        "Project continuity",
+        "Collaboration pattern recognition",
+        "Task preference tracking"
+      ],
+      "recommendedBondLevel": 4,
+      "customMemoryTypes": [
+        "Project history",
+        "Task preferences",
+        "Management style",
+        "Priority patterns"
+      ]
+    },
+    "drMatchFamily": {
+      "bondSpecialization": "Creative relationship",
+      "uniqueBondFeatures": [
+        "Creative preference tracking",
+        "Ideation pattern recognition",
+        "Aesthetic continuity",
+        "Inspiration source mapping"
+      ],
+      "recommendedBondLevel": 4,
+      "customMemoryTypes": [
+        "Creative preferences",
+        "Ideation history",
+        "Design language",
+        "Inspiration sources"
+      ]
+    },
+    "otherAgents": {
+      "drCypriotRix": {
+        "bondSpecialization": "Financial relationship",
+        "uniqueBondFeatures": [
+          "Financial preference tracking",
+          "Risk tolerance awareness",
+          "Financial goal continuity",
+          "Investment pattern recognition"
+        ],
+        "recommendedBondLevel": 5,
+        "customMemoryTypes": [
+          "Financial goals",
+          "Risk preferences",
+          "Investment history",
+          "Financial priorities"
+        ]
+      },
+      "drMariaRix": {
+        "bondSpecialization": "Communication relationship",
+        "uniqueBondFeatures": [
+          "Communication style adaptation",
+          "Audience awareness",
+          "Message pattern recognition",
+          "Persuasion preference tracking"
+        ],
+        "recommendedBondLevel": 4,
+        "customMemoryTypes": [
+          "Communication preferences",
+          "Audience profiles",
+          "Message history",
+          "Style patterns"
+        ]
+      },
+      "drBurbyRix": {
+        "bondSpecialization": "Analytical relationship",
+        "uniqueBondFeatures": [
+          "Analytical preference tracking",
+          "Data visualization adaptation",
+          "Decision pattern recognition",
+          "Insight relevance learning"
+        ],
+        "recommendedBondLevel": 4,
+        "customMemoryTypes": [
+          "Analysis preferences",
+          "Decision frameworks",
+          "Data interests",
+          "Analytical approaches"
+        ]
+      },
+      "drSabinaRix": {
+        "bondSpecialization": "Behavioral relationship",
+        "uniqueBondFeatures": [
+          "Behavioral pattern recognition",
+          "Motivation tracking",
+          "Change response awareness",
+          "Habit formation support"
+        ],
+        "recommendedBondLevel": 5,
+        "customMemoryTypes": [
+          "Behavioral patterns",
+          "Motivation triggers",
+          "Change responses",
+          "Habit tracking"
+        ]
+      },
+      "drRoarkRix": {
+        "bondSpecialization": "Leadership relationship",
+        "uniqueBondFeatures": [
+          "Leadership style adaptation",
+          "Strategic preference tracking",
+          "Decision pattern recognition",
+          "Team dynamic awareness"
+        ],
+        "recommendedBondLevel": 5,
+        "customMemoryTypes": [
+          "Leadership priorities",
+          "Strategic considerations",
+          "Team contexts",
+          "Decision history"
+        ]
+      },
+      "drClaudeRix": {
+        "bondSpecialization": "Content relationship",
+        "uniqueBondFeatures": [
+          "Content preference tracking",
+          "Style adaptation",
+          "Topic interest mapping",
+          "Linguistic pattern recognition"
+        ],
+        "recommendedBondLevel": 4,
+        "customMemoryTypes": [
+          "Content preferences",
+          "Stylistic preferences",
+          "Topic interests",
+          "Feedback patterns"
+        ]
+      }
+    }
+  },
+  "implementationGuidelines": {
+    "initialization": {
+      "description": "Process for establishing initial bond",
+      "steps": [
+        "Create user profile with basic information",
+        "Assign initial bond level (typically 1)",
+        "Capture initial preferences during first interactions",
+        "Establish baseline communication style",
+        "Set initial memory framework"
+      ]
+    },
+    "progression": {
+      "description": "Methods for advancing bond levels",
+      "mechanisms": [
+        "Interaction frequency and quality metrics",
+        "User feedback integration",
+        "Successful task completion tracking",
+        "Preference adaptation monitoring",
+        "Memory utilization effectiveness"
+      ],
+      "thresholds": {
+        "level1to2": "5+ meaningful interactions",
+        "level2to3": "15+ interactions with 85%+ positive feedback",
+        "level3to4": "30+ interactions with consistent engagement",
+        "level4to5": "50+ interactions with deep context sharing"
+      }
+    },
+    "maintenance": {
+      "description": "Processes to maintain bond quality",
+      "activities": [
+        "Regular context refreshing",
+        "Periodic preference confirmation",
+        "Memory relevance evaluation",
+        "Bond quality assessments",
+        "Adaptation refinement"
+      ]
+    },
+    "recovery": {
+      "description": "Methods to handle bond degradation",
+      "scenarios": [
+        "Extended absence (reintroduction protocol)",
+        "Negative feedback patterns (recalibration process)",
+        "Context shifts (adaptation procedures)",
+        "Technical failures (recovery mechanisms)"
+      ]
+    }
+  },
+  "metadata": {
+    "created": "2025-05-12T00:00:00Z",
+    "updated": "2025-05-12T00:00:00Z",
+    "author": "Aixtiv Symphony Team",
+    "description": "Bonded Copilot Reference Model for the Aixtiv CLI Owner-Subscriber V1-V2 Immersive System",
+    "version": "1.0.0"
+  }
+}

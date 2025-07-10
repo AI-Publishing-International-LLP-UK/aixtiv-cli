@@ -1,0 +1,16 @@
+{
+  "schema": {
+    "version": "1.0.0",
+    "collections": [
+      {
+        "name": "sessions",
+        "fields": [
+          { "name": "id", "type": "string" },
+          { "name": "start_time", "type": "timestamp" },
+          { "name": "end_time", "type": "timestamp" },
+          { "name": "agent_id", "type": "string" }
+        ]
+      }
+    ]
+  }
+}

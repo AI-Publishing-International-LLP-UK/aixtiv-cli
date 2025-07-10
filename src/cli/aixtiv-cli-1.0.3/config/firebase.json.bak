@@ -1,0 +1,5 @@
+{
+  "projectId": "api-for-warp-drive",
+  "databaseURL": "https://api-for-warp-drive.firebaseio.com",
+  "storageBucket": "api-for-warp-drive.appspot.com"
+}

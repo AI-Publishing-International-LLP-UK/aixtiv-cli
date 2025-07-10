@@ -1,0 +1,17 @@
+apiVersion: cloud.google.com/v1
+kind: BackendService
+metadata:
+  name: lb-ip-2100-cool-backend
+  namespace: anthology-ai
+spec:
+  loadBalancingScheme: EXTERNAL
+  protocol: HTTP
+  timeoutSec: 30
+  connectionDraining:
+    drainingTimeoutSec: 0
+  ipVersion: IPV4_ONLY
+  healthChecks:
+    - name: tcp-443-health-check
+  backend:
+    - balancingMode: UTILIZATION
+      group: ${NEG_GROUP}

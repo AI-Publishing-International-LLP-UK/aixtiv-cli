@@ -1,0 +1,57 @@
+{
+  "id": "dr-match",
+  "name": "Dr. Match",
+  "version": "1.0.0",
+  "description": "CRO Growth",
+  "capabilities": [
+    "Revenue Strategy",
+    "Growth Optimization",
+    "Sales Leadership",
+    "Business Development",
+    "Market Expansion",
+    "Revenue Operations",
+    "Growth Strategy"
+  ],
+  "service_path": "/src/services/dr_match/index.js",
+  "api_endpoint": "api.coaching2100.ai/v1/specialists/dr-match",
+  "status": "ready",
+  "team_compatible": true,
+  "requires_authentication": true,
+  "authentication_provider": "SallyPort",
+  "default_permissions": ["create", "read", "process"],
+  "metadata": {
+    "region": "us-west1",
+    "zone": "us-west1-b",
+    "creator": "Aixtiv Symphony System",
+    "created_at": "2025-05-23T20:30:29.522Z",
+    "last_updated": "2025-05-23T20:30:29.522Z",
+    "specializations": [
+      "Revenue Strategy",
+      "Growth Optimization",
+      "Sales Leadership",
+      "Business Development",
+      "Market Expansion"
+    ],
+    "knowledge_domains": [
+      "Revenue Operations",
+      "Growth Strategy",
+      "Sales Management",
+      "Market Development",
+      "Customer Success"
+    ]
+  },
+  "team_assignments": [
+    {
+      "team_id": "symphony-core",
+      "role": "contributor",
+      "description": "Core Dr. Match component for Symphony"
+    }
+  ],
+  "instances": [
+    {
+      "id": "dr-match-01",
+      "specialization": "Revenue Strategy",
+      "status": "active"
+    }
+  ]
+}

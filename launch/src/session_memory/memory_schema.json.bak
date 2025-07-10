@@ -1,0 +1,403 @@
+{
+  "schema": {
+    "version": "1.0.0",
+    "description": "Aixtiv CLI Owner-Subscriber Memory System Schema",
+    "collections": {
+      "memories": {
+        "description": "Individual memory entries for user-copilot interactions",
+        "fields": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the memory",
+            "required": true
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Session identifier for grouping memories",
+            "required": true
+          },
+          "userId": {
+            "type": "string",
+            "description": "User identifier",
+            "required": true
+          },
+          "copilotId": {
+            "type": "string",
+            "description": "Copilot identifier",
+            "required": true
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO timestamp when the memory was created",
+            "required": true
+          },
+          "type": {
+            "type": "string",
+            "enum": ["user_input", "copilot_response", "system_event", "memory_recall"],
+            "description": "Type of memory entry",
+            "required": true
+          },
+          "content": {
+            "type": "string",
+            "description": "Text content of the memory",
+            "required": true
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional context for the memory",
+            "properties": {
+              "channel": {
+                "type": "string",
+                "description": "Communication channel (chat, voice, etc.)"
+              },
+              "sentiment": {
+                "type": "string",
+                "description": "Detected sentiment (positive, negative, neutral)"
+              },
+              "entities": {
+                "type": "array",
+                "description": "Extracted entities from the content",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "intention": {
+                "type": "string",
+                "description": "Detected user intention"
+              },
+              "context": {
+                "type": "string",
+                "description": "Context category for the memory"
+              },
+              "source": {
+                "type": "string",
+                "description": "Source of the memory (direct input, processed, recalled)"
+              }
+            }
+          },
+          "importance": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 10,
+            "description": "Importance score (1-10) for memory retrieval prioritization",
+            "default": 5
+          },
+          "category": {
+            "type": "string",
+            "description": "Category for organization (personal, work, creative, etc.)"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO date when memory should expire or be archived"
+          },
+          "references": {
+            "type": "array",
+            "description": "References to other memories",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hasAttachments": {
+            "type": "boolean",
+            "description": "Indicates if the memory has attachments",
+            "default": false
+          },
+          "attachments": {
+            "type": "array",
+            "description": "Associated files or resources",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "sessions": {
+        "description": "Session information for grouping memories",
+        "fields": {
+          "id": {
+            "type": "string",
+            "description": "Unique session identifier",
+            "required": true
+          },
+          "userId": {
+            "type": "string",
+            "description": "User identifier",
+            "required": true
+          },
+          "copilotId": {
+            "type": "string",
+            "description": "Primary copilot identifier for the session",
+            "required": true
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Session start time",
+            "required": true
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Session end time"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "paused", "completed", "expired"],
+            "description": "Current session status",
+            "default": "active"
+          },
+          "title": {
+            "type": "string",
+            "description": "Generated or user-provided session title"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Session summary for quick reference"
+          },
+          "tags": {
+            "type": "array",
+            "description": "User or system tags for the session",
+            "items": {
+              "type": "string"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional session context",
+            "properties": {
+              "channel": {
+                "type": "string",
+                "description": "Primary channel for the session"
+              },
+              "purpose": {
+                "type": "string",
+                "description": "Main purpose or goal of the session"
+              },
+              "projectId": {
+                "type": "string",
+                "description": "Associated project identifier"
+              },
+              "deviceInfo": {
+                "type": "object",
+                "description": "Information about the user's device"
+              },
+              "copilots": {
+                "type": "array",
+                "description": "All copilots involved in the session",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "users": {
+        "description": "User profiles with preferences",
+        "fields": {
+          "id": {
+            "type": "string",
+            "description": "Unique user identifier",
+            "required": true
+          },
+          "email": {
+            "type": "string",
+            "description": "User email address"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "User display name"
+          },
+          "preferences": {
+            "type": "object",
+            "description": "User preferences for interactions",
+            "properties": {
+              "memoryRetention": {
+                "type": "string",
+                "enum": ["short", "medium", "long", "permanent"],
+                "default": "medium",
+                "description": "How long to retain memories"
+              },
+              "copilotStyles": {
+                "type": "object",
+                "description": "Preferred interaction styles for copilots"
+              },
+              "defaultSessionTags": {
+                "type": "array",
+                "description": "Default tags for new sessions",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "bondedCopilots": {
+            "type": "array",
+            "description": "Bonded copilots for this user",
+            "items": {
+              "type": "object",
+              "properties": {
+                "copilotId": {
+                  "type": "string"
+                },
+                "bondLevel": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 10
+                },
+                "bondedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "lastInteraction": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "specializations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "copilots": {
+        "description": "Copilot profiles with capabilities",
+        "fields": {
+          "id": {
+            "type": "string",
+            "description": "Unique copilot identifier",
+            "required": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Copilot name",
+            "required": true
+          },
+          "type": {
+            "type": "string",
+            "enum": ["general", "specialized", "composite"],
+            "description": "Type of copilot",
+            "required": true
+          },
+          "specializations": {
+            "type": "array",
+            "description": "Areas of specialization",
+            "items": {
+              "type": "string"
+            }
+          },
+          "capabilities": {
+            "type": "array",
+            "description": "Specific capabilities",
+            "items": {
+              "type": "string"
+            }
+          },
+          "personalityTraits": {
+            "type": "object",
+            "description": "Personality characteristics"
+          },
+          "interactionStyle": {
+            "type": "string",
+            "description": "Default interaction style"
+          },
+          "backstory": {
+            "type": "string",
+            "description": "Copilot backstory and context"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional copilot metadata"
+          }
+        }
+      }
+    },
+    "relationships": [
+      {
+        "name": "user_sessions",
+        "source": "users",
+        "target": "sessions",
+        "type": "one-to-many",
+        "sourceField": "id",
+        "targetField": "userId"
+      },
+      {
+        "name": "session_memories",
+        "source": "sessions",
+        "target": "memories",
+        "type": "one-to-many",
+        "sourceField": "id",
+        "targetField": "sessionId"
+      },
+      {
+        "name": "user_memories",
+        "source": "users",
+        "target": "memories",
+        "type": "one-to-many",
+        "sourceField": "id",
+        "targetField": "userId"
+      },
+      {
+        "name": "copilot_sessions",
+        "source": "copilots",
+        "target": "sessions",
+        "type": "one-to-many",
+        "sourceField": "id",
+        "targetField": "copilotId"
+      },
+      {
+        "name": "copilot_memories",
+        "source": "copilots",
+        "target": "memories",
+        "type": "one-to-many",
+        "sourceField": "id",
+        "targetField": "copilotId"
+      },
+      {
+        "name": "user_bonded_copilots",
+        "source": "users",
+        "target": "copilots",
+        "type": "many-to-many",
+        "sourceField": "bondedCopilots[].copilotId",
+        "targetField": "id"
+      }
+    ]
+  },
+  "metadata": {
+    "created": "2025-05-12T00:00:00Z",
+    "updated": "2025-05-12T00:00:00Z",
+    "author": "Aixtiv Symphony Team",
+    "description": "Memory schema for the Aixtiv CLI Owner-Subscriber V1-V2 Immersive System"
+  }
+}

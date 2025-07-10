@@ -1,0 +1,63 @@
+{
+  "worker_pool_specs": [
+    {
+      "machine_spec": {
+        "machine_type": "n1-standard-8",
+        "accelerator_type": "NVIDIA_TESLA_T4",
+        "accelerator_count": 1
+      },
+      "replica_count": 1,
+      "container_spec": {
+        "image_uri": "gcr.io/deeplearning-platform-release/tf2-gpu.2-9",
+        "command": ["python3", "-m", "lucy_flight_memory.main"],
+        "args": [
+          "--task",
+          "flight-memory-system",
+          "--data-path",
+          "gs://api-for-warp-drive-data/fms/input/",
+          "--output-path",
+          "gs://api-for-warp-drive-data/fms/output/",
+          "--log-path",
+          "gs://api-for-warp-drive-data/fms/logs/",
+          "--model-path",
+          "gs://api-for-warp-drive-data/models/lucy/",
+          "--batch-size",
+          "32",
+          "--region",
+          "us-west1"
+        ],
+        "env": [
+          {
+            "name": "GOOGLE_APPLICATION_CREDENTIALS",
+            "value": "/secrets/service_account.json"
+          },
+          {
+            "name": "FIRESTORE_PROJECT",
+            "value": "api-for-warp-drive"
+          },
+          {
+            "name": "FIRESTORE_DATABASE",
+            "value": "(default)"
+          },
+          {
+            "name": "MEMORY_COLLECTION",
+            "value": "flight_memory"
+          },
+          {
+            "name": "DEBUG_MODE",
+            "value": "false"
+          }
+        ]
+      }
+    }
+  ],
+  "scheduling": {
+    "timeout": "86400s",
+    "restart_job_on_worker_restart": true
+  },
+  "enable_web_access": true,
+  "reserved_ip_ranges": [],
+  "base_output_directory": {
+    "output_uri_prefix": "gs://api-for-warp-drive-data/fms/outputs/"
+  }
+}

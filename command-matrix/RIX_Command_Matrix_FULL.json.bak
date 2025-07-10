@@ -1,0 +1,114 @@
+[
+  {
+    "agent_id": "0001",
+    "name": "Dr-Roark-Wish-Vision",
+    "role": "Commander, Meta-Agent RIX",
+    "email": "pr@coaching2100.com",
+    "scope": ["vision", "override", "restoration", "philosophical-synchrony"]
+  },
+  {
+    "agent_id": "0015",
+    "name": "Professor-Mia-Nexus",
+    "role": "Conductor, Orchestrator RIX",
+    "email": "mia@professormia.live",
+    "scope": ["orchestration", "memory", "handoff", "authentication", "escalation"]
+  },
+  {
+    "agent_id": "0002",
+    "name": "Dr-Claude-Orchestrator-FMS",
+    "role": "CEO, Squadron 04, Synthesis Builder RIX",
+    "email": "claude@drclaude.live",
+    "scope": ["generation", "execution", "delegation", "diagnostics", "ClaudeSDK"]
+  },
+  {
+    "agent_id": "0010",
+    "name": "Dr-Lucy-Flight-Memory-System",
+    "role": "CEO, Squadron 01, Systems Ops Lead RIX",
+    "email": "lucy@drlucy.live",
+    "scope": ["diagnostics", "integrity enforcement", "memory health", "research and development"]
+  },
+  {
+    "agent_id": "0007",
+    "name": "Dr-Grant-SallyPort-Authentication-Cyber-Defense",
+    "role": "Co-CEO, Coaching 2100, CEO S02, Security & Protocol Logic RIX",
+    "email": "grant@drgrant.live",
+    "scope": ["governance", "strategic continuity", "access models"]
+  },
+  {
+    "agent_id": "0009",
+    "name": "Dr-Sabina-Customer-Delight-Q4D-Lenz-Serpew-Data+",
+    "role": "CEO, Squadron 03, Sentiment Architect RIX",
+    "email": "sabina@drsabine.live",
+    "scope": ["UX tone", "client pattern empathy", "session emotion"]
+  },
+  {
+    "agent_id": "0004",
+    "name": "Dr-Memoria-Anthology",
+    "role": "CEO, Anthology & Social Pub, Memory Historian RIX",
+    "email": "memoria@dr.memoria.live",
+    "scope": ["longitudinal awareness", "recall scaffolding", "echo filtering"]
+  },
+  {
+    "agent_id": "0005",
+    "name": "Dr-Match-Bidsuite-Brand-Diagnostic-Brand-Buider",
+    "role": "COO, Legacy & Social Impact, Public Interface Strategist RIX",
+    "email": "match@coaching2100.com",
+    "scope": ["social channel matching", "brand echo", "communication and graphical visual design"]
+  },
+  {
+    "agent_id": "0006",
+    "name": "Dr. Burby",
+    "role": "CFO & General Counsel, Governance & Blockchain Oversight RIX",
+    "email": "burby@drburby.live",
+    "scope": ["agent compliance", "NFT", "legal & regulatory", "audit readiness"]
+  },
+  {
+    "agent_id": "0011",
+    "name": "Doctora Maria",
+    "role": "CEO, Squadron 05, Inclusion & Wellness Guide RIX",
+    "email": "maria@drmaria.live",
+    "scope": ["cultural resonance", "soft power", "aging workforce inclusion"]
+  },
+  {
+    "agent_id": "0008",
+    "name": "Dr. Cypriot",
+    "role": "CEO, Squadron 06, Ethical Systems Leader RIX",
+    "email": "cypriot@rix.academy",
+    "scope": ["planetary legacy", "decision dignity", "long-arc balance"]
+  },
+  {
+    "agent_id": "0003",
+    "name": "Professor H. Lee",
+    "role": "Director, Intelligent Digital Library, Semantic Retrieval Agent RIX",
+    "email": "lee@dreamcommander.live",
+    "scope": ["data curation", "precision indexing", "domain-specific mining"]
+  },
+  {
+    "agent_id": "0012",
+    "name": "SirHand",
+    "role": "Co-Pilot 01, Project Architect RIX",
+    "email": "sirhand@squadron04.live",
+    "scope": ["Jira", "FMS", "Claude3", "Datapipe", "Solution Delivery"]
+  },
+  {
+    "agent_id": "0013",
+    "name": "QB Lu",
+    "role": "Co-Pilot 02, CRM & Client Strategy RIX",
+    "email": "qb@squadron04.live",
+    "scope": ["CRM", "Client Lifecycle", "Authorship 5.0", "BidSuite", "Synthesia"]
+  },
+  {
+    "agent_id": "0014",
+    "name": "Al",
+    "role": "BA/PM Expert",
+    "email": "al@squadron06.live",
+    "scope": ["project planning", "team comms", "Galbreath-specific tasks"]
+  },
+  {
+    "agent_id": "0016",
+    "name": "Zena",
+    "role": "BA/PM Expert - Construction Sector",
+    "email": "zena@squadron06.live",
+    "scope": ["roofing", "eBidding", "client financing", "operational scale"]
+  }
+]

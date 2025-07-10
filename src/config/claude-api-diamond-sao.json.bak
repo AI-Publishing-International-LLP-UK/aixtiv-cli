@@ -1,0 +1,33 @@
+{
+  "claude_api_config": {
+    "apiKey": "${NEW_ANTHROPIC_KEY}",
+    "defaultModel": "claude-3-5-sonnet-20241022",
+    "modelBlending": {
+      "enabled": true,
+      "primaryModel": "claude-3-5-sonnet-20241022",
+      "fallbackModels": [
+        "claude-3-sonnet-20240229",
+        "claude-3-haiku-20240307"
+      ]
+    },
+    "enterpriseSettings": {
+      "defaultCodeMode": true,
+      "allowUserOverrides": true,
+      "rateLimiting": {
+        "requestsPerMinute": 1000,
+        "tokensPerMinute": 40000
+      }
+    },
+    "authMethod": "oauth2",
+    "tokenType": "Bearer",
+    "expiresAt": "2025-06-28T15:33:55.817Z",
+    "diamond_sao_interface": {
+      "graphical_mode": true,
+      "audio_effects": true,
+      "real_time_responses": true,
+      "multi_agent_coordination": true,
+      "oauth2_enabled": true,
+      "push_button_auth": true
+    }
+  }
+}

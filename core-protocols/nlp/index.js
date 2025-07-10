@@ -78,6 +78,22 @@ function processNaturalLanguage(input, options = {}) {
       };
     }
 
+// Add support for chaining commands in CI/CD/CT-T
+    if (intent.command === 'swarm') {
+      // For Swarm commands, allow chaining with &&
+      let chainedCommand = buildCommandString(intent);
+      if (options.chain) {
+        const nextCommand = options.chain.shift();
+        if (nextCommand) {
+          const nextIntent = classifyIntent(nextCommand);
+          if (nextIntent.command) {
+            chainedCommand += ` && ${buildCommandString(nextIntent)}`;
+          }
+        }
+      }
+      return executeCommand(chainedCommand, intent, { dryRun });
+    }
+
     // Build the command string with flags
     const commandString = buildCommandString(intent);
 

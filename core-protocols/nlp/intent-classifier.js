@@ -52,6 +52,19 @@ const COMMAND_PATTERNS = [
       'check security for our main repository',
       'align files in the AIXTIV-SYMPHONY repo',
       'clean up pending changes in repository',
+],
+  },
+  {
+    command: 'swarm',
+    keywords: ['deploy', 'activate', 'orchestrate', 'status', 'swarm', 'execute'],
+    flags: {
+      action: { required: true, type: 'string', default: 'deploy' },
+      verbose: { required: false, type: 'boolean', default: false },
+    },
+    examples: [
+      'deploy the testament swarm',
+      'activate swarm operations',
+      'check swarm status',
     ],
   },
   {
@@ -238,7 +251,7 @@ function extractFlags(input, pattern) {
 
       case 'action':
         // For GitHub automation
-        const actions = {
+        const githubActions = {
           security: 'secure',
           secure: 'secure',
           clean: 'clean',
@@ -249,10 +262,36 @@ function extractFlags(input, pattern) {
           sync: 'sync',
         };
 
-        for (const [actionWord, actionValue] of Object.entries(actions)) {
-          if (input.includes(actionWord)) {
-            value = actionValue;
-            break;
+        // For Swarm operations
+        const swarmActions = {
+          deploy: 'deploy',
+          deployment: 'deploy',
+          activate: 'activate',
+          activation: 'activate',
+          start: 'activate',
+          orchestrate: 'orchestrate',
+          orchestration: 'orchestrate',
+          coordinate: 'orchestrate',
+          status: 'status',
+          check: 'status',
+          monitor: 'status',
+        };
+
+        // Check if this is a swarm command
+        if (pattern.command === 'swarm') {
+          for (const [actionWord, actionValue] of Object.entries(swarmActions)) {
+            if (input.includes(actionWord)) {
+              value = actionValue;
+              break;
+            }
+          }
+        } else {
+          // GitHub automation actions
+          for (const [actionWord, actionValue] of Object.entries(githubActions)) {
+            if (input.includes(actionWord)) {
+              value = actionValue;
+              break;
+            }
           }
         }
         break;

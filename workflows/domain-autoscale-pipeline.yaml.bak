@@ -1,0 +1,276 @@
+name: GoDaddy Domain Autoscale Pipeline
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Run daily at 2:00 AM UTC
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: 'Pipeline phase to run'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - full
+          - fetch
+          - categorize
+          - assign
+          - verify
+      dry_run:
+        description: 'Perform a dry run without making changes'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  PROJECT_ID: api-for-warp-drive
+  AGENT_ID: DOMAIN_AUTOSCALE_AUTOMATION
+
+jobs:
+  setup-agent-tracking:
+    runs-on: ubuntu-latest
+    outputs:
+      run_id: ${{ steps.generate-id.outputs.run_id }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Generate unique run ID
+        id: generate-id
+        run: echo "run_id=$(date +%Y%m%d%H%M%S)-${{ github.run_id }}" >> $GITHUB_OUTPUT
+
+      - name: Setup agent tracking
+        run: |
+          chmod +x scripts/setup-agent-tracking.sh
+          ./scripts/setup-agent-tracking.sh
+          source bin/agent-tracking.sh
+          log_agent_action "domain_autoscale_workflow_start" "Starting Domain Autoscale workflow: ${{ steps.generate-id.outputs.run_id }}"
+
+  domain-autoscale:
+    needs: setup-agent-tracking
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          pip install -r requirements.txt
+          
+      - name: Configure GoDaddy API credentials
+        run: |
+          mkdir -p ~/.aixtiv
+          cat > ~/.aixtiv/godaddy-api-key.json << EOF
+          {
+            "apiKey": "${{ secrets.GODADDY_API_KEY }}",
+            "apiSecret": "${{ secrets.GODADDY_API_SECRET }}"
+          }
+          EOF
+          chmod 600 ~/.aixtiv/godaddy-api-key.json
+
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+          
+      - name: Configure Firebase
+        run: |
+          npm install -g firebase-tools
+          firebase login:ci --no-localhost
+          
+      - name: Setup agent tracking for this job
+        run: |
+          source bin/agent-tracking.sh
+          export AGENT_ID=$AGENT_ID
+          log_agent_action "domain_autoscale_start" "Starting domain autoscale job"
+
+      - name: Run Domain Autoscale Integration
+        id: autoscale
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "domain_autoscale_execution_start" "Starting domain autoscale execution"
+          
+          python automation/domain-autoscale-integration.py \
+            --project-id $PROJECT_ID \
+            --agent-id $AGENT_ID \
+            --phase ${{ github.event.inputs.phase || 'full' }} \
+            ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
+            
+          log_agent_action "domain_autoscale_execution_complete" "Completed domain autoscale execution"
+          
+      - name: Upload autoscale results
+        uses: actions/upload-artifact@v3
+        with:
+          name: domain-autoscale-results
+          path: reports/domain-autoscale/
+          retention-days: 30
+
+  generate-report:
+    needs: [setup-agent-tracking, domain-autoscale]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Download autoscale results
+        uses: actions/download-artifact@v3
+        with:
+          name: domain-autoscale-results
+          path: reports/domain-autoscale/
+          
+      - name: Setup agent tracking for this job
+        run: |
+          source bin/agent-tracking.sh
+          export AGENT_ID=$AGENT_ID
+          log_agent_action "report_generation_start" "Starting report generation"
+
+      - name: Generate domain autoscale report
+        run: |
+          source bin/agent-tracking.sh
+          
+          # Find the latest results file
+          LATEST_RESULT=$(ls -t reports/domain-autoscale/autoscale-results-*.json | head -1)
+          
+          # Generate HTML report
+          python -c "
+import json
+import sys
+import os
+from datetime import datetime
+
+# Load results
+with open('$LATEST_RESULT', 'r') as f:
+    results = json.load(f)
+
+# Generate HTML report
+html = f'''
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Domain Autoscale Report</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; line-height: 1.6; }}
+        .container {{ max-width: 1000px; margin: 0 auto; }}
+        h1 {{ color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px; }}
+        .success {{ color: green; }}
+        .failure {{ color: red; }}
+        .summary {{ background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0; }}
+        table {{ width: 100%; border-collapse: collapse; margin: 20px 0; }}
+        th, td {{ padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }}
+        th {{ background: #f5f5f5; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <h1>Domain Autoscale Report</h1>
+        
+        <div class='summary'>
+            <h2>Summary</h2>
+            <p><strong>Status:</strong> <span class='{'success' if results.get('success', False) else 'failure'}'>
+                {'SUCCESS' if results.get('success', False) else 'FAILURE'}</span></p>
+            <p><strong>Date:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+            <p><strong>Domains Fetched:</strong> {results.get('domains_fetched', 0)}</p>
+            <p><strong>Families Identified:</strong> {results.get('families_identified', 0)}</p>
+            <p><strong>Domains Categorized:</strong> {results.get('domains_categorized', 0)}</p>
+            <p><strong>Domains Assigned:</strong> {results.get('domains_assigned', 0)}</p>
+            <p><strong>Domains Verified:</strong> {results.get('domains_verified', 0)}</p>
+        </div>
+'''
+
+# Add error section if there are errors
+if results.get('errors', []):
+    html += f'''
+        <div class='errors'>
+            <h2>Errors</h2>
+            <ul>
+    '''
+    for error in results.get('errors', []):
+        html += f'<li>{error}</li>\n'
+    html += '''
+            </ul>
+        </div>
+    '''
+
+# Close the HTML
+html += '''
+    </div>
+</body>
+</html>
+'''
+
+# Write the report to file
+with open('reports/domain-autoscale/latest-report.html', 'w') as f:
+    f.write(html)
+
+print('Domain Autoscale Report generated successfully')
+          "
+          
+          log_agent_action "report_generation_complete" "Completed report generation"
+          
+      - name: Upload report
+        uses: actions/upload-artifact@v3
+        with:
+          name: domain-autoscale-report
+          path: reports/domain-autoscale/latest-report.html
+          retention-days: 30
+
+  notify-completion:
+    needs: [setup-agent-tracking, domain-autoscale, generate-report]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup agent tracking for this job
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "domain_autoscale_workflow_completion" "Domain Autoscale workflow completed"
+
+      - name: Determine overall workflow status
+        id: status
+        run: |
+          if [[ "${{ needs.domain-autoscale.result }}" == "success" && 
+                "${{ needs.generate-report.result }}" == "success" ]]; then
+            echo "workflow_status=success" >> $GITHUB_OUTPUT
+          else
+            echo "workflow_status=failure" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Firestore record
+        run: |
+          source bin/agent-tracking.sh
+          log_agent_action "workflow_record" "Creating workflow record in Firestore"
+
+          # Check if gcloud is installed
+          if command -v gcloud &> /dev/null; then
+            # Create Firestore document with workflow results
+            gcloud firestore documents create \
+              projects/$PROJECT_ID/databases/(default)/documents/domain-autoscale-workflows/${{ needs.setup-agent-tracking.outputs.run_id }} \
+              --fields="status=${{ steps.status.outputs.workflow_status }},timestamp=$(date +%s),agent=$AGENT_ID,workflow_id=${{ github.run_id }},run_type=${{ github.event_name }}"
+          fi

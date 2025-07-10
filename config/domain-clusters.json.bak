@@ -1,0 +1,62 @@
+{
+  "civic_centers": {
+    "BCS-001": {
+      "name": "Memory Plaza",
+      "dewey_range": "700-799",
+      "function": "Knowledge, Loops",
+      "domains": ["2100.institute", "c2100.co"],
+      "firebase_config": {
+        "hosting_target": "memory-plaza",
+        "region": "us-west1"
+      }
+    },
+    "BCS-010": {
+      "name": "Vision Lake",
+      "dewey_range": ["100-199", "800-899"],
+      "function": "Meditation & Council, Pilots & Testimony",
+      "domains": ["coaching2100.org", "getready2100.com", "drmatch.live", "queenlucy.live"],
+      "firebase_config": {
+        "hosting_target": "vision-lake",
+        "region": "us-west1"
+      }
+    },
+    "BCS-005": {
+      "name": "Edge Labs",
+      "dewey_range": "400-409",
+      "function": "Simulation & Scenario",
+      "domains": ["aixtiv.world", "asoos.live"],
+      "firebase_config": {
+        "hosting_target": "edge-labs",
+        "region": "us-west1"
+      }
+    },
+    "BCS-011": {
+      "name": "Queen Mint Mark",
+      "dewey_range": "620-629",
+      "function": "Certification, Legacy Transactions",
+      "domains": ["2100.foundation", "2100.cool"],
+      "firebase_config": {
+        "hosting_target": "queen-mint-mark",
+        "region": "us-west1"
+      }
+    }
+  },
+  "keyword_structure": {
+    "per_domain": 1000,
+    "total_keywords": 250000,
+    "pinecone_index": "aixtiv-memories",
+    "semantic_clustering": true
+  },
+  "deployment_rules": {
+    "firebase": {
+      "multi_site": true,
+      "region": "us-west1",
+      "custom_domains": true
+    },
+    "pinecone": {
+      "namespace": "domain-keywords",
+      "dimension": 1536,
+      "metric": "cosine"
+    }
+  }
+}

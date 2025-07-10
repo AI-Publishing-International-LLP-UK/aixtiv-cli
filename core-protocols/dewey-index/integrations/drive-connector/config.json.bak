@@ -1,0 +1,13 @@
+{
+  "name": "drive-connector",
+  "description": "Google Drive connector for DI:DC (Dewey Digital Index Cards)",
+  "version": "1.0.0",
+  "mountPoint": "/ddiCardMount",
+  "serviceAccount": "drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com",
+  "collections": {
+    "driveFiles": "drive_files",
+    "indexedContent": "dewey_indexed_content",
+    "classifications": "dewey_classifications"
+  },
+  "enabled": true
+}

@@ -1,0 +1,44 @@
+{
+  "hosting": {
+    "public": "public",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "/api/**",
+        "function": "api"
+      },
+      {
+        "source": "/claude-code-generate",
+        "function": "generateCode"
+      },
+      {
+        "source": "/context-storage",
+        "function": "contextStorage"
+      },
+      {
+        "source": "/model-metrics",
+        "function": "modelMetrics"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|html|css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=86400"
+          }
+        ]
+      }
+    ]
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs18",
+    "region": "us-west1"
+  }
+}

@@ -1,0 +1,58 @@
+steps:
+  # Initialize for live deployment
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'initialize-live'
+    args:
+      - 'config'
+      - 'set'
+      - 'project'
+      - '${PROJECT_ID}'
+
+  # Apply live configuration
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'deploy-live'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud builds submit \
+          --config=config-sdk \
+          tf apply \
+          --backend-bucket=gs://859242575175-us-west1-blueprint-config/generative-ai-document-summarization/state \
+          --output-bucket=gs://859242575175-us-west1-blueprint-config/generative-ai-document-summarization/r-0/apply_results \
+          --working-dir=/workspace/apply \
+          --add-attribution-labels=true \
+          --im-lock-id=1732692659334471 \
+          --draft=false \
+          --upload \
+          --backend=im \
+          --deployment=config.googleapis.com/v1/projects/api-for-warp-drive/locations/us-west1/deployments/generative-ai-document-summarization \
+          --inputs={"delete_contents_on_destroy":true,"deployment_name":"generative-ai-document-summarization","labels":{"environment":"production","goog-solutions-console-deployment-name":"generative-ai-document-summarization","goog-solutions-console-solution-id":"generative-ai-document-summarization"},"project_id":"api-for-warp-drive","region":"us-west1"}
+
+  # Verify live deployment
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'verify-live'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Verifying live deployment..."
+        gcloud builds list \
+          --ongoing \
+          --filter="id=$BUILD_ID" \
+          --format="get(status)"
+
+timeout: '7200s'
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'N1_HIGHCPU_8'
+  env:
+    - 'ENVIRONMENT=production'
+    - 'DEPLOYMENT=live'
+
+substitutions:
+  _DEPLOYMENT_NAME: 'generative-ai-document-summarization'
+  _REGION: 'us-west1'
+  _ENV: 'production'
+
+serviceAccount: 'goog-sc-generative-ai-docu-147@api-for-warp-drive.iam.gserviceaccount.com'

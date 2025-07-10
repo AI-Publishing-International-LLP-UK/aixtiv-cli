@@ -1,0 +1,2 @@
+# .github/workflows/testament_ci.yml
+GitHub Actions CI workflow for tenant QA tests.

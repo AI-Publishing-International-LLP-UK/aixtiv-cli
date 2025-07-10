@@ -2,7 +2,7 @@
  * Test Setup Configuration
  *
  * This file configures the testing environment for the Aixtiv CLI ecosystem,
- * particularly for the DI:DC (Dewey Digital Index Cards) and related components.
+ * particularly for the DIDC (Dewey Digital Index Cards) and related components.
  */
 
 // Import required testing libraries

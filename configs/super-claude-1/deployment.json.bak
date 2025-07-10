@@ -1,0 +1,14 @@
+{
+  "name": "super-claude-1",
+  "region": "us-west1",
+  "project_id": "api-for-warp-drive",
+  "service_account": "drlucyatuomation@api-for-warp-drive.iam.gserviceaccount.com",
+  "endpoint_config": {
+    "machine_type": "n1-standard-16",
+    "service_networking": "quantum-secured",
+    "integration_points": {
+      "voice_profile": "dana",
+      "automation": "dr-lucy-auto"
+    }
+  }
+}

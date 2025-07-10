@@ -90,6 +90,9 @@ const claudeAutomationGithub = require('../commands/claude/automation/github');
 const claudeCodeGenerate = require('../commands/claude/code/generate');
 const claudeStatus = require('../commands/claude/status');
 
+// OAuth2 Integration
+const { registerCommand: registerOAuth2Command } = require('../commands/claude/oauth2-setup');
+
 // ASOOS commands
 const asoosCommands = require('../commands/asoos');
 
@@ -334,6 +337,9 @@ if (nlpCommand) {
 // Register domain management commands
 registerDomainCommands(program);
 
+// Register OAuth2 command
+registerOAuth2Command(program);
+
 // Register ASOOS commands
 program
   .command('asoos:deploy')
@@ -342,6 +348,71 @@ program
   .option('-v, --verbose', 'Show detailed output')
   .option('-i, --info', 'Show deployment configuration info')
   .action(asoosCommands.deploy);
+
+// Register Swarm commands
+program
+  .command('swarm')
+  .description('Testament Swarm Operations and Agent Orchestration')
+  .argument('[action]', 'Swarm action (deploy, activate, orchestrate, status)', 'deploy')
+  .option('-v, --verbose', 'Show detailed output')
+  .option('--production', 'Run in production mode')
+  .option('--staging', 'Run in staging mode')
+  .action(async (action, options) => {
+    const { spawn } = require('child_process');
+    const path = require('path');
+    
+    console.log(chalk.cyan('🌪️ Executing Testament Swarm Command...'));
+    
+    let scriptPath, workingDir;
+    
+    switch (action) {
+      case 'deploy':
+        workingDir = '/Users/as/asoos/integration-gateway/testament_deployment';
+        scriptPath = path.join(workingDir, 'deploy_testament_swarm.sh');
+        break;
+      case 'activate':
+        workingDir = '/Users/as/asoos/wing';
+        scriptPath = path.join(workingDir, 'testament-swarm-1-activation.sh');
+        break;
+      case 'orchestrate':
+        workingDir = '/Users/as/asoos/integration-gateway';
+        scriptPath = path.join(workingDir, 'testament_swarm_orchestration.py');
+        break;
+      case 'status':
+        workingDir = '/Users/as/asoos/integration-gateway';
+        scriptPath = path.join(workingDir, 'testament_swarm_orchestration.py');
+        break;
+      default:
+        console.log(chalk.red(`❌ Unknown swarm action: ${action}`));
+        console.log(chalk.yellow('Available actions: deploy, activate, orchestrate, status'));
+        return;
+    }
+    
+    const args = [];
+    if (action === 'status') args.push('--status');
+    if (options.verbose) args.push('--verbose');
+    if (options.production) args.push('--production');
+    if (options.staging) args.push('--staging');
+    
+    const isScript = scriptPath.endsWith('.sh');
+    const command = isScript ? 'bash' : 'python3';
+    const finalArgs = [scriptPath, ...args];
+    
+    console.log(chalk.blue(`Executing: ${command} ${finalArgs.join(' ')}`));
+    
+    const child = spawn(command, finalArgs, {
+      cwd: workingDir,
+      stdio: 'inherit'
+    });
+    
+    child.on('close', (code) => {
+      if (code === 0) {
+        console.log(chalk.green('✅ Swarm command completed successfully'));
+      } else {
+        console.log(chalk.red(`❌ Swarm command failed with code ${code}`));
+      }
+    });
+  });
 
 // Register SERPEW commands (temporarily commented out)
 // registerSerpewCommands(program);

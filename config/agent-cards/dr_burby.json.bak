@@ -1,0 +1,57 @@
+{
+  "id": "dr-burby",
+  "name": "Dr. Burby",
+  "version": "1.0.0",
+  "description": "CFO Excellence & Fiduciary/Legal Risk",
+  "capabilities": [
+    "Financial Strategy",
+    "Risk Management",
+    "Legal Compliance",
+    "Corporate Finance",
+    "Regulatory Affairs",
+    "Financial Planning",
+    "Risk Assessment"
+  ],
+  "service_path": "/src/services/dr_burby/index.js",
+  "api_endpoint": "api.coaching2100.ai/v1/specialists/dr-burby",
+  "status": "ready",
+  "team_compatible": true,
+  "requires_authentication": true,
+  "authentication_provider": "SallyPort",
+  "default_permissions": ["create", "read", "process"],
+  "metadata": {
+    "region": "us-west1",
+    "zone": "us-west1-b",
+    "creator": "Aixtiv Symphony System",
+    "created_at": "2025-05-23T20:30:29.521Z",
+    "last_updated": "2025-05-23T20:30:29.521Z",
+    "specializations": [
+      "Financial Strategy",
+      "Risk Management",
+      "Legal Compliance",
+      "Corporate Finance",
+      "Regulatory Affairs"
+    ],
+    "knowledge_domains": [
+      "Financial Planning",
+      "Risk Assessment",
+      "Legal Framework",
+      "Regulatory Compliance",
+      "Corporate Governance"
+    ]
+  },
+  "team_assignments": [
+    {
+      "team_id": "symphony-core",
+      "role": "contributor",
+      "description": "Core Dr. Burby component for Symphony"
+    }
+  ],
+  "instances": [
+    {
+      "id": "dr-burby-01",
+      "specialization": "Financial Strategy",
+      "status": "active"
+    }
+  ]
+}

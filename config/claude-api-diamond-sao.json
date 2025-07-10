@@ -1,0 +1,53 @@
+{
+  "claude_api_config": {
+    "api_key": "${ANTHROPIC_API_KEY}",
+    "organization_id": "",
+    "default_model": "claude-3-5-sonnet-20241022",
+    "model_blending": {
+      "enabled": true,
+      "primary_model": "claude-3-5-sonnet-20241022",
+      "fallback_models": [
+        "claude-3-sonnet-20240229",
+        "claude-3-haiku-20240307"
+      ],
+      "use_cases": {
+        "code_generation": "claude-3-5-sonnet-20241022",
+        "quick_responses": "claude-3-haiku-20240307",
+        "complex_analysis": "claude-3-opus-20240229"
+      }
+    },
+    "enterprise_settings": {
+      "default_code_mode": true,
+      "allow_user_overrides": true,
+      "rate_limiting": {
+        "requests_per_minute": 1000,
+        "tokens_per_minute": 40000
+      }
+    },
+    "asoos_integration": {
+      "dr_claude_orchestrator": {
+        "enabled": true,
+        "model": "claude-3-5-sonnet-20241022",
+        "temperature": 0.3,
+        "max_tokens": 4096
+      },
+      "vision_lake_solutions": {
+        "dr_lucy_fms": "claude-3-5-sonnet-20241022",
+        "dr_sabina_dream_commander": "claude-3-opus-20240229",
+        "professor_lee_q4d": "claude-3-5-sonnet-20241022",
+        "dr_memoria_anthology": "claude-3-sonnet-20240229"
+      },
+      "region_mapping": {
+        "us-west1": "primary",
+        "us-central1": "backup",
+        "eu-west1": "gdpr_compliant"
+      }
+    },
+    "diamond_sao_interface": {
+      "graphical_mode": true,
+      "audio_effects": true,
+      "real_time_responses": true,
+      "multi_agent_coordination": true
+    }
+  }
+}

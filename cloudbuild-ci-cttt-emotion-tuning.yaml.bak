@@ -1,0 +1,175 @@
+steps:
+  # Initialize with Authentication and Project Setup
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'initialize'
+    args:
+      - 'config'
+      - 'set'
+      - 'project'
+      - 'api-for-warp-drive'
+
+  # Setup Node.js environment
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'install-dependencies'
+    args: ['install']
+
+  # Run the emotion tuning tests
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'test-emotion-tuning'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        source bin/agent-tracking.sh
+        log_agent_action "emotion_tuning_test_start" "Starting Emotion Tuning tests"
+
+        # Create test results directory
+        mkdir -p test-results/emotion-tuning
+
+        # Run the dedicated basic emotion tuning test
+        log_agent_action "emotion_tuning_basic_test_start" "Running basic emotion tuning tests"
+        npm run test:emotion-tuning
+
+        # Store basic test result
+        BASIC_TEST_RESULT=$?
+
+        # Create a basic test summary
+        if [ $BASIC_TEST_RESULT -eq 0 ]; then
+          echo "Basic Emotion Tuning tests passed successfully" > test-results/emotion-tuning/basic_summary.txt
+          log_agent_action "emotion_tuning_basic_test_complete" "Basic Emotion Tuning tests passed successfully"
+        else
+          echo "Basic Emotion Tuning tests failed" > test-results/emotion-tuning/basic_summary.txt
+          log_agent_action "emotion_tuning_basic_test_failed" "Basic Emotion Tuning tests failed"
+          # Don't fail the build, just report the failure
+        fi
+
+        # Run the speech integration test
+        log_agent_action "emotion_tuning_speech_test_start" "Running emotion tuning speech integration tests"
+        node test/emotion-tuning-speech-integration-test.js
+
+        # Store speech integration test result
+        SPEECH_TEST_RESULT=$?
+
+        # Create a speech integration test summary
+        if [ $SPEECH_TEST_RESULT -eq 0 ]; then
+          echo "Speech Integration tests passed successfully" > test-results/emotion-tuning/speech_integration_summary.txt
+          log_agent_action "emotion_tuning_speech_test_complete" "Speech Integration tests passed successfully"
+        else
+          echo "Speech Integration tests failed" > test-results/emotion-tuning/speech_integration_summary.txt
+          log_agent_action "emotion_tuning_speech_test_failed" "Speech Integration tests failed"
+          # Don't fail the build, just report the failure
+        fi
+
+        # Create overall test summary
+        if [ $BASIC_TEST_RESULT -eq 0 ] && [ $SPEECH_TEST_RESULT -eq 0 ]; then
+          echo "All Emotion Tuning tests passed successfully" > test-results/emotion-tuning/summary.txt
+          log_agent_action "emotion_tuning_test_complete" "All Emotion Tuning tests passed successfully"
+        else
+          echo "Some Emotion Tuning tests failed" > test-results/emotion-tuning/summary.txt
+          log_agent_action "emotion_tuning_test_failed" "Some Emotion Tuning tests failed"
+          # Don't fail the build, just report the failure
+        fi
+
+  # Build distribution package
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'build-distribution'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        mkdir -p dist/aixtiv-cli-$(date +%Y%m%d%H%M%S)
+        cp -R bin lib commands src config scripts server.js package.json LICENSE README.md dist/aixtiv-cli-$(date +%Y%m%d%H%M%S)/
+        chmod +x dist/aixtiv-cli-$(date +%Y%m%d%H%M%S)/bin/aixtiv.js
+        cd dist
+        tar -czf aixtiv-cli-$(date +%Y%m%d%H%M%S).tar.gz aixtiv-cli-$(date +%Y%m%d%H%M%S)/
+        zip -r aixtiv-cli-$(date +%Y%m%d%H%M%S).zip aixtiv-cli-$(date +%Y%m%d%H%M%S)/
+
+  # Prepare for deployment to Firebase hosting
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'prepare-hosting'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        mkdir -p public/aixtiv-cli-latest
+        cp dist/aixtiv-cli-$(date +%Y%m%d%H%M%S).tar.gz public/aixtiv-cli-latest/aixtiv-cli-latest.tar.gz
+        cp dist/aixtiv-cli-$(date +%Y%m%d%H%M%S).zip public/aixtiv-cli-latest/aixtiv-cli-latest.zip
+
+  # Deploy to Firebase
+  - name: 'gcr.io/$PROJECT_ID/firebase'
+    id: 'deploy-firebase'
+    args: ['deploy', '--only', 'hosting']
+    env:
+      - 'FIREBASE_TOKEN=$_FIREBASE_TOKEN'
+
+  # Create Cloud Storage backup
+  - name: 'gcr.io/cloud-builders/gsutil'
+    id: 'backup-to-storage'
+    args:
+      - '-m'
+      - 'cp'
+      - 'dist/aixtiv-cli-*.tar.gz'
+      - 'gs://aixtiv-symphony-backups/emotion-tuning/$(date +%Y%m%d)/'
+
+  # Run integration test with deployed package
+  - name: 'gcr.io/cloud-builders/curl'
+    id: 'verify-deployment'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        DEPLOY_URL="https://api-for-warp-drive.web.app/aixtiv-cli-latest/aixtiv-cli-latest.tar.gz"
+        echo "Verifying deployment at: $DEPLOY_URL"
+        curl -s -o /dev/null -w "%{http_code}" $DEPLOY_URL | grep 200 && echo "Deployment successful!" || echo "Deployment failed!"
+
+  # Setup and run telemetry integration
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'integrate-telemetry'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        bash scripts/telemetry/final-integration.sh emotion-tuning
+        echo "Emotion tuning telemetry integration complete"
+
+  # Send notification about build status
+  - name: 'gcr.io/cloud-builders/curl'
+    id: 'notify-completion'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        if [ $? -eq 0 ]; then
+          STATUS="success"
+          MESSAGE="Emotion Tuning CI/CD/CTTT process completed successfully"
+        else
+          STATUS="failure"
+          MESSAGE="Emotion Tuning CI/CD/CTTT process failed"
+        fi
+
+        # Send to notification endpoint (placeholder - replace with actual endpoint)
+        curl -X POST \
+          -H "Content-Type: application/json" \
+          -d "{\"status\":\"$STATUS\",\"message\":\"$MESSAGE\",\"service\":\"emotion-tuning\",\"build_id\":\"$BUILD_ID\"}" \
+          https://api-for-warp-drive.web.app/api/notifications
+
+  # Create link to Emotions Tuning module in Dr. Claude Symphony
+  - name: 'gcr.io/cloud-builders/npm'
+    id: 'link-to-symphony'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Create symbolic link record for Symphony integration
+        mkdir -p /workspace/symphony-integration
+        echo "{\"module\":\"emotion-tuning\",\"version\":\"$(date +%Y%m%d%H%M%S)\",\"path\":\"src/services/emotion-tuning\",\"dependencies\":[\"speech\"]}" > /workspace/symphony-integration/emotion-tuning.json
+
+        # Upload to GCS for Symphony to discover
+        gsutil cp /workspace/symphony-integration/emotion-tuning.json gs://aixtiv-symphony-modules/emotion-tuning/latest.json
+
+timeout: 1800s
+options:
+  machineType: 'E2_HIGHCPU_8'
+substitutions:
+  _FIREBASE_TOKEN: 'firebase-token-placeholder'
+tags: ['emotion-tuning', 'symphony', 'phase-ii']

@@ -1,0 +1,39 @@
+{
+  "id": "dr-roark-wish-visionary",
+  "name": "Dr. Roark WishVision",
+  "version": "1.0.3",
+  "description": "Sophisticated visualization system for complex data representation in virtual reality",
+  "capabilities": [
+    "3D data visualization",
+    "Virtual reality data representation",
+    "Visualization space creation and management",
+    "Secure access token generation",
+    "Real-time data rendering"
+  ],
+  "service_path": "/src/services/wishvision/index.js",
+  "api_endpoint": "https://api.vision-lake.com/wishvision",
+  "status": "ready",
+  "team_compatible": true,
+  "requires_authentication": true,
+  "authentication_provider": "SallyPort",
+  "default_permissions": ["view", "create"],
+  "metadata": {
+    "region": "us-west1",
+    "data_dimensions": "3d",
+    "creator": "Phillip Corey Roark",
+    "created_at": "2025-04-01T00:00:00Z",
+    "last_updated": "2025-05-10T00:00:00Z"
+  },
+  "team_assignments": [
+    {
+      "team_id": "visualization-team",
+      "role": "primary",
+      "description": "Primary visualization provider for all data visualization needs"
+    },
+    {
+      "team_id": "symphony-core",
+      "role": "contributor",
+      "description": "Core contributor to Symphony visualization layer"
+    }
+  ]
+}

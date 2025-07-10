@@ -1,0 +1,25 @@
+{
+  "name": "new-structure",
+  "version": "1.0.0",
+  "main": "webpack.config.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@babel/core": "^7.27.4",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/preset-env": "^7.27.2",
+    "babel-loader": "^10.0.0",
+    "terser-webpack-plugin": "^5.3.14",
+    "webpack": "^5.99.9",
+    "webpack-bundle-analyzer": "^4.10.2",
+    "webpack-cli": "^6.0.1"
+  }
+}

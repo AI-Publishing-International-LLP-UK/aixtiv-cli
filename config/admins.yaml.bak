@@ -1,0 +1,14 @@
+admins:
+  superadmin:
+    - email: pr@coaching2100.com
+      role: owner
+  editors:
+    - email: dk@coaching2100.com
+      role: editor
+
+notifications:
+  alerts:
+    - pr@coaching2100.com
+    - dk@coaching2100.com
+  reports:
+    - pr@coaching2100.com

@@ -1,0 +1,4 @@
+{
+  "placeholder": "prompts/init.json",
+  "description": "This file will contain initialization prompts"
+}

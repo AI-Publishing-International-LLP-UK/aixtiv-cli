@@ -1,0 +1,32 @@
+{
+  "routing_configuration": {
+    "load_balancer": {
+      "type": "global",
+      "region": "us-west1",
+      "ssl_policy": "quantum-secured",
+      "health_checks": "enabled"
+    },
+    "routes": {
+      "2100.cool": {
+        "backend_service": "primary-platform",
+        "security_policy": "primary",
+        "endpoints": ["super-claude-1", "dr-lucy-auto"]
+      },
+      "coach.2100.cool": {
+        "backend_service": "coaching-platform",
+        "security_policy": "coaching-specific",
+        "features": ["session-management", "resource-access"]
+      },
+      "zena.2100.cool": {
+        "backend_service": "enterprise-platform",
+        "security_policy": "enterprise-specific",
+        "features": ["executive-access", "project-management"]
+      }
+    },
+    "traffic_management": {
+      "ssl_certificates": "managed",
+      "cdn_policy": "enabled",
+      "security_policies": "enforced"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+project:
+  name: api-for-warp-drive
+  id: "anthology-ai-384522"
+  org_id: "2100675849"
+  billing_account: "014A28-8E4A93-1E8F22"
+  folder_id: "589302847566"
+
+environment:
+  prod:
+    project_number: "384522847566"
+    service_account: "anthology-sa@anthology-ai-384522.iam.gserviceaccount.com"
+  staging:
+    project_number: "384522847567"
+    service_account: "anthology-staging-sa@anthology-ai-384522.iam.gserviceaccount.com"
+
+networking:
+  vpc: "anthology-vpc"
+  subnet: "anthology-subnet-us-central1"
+  ip_ranges:
+    prod: "10.0.0.0/20"
+    staging: "10.0.16.0/20"
+
+domains:
+  primary: "2100.cool"
+  staging: "staging.2100.cool"
