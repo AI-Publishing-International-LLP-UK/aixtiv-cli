@@ -1,0 +1,1397 @@
+bindings:
+- members:
+  - user:jg@coaching2100.com
+  - user:pr@coaching2100.com
+  role: organizations/288533752685/roles/super_admin_role_sa1
+- members:
+  - serviceAccount:compute@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:warp-drive-service@api-for-warp-drive.iam.gserviceaccount.com
+  role: projects/api-for-warp-drive/roles/CustomRole
+- members:
+  - serviceAccount:compute@api-for-warp-drive.iam.gserviceaccount.com
+  role: projects/api-for-warp-drive/roles/cloudBuildCustomRole
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: project-owner-access
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  role: projects/api-for-warp-drive/roles/cloudBuildCustomRole
+- members:
+  - serviceAccount:compute@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/accessapproval.approver
+- members:
+  - serviceAccount:compute@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/accesscontextmanager.policyAdmin
+- members:
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:github-actions-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:warp-drive-service@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/aiplatform.admin
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: user_cloudbuild_access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/aiplatform.admin
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_build_service_access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/aiplatform.admin
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_build_service_agent_access
+  members:
+  - serviceAccount:dr-maria-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:knowledge-base-fn@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/aiplatform.admin
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-vertex-nb.iam.gserviceaccount.com
+  role: roles/aiplatform.colabServiceAgent
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-aiplatform-cc.iam.gserviceaccount.com
+  role: roles/aiplatform.customCodeServiceAgent
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-vertex-ex.iam.gserviceaccount.com
+  role: roles/aiplatform.extensionServiceAgent
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-aiplatform-vm.iam.gserviceaccount.com
+  role: roles/aiplatform.notebookServiceAgent
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-vertex-rag.iam.gserviceaccount.com
+  role: roles/aiplatform.ragServiceAgent
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-aiplatform.iam.gserviceaccount.com
+  role: roles/aiplatform.serviceAgent
+- members:
+  - serviceAccount:dr-lucy-auto@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-lucy-tensorboard@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/aiplatform.user
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: project-owner-access
+  members:
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/aiplatform.user
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: service-account-user
+  members:
+  - serviceAccount:knowledge-base-fn@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/aiplatform.user
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloudrun-admin-access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/aiplatform.user
+- condition:
+    description: Enable logging for Dr Lucy automation service
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: dr_lucy_logging_access
+  members:
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/aiplatform.user
+- condition:
+    description: Grant temporary network admin access
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_network_access
+  members:
+  - serviceAccount:dr-cypriot-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/aiplatform.user
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_service_access
+  members:
+  - serviceAccount:agentic-civilization-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/aiplatform.user
+- condition:
+    description: Grant AI Platform access to Dr Roark service account
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_ai_platform_access
+  members:
+  - serviceAccount:dr-roark-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/aiplatform.user
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: github_actions_cloud_run_access
+  members:
+  - serviceAccount:dr-roark-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/aiplatform.user
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_build_service_agent_access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/aiplatform.user
+- members:
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:publishing-automation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:service-859242575175@gcp-sa-apigateway-mgmt.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/apigateway.admin
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-apigateway-mgmt.iam.gserviceaccount.com
+  - serviceAccount:service-859242575175@gcp-sa-apigateway.iam.gserviceaccount.com
+  - serviceAccount:warp-drive-api-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/apigateway.serviceAgent
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-apigateway-mgmt.iam.gserviceaccount.com
+  role: roles/apigateway_management.serviceAgent
+- members:
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/apigeeconnect.Admin
+- members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - serviceAccount:api-for-warp-drive@appspot.gserviceaccount.com
+  - serviceAccount:claude-api-access@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:cloud-function-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-cypriot-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-grant-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-maria-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-match@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-memoria-02-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-adminsdk-j93w9@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-functions-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:github-actions-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:knowledge-base-webhook-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:lucy-service@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:openai-secrets@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:predict-endpoint-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:professor-lee-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:publishing-automation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:secretmanager-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:summary-webhook-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:warp-drive-bot@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/appengine.appAdmin
+- members:
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:service-859242575175@gcp-gae-service.iam.gserviceaccount.com
+  role: roles/appengine.serviceAgent
+- members:
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/appmetadata.workspaceMarketplaceAppConfigurationAdmin
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-artifactregistry.iam.gserviceaccount.com
+  role: roles/artifactregistry.serviceAgent
+- members:
+  - serviceAccount:859242575175-compute@developer.gserviceaccount.com
+  - serviceAccount:github-actions-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/artifactregistry.writer
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloudbuild-artifact-access
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  role: roles/artifactregistry.writer
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_token_creator_access
+  members:
+  - serviceAccount:dr-memoria-pub-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/artifactregistry.writer
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloudbuild-editor-access
+  members:
+  - serviceAccount:dr-sabina-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/bigquery.dataEditor
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_build_service_access
+  members:
+  - serviceAccount:dr-match-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/bigquery.dataViewer
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-bigquerydatatransfer.iam.gserviceaccount.com
+  role: roles/bigquerydatatransfer.serviceAgent
+- members:
+  - user:jg@coaching2100.com
+  role: roles/billing.projectManager
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-cloudaicompanion.iam.gserviceaccount.com
+  role: roles/cloudaicompanion.serviceAgent
+- members:
+  - user:pr@coaching2100.com
+  role: roles/cloudasset.viewer
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_build_access
+  members:
+  - serviceAccount:dr-burby-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/cloudasset.viewer
+- members:
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/cloudbuild.builds.approver
+- members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/cloudbuild.builds.builder
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: project-owner-access
+  members:
+  - serviceAccount:859242575175-compute@developer.gserviceaccount.com
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/cloudbuild.builds.builder
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: storage-admin-access
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  role: roles/cloudbuild.builds.builder
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloudbuild-builder-access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/cloudbuild.builds.builder
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_build_access
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/cloudbuild.builds.builder
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_build_service_access
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  role: roles/cloudbuild.builds.builder
+- members:
+  - serviceAccount:github-cicd-cttt@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  - user:pr@fabriziosassano.com
+  role: roles/cloudbuild.builds.editor
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: project-owner-access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/cloudbuild.builds.editor
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: storage-admin-access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/cloudbuild.builds.editor
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: project-owner-access
+  members:
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/cloudbuild.builds.editor
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: user_cloudbuild_access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/cloudbuild.builds.editor
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloudbuild-editor-access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/cloudbuild.builds.editor
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_build_submission_access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/cloudbuild.builds.editor
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: publishing-automation-storage-access
+  members:
+  - serviceAccount:service-859242575175@gcp-sa-cloudbuild.iam.gserviceaccount.com
+  role: roles/cloudbuild.serviceAgent
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_build_service_access
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - serviceAccount:service-859242575175@gcp-sa-cloudbuild.iam.gserviceaccount.com
+  role: roles/cloudbuild.serviceAgent
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_build_service_agent_access
+  members:
+  - serviceAccount:service-859242575175@gcp-sa-cloudbuild.iam.gserviceaccount.com
+  role: roles/cloudbuild.serviceAgent
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_cloudbuild_service_agent_access
+  members:
+  - serviceAccount:service-859242575175@gcp-sa-cloudbuild.iam.gserviceaccount.com
+  role: roles/cloudbuild.serviceAgent
+- members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - serviceAccount:api-for-warp-drive@appspot.gserviceaccount.com
+  - serviceAccount:claude-api-access@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:cloud-function-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-burby-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-cypriot-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-maria-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-match-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-memoria-02-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-adminsdk-j93w9@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-functions-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:lucy-service@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:professor-lee-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:publishing-automation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:warp-drive-bot@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/cloudbuild.workerPoolUser
+- members:
+  - serviceAccount:dr-match@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/clouddebugger.agent
+- members:
+  - serviceAccount:firebase-adminsdk-fbsvc@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/cloudfunctions.admin
+- members:
+  - serviceAccount:859242575175-compute@developer.gserviceaccount.com
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - serviceAccount:api-for-warp-drive@appspot.gserviceaccount.com
+  - serviceAccount:claude-api-access@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:cloud-function-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:cloud-functions-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-burby-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-cypriot-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-grant-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-maria-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-match-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-match@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-memoria-02-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-memoria-pub-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:drClaude@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-adminsdk-j93w9@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-functions-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:github-action-921998268@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:github-actions-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:knowledge-base-trigger-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:knowledge-base-webhook-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:knowledge-base-webhook@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:lucy-service@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:openai-secrets@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:predict-endpoint-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:professor-lee-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:publishing-automation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:summary-webhook-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/cloudfunctions.developer
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: project-owner-access
+  members:
+  - serviceAccount:drClaude@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/cloudfunctions.developer
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_storage_creator_access
+  members:
+  - serviceAccount:squadron-02-deployment-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/cloudfunctions.developer
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_build_service_agent_access
+  members:
+  - serviceAccount:dr-sabina-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/cloudfunctions.invoker
+- members:
+  - serviceAccount:service-859242575175@gcf-admin-robot.iam.gserviceaccount.com
+  role: roles/cloudfunctions.serviceAgent
+- members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - serviceAccount:claude-api-access@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:cloud-function-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-burby-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-cypriot-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-maria-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-match-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-memoria-02-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-adminsdk-j93w9@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-functions-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:github-actions-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:lucy-service@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:professor-lee-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:publishing-automation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/cloudkms.cryptoKeyDecrypter
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-cloudkms.iam.gserviceaccount.com
+  role: roles/cloudkms.serviceAgent
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_cloudbuild_service_agent_access
+  members:
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/cloudscheduler.admin
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-cloudscheduler.iam.gserviceaccount.com
+  role: roles/cloudscheduler.serviceAgent
+- condition:
+    description: Grant temporary network admin access
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_network_access
+  members:
+  - serviceAccount:dr-roark-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/cloudscheduler.viewer
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: developer-connect-connection-setup
+  members:
+  - serviceAccount:859242575175-compute@developer.gserviceaccount.com
+  role: roles/cloudsql.admin
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-cloudtasks.iam.gserviceaccount.com
+  role: roles/cloudtasks.serviceAgent
+- members:
+  - user:jg@coaching2100.com
+  role: roles/commercebusinessenablement.paymentConfigAdmin
+- members:
+  - serviceAccount:service-859242575175@cloudcomposer-accounts.iam.gserviceaccount.com
+  role: roles/composer.serviceAgent
+- members:
+  - serviceAccount:github-actions-deploy@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/compute.admin
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloud-run-admin
+  members:
+  - serviceAccount:dr-grant-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/compute.admin
+- condition:
+    description: Grant temporary network admin access
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_network_access
+  members:
+  - serviceAccount:dr-roark-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/compute.admin
+- members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - serviceAccount:api-for-warp-drive@appspot.gserviceaccount.com
+  - serviceAccount:claude-api-access@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:cloud-function-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-burby-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-cypriot-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-grant-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-maria-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-match-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-match@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-memoria-02-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-functions-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:github-actions-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:knowledge-base-webhook-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:lucy-service@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:professor-lee-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:publishing-automation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:secretmanager-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/compute.instanceAdmin.v1
+- condition:
+    expression: request.time < timestamp("2025-05-13T05:00:14.858Z")
+    title: cloudbuild-connection-setup
+  members:
+  - serviceAccount:compute@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/compute.instanceAdmin.v1
+- condition:
+    description: Grant temporary network admin access
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_network_access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/compute.networkAdmin
+- condition:
+    description: Grant temporary security admin access
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_security_access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/compute.securityAdmin
+- members:
+  - serviceAccount:github-actions-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/container.admin
+- condition:
+    description: Grant temporary network admin access
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_network_access
+  members:
+  - serviceAccount:dr-roark-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/container.admin
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-gkenode.iam.gserviceaccount.com
+  role: roles/container.defaultNodeServiceAgent
+- members:
+  - serviceAccount:api-for-warp-drive@appspot.gserviceaccount.com
+  - serviceAccount:claude-api-access@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:cloud-function-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-burby-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-cypriot-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-grant-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-maria-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-match-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-match@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-memoria-02-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-adminsdk-j93w9@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-functions-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:github-actions-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:knowledge-base-webhook-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:lucy-service@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:openai-secrets@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:professor-lee-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:publishing-automation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:warp-drive-api-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/container.developer
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: project-owner-access
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  role: roles/container.developer
+- members:
+  - serviceAccount:service-859242575175@container-engine-robot.iam.gserviceaccount.com
+  role: roles/container.serviceAgent
+- members:
+  - serviceAccount:service-859242575175@containerregistry.iam.gserviceaccount.com
+  role: roles/containerregistry.ServiceAgent
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-containerscanning.iam.gserviceaccount.com
+  role: roles/containerscanning.ServiceAgent
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-vertex-ex.iam.gserviceaccount.com
+  - serviceAccount:service-859242575175@gcp-sa-vertex-nb.iam.gserviceaccount.com
+  role: roles/containerthreatdetection.serviceAgent
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: developer-connect-connection-setup
+  members:
+  - serviceAccount:service-859242575175@gcp-sa-ktd-control.iam.gserviceaccount.com
+  role: roles/containerthreatdetection.serviceAgent
+- condition:
+    description: Grant temporary security admin access
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_security_access
+  members:
+  - serviceAccount:service-859242575175@gcp-sa-ktd-control.iam.gserviceaccount.com
+  role: roles/containerthreatdetection.serviceAgent
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-dataform.iam.gserviceaccount.com
+  role: roles/dataform.serviceAgent
+- members:
+  - serviceAccount:api-for-warp-drive@appspot.gserviceaccount.com
+  - serviceAccount:knowledge-base-webhook-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/datafusion.runner
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-datafusion.iam.gserviceaccount.com
+  role: roles/datafusion.serviceAgent
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-dataplex.iam.gserviceaccount.com
+  role: roles/dataplex.serviceAgent
+- members:
+  - serviceAccount:859242575175-compute@developer.gserviceaccount.com
+  - serviceAccount:api-for-warp-drive@appspot.gserviceaccount.com
+  - serviceAccount:knowledge-base-webhook-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/dataproc.worker
+- members:
+  - serviceAccount:knowledge-base-fn@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/datastore.owner
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: project-owner-access
+  members:
+  - serviceAccount:firebase-adminsdk-fbsvc@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/datastore.owner
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: github_actions_cloud_run_access
+  members:
+  - serviceAccount:squadron-02-deployment-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/datastore.owner
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloud-run-admin
+  members:
+  - serviceAccount:aixtiv-gateway-agent@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/datastore.user
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: github_actions_cloud_run_access
+  members:
+  - serviceAccount:aixtiv-gateway-agent@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/datastore.user
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_cloudbuild_service_agent_access
+  members:
+  - serviceAccount:drClaude@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/datastore.user
+- members:
+  - serviceAccount:firebase-adminsdk-fbsvc@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/datastore.viewer
+- members:
+  - serviceAccount:firebase-app-hosting-compute@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/developerconnect.readTokenAccessor
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-devconnect.iam.gserviceaccount.com
+  role: roles/developerconnect.serviceAgent
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: project-owner-access
+  members:
+  - serviceAccount:dr-cypriot-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/dialogflow.client
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: storage-creator-access
+  members:
+  - serviceAccount:professor-lee-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/documentai.admin
+- members:
+  - user:jg@coaching2100.com
+  role: roles/editor
+- members:
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/eventarc.admin
+- members:
+  - serviceAccount:859242575175-compute@developer.gserviceaccount.com
+  role: roles/eventarc.eventReceiver
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-eventarc.iam.gserviceaccount.com
+  role: roles/eventarc.serviceAgent
+- members:
+  - serviceAccount:service-859242575175@cloud-filer.iam.gserviceaccount.com
+  role: roles/file.serviceAgent
+- members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - serviceAccount:dr-burby-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-cypriot-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-grant-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-maria-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-match@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-memoria-02-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-adminsdk-fbsvc@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-adminsdk-j93w9@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-functions-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:github-actions-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:github-cicd-cttt@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:knowledge-base-trigger-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:lucy-service@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:openai-secrets@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:predict-endpoint-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:professor-lee-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:publishing-automation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:secretmanager-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:warp-drive-bot@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/firebase.admin
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: project-owner-access
+  members:
+  - serviceAccount:knowledge-base-fn@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/firebase.admin
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloud-run-admin
+  members:
+  - serviceAccount:firebase-domain-manager@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/firebase.admin
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: project-owner-access
+  members:
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/firebase.admin
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_cloudbuild_service_agent_access
+  members:
+  - serviceAccount:squadron-02-deployment-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/firebase.admin
+- members:
+  - serviceAccount:api-for-warp-drive@appspot.gserviceaccount.com
+  role: roles/firebase.developAdmin
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-firebase.iam.gserviceaccount.com
+  role: roles/firebase.managementServiceAgent
+- members:
+  - serviceAccount:firebase-adminsdk-j93w9@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-app-hosting-compute@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/firebase.sdkAdminServiceAgent
+- members:
+  - serviceAccount:firebase-adminsdk-j93w9@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/firebaseappcheck.admin
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-firebaseappcheck.iam.gserviceaccount.com
+  role: roles/firebaseappcheck.serviceAgent
+- members:
+  - serviceAccount:firebase-app-hosting-compute@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/firebaseapphosting.computeRunner
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-firebaseapphosting.iam.gserviceaccount.com
+  role: roles/firebaseapphosting.serviceAgent
+- members:
+  - serviceAccount:github-action-921998268@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/firebaseauth.admin
+- members:
+  - serviceAccount:github-action-921998268@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/firebasehosting.admin
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: storage-admin-access
+  members:
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/firebasehosting.admin
+- condition:
+    expression: request.time < timestamp('2024-03-17T00:00:00.000Z')
+    title: bulk_domain_setup
+  members:
+  - serviceAccount:firebase-domain-manager@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/firebasehosting.admin
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-firebasevertexai.iam.gserviceaccount.com
+  role: roles/firebaseml.serviceAgent
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-firebasemods.iam.gserviceaccount.com
+  role: roles/firebasemods.serviceAgent
+- members:
+  - serviceAccount:service-859242575175@firebase-rules.iam.gserviceaccount.com
+  role: roles/firebaserules.system
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-firestore.iam.gserviceaccount.com
+  role: roles/firestore.serviceAgent
+- members:
+  - user:pr@coaching2100.com
+  role: roles/iam.roleAdmin
+- members:
+  - user:pr@coaching2100.com
+  role: roles/iam.securityAdmin
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloudrun-admin-access
+  members:
+  - serviceAccount:dr-grant-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/iam.securityAdmin
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_token_creator_access
+  members:
+  - serviceAccount:dr-burby-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/iam.securityReviewer
+- members:
+  - user:pr@coaching2100.com
+  role: roles/iam.serviceAccountAdmin
+- members:
+  - serviceAccount:github-cicd-cttt@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/iam.serviceAccountKeyAdmin
+- members:
+  - serviceAccount:dr-lucy-auto@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-adminsdk-j93w9@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:my-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:service-859242575175@gcp-sa-pubsub.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/iam.serviceAccountTokenCreator
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: developer-connect-connection-setup
+  members:
+  - user:pr@coaching2100.com
+  role: roles/iam.serviceAccountTokenCreator
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_token_creator_access
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  role: roles/iam.serviceAccountTokenCreator
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_storage_creator_access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/iam.serviceAccountTokenCreator
+- members:
+  - serviceAccount:859242575175-compute@developer.gserviceaccount.com
+  - serviceAccount:api-for-warp-drive@appspot.gserviceaccount.com
+  - serviceAccount:claude-api-access@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:cloud-function-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:cloud-functions-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:coaching-backend-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-burby-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-cypriot-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-grant-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-maria-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-match-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-match@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-memoria-02-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-memoria-pub-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-adminsdk-j93w9@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-functions-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:github-actions-deploy@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:github-actions-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:knowledge-base-trigger-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:knowledge-base-webhook-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:lucy-service@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:openai-secrets@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:predict-endpoint-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:professor-lee-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:publishing-automation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:secretmanager-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:summary-webhook-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:warp-drive-bot@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:zena-backend@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/iam.serviceAccountUser
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: project-owner-access
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  role: roles/iam.serviceAccountUser
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: project-owner-access
+  members:
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/iam.serviceAccountUser
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: service-account-user
+  members:
+  - user:pr@coaching2100.com
+  role: roles/iam.serviceAccountUser
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_cloudbuild_service_agent_access
+  members:
+  - serviceAccount:dr-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/iam.serviceAccountUser
+- members:
+  - user:pr@coaching2100.com
+  role: roles/iam.workloadIdentityPoolAdmin
+- members:
+  - serviceAccount:my-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/iam.workloadIdentityUser
+- members:
+  - serviceAccount:github-actions-deploy@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/iap.tunnelResourceAccessor
+- members:
+  - user:pr@coaching2100.com
+  role: roles/logging.admin
+- members:
+  - serviceAccount:859242575175-compute@developer.gserviceaccount.com
+  - serviceAccount:api-for-warp-drive@appspot.gserviceaccount.com
+  - serviceAccount:content-service@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:my-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:service-859242575175@serverless-robot-prod.iam.gserviceaccount.com
+  role: roles/logging.logWriter
+- condition:
+    description: Enable logging for Dr Lucy automation service
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: dr_lucy_logging_access
+  members:
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/logging.logWriter
+- condition:
+    description: Grant temporary security admin access
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_security_access
+  members:
+  - serviceAccount:dr-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/logging.logWriter
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-logging.iam.gserviceaccount.com
+  role: roles/logging.serviceAgent
+- members:
+  - serviceAccount:service-859242575175@cloud-ml.google.com.iam.gserviceaccount.com
+  role: roles/ml.serviceAgent
+- members:
+  - user:pr@coaching2100.com
+  role: roles/monitoring.admin
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: project-owner-access
+  members:
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/monitoring.admin
+- members:
+  - serviceAccount:api-for-warp-drive.svc.id.goog[gatekeeper-system/gatekeeper-admin]
+  - serviceAccount:my-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/monitoring.metricWriter
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-monitoring-notification.iam.gserviceaccount.com
+  role: roles/monitoring.notificationServiceAgent
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: project-owner-access
+  members:
+  - serviceAccount:dr-roark-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/monitoring.viewer
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-notebooks.iam.gserviceaccount.com
+  role: roles/notebooks.serviceAgent
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-osconfig.iam.gserviceaccount.com
+  role: roles/osconfig.serviceAgent
+- members:
+  - user:pr@coaching2100.com
+  role: roles/owner
+- members:
+  - serviceAccount:service-org-288533752685@gcp-sa-pam.iam.gserviceaccount.com
+  role: roles/privilegedaccessmanager.serviceAgent
+- members:
+  - user:pr@coaching2100.com
+  role: roles/pubsub.admin
+- members:
+  - serviceAccount:project-859242575175@storage-transfer-service.iam.gserviceaccount.com
+  role: roles/pubsub.editor
+- members:
+  - serviceAccount:service-859242575175@gs-project-accounts.iam.gserviceaccount.com
+  role: roles/pubsub.publisher
+- members:
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/recaptchaenterprise.admin
+- members:
+  - user:jg@coaching2100.com
+  role: roles/recommender.billingAccountCudAdmin
+- members:
+  - user:pr@coaching2100.com
+  role: roles/resourcemanager.organizationAdmin
+- members:
+  - user:pr@coaching2100.com
+  - user:pr@fabriziosassano.com
+  role: roles/resourcemanager.projectIamAdmin
+- members:
+  - serviceAccount:859242575175-compute@developer.gserviceaccount.com
+  - serviceAccount:api-for-warp-drive@appspot.gserviceaccount.com
+  - serviceAccount:claude-api-access@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:cloud-function-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-burby-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-cypriot-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-grant-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-maria-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-match-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-memoria-02-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-roark-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-adminsdk-j93w9@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-functions-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:github-actions-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:knowledge-base-trigger-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:knowledge-base-webhook-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:lucy-service@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:professor-lee-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:publishing-automation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:secretmanager-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:service-859242575175@serverless-robot-prod.iam.gserviceaccount.com
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:warp-drive-bot@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  - user:pr@fabriziosassano.com
+  role: roles/run.admin
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: project-owner-access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/run.admin
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: publishing-automation-storage-access
+  members:
+  - serviceAccount:github-actions@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/run.admin
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloud-run-admin
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  role: roles/run.admin
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: project-owner-access
+  members:
+  - serviceAccount:squadron-02-deployment-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/run.admin
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloudrun-admin-access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/run.admin
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_service_access
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - serviceAccount:asoos-service-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/run.admin
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: github_actions_cloud_run_access
+  members:
+  - serviceAccount:github-actions@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/run.admin
+- members:
+  - serviceAccount:859242575175-compute@developer.gserviceaccount.com
+  - serviceAccount:dr-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-roark-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:lucy-service@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:mocoa-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/run.invoker
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: project-owner-access
+  members:
+  - serviceAccount:asoos-service-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/run.invoker
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: project-owner-access
+  members:
+  - serviceAccount:agentic-civilization-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/run.invoker
+- condition:
+    description: Grant AI Platform access to Dr Roark service account
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_ai_platform_access
+  members:
+  - serviceAccount:dr-roark-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/run.invoker
+- members:
+  - serviceAccount:service-859242575175@serverless-robot-prod.iam.gserviceaccount.com
+  role: roles/run.serviceAgent
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloud-run-service-agent
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - serviceAccount:service-859242575175@serverless-robot-prod.iam.gserviceaccount.com
+  role: roles/run.serviceAgent
+- members:
+  - serviceAccount:github-action-921998268@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/run.viewer
+- members:
+  - serviceAccount:859242575175-compute@developer.gserviceaccount.com
+  - serviceAccount:github-cicd-cttt@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:openai-secrets@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:secret-manager-admin@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/secretmanager.admin
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: developer-connect-connection-setup
+  members:
+  - serviceAccount:service-859242575175@gcp-sa-devconnect.iam.gserviceaccount.com
+  role: roles/secretmanager.admin
+- condition:
+    expression: request.time < timestamp("2025-05-13T05:00:14.858Z")
+    title: cloudbuild-connection-setup
+  members:
+  - serviceAccount:service-859242575175@gcp-sa-cloudbuild.iam.gserviceaccount.com
+  role: roles/secretmanager.admin
+- members:
+  - serviceAccount:859242575175-compute@developer.gserviceaccount.com
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - serviceAccount:api-for-warp-drive@appspot.gserviceaccount.com
+  - serviceAccount:claude-api-access@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:cloud-function-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:coaching-backend-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-burby-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-cypriot-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-lucy-auto@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-maria-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-match-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:dr-memoria-02-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-adminsdk-j93w9@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:firebase-functions-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:github-actions-deployer@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:knowledge-base-trigger-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:knowledge-base-webhook-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:lucy-service@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:openai-secrets@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:predict-endpoint-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:professor-lee-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:publishing-automation@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:secretmanager-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:super-claude-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:warp-drive-bot@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:zena-backend@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/secretmanager.secretAccessor
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: project-owner-access
+  members:
+  - serviceAccount:mocoa-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: storage-admin-access
+  members:
+  - serviceAccount:mocoa-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloud-run-admin
+  members:
+  - serviceAccount:mocoa-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: storage-admin-access
+  members:
+  - serviceAccount:dr-roark-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloudbuild-builder-access
+  members:
+  - serviceAccount:mocoa-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_service_access
+  members:
+  - serviceAccount:mocoa-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+- condition:
+    description: Grant temporary security admin access
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_security_access
+  members:
+  - serviceAccount:mocoa-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_build_service_agent_access
+  members:
+  - serviceAccount:squadron-02-deployment-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_cloudbuild_service_agent_access
+  members:
+  - serviceAccount:mocoa-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/secretmanager.secretAccessor
+- members:
+  - serviceAccount:859242575175-compute@developer.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/secretmanager.viewer
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-apigateway-mgmt.iam.gserviceaccount.com
+  role: roles/servicemanagement.admin
+- members:
+  - serviceAccount:api-gateway-sa@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:service-859242575175@gcp-sa-apigateway-mgmt.iam.gserviceaccount.com
+  - serviceAccount:warp-drive-api-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/servicemanagement.serviceController
+- members:
+  - serviceAccount:github-action-921998268@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/serviceusage.apiKeysViewer
+- members:
+  - serviceAccount:github-cicd-cttt@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/serviceusage.serviceUsageAdmin
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: publishing-automation-storage-access
+  members:
+  - serviceAccount:dr-memoria-pub-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/serviceusage.serviceUsageAdmin
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: service-account-user
+  members:
+  - user:pr@coaching2100.com
+  role: roles/serviceusage.serviceUsageAdmin
+- members:
+  - serviceAccount:github-action-921998268@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/serviceusage.serviceUsageConsumer
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloud-run-admin
+  members:
+  - user:pr@coaching2100.com
+  role: roles/serviceusage.serviceUsageConsumer
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_service_access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/serviceusage.serviceUsageConsumer
+- members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - serviceAccount:dr-lucy-tensorboard@api-for-warp-drive.iam.gserviceaccount.com
+  - serviceAccount:drlucyautomation@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/storage.admin
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: project-owner-access
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  role: roles/storage.admin
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: storage-admin-access
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/storage.admin
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: publishing-automation-storage-access
+  members:
+  - serviceAccount:publishing-automation@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/storage.admin
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloud-run-admin
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/storage.admin
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: storage-admin-access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/storage.admin
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_storage_access
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  role: roles/storage.admin
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_build_service_agent_access
+  members:
+  - serviceAccount:dr-memoria-pub-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/storage.admin
+- members:
+  - serviceAccount:upload-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  - user:pr@coaching2100.com
+  role: roles/storage.objectAdmin
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: storage-admin-access
+  members:
+  - serviceAccount:professor-lee-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/storage.objectAdmin
+- members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  role: roles/storage.objectCreator
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: storage-creator-access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/storage.objectCreator
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_storage_creator_access
+  members:
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  role: roles/storage.objectCreator
+- members:
+  - serviceAccount:859242575175-compute@developer.gserviceaccount.com
+  - serviceAccount:859242575175@cloudbuild.gserviceaccount.com
+  - serviceAccount:firebase-app-hosting-compute@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/storage.objectViewer
+- condition:
+    expression: request.time < timestamp("2025-02-07T11:43:50.392Z")
+    title: developer-connect-connection-setup
+  members:
+  - serviceAccount:mocoa-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/storage.objectViewer
+- condition:
+    expression: request.time < timestamp("2025-05-13T05:00:14.858Z")
+    title: cloudbuild-connection-setup
+  members:
+  - serviceAccount:mocoa-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/storage.objectViewer
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: user_storage_access
+  members:
+  - user:pr@coaching2100.com
+  role: roles/storage.objectViewer
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloudrun-admin-access
+  members:
+  - serviceAccount:dr-maria-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/storage.objectViewer
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloud-run-service-agent
+  members:
+  - serviceAccount:mocoa-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/storage.objectViewer
+- condition:
+    expression: request.time < timestamp('2025-02-07T11:43:50.392Z')
+    title: cloudbuild-builder-access
+  members:
+  - serviceAccount:dr-match-sa@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/storage.objectViewer
+- condition:
+    description: Enable logging for Dr Lucy automation service
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: dr_lucy_logging_access
+  members:
+  - serviceAccount:mocoa-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/storage.objectViewer
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_token_creator_access
+  members:
+  - serviceAccount:mocoa-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/storage.objectViewer
+- condition:
+    expression: request.time < timestamp('2026-01-01T00:00:00.000Z')
+    title: extended_storage_creator_access
+  members:
+  - serviceAccount:mocoa-service-account@api-for-warp-drive.iam.gserviceaccount.com
+  role: roles/storage.objectViewer
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-storageinsights.iam.gserviceaccount.com
+  role: roles/storageinsights.serviceAgent
+- members:
+  - serviceAccount:service-859242575175@gcp-sa-visionai.iam.gserviceaccount.com
+  role: roles/visionai.serviceAgent
+etag: BwY5C1x5ur0=
+version: 3
